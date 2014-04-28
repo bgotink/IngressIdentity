@@ -328,6 +328,7 @@ window.iidentity = window.iidentity || {};
         }
 
         setStoredData('option-' + request.option, request.value, function () {
+            data.invalidateCache();
             updateTabs();
             sendResponse({ result: request.value });
         });
@@ -357,7 +358,7 @@ window.iidentity = window.iidentity || {};
         if (data === null) {
             sendResponse({ status: 'not-found' });
         } else {
-            var player = $.extend(true, {}, data.getPlayer(request.oid));
+            var player = data.getPlayer(request.oid);
 
             if (player === null) {
                 sendResponse({ status: 'not-found' });
