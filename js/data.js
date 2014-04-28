@@ -13,7 +13,7 @@ window.iidentity = window.iidentity || {};
 
     // unexported helper functions and classes
 
-        deep_merge = function () {
+        merge_player = function () {
             if (arguments.length === 0) {
                 return false;
             } else if (arguments.length == 1) {
@@ -22,32 +22,38 @@ window.iidentity = window.iidentity || {};
 
             var target = arguments[0],
                 src = arguments[1],
-                newArguments = Array.prototype.slice.call(arguments, 1);
+                newArguments,
+                key,
+                extraKey;
 
-            if (Array.isArray(target)) {
-                if (!Array.isArray(src)) {
-                    // cannot merge non-array data into an array...
-                    return false;
-                } else {
-                    target = target.concat(src);
-                }
-            } else {
-                for (var key in src) {
-                    if (key in target) {
-                        if ((typeof src[key] === 'object' || typeof src[key] === 'array')
-                                && (typeof target[key] === 'object' || typeof target[key] === 'array')) {
-                            target[key] = deep_merge.call(null, target[key], src[key]);
+            if (typeof target.extra !== 'object') {
+                target.extra = {};
+            }
+
+            for (key in src) {
+                if (key === 'extra') {
+                    for (extraKey in src.extra) {
+                        if (extraKey in target.extra) {
+                            if (Array.isArray(target.extra[extraKey])) {
+                                target.extra[extraKey].push(src.extra[extraKey]);
+                            } else {
+                                target.extra[extraKey] = [
+                                    target.extra[extraKey],
+                                    src.extra[extraKey]
+                                ];
+                            }
                         } else {
-                            target[key] = src[key];
+                            target.extra[extraKey] = src.extra[extraKey];
                         }
-                    } else {
-                        target[key] = src[key];
                     }
+                } else {
+                    target[key] = src[key];
                 }
             }
 
+            newArguments = Array.prototype.slice.call(arguments, 1);
             newArguments[0] = target;
-            return deep_merge.apply(null, newArguments);
+            return merge_player.apply(null, newArguments);
         },
 
         PlayerSource = Class.extend({
@@ -82,7 +88,14 @@ window.iidentity = window.iidentity || {};
                     return null;
                 }
 
-                return $.extend(true, { faction: this.data.faction }, this.data.extratags, this.players[oid]);
+                return $.extend(
+                    true,
+                    {
+                        faction: this.data.faction,
+                        extra: this.data.extratags
+                    },
+                    this.players[oid]
+                );
             },
 
             getNbPlayers: function () {
@@ -196,7 +209,9 @@ window.iidentity = window.iidentity || {};
                     data[0].err = ['Player ' + data[0].name + ' [' + data[0].nickname + '] has been registered as both enlightened and resistance'];
                 }
 
-                return this.cache[oid] = deep_merge.apply(null, data);
+                this.cache[oid] = merge_player.apply(null, data);
+
+                return this.cache[oid];
             },
 
             getSources: function () {
