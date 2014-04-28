@@ -156,6 +156,7 @@ window.iidentity = window.iidentity || {};
             );
         });
 
+        module.comm.setOnUpdate(reloadManifests);
         reloadManifests();
 
         $('#enable_push').on('click.request-permission', function () {
