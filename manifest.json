@@ -22,5 +22,11 @@
             "css": [ "css/content.css" ],
             "js": [ "vendor/js/jquery.min.js", "js/log.js", "js/communication.js", "js/content.js" ]
         }
+    ],
+
+    "web_accessible_resources": [
+        "img/anomalies/13magnus.png",
+        "img/anomalies/recursion.png",
+        "img/anomalies/interitus.png"
     ]
 }

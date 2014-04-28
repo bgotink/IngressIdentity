@@ -1,4 +1,5 @@
 /**
+ * Interpret, cache and merge player data.
  *
  * @author Bram Gotink (@bgotink)
  * @license MIT
@@ -10,6 +11,8 @@ window.iidentity = window.iidentity || {};
 
 (function (module, $) {
     var exports = module.data = {},
+
+        anomalies = [ '13magnus', 'recursion', 'interitus' ],
 
     // unexported helper functions and classes
 
@@ -31,7 +34,19 @@ window.iidentity = window.iidentity || {};
             }
 
             for (key in src) {
-                if (key === 'extra') {
+                if (key === 'err') {
+                    if (Array.isArray(src.err)) {
+                        if ('err' in target) {
+                            if (Array.isArray(target.err)) {
+                                target.err = target.err.join(src.err);
+                            } else {
+                                target.err = src.err;
+                            }
+                        } else {
+                            target.err = src.err;
+                        }
+                    }
+                } else if (key === 'extra') {
                     for (extraKey in src.extra) {
                         if (extraKey in target.extra) {
                             if (Array.isArray(target.extra[extraKey])) {
@@ -67,6 +82,16 @@ window.iidentity = window.iidentity || {};
                     data.extratags = JSON.parse(data.extratags);
                 } else {
                     data.extratags = {};
+                }
+
+                if (typeof data.extratags.anomaly !== 'undefined') {
+                    var anomaly = data.extratags.anomaly;
+
+                    if (anomalies.indexOf(anomaly) === -1) {
+                        this.data.err = this.data.err || [];
+                        this.data.err.push('Invalid anomaly: ' + anomaly);
+                        delete data.extratags.anomaly;
+                    }
                 }
 
                 this.setPlayers(players);

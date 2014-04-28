@@ -54,25 +54,49 @@ window.iidentity = window.iidentity || {};
                     player.level = 0;
                 }
 
-                var $extraInfo, $elem = $('<div>')
-                    .addClass('iidentity-wrapper')
-                    .attr('data-oid', oid)
-                    .append(
-                        $('<div>')
-                            .addClass('iidentity-name')
-                            .addClass('iidentity-faction-' + player.faction)
-                            .text(player.nickname)
-                    )
-                    .append(
-                        $extraInfo = $('<div>')
-                            .addClass('iidentity-extra')
-                    );
+                var $extraInfo,
+                    $name,
+                    $elem = $('<div>')
+                        .addClass('iidentity-wrapper')
+                        .attr('data-oid', oid)
+                        .append(
+                            $name = $('<div>')
+                                .addClass('iidentity-name')
+                                .addClass('iidentity-faction-' + player.faction)
+                                .text(player.nickname)
+                        )
+                        .append(
+                            $extraInfo = $('<div>')
+                                .addClass('iidentity-extra')
+                        );
 
                 $extraInfo.append(
                     $('<span>')
                         .addClass('iidentity-level iidentity-level' + player.level)
                         .text('L' + ('0' == player.level ? '?' : player.level))
                 );
+
+                if ('anomaly' in player.extra) {
+                    if (!Array.isArray(player.extra.anomaly)) {
+                        player.extra.anomaly = [ player.extra.anomaly ];
+                    }
+
+                    var anomalyList = [];
+
+                    player.extra.anomaly.forEach(function (anomaly) {
+                        anomalyList.push(
+                            $('<img>')
+                                .attr('src', chrome.extension.getURL('img/anomalies/' + anomaly + '.png'))
+                                .addClass('iidentity-anomaly')
+                        );
+                    });
+
+                    $name.append(
+                        $('<div>')
+                            .addClass('iidentity-anomalies')
+                            .append(anomalyList)
+                    );
+                }
 
                 callback(null, $elem);
             });
@@ -88,7 +112,7 @@ window.iidentity = window.iidentity || {};
                     player.level = 0;
                 }
 
-                callback(null, $('<span>')
+                var $wrapper = $('<span>')
                     .addClass('iidentity-iwrapper')
                     .attr('data-oid', oid)
                     .append(
@@ -101,8 +125,31 @@ window.iidentity = window.iidentity || {};
                         $('<span>')
                             .addClass('iidentity-level iidentity-level' + player.level)
                             .text('L' + ('0' == player.level ? '?' : player.level))
-                    )
-                );
+                    );
+
+                if ('anomaly' in player.extra) {
+                    if (!Array.isArray(player.extra.anomaly)) {
+                        player.extra.anomaly = [ player.extra.anomaly ];
+                    }
+
+                    var anomalyList = [];
+
+                    player.extra.anomaly.forEach(function (anomaly) {
+                        anomalyList.push(
+                            $('<img>')
+                                .attr('src', chrome.extension.getURL('img/anomalies/' + anomaly + '.png'))
+                                .addClass('iidentity-anomaly')
+                        );
+                    });
+
+                    $wrapper.append(
+                        $('<span>')
+                            .addClass('iidentity-anomalies')
+                            .append(anomalyList)
+                    );
+                }
+
+                callback(null, $wrapper);
             });
         },
 

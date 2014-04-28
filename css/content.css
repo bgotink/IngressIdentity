@@ -84,3 +84,17 @@
 .iidentity-level16 {
     color: #9627F4;
 }
+
+.iidentity-anomalies {
+    display: inline;
+    position: relative;
+}
+
+.iidentity-anomaly {
+    width: auto;
+    height: .8em;
+
+    margin-bottom: auto;
+    margin-top: auto;
+    margin-left: .4ex;
+}
