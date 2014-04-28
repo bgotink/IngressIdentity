@@ -10,10 +10,24 @@
 window.iidentity = window.iidentity || {};
 
 (function (module) {
-    var exports = module.comm = {};
+    var exports = module.comm = {},
+        onUpdate = function () {},
+        lastUpdate = +new Date;
 
     exports.send = function (request, callback) {
-        chrome.runtime.sendMessage(request, callback);
+        chrome.runtime.sendMessage({ request: request, lastUpdate: lastUpdate },
+            function (reply) {
+                callback(reply.reply);
+
+                if (reply.shouldUpdate) {
+                    lastUpdate = +new Date;
+
+                    if (onUpdate) {
+                        onUpdate();
+                    }
+                }
+            }
+        );
     };
 
     exports.hasPlayer = function (oid, callback) {
@@ -32,4 +46,8 @@ window.iidentity = window.iidentity || {};
             callback(null, result.player);
         });
     };
+
+    exports.setOnUpdate = function (callback) {
+        onUpdate = callback;
+    }
 })(window.iidentity);

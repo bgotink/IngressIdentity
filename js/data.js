@@ -118,6 +118,7 @@ window.iidentity = window.iidentity || {};
                 this.key = key || 0;
 
                 this.cache = {};
+                this.loadTimestamp = +new Date;
             },
 
             getKey: function () {
@@ -183,6 +184,10 @@ window.iidentity = window.iidentity || {};
 
             isCombined: function () {
                 return true;
+            },
+
+            shouldUpdate: function (remoteTimestamp) {
+                return remoteTimestamp < this.loadTimestamp;
             }
         }),
 

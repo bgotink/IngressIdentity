@@ -198,6 +198,8 @@ window.iidentity = window.iidentity || {};
         };
 
     forceUpdate();
+    module.comm.setOnUpdate(forceUpdate);
+
     observer.observe(window.document, { childList: true, subtree: true });
 
 })(window.iidentity, window, window.jQuery);

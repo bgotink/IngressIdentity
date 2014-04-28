@@ -234,8 +234,24 @@ window.iidentity = window.iidentity || {};
                 return;
             }
 
+            var reply = null;
+
+            if (request.lastUpdate) {
+                reply = { shouldUpdate: data.shouldUpdate(request.lastUpdate) };
+
+                request = request.request;
+            }
+
             if (request.type in messageListeners) {
-                return messageListeners[request.type](request, sender, sendResponse);
+                return messageListeners[request.type](request, sender, function (response) {
+                    if (reply !== null) {
+                        reply.reply = response;
+                    } else {
+                        reply = response;
+                    }
+
+                    sendResponse(reply);
+                });
             } else {
                 module.log.error('Unknown message type: %s', request.type);
                 module.log.error('Request: ', request);
