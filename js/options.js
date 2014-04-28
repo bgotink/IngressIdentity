@@ -42,6 +42,17 @@ window.iidentity = window.iidentity || {};
                 module.comm.send({ type: 'revokePermission', permission: permission }, function (result) {
                     callback(result.revoked);
                 })
+            },
+
+            setOption: function (option, value, callback) {
+                module.comm.send({ type: 'setOption', option: option, value: value }, function (result) {
+                    callback(result.result);
+                });
+            },
+            getOption: function (option, defaultValue, callback) {
+                module.comm.send({ type: 'getOption', option: option, default: defaultValue }, function (result) {
+                    callback(result.value);
+                });
             }
         },
 
@@ -167,20 +178,25 @@ window.iidentity = window.iidentity || {};
                 return;
             }
             $this.data('iidentity-working', true);
+            $this.button('loading');
 
             if ($this.hasClass('active')) {
                 comm.revokePermission('tabs', function (revoked) {
                     if (revoked) {
                         $this.removeClass('active');
                     }
+
                     $this.data('iidentity-working', false);
+                    $this.button('reset');
                 });
             } else {
                 comm.requestPermission('tabs', function (granted) {
                     if (granted) {
                         $this.addClass('active');
                     }
+
                     $this.data('iidentity-working', false);
+                    $this.button('reset');
                 })
             }
         });
@@ -190,5 +206,27 @@ window.iidentity = window.iidentity || {};
                 $('#enable_push').addClass('active');
             }
         });
+
+        $('#enable_anomalies').on('click.set-option', function () {
+            var $this = $(this);
+            $this.button('loading');
+
+            comm.setOption('show-anomalies', !$this.hasClass('active'), function (state) {
+                if (state) {
+                    $this.addClass('active');
+                } else {
+                    $this.removeClass('active');
+                }
+                $this.button('reset');
+            });
+        });
+        comm.getOption('show-anomalies', true, function (state) {
+            console.log(state);
+            if (state) {
+                $('#enable_anomalies').addClass('active');
+            } else {
+                $('#enable_anomalies').removeClass('active');
+            }
+        })
     });
 })(window.iidentity, window.jQuery);

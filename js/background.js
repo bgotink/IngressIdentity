@@ -13,6 +13,7 @@ window.iidentity = window.iidentity || {};
 (function (module, $, window) {
     var storage = chrome.storage.sync,
         data = null,
+        storageCache = {},
 
         isOptionsPage = function (url) {
             return url.match(new RegExp('chrome-extension:\\/\\/' + chrome.runtime.id + '/options.html.*'));
@@ -20,16 +21,49 @@ window.iidentity = window.iidentity || {};
 
     // storage functions
 
+        getStoredData = function (key, defaultValue, callback) {
+            var request = {};
+            request[key] = defaultValue;
+
+            if (key in storageCache && storageCache[key].expires > (+new Date)) {
+                module.log.log('Got storage { key: %s, value: %s } from storage cache', key, '' + storageCache[key].result);
+                callback(storageCache[key].result);
+            } else {
+                storage.get(request, function (result) {
+                    module.log.log('Got storage { key: %s, value: %s } from storage', key, '' + result[key]);
+
+                    storageCache[key] = {
+                        result: result[key],
+                        expires: (+new Date()) + 60 * 1000
+                    };
+
+                    callback(result[key]);
+                });
+            }
+        },
+
+        setStoredData = function (key, value, callback) {
+            var request = {};
+            request[key] = value;
+
+            module.log.log('Setting storage key %s to %s', key, '' + value);
+            storage.set(request, callback);
+
+            if (key in storageCache) {
+                delete storageCache[key];
+            }
+        },
+
         getManifestKeys = function (callback) {
             module.log.log('Fetching manifest keys...');
-            return storage.get({ manifest_keys: [] }, function (result) {
+            storage.get({ manifest_keys: [] }, function (result) {
                 callback(result.manifest_keys);
             });
         },
 
         setManifestKeys = function (keys, callback) {
             module.log.log('Setting manifest keys...');
-            storage.set({ manifest_keys: keys}, callback);
+            storage.set({ manifest_keys: keys }, callback);
         },
 
         addManifestKey = function (key, callback) {
@@ -286,6 +320,29 @@ window.iidentity = window.iidentity || {};
         return true;
     };
 
+    messageListeners.setOption = function (request, sender, sendResponse) {
+        if (!isOptionsPage(sender.url)) {
+            module.log.error('A \'setOption\' message can only originate from the options page');
+            // silently die by not sending a response
+            return false;
+        }
+
+        setStoredData('option-' + request.option, request.value, function () {
+            updateTabs();
+            sendResponse({ result: request.value });
+        });
+
+        return true;
+    };
+
+    messageListeners.getOption = function (request, sender, sendResponse) {
+        getStoredData('option-' + request.option, request.default, function (result) {
+            sendResponse({ value: result });
+        });
+
+        return true;
+    }
+
     messageListeners.hasPlayer = function (request, sender, sendResponse) {
         if (data === null) {
             sendResponse({ result: false });
@@ -300,13 +357,27 @@ window.iidentity = window.iidentity || {};
         if (data === null) {
             sendResponse({ status: 'not-found' });
         } else {
-            var player = data.getPlayer(request.oid);
+            var player = $.extend(true, {}, data.getPlayer(request.oid));
 
-            if (player !== null) {
-                sendResponse({ status: 'success', player: player});
-            } else {
+            if (player === null) {
                 sendResponse({ status: 'not-found' });
+
+                return false;
             }
+
+            if ('anomaly' in player.extra) {
+                getStoredData('option-show-anomalies', true, function (showAnomalies) {
+                    if (!showAnomalies) {
+                        delete player.extra.anomaly;
+                    }
+
+                    sendResponse({ status: 'success', player: player });
+                });
+
+                return true;
+            }
+
+            sendResponse({ status: 'success', player: player });
         }
 
         return false;

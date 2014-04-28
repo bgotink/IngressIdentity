@@ -111,7 +111,7 @@
                 will lead the extension to request extra permissions.
             </p>
             <div>
-                <h3><button id="enable_push" type="button" class="btn btn-default btn-sm">Enable</button> Automatically push source updates to the webpages</h3>
+                <h3><button id="enable_push" type="button" data-loading-text="Storing..." class="btn btn-default btn-sm">Enable</button> Automatically push source updates to the webpages</h3>
                 <p>
                     An extra permission is required in order to send messages from
                     the extension to the tabs where its content scripts run. Without
@@ -143,6 +143,16 @@
                     You can check this by clicking the 'Permissions' link next
                     to this extension on <a href="chrome://extensions">chrome://extensions</a>.
                 </p>
+            </div>
+            <div>
+                <h3>Layout options</h3>
+                <p>This subsection contains a couple of layout tweaks.</p>
+                <div>
+                    <h4><button id="enable_anomalies" type="button" data-loading-text="Storing..." class="btn btn-default btn-sm">Enable</button> Show anomaly badges</h4>
+                    <p>
+                        Enable/disable showing the anomaly badges.
+                    </p>
+                </div>
             </div>
         </div>
     </div>

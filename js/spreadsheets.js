@@ -48,7 +48,7 @@ window.iidentity = window.iidentity || {};
             loadRaw: function (callback) {
                 (new google.visualization.Query(baseUrl + this.key)).send(function (response) {
                     if (response.isError()) {
-                        module.error('An error occured while fetching data from ' + this.key, response);
+                        module.log.error('An error occured while fetching data from ' + this.key, response);
                         callback(response.getDetailedMessage(), null);
                         return;
                     }
