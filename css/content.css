@@ -22,15 +22,15 @@
     padding-right: .4em;
 }
 
-.iidentity-wrapper > .iidentity-extra > span
-.iidentity-iwrapper > span {
-    padding-left:  .1em;
-    padding-right: .1em;
+.iidentity-wrapper > .iidentity-extra > span ~ span,
+.iidentity-iwrapper > span ~ span {
+    padding-left:  .2em;
 }
 
-.iidentity-wrapper > .iidentity-extra > span ~ span::before,
-.iidentity-iwrapper > span ~ span::before {
+.iidentity-wrapper > .iidentity-extra > span + span::before,
+.iidentity-iwrapper > span + span::before {
     content: '//';
+    padding-right: .2em;
 }
 
 .iidentity-level0 {
