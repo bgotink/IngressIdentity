@@ -2,7 +2,7 @@
     "manifest_version": 2,
 
     "name": "Ingress Identity",
-    "version": "0.0.1",
+    "version": "0.1",
     "description": "Adds Ingress identity to G+ profiles",
 
     "permissions": [ "storage" ],
