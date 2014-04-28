@@ -193,7 +193,7 @@ window.iidentity = window.iidentity || {};
                 if (data.some(function (elem) {
                     return elem.faction && (elem.faction !== faction);
                 })) {
-                    err.push('Player ' + data[0].name + ' [' + data[0].nickname + '] has been registered as both enlightened and resistance');
+                    data[0].err = ['Player ' + data[0].name + ' [' + data[0].nickname + '] has been registered as both enlightened and resistance'];
                 }
 
                 return this.cache[oid] = deep_merge.apply(null, data);
