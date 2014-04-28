@@ -63,6 +63,10 @@ window.iidentity = window.iidentity || {};
                     data.extratags = {};
                 }
 
+                this.setPlayers(players);
+            },
+
+            setPlayers: function (players) {
                 this.players = {};
                 var newPlayers = this.players;
                 players.forEach(function (player) {
@@ -120,9 +124,10 @@ window.iidentity = window.iidentity || {};
                 var self = this;
 
                 module.log.log('Updating source %s', this.getKey());
-                query.load(function (err, players) {
+                this.query.load(function (err, players) {
                     if (players) {
-                        self.players = players;
+                        module.log.log('Had %d players, now %d', self.players.length, players.length);
+                        self.setPlayers(players);
                         self.setUpdated();
 
                         if (err) {
@@ -263,6 +268,7 @@ window.iidentity = window.iidentity || {};
                             if (source === null) {
                                 loadSource(data[i], function (err, source) {
                                     if (source) {
+                                        module.log.log('Adding new source sheet %s', data[i].key)
                                         self.sources.push(source);
                                         if (err) {
                                             err.forEach(module.log.warn);
@@ -278,7 +284,8 @@ window.iidentity = window.iidentity || {};
                                 });
                             } else {
                                 if (source.shouldUpdate()) {
-                                    if (source.getVersion !== data[i].lastupdated) {
+                                    if (source.getVersion() !== data[i].lastupdated) {
+                                        module.log.log('Updating source sheet %s from version %s to %s', data[i].key, source.getVersion(), data[i].lastupdated);
                                         source.data = data[i];
                                         source.update(function (u) {
                                             step(i + 1, updated || u);
