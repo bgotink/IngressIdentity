@@ -14,4 +14,12 @@
     "options_page": "options.html",
 
     "content_security_policy": "script-src 'self' https://www.google.com https://spreadsheets.google.com; object-src 'self'",
+    "content_scripts": [
+        {
+            "matches": [ "https://plus.google.com/*" ],
+            "run_at": "document_end",
+            "css": [ "css/content.css" ],
+            "js": [ "vendor/js/jquery.min.js", "js/communication.js", "js/content.js" ]
+        }
+    ]
 }

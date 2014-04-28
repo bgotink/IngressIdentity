@@ -1,0 +1,86 @@
+.iidentity-faction-enlightened {
+    color: green;
+}
+
+.iidentity-faction-resistance {
+    color: blue;
+}
+
+.iidentity-wrapper {
+    padding: 4px 8px 10px;
+}
+
+.iidentity-wrapper > .iidentity-name {
+    font-size: 24px;
+}
+
+.iidentity-wrapper > .iidentity-extra {
+    font-size: 18px;
+}
+
+.iidentity-iwrapper {
+    padding-right: .4em;
+}
+
+.iidentity-wrapper > .iidentity-extra > span
+.iidentity-iwrapper > span {
+    padding-left:  .1em;
+    padding-right: .1em;
+}
+
+.iidentity-wrapper > .iidentity-extra > span ~ span::before,
+.iidentity-iwrapper > span ~ span::before {
+    content: '//';
+}
+
+.iidentity-level0 {
+    color: #202020;
+}
+.iidentity-level1 {
+    color: #FECE5A;
+}
+.iidentity-level2 {
+    color: #FFA630;
+}
+.iidentity-level3 {
+    color: #FF7315;
+}
+.iidentity-level4 {
+    color: #E40000;
+}
+.iidentity-level5 {
+    color: #FD2992;
+}
+.iidentity-level6 {
+    color: #EB26CD;
+}
+.iidentity-level7 {
+    color: #C124E0;
+}
+.iidentity-level8 {
+    color: #9627F4;
+}
+.iidentity-level9 {
+    color: #9627F4;
+}
+.iidentity-level10 {
+    color: #9627F4;
+}
+.iidentity-level11 {
+    color: #9627F4;
+}
+.iidentity-level12 {
+    color: #9627F4;
+}
+.iidentity-level13 {
+    color: #9627F4;
+}
+.iidentity-level14 {
+    color: #9627F4;
+}
+.iidentity-level15 {
+    color: #9627F4;
+}
+.iidentity-level16 {
+    color: #9627F4;
+}
