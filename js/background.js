@@ -10,7 +10,7 @@
 
 window.iidentity = window.iidentity || {};
 
-(function (module, $) {
+(function (module, $, window) {
     var storage = chrome.storage.sync,
         data = null,
 
@@ -98,8 +98,10 @@ window.iidentity = window.iidentity || {};
                         var i,
                             length = tabs.length,
                             message = { type: 'update' };
+                        module.log.log('Sending update message to %d tabs', length);
 
                         for (i = 0; i < length; i++) {
+                            module.log.log('-- tab ', tabs[i]);
                             chrome.tabs.sendMessage(tabs[i].id, message);
                         }
                     });
@@ -323,7 +325,7 @@ window.iidentity = window.iidentity || {};
             var reply = null;
 
             if (request.lastUpdate) {
-                reply = { shouldUpdate: data.shouldUpdate(request.lastUpdate) };
+                reply = { shouldUpdate: data.shouldUpdateRemote(request.lastUpdate) };
 
                 request = request.request;
             }
@@ -361,6 +363,19 @@ window.iidentity = window.iidentity || {};
                     err.forEach(function (e) { module.log.error(e); });
                 }
             });
+
+            window.setInterval(function () {
+                if (data === null)
+                    return;
+
+                module.log.log('Performing hourly update...');
+                data.update(function (updated) {
+                    if (updated) {
+                        data.invalidateCache();
+                        updateTabs();
+                    }
+                })
+            }, 60 * 60 * 1000);
         }});
     });
-})(window.iidentity, window.jQuery);
+})(window.iidentity, window.jQuery, window);

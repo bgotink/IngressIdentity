@@ -29,7 +29,7 @@ window.iidentity = window.iidentity || {};
 
 (function (module, window, $) {
 
-    var doOnceTimestamp = '' + +new Date,
+    var doOnceTimestamp,
         doOnce = function (elem, callback) {
             var $elem = $(elem);
 

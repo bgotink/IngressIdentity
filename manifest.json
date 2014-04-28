@@ -20,7 +20,7 @@
             "matches": [ "https://plus.google.com/*" ],
             "run_at": "document_end",
             "css": [ "css/content.css" ],
-            "js": [ "vendor/js/jquery.min.js", "js/communication.js", "js/content.js" ]
+            "js": [ "vendor/js/jquery.min.js", "js/log.js", "js/communication.js", "js/content.js" ]
         }
     ]
 }

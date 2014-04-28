@@ -51,8 +51,9 @@ window.iidentity = window.iidentity || {};
         },
 
         PlayerSource = Class.extend({
-            init: function (key, data, players) {
+            init: function (key, query, data, players) {
                 this.key = key;
+                this.query = query;
                 this.data = data;
                 this.timestamp = +new Date();
 
@@ -100,25 +101,53 @@ window.iidentity = window.iidentity || {};
             getTimestamp: function () {
                 return this.timestamp;
             },
-            getRefreshInterval: function () {
-                return this.data.getRefreshInterval();
-            },
-            shouldRefresh: function () {
-                return (+new Date()) > (this.getTimestamp() + this.getRefreshInterval());
+            getUpdateInterval: function () {
+                return Math.floor(this.data.refresh) * 60 * 60 * 1000;
             },
 
             isCombined: function () {
                 return false;
-            }
+            },
+
+            shouldUpdate: function () {
+                return (+new Date()) > (this.getTimestamp() + this.getUpdateInterval());
+            },
+            setUpdated: function () {
+                this.timestamp = +new Date();
+                return this;
+            },
+            update: function (callback) {
+                var self = this;
+
+                module.log.log('Updating source %s', this.getKey());
+                query.load(function (err, players) {
+                    if (players) {
+                        self.players = players;
+                        self.setUpdated();
+
+                        if (err) {
+                            err.forEach(module.log.warn);
+                        }
+
+                        callback(true);
+                    } else {
+                        err.forEach(module.log.error);
+
+                        callback(false);
+                    }
+                });
+            },
         }),
 
         CombinedPlayerSource = Class.extend({
-            init: function (sources, key) {
+            init: function (sources, key, query) {
                 this.sources = sources;
+
                 this.key = key || 0;
+                this.query = query || null;
 
                 this.cache = {};
-                this.loadTimestamp = +new Date;
+                this.timestamp = +new Date;
             },
 
             getKey: function () {
@@ -186,9 +215,109 @@ window.iidentity = window.iidentity || {};
                 return true;
             },
 
-            shouldUpdate: function (remoteTimestamp) {
-                return remoteTimestamp < this.loadTimestamp;
-            }
+            invalidateCache: function () {
+                this.getSources().forEach(function (source) {
+                    if (source.isCombined()) {
+                        source.invalidateCache();
+                    }
+                });
+
+                this.cache = {};
+
+                return this;
+            },
+
+            shouldUpdateRemote: function (remoteTimestamp) {
+                return remoteTimestamp < this.timestamp;
+            },
+            shouldUpdate: function () {
+                return true;
+            },
+            update: function (callback) {
+                var origCallback = callback,
+                    self = this;
+                callback = function (updated) {
+                    if (updated) {
+                        self.timestamp = +new Date();
+                    }
+
+                    origCallback(updated);
+                }
+
+                if (this.query) {
+                    var source,
+                        step,
+                        length;
+
+                    module.log.log('Updating manifest %s', this.key);
+                    this.query.load(function (err, data) {
+                        length = data.length;
+
+                        step = function (i, updated) {
+                            if (i >= length) {
+                                callback(updated);
+                                return;
+                            }
+
+                            source = self.getSource(data[i].key);
+                            if (source === null) {
+                                loadSource(data[i], function (err, source) {
+                                    if (source) {
+                                        self.sources.push(source);
+                                        if (err) {
+                                            err.forEach(module.log.warn);
+                                        }
+
+                                        step(i + 1, true);
+                                    } else {
+                                        module.log.error('Error occured while adding source');
+                                        err.forEach(module.log.error);
+
+                                        step(i + 1, updated);
+                                    }
+                                });
+                            } else {
+                                if (source.shouldUpdate()) {
+                                    if (source.getVersion !== data[i].lastupdated) {
+                                        source.data = data[i];
+                                        source.update(function (u) {
+                                            step(i + 1, updated || u);
+                                        });
+                                    } else {
+                                        source.setUpdated();
+                                        step(i + 1, updated);
+                                    }
+                                } else {
+                                    step(i + 1, updated);
+                                }
+                            }
+                        };
+                        step(0, false);
+                    });
+                } else {
+                    var sources = this.getSources(),
+                        length = sources.length;
+
+                    module.log.log('Updating collection of manifests');
+                    step = function (i, updated) {
+                        if (i >= length) {
+                            callback(updated);
+                            return;
+                        }
+
+                        if (sources[i].shouldUpdate()) {
+                            sources[i].update(function (u) {
+                                step(i + 1, updated || u);
+                            });
+                        } else {
+                            step(i + 1, updated);
+                        }
+                    };
+                    step(0, false);
+                }
+
+                return this;
+            },
         }),
 
         loadSource = function (data, callback) {
@@ -202,7 +331,7 @@ window.iidentity = window.iidentity || {};
                     return;
                 }
 
-                callback(err, new PlayerSource(key, data, players));
+                callback(err, new PlayerSource(key, source, data, players));
             });
         },
 
@@ -223,7 +352,7 @@ window.iidentity = window.iidentity || {};
                         if (i >= nbSources) {
                             callback(
                                 err.length > 0 ? err : null,
-                                new CombinedPlayerSource(sources, key)
+                                new CombinedPlayerSource(sources, key, manifest)
                             );
                             return;
                         }

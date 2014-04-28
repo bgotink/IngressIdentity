@@ -30,6 +30,24 @@ window.iidentity = window.iidentity || {};
         );
     };
 
+    chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+        if (request.type === 'update') {
+
+            lastUpdate = +new Date;
+
+            if (onUpdate) {
+                onUpdate();
+            }
+
+            // will not send reply
+            return false;
+        }
+
+        // ignore: the options page gets all the messages meant for the background
+        // page as well... logging/throwing here would fill the console with junk
+        return false;
+    });
+
     exports.hasPlayer = function (oid, callback) {
         this.send({ type: 'hasPlayer', oid: oid }, function (result) {
             callback(result.result);
