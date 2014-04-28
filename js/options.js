@@ -33,7 +33,7 @@ window.iidentity = window.iidentity || {};
             }
         },
 
-        showAlert = function(id) {
+        showAlert = function (id) {
             console.log('showing alert %s', id);
             $('.alert').addClass('hide');
             $('.alert-' + id).removeClass('hide');
