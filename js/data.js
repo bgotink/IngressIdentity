@@ -116,6 +116,8 @@ window.iidentity = window.iidentity || {};
             init: function (sources, key) {
                 this.sources = sources;
                 this.key = key || 0;
+
+                this.cache = {};
             },
 
             getKey: function () {
@@ -123,11 +125,19 @@ window.iidentity = window.iidentity || {};
             },
 
             hasPlayer: function (oid) {
+                if (typeof this.cache[oid] !== 'undefined') {
+                    return true;
+                }
+
                 return this.sources.some(function (source) {
                     return source.hasPlayer(oid);
                 });
             },
             getPlayer: function (oid) {
+                if (typeof this.cache[oid] !== 'undefined') {
+                    return this.cache[oid];
+                }
+
                 var data = [ {} ],
                     result,
                     faction;
@@ -151,7 +161,7 @@ window.iidentity = window.iidentity || {};
                     err.push('Player ' + data[0].name + ' [' + data[0].nickname + '] has been registered as both enlightened and resistance');
                 }
 
-                return deep_merge.apply(null, data);
+                return this.cache[oid] = deep_merge.apply(null, data);
             },
 
             getSources: function () {
