@@ -6,6 +6,7 @@
     "description": "Adds Ingress identity to G+ profiles",
 
     "permissions": [ "storage" ],
+    "optional_permissions": [ "tabs", "https://*.google.com/*" ],
 
     "background": {
        "page": "background.html"

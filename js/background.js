@@ -87,9 +87,24 @@ window.iidentity = window.iidentity || {};
     // communication functions
 
         updateTabs = function () {
-            // impossible without the "tabs" permission
-            // (or we could use ports, but they have their disadvantages)
-            // TODO
+            chrome.permissions.contains(
+                { permissions: ['tabs'] },
+                function (hasPermission) {
+                    if (!hasPermission) {
+                        return;
+                    }
+
+                    chrome.tabs.query({}, function(tabs) {
+                        var i,
+                            length = tabs.length,
+                            message = { type: 'update' };
+
+                        for (i = 0; i < length; i++) {
+                            chrome.tabs.sendMessage(tabs[i].id, message);
+                        }
+                    });
+                }
+            );
         },
 
     // communication listeners
@@ -100,7 +115,7 @@ window.iidentity = window.iidentity || {};
         if (!isOptionsPage(sender.url)) {
             module.log.error('A \'getManifests\' message can only originate from the options page');
             // silently die by not sending a response
-            return;
+            return false;
         }
 
         getManifestKeys(function (keys) {
@@ -146,7 +161,7 @@ window.iidentity = window.iidentity || {};
         if (!isOptionsPage(sender.url)) {
             module.log.error('An \'addManifest\' message can only originate from the options page');
             // silently die by not sending a response
-            return;
+            return false;
         }
 
         addManifestKey(request.key, function (added) {
@@ -167,7 +182,7 @@ window.iidentity = window.iidentity || {};
         if (!isOptionsPage(sender.url)) {
             module.log.error('A \'removeManifest\' message can only originate from the options page');
             // silently die by not sending a response
-            return;
+            return false;
         }
 
         removeManifestKey(request.key, function (removed) {
@@ -194,6 +209,77 @@ window.iidentity = window.iidentity || {};
         reloadData(function (err, status) {
             sendResponse({ status: status ? 'success' : 'failed', err: err });
         });
+
+        return true;
+    };
+
+    messageListeners.requestPermission = function (request, sender, sendResponse) {
+        if (!isOptionsPage(sender.url)) {
+            module.log.error('A \'requestPermission\' message can only originate from the options page');
+            // silently die by not sending a response
+            return;
+        }
+
+        var permissions = { permissions: [ request.permission ]};
+        module.log.log('Requesting premission %s', request.permission);
+
+        chrome.permissions.contains(
+            permissions,
+            function (alreadyGranted) {
+                if (alreadyGranted) {
+                    sendResponse({ granted: true});
+                    return;
+                }
+
+                chrome.permissions.request(
+                    permissions,
+                    function (granted) {
+                        sendResponse({ granted: granted });
+                    }
+                );
+            }
+        );
+
+        return true;
+    };
+
+    messageListeners.hasPermission = function (request, sender, sendResponse) {
+        chrome.permissions.contains(
+            { permissions: [ request.permission ]},
+            function (granted) {
+                sendResponse({ hasPermission: granted });
+            }
+        );
+
+        return true;
+    };
+
+    messageListeners.revokePermission = function (request, sender, sendResponse) {
+        if (!isOptionsPage(sender.url)) {
+            module.log.error('A \'revokePermission\' message can only originate from the options page');
+            // silently die by not sending a response
+            return false;
+        }
+
+        var permissions = { permissions: [ request.permission ]};
+        module.log.log('Revoking premission %s', request.permission);
+
+        chrome.permissions.contains(
+            permissions,
+            function (granted) {
+                if (!granted) {
+                    sendResponse({ revoked: true});
+                    return;
+                }
+
+                chrome.permissions.remove(
+                    permissions,
+                    function (revoked) {
+                        sendResponse({ revoked: revoked });
+                    }
+                );
+            }
+        );
 
         return true;
     };

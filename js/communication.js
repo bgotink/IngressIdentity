@@ -49,5 +49,11 @@ window.iidentity = window.iidentity || {};
 
     exports.setOnUpdate = function (callback) {
         onUpdate = callback;
-    }
+    };
+
+    exports.hasPermission = function (permission, callback) {
+        this.send({ type: 'hasPermission', permission: permission }, function (result) {
+            callback(result.hasPermission);
+        });
+    };
 })(window.iidentity);

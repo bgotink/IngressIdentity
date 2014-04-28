@@ -26,10 +26,22 @@ window.iidentity = window.iidentity || {};
                     callback(result.status);
                 });
             },
+
             reloadData: function (callback) {
                 module.comm.send({ type: 'reloadData' }, function (result) {
                     callback(result.status);
                 });
+            },
+
+            requestPermission: function (permission, callback) {
+                module.comm.send({ type: 'requestPermission', permission: permission }, function (result) {
+                    callback(result.granted);
+                });
+            },
+            revokePermission: function (permission, callback) {
+                module.comm.send({ type: 'revokePermission', permission: permission }, function (result) {
+                    callback(result.revoked);
+                })
             }
         },
 
@@ -145,5 +157,37 @@ window.iidentity = window.iidentity || {};
         });
 
         reloadManifests();
+
+        $('#enable_push').on('click.request-permission', function () {
+            var $this = $(this);
+
+            if ($this.data('iidentity-working') == true) {
+                // already requesting...
+                return;
+            }
+            $this.data('iidentity-working', true);
+
+            if ($this.hasClass('active')) {
+                comm.revokePermission('tabs', function (revoked) {
+                    if (revoked) {
+                        $this.removeClass('active');
+                    }
+                    $this.data('iidentity-working', false);
+                });
+            } else {
+                comm.requestPermission('tabs', function (granted) {
+                    if (granted) {
+                        $this.addClass('active');
+                    }
+                    $this.data('iidentity-working', false);
+                })
+            }
+        });
+
+        module.comm.hasPermission('tabs', function (hasPermission) {
+            if (hasPermission) {
+                $('#enable_push').addClass('active');
+            }
+        });
     });
 })(window.iidentity, window.jQuery);
