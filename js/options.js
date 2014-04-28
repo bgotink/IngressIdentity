@@ -221,7 +221,6 @@ window.iidentity = window.iidentity || {};
             });
         });
         comm.getOption('show-anomalies', true, function (state) {
-            console.log(state);
             if (state) {
                 $('#enable_anomalies').addClass('active');
             } else {
