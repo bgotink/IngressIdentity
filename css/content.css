@@ -22,6 +22,10 @@
     padding-right: .4em;
 }
 
+.iidentity-iwrapper > span {
+    white-space: nowrap;
+}
+
 .iidentity-wrapper > .iidentity-extra > span ~ span,
 .iidentity-iwrapper > span ~ span {
     padding-left:  .2em;
@@ -31,6 +35,7 @@
 .iidentity-iwrapper > span + span::before {
     content: '//';
     padding-right: .2em;
+    color: #777;
 }
 
 .iidentity-level0 {
