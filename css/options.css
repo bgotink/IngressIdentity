@@ -18,3 +18,7 @@
 .faction-resistance > a {
     font-weight: bold;
 }
+
+.settings p {
+    text-align: justified;
+}
