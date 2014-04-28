@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>IngressIdentity Options</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="vendor/css/bootstrap.min.css" />
+
+    <!-- Our CSS -->
+    <link rel="stylesheet" href="css/options.css" />
+
+    <!-- jQuery and Bootstrap JS -->
+    <script type="text/javascript" src="vendor/js/jquery.min.js"></script>
+    <script type="text/javascript" src="vendor/js/bootstrap.min.js"></script>
+
+    <!-- Our JS -->
+    <script type="text/javascript" src="js/communication.js"></script>
+    <script type="text/javascript" src="js/options.js"></script>
+</head>
+<body>
+	<div class="row">
+		<div class="col-sm-12 col-md-6 col-md-offset-3">
+			<h1>IngressIdentity Options</h1>
+			<p>
+				This options page allows you to configure the manifests to use
+				when identifying people on G+. It also provides some tools to
+				help acquiring data to put in manifest files or source files.
+			</p>
+		</div>
+	</div>
+    <div class="row">
+        <div class="col-sm-10 col-sm-offset-1 col-md-4 col-md-offset-4">
+            <div class="hide alert alert-success alert-dismissable alert-reload-success">
+                <button type="button" class="close" aria-hidden="true">&times;</button>
+                <strong>Success!</strong> The data was successfully reloaded.
+            </div>
+            <div class="hide alert alert-danger alert-dismissable alert-reload-failed">
+                <button type="button" class="close" aria-hidden="true">&times;</button>
+                <strong>Error!</strong> Something went wrong when reloading the data.
+            </div>
+
+            <div class="hide alert alert-success alert-dismissable alert-add-success">
+                <button type="button" class="close" aria-hidden="true">&times;</button>
+                <strong>Success!</strong> The manifest file was successfully added.
+            </div>
+            <div class="hide alert alert-warning alert-dismissable alert-add-duplicate">
+                <button type="button" class="close" aria-hidden="true">&times;</button>
+                <strong>Warning!</strong> The given manifest is already loaded.
+            </div>
+            <div class="hide alert alert-danger alert-dismissable alert-add-failed">
+                <button type="button" class="close" aria-hidden="true">&times;</button>
+                <strong>Error!</strong> Something went wrong when adding the manifest.
+            </div>
+
+            <div class="hide alert alert-success alert-dismissable alert-remove-success">
+                <button type="button" class="close" aria-hidden="true">&times;</button>
+                <strong>Success!</strong> The manifest file was successfully removed.
+            </div>
+            <div class="hide alert alert-warning alert-dismissable alert-remove-nonexistent">
+                <button type="button" class="close" aria-hidden="true">&times;</button>
+                <strong>Warning!</strong> The given manifest was not loaded.
+            </div>
+            <div class="hide alert alert-danger alert-dismissable alert-remove-failed">
+                <button type="button" class="close" aria-hidden="true">&times;</button>
+                <strong>Error!</strong> Something went wrong when removing the manifest.
+            </div>
+        </div>
+    </div>
+	<div class="row">
+		<div class="col-sm-12 col-md-6 col-md-offset-3 sources">
+			<h2>Data Sources <button id="reload_sources" type="button" class="btn btn-default btn-sm">
+                <span class="glyphicon glyphicon-refresh"></span>
+                Force reload
+            </button></h2>
+			<div class="row">
+				<div class="col-sm-12 listing">
+					<div id="source_list"></div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12 input">
+                    <h3>Add a new manifest</h3>
+					<form role="form" action="#">
+						<div class="form-group">
+							<label for="manifest_input">Manifest Key</label>
+							<input id="manifest_input" class="form-control" type="text" placeholer="0AtpJ3MMfk4gjdFJxdW41VHdxVC1nTnU2RVh1RUk4THc">
+						    <div class="help-block">
+								<p>
+									You can find this key in the URL of the google
+									drive document:
+								</p>
+								<blockquote>
+									<p>https://docs.google.com/spreadsheet/ccc?key=THIS_IS_THE_KEY</p>
+								</blockquote>
+							</div>
+						</div>
+						<button id="manifest_add" type="button" class="btn btn-primary">
+							<span class="glyphicon glyphicon-plus"></span>
+							Add manifest
+						</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

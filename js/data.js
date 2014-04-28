@@ -81,7 +81,7 @@ window.iidentity = window.iidentity || {};
             },
 
             getNbPlayers: function () {
-                return this.players.length;
+                return Object.keys(this.players).length;
             },
 
             getKey: function () {
@@ -93,6 +93,9 @@ window.iidentity = window.iidentity || {};
             getVersion: function () {
                 return this.data.lastupdated;
             },
+            getFaction: function () {
+                return this.data.faction;
+            },
 
             getTimestamp: function () {
                 return this.timestamp;
@@ -102,16 +105,25 @@ window.iidentity = window.iidentity || {};
             },
             shouldRefresh: function () {
                 return (+new Date()) > (this.getTimestamp() + this.getRefreshInterval());
+            },
+
+            isCombined: function () {
+                return false;
             }
         }),
 
         CombinedPlayerSource = Class.extend({
-            init: function (sources) {
+            init: function (sources, key) {
                 this.sources = sources;
+                this.key = key || 0;
+            },
+
+            getKey: function () {
+                return this.key;
             },
 
             hasPlayer: function (oid) {
-                this.sources.some(function (source) {
+                return this.sources.some(function (source) {
                     return source.hasPlayer(oid);
                 });
             },
@@ -157,6 +169,10 @@ window.iidentity = window.iidentity || {};
                 }
 
                 return null;
+            },
+
+            isCombined: function () {
+                return true;
             }
         }),
 
@@ -190,7 +206,10 @@ window.iidentity = window.iidentity || {};
                 var nbSources = sourcesData.length,
                     step = function (i) {
                         if (i >= nbSources) {
-                            callback(err.length > 0 ? err : null, sources);
+                            callback(
+                                err.length > 0 ? err : null,
+                                new CombinedPlayerSource(sources, key)
+                            );
                             return;
                         }
 
@@ -218,18 +237,21 @@ window.iidentity = window.iidentity || {};
                 err = [],
                 step = function (i) {
                     if (i >= nbKeys) {
-                        callback(err.length > 0 ? err : null, sources);
+                        callback(
+                            err.length > 0 ? err : null,
+                            new CombinedPlayerSource(sources)
+                        );
                         return;
                     }
 
-                    loadManifest(keys[i], function (err2, manifestSources) {
+                    loadManifest(keys[i], function (err2, manifest) {
                         err = err.concat(err2 || []);
 
-                        if (manifestSources === null) {
+                        if (manifest === null) {
                             callback(err, null);
                             return;
                         }
-                        sources = sources.concat(manifestSources);
+                        sources.push(manifest);
 
                         step(i + 1);
                     });
@@ -239,14 +261,6 @@ window.iidentity = window.iidentity || {};
         };
 
     // exported functions
-    exports.loadManifests = function (keys, callback) {
-        loadManifests(keys, function (err, data) {
-            if (data === null) {
-                callback(err, null);
-            } else {
-                callback(err, new CombinedPlayerSource(data));
-            }
-        });
-    };
+    exports.loadManifests = loadManifests;
 
 })(window.iidentity, window.jQuery);

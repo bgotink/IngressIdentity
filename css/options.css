@@ -1,0 +1,20 @@
+.manifest > .remove {
+    margin-left: 1em;
+}
+
+.faction-enlightened {
+    color: green;
+}
+
+.faction-enlightened > a {
+    color: green;
+}
+
+.faction-resistance {
+    color: blue;
+}
+
+.faction-enlightened > a,
+.faction-resistance > a {
+    font-weight: bold;
+}
