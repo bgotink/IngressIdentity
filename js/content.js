@@ -282,11 +282,11 @@ window.iidentity = window.iidentity || {};
         observer = new window.MutationObserver(function (mutations) {
             var i;
 
-        	mutations.forEach(function (mutation) {
-        		for(i = 0; i < mutation.addedNodes.length; i++) {
-        			checkElement(mutation.addedNodes[i]);
-        		}
-        	});
+            mutations.forEach(function (mutation) {
+                for(i = 0; i < mutation.addedNodes.length; i++) {
+                    checkElement(mutation.addedNodes[i]);
+                }
+            });
         }),
 
         forceUpdate = function () {
