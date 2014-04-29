@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1 Tiny//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-tiny.dtd">
-<svg version="1.1" baseProfile="tiny" id="ingress" x="0px" y="0px" width="2048px" height="2048px"
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+	"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="ingress" x="0px" y="0px" width="2048px" height="2048px"
 	 viewBox="0 0 2048 2048" overflow="inherit" xml:space="preserve">
+	<rect x="0" y="0" width="2048" height="2048" fill="none" />
 	<g>
 		<!--
 			Colors changed:
