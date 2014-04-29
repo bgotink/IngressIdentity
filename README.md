@@ -16,3 +16,8 @@ The images in `img/anomalies` have an unknown origin. If you are the author and
 want me to take down these images, please contact me with your request and proof
 that you're the author. If you know the origin of these files, feel free to share
 that information.
+
+## Disclaimer
+
+The extension is in no way affiliated with Ingress or Google. It merely serves as
+third-party support for Ingress Players and Ingress Communities living on Google+.
