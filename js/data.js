@@ -122,7 +122,8 @@ window.iidentity = window.iidentity || {};
                     try {
                         data.extratags = JSON.parse(data.extratags);
                     } catch (e) {
-                        this.data.err.push('Invalid JSON in extratags: ' + e.message);
+                        this.err.push('Invalid JSON in extratags: ' + e.message);
+                        data.extratags = {};
                     }
                 } else {
                     data.extratags = {};
@@ -132,7 +133,7 @@ window.iidentity = window.iidentity || {};
                     var anomaly = data.extratags.anomaly;
 
                     if (anomalies.indexOf(anomaly) === -1) {
-                        this.data.err.push('Invalid anomaly: ' + anomaly);
+                        this.err.push('Invalid anomaly: ' + anomaly);
                         delete data.extratags.anomaly;
                     }
                 }
@@ -141,7 +142,7 @@ window.iidentity = window.iidentity || {};
                     var community = data.extratags.community;
 
                     if (community.indexOf(':') === -1) {
-                        this.data.err.push('Invalid community: "' + community + '"');
+                        this.err.push('Invalid community: "' + community + '"');
                         delete data.extratags.community;
                     }
                 }
