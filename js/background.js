@@ -152,6 +152,10 @@ window.iidentity = window.iidentity || {};
                     if (newData !== null) {
                         data = newData;
 
+                        if ('manifests' in storageCache) {
+                            delete storageCache.manifests;
+                        }
+
                         updateTabs();
                         callback(err, true);
                     } else {
@@ -197,6 +201,14 @@ window.iidentity = window.iidentity || {};
             return false;
         }
 
+        if ('manifests' in storageCache) {
+            module.log.log('Requesting manifests, loaded from cache');
+            sendResponse(storageCache.manifests);
+
+            return false;
+        }
+
+        module.log.log('Requesting manifests, loading from source');
         getManifestKeys(function (keys) {
             var result = {},
                 manifest,
@@ -228,6 +240,8 @@ window.iidentity = window.iidentity || {};
 
                 result[key] = manifestData;
             });
+
+            storageCache.manifests = result;
 
             module.log.log('Sending result to getManifests: ', result);
             sendResponse(result);

@@ -112,19 +112,20 @@ window.iidentity = window.iidentity || {};
                         player.extra.community = [ player.extra.community ];
                     }
 
-                    player.extra.community.forEach(function(community) {
+                    player.extra.community.forEach(function (community) {
                         var seperatorposition = community.indexOf(":");
 
                         if(seperatorposition === -1){
                             return;
                         }
+
                         $groupInfo.append(
                             $('<div>')
-                            .append(
-                                $('<a>')
-                                    .attr('href', 'https://plus.google.com/communities/' + community.substring(0,seperatorposition).trim())
-                                    .text(community.substring(seperatorposition + 1 ).trim())
-                            )
+                                .append(
+                                    $('<a>')
+                                        .attr('href', 'https://plus.google.com/communities/' + community.substring(0,seperatorposition).trim())
+                                        .text(community.substring(seperatorposition + 1 ).trim())
+                                )
                         );
                     });
                 }
