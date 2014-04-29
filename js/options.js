@@ -226,6 +226,31 @@ window.iidentity = window.iidentity || {};
             } else {
                 $('#enable_anomalies').removeClass('active');
             }
-        })
+        });
+
+        $('button[data-match]').on('click.set-option', function () {
+            var $this = $(this);
+            $this.button('loading');
+
+            comm.setOption('match-' + $this.attr('data-match'), !$this.hasClass('active'), function (state) {
+                if (state) {
+                    $this.addClass('active');
+                } else {
+                    $this.removeClass('active');
+                }
+                $this.button('reset');
+            });
+        });
+        $('button[data-match]').each(function () {
+            var $this = $(this);
+
+            comm.getOption('match-' + $this.attr('data-match'), true, function (state) {
+                if (state) {
+                    $this.addClass('active');
+                } else {
+                    $this.removeClass('active');
+                }
+            });
+        });
     });
 })(window.iidentity, window.jQuery);

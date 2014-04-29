@@ -31,7 +31,9 @@ window.iidentity = window.iidentity || {};
 
     var doOnceTimestamp,
         doOnce = function (elem, callback) {
-            var $elem = $(elem);
+            var $elem = $(elem),
+                callbackArguments = Array.prototype.slice.call(arguments, 1);
+            callbackArguments[0] = elem;
 
             if ($elem.attr('data-iidentity') === doOnceTimestamp) {
                 // already performed
@@ -40,10 +42,10 @@ window.iidentity = window.iidentity || {};
 
             $elem.attr('data-iidentity', doOnceTimestamp);
 
-            callback(elem);
+            callback.apply(null, callbackArguments);
         },
 
-        createBlockElement = function (oid, callback) {
+        createBlockElement = function (oid, match, callback) {
             module.comm.getPlayer(oid, function (err, player) {
                 if (err !== null) {
                     callback(err, null);
@@ -99,9 +101,9 @@ window.iidentity = window.iidentity || {};
                 }
 
                 callback(null, $elem);
-            });
+            }, { match: match });
         },
-        createInlineElement = function (oid, callback) {
+        createInlineElement = function (oid, match, callback) {
             module.comm.getPlayer(oid, function (err, player) {
                 if (err !== null) {
                     callback(err, null);
@@ -150,9 +152,9 @@ window.iidentity = window.iidentity || {};
                 }
 
                 callback(null, $wrapper);
-            });
+            }, { match: match });
         },
-        createConciseInlineElement = function (oid, callback) {
+        createConciseInlineElement = function (oid, match, callback) {
             module.comm.getPlayer(oid, function (err, player) {
                 if (err !== null) {
                     callback(err, null);
@@ -167,7 +169,7 @@ window.iidentity = window.iidentity || {};
                         .attr('data-oid', oid)
                         .text(player.nickname)
                 );
-            });
+            }, { match: match });
         },
 
         handlers = [
@@ -175,13 +177,14 @@ window.iidentity = window.iidentity || {};
                 matches: [
                     'a.Ug[oid]', // profile pop-up
                 ],
-                handler: function (elem) {
+                handler: function (elem, match) {
                     var $elem = $(elem),
                         oid = $elem.attr('oid');
 
-                    createBlockElement(oid, function (err, $infoElem) {
+                    createBlockElement(oid, match, function (err, $infoElem) {
                         if (err) {
                             if (err === 'not-found') {
+                                $elem.parent().find('.iidentity-wrapper[data-oid=' + oid + ']').remove();
                                 return;
                             }
 
@@ -202,13 +205,14 @@ window.iidentity = window.iidentity || {};
                     // 'a.ob.tv.Ub.ita[oid]', // event creator
                     'a.ob.tv.Ub[oid]',    // event rsvp; also matches all previous entries
                 ],
-                handler: function (elem) {
+                handler: function (elem, match) {
                     var $elem = $(elem),
                         oid = $elem.attr('oid');
 
-                    createInlineElement(oid, function (err, $infoElem) {
+                    createInlineElement(oid, match, function (err, $infoElem) {
                         if (err) {
                             if (err === 'not-found') {
+                                $elem.parent().find('.iidentity-iwrapper[data-oid=' + oid + ']').remove();
                                 return;
                             }
 
@@ -231,13 +235,14 @@ window.iidentity = window.iidentity || {};
                 matches: [
                     'a.proflink.aaTEdf[oid]', // mentions
                 ],
-                handler: function (elem) {
+                handler: function (elem, match) {
                     var $elem = $(elem),
                         oid = $elem.attr('oid');
 
-                    createConciseInlineElement(oid, function (err, $infoElem) {
+                    createConciseInlineElement(oid, match, function (err, $infoElem) {
                         if (err) {
                             if (err === 'not-found') {
+                                $elem.parent().find('.iidentity-ciwrapper[data-oid=' + oid + ']').remove();
                                 return;
                             }
 
@@ -267,7 +272,7 @@ window.iidentity = window.iidentity || {};
                             return;
                         }
 
-                        doOnce(this, handler.handler);
+                        doOnce(this, handler.handler, match);
                     });
                 });
             });

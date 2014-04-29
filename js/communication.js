@@ -54,8 +54,13 @@ window.iidentity = window.iidentity || {};
         });
     };
 
-    exports.getPlayer = function (oid, callback) {
-        this.send({ type: 'getPlayer', oid: oid}, function (result) {
+    exports.getPlayer = function (oid, callback, extra) {
+        var request = { type: 'getPlayer', oid: oid };
+
+        if (typeof extra !== 'undefined' && extra !== null)
+            request.extra = extra;
+
+        this.send(request, function (result) {
             if (result.status !== 'success') {
                 callback(result.status, null);
                 return;

@@ -358,27 +358,48 @@ window.iidentity = window.iidentity || {};
         if (data === null) {
             sendResponse({ status: 'not-found' });
         } else {
-            var player = data.getPlayer(request.oid);
+            var doGetPlayer = function () {
+                var player = data.getPlayer(request.oid);
 
-            if (player === null) {
-                sendResponse({ status: 'not-found' });
+                if (player === null) {
+                    sendResponse({ status: 'not-found' });
 
-                return false;
+                    return false;
+                }
+
+                if ('anomaly' in player.extra) {
+                    getStoredData('option-show-anomalies', true, function (showAnomalies) {
+                        if (!showAnomalies) {
+                            delete player.extra.anomaly;
+                        }
+
+                        sendResponse({ status: 'success', player: player });
+                    });
+
+                    return true;
+                }
+
+                sendResponse({ status: 'success', player: player });
+            };
+
+            if (!('extra' in request) || !('match' in request.extra)) {
+                return doGetPlayer();
             }
 
-            if ('anomaly' in player.extra) {
-                getStoredData('option-show-anomalies', true, function (showAnomalies) {
-                    if (!showAnomalies) {
-                        delete player.extra.anomaly;
+            getStoredData(
+                'option-match-' + request.extra.match,
+                true,
+                function (doMatch) {
+                    if (!doMatch) {
+                        sendResponse({ status: 'not-found' });
+                        return;
                     }
 
-                    sendResponse({ status: 'success', player: player });
-                });
+                    doGetPlayer();
+                }
+            );
 
-                return true;
-            }
-
-            sendResponse({ status: 'success', player: player });
+            return true;
         }
 
         return false;
