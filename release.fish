@@ -72,9 +72,14 @@ if set -q branch
     git merge --no-ff $branch -m "merge $branch"
 end
 
+# update version
 sed -i'' -e "s/\"version\"\:.*\$/\"version\": \"$newversion\",/" manifest.json
+# set name to non-dev value
+sed -i'' -e 's/"name"\:.*\$/"name": "Ingress Identity",/' manifest.json
+# set logging to false
+sed -i'' -e 's/enableLogging.*\$/enableLogging: false,/' js/log.js
+git add manifest.json js/log.js
 
-git add manifest.json
 git commit -m "[release] v$newversion"
 
 git tag -s "v$newversion"; or begin
