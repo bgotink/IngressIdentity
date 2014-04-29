@@ -21,6 +21,53 @@ window.iidentity = window.iidentity || {};
 
     // storage functions
 
+        disableUpdateListener = false,
+        onDataUpdated = function (changes, areaName) {
+            var update = false,
+                reload = false,
+                key;
+
+            if (disableUpdateListener) {
+                module.log.log('Chrome storage update listener disabled, re-enabling');
+                disableUpdateListener = false;
+                return;
+            }
+
+            module.log.log('Settings updated:');
+            for (key in changes) {
+                if (key in storageCache) {
+                    delete storageCache[key];
+                }
+
+                module.log.log('- %s', key);
+
+                if (key === 'manifest_keys') {
+                    reload = true;
+                } else {
+                    update = true;
+                }
+            }
+
+            if (reload) {
+                module.log.log('Reloading manifests');
+                reloadData(function (err, reloaded) {
+                    if (reloaded) {
+                        module.log.log('Manifests reloaded');
+
+                        if (err) {
+                            err.forEach(module.log.warn);
+                        }
+                    } else {
+                        module.log.error('Error when reloading manifest:');
+                        err.forEach(module.log.error);
+                    }
+                });
+            } else if (update) {
+                module.log.log('Updating tabs');
+                updateTabs();
+            }
+        },
+
         getStoredData = function (key, defaultValue, callback) {
             var request = {};
             request[key] = defaultValue;
@@ -48,10 +95,6 @@ window.iidentity = window.iidentity || {};
 
             module.log.log('Setting storage key %s to %s', key, '' + value);
             storage.set(request, callback);
-
-            if (key in storageCache) {
-                delete storageCache[key];
-            }
         },
 
         getManifestKeys = function (callback) {
@@ -200,13 +243,16 @@ window.iidentity = window.iidentity || {};
             return false;
         }
 
+        disableUpdateListener = true;
         addManifestKey(request.key, function (added) {
             if (!added) {
+                disableUpdateListener = false;
                 sendResponse({ status: 'duplicate' });
                 return;
             }
 
             reloadData(function (err, status) {
+                disableUpdateListener = false;
                 sendResponse({ status: status ? 'success' : 'failed', err: err });
             });
         });
@@ -221,13 +267,16 @@ window.iidentity = window.iidentity || {};
             return false;
         }
 
+        disableUpdateListener = true;
         removeManifestKey(request.key, function (removed) {
             if (!removed) {
+                disableUpdateListener = false;
                 sendResponse({ status: 'nonexistent' });
                 return;
             }
 
             reloadData(function (err, status) {
+                disableUpdateListener = false;
                 sendResponse({ status: status ? 'success' : 'failed', err: err });
             });
         });
@@ -470,5 +519,7 @@ window.iidentity = window.iidentity || {};
                 })
             }, 60 * 60 * 1000);
         }});
+
+        chrome.storage.onChanged.addListener(onDataUpdated);
     });
 })(window.iidentity, window.jQuery, window);
