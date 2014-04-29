@@ -164,6 +164,7 @@ window.iidentity = window.iidentity || {};
                     .append(
                         $('<ul>').append(manifestList)
                     );
+                $('#reload_sources').button('reset');
 
                 reloadManifestErrors();
             });
@@ -215,6 +216,7 @@ window.iidentity = window.iidentity || {};
         });
 
         $('#reload_sources').on('click.ii.reload', function () {
+            $(this).button('loading');
             comm.reloadData(function (result) {
                 if (result) {
                     reloadManifests();
