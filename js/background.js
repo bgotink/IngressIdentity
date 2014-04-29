@@ -236,6 +236,22 @@ window.iidentity = window.iidentity || {};
         return true;
     };
 
+    messageListeners.getManifestErrors = function (request, sender, sendResponse) {
+        if (!isOptionsPage(sender.url)) {
+            module.log.error('A \'getManifestErrors\' message can only originate from the options page');
+            // silently die by not sending a response
+            return false;
+        }
+
+        if (data === null) {
+            sendResponse({});
+        } else {
+            sendResponse(data.getErrors());
+        }
+
+        return false;
+    };
+
     messageListeners.addManifest = function (request, sender, sendResponse) {
         if (!isOptionsPage(sender.url)) {
             module.log.error('An \'addManifest\' message can only originate from the options page');
