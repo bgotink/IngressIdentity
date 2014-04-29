@@ -418,7 +418,7 @@ window.iidentity = window.iidentity || {};
             var reply = null;
 
             if (request.lastUpdate) {
-                reply = { shouldUpdate: data.shouldUpdateRemote(request.lastUpdate) };
+                reply = { shouldUpdate: data === null ? false : data.shouldUpdateRemote(request.lastUpdate) };
 
                 request = request.request;
             }
