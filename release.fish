@@ -2,9 +2,22 @@
 
 cd (dirname (status -f));
 
-if test (count $argv) -ne 1
-    echo 'Please enter a version number, e.g. ./release.sh 0.1.0' >&2
+function usage
+    echo 'Usage: ./release.fish <version> [branch]' >&2
+    echo '    version: major.minor.patch' >&2
+    echo '    branch: branch to merge --no-ff before committing' >&2
     exit 1
+end
+
+set argc (count $argv)
+if test $argc -lt 1
+    usage
+end
+
+if test $argc -eq 2
+    set branch $argv[2]
+else if test $argc -gt 2
+    usage
 end
 
 set newversion $argv[1]
@@ -52,6 +65,11 @@ end
 git diff --quiet --cached; or begin
     echo 'There are uncommitted changes. Please commit these changes before creating a new release' >&2
     exit 6
+end
+
+if set -q branch
+    # merge!
+    git merge --no-ff $branch -m "merge $branch"
 end
 
 sed -i'' -e "s/\"version\"\:.*\$/\"version\": \"$newversion\",/" manifest.json
