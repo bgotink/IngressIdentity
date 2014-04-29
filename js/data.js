@@ -13,6 +13,7 @@ window.iidentity = window.iidentity || {};
     var exports = module.data = {},
 
         anomalies = [ '13magnus', 'recursion', 'interitus' ],
+        mainPlayerData = ['name', 'nickname', 'oid', 'level'],
 
     // unexported helper functions and classes
 
@@ -166,13 +167,26 @@ window.iidentity = window.iidentity || {};
                     return null;
                 }
 
+                var rawPlayer = this.players[oid],
+                    player = {},
+                    key;
+                player.extra = {};
+
+                for (key in rawPlayer) {
+                    if (mainPlayerData.indexOf(key) !== -1) {
+                        player[key] = rawPlayer[key];
+                    } else {
+                        player.extra[key] = rawPlayer[key];
+                    }
+                }
+
                 return $.extend(
                     true,
                     {
                         faction: this.data.faction,
                         extra: this.data.extratags
                     },
-                    this.players[oid]
+                    player
                 );
             },
 
