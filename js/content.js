@@ -152,6 +152,23 @@ window.iidentity = window.iidentity || {};
                 callback(null, $wrapper);
             });
         },
+        createConciseInlineElement = function (oid, callback) {
+            module.comm.getPlayer(oid, function (err, player) {
+                if (err !== null) {
+                    callback(err, null);
+                    return;
+                }
+
+                callback(
+                    null,
+                    $('<span>')
+                        .addClass('iidentity-ciwrapper')
+                        .addClass('iidentity-faction-' + player.faction)
+                        .attr('data-oid', oid)
+                        .text(player.nickname)
+                );
+            });
+        },
 
         handlers = [
             {
@@ -200,6 +217,35 @@ window.iidentity = window.iidentity || {};
                         }
 
                         $elem.parent().find('.iidentity-iwrapper[data-oid=' + oid + ']').remove();
+
+                        $elem.after(
+                            $('<span>')
+                                .text(' ')
+                            ,
+                            $infoElem
+                        );
+                    });
+                }
+            },
+            {
+                matches: [
+                    'a.proflink.aaTEdf[oid]', // mentions
+                ],
+                handler: function (elem) {
+                    var $elem = $(elem),
+                        oid = $elem.attr('oid');
+
+                    createConciseInlineElement(oid, function (err, $infoElem) {
+                        if (err) {
+                            if (err === 'not-found') {
+                                return;
+                            }
+
+                            console.error(err);
+                            return;
+                        }
+
+                        $elem.parent().find('.iidentity-ciwrapper[data-oid=' + oid + ']').remove();
 
                         $elem.after(
                             $('<span>')

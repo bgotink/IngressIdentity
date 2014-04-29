@@ -38,6 +38,22 @@
     color: #777;
 }
 
+.iidentity-ciwrapper {
+    white-space: nowrap;
+}
+
+.iidentity-ciwrapper::before {
+    content: '[';
+    padding-right: .2ex;
+    color: #777;
+}
+
+.iidentity-ciwrapper::after {
+    content: ']';
+    padding-left: .2ex;
+    color: #777;
+}
+
 .iidentity-level0 {
     color: #202020;
 }
