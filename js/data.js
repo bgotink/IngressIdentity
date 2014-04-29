@@ -115,21 +115,34 @@ window.iidentity = window.iidentity || {};
                 this.key = key;
                 this.query = query;
                 this.data = data;
+                this.err = [];
                 this.timestamp = +new Date();
 
                 if ('extratags' in data) {
-                    data.extratags = JSON.parse(data.extratags);
+                    try {
+                        data.extratags = JSON.parse(data.extratags);
+                    } catch (e) {
+                        this.data.err.push('Invalid JSON in extratags: ' + e.message);
+                    }
                 } else {
                     data.extratags = {};
                 }
 
-                if (typeof data.extratags.anomaly !== 'undefined') {
+                if ('anomaly' in data.extratags) {
                     var anomaly = data.extratags.anomaly;
 
                     if (anomalies.indexOf(anomaly) === -1) {
-                        this.data.err = this.data.err || [];
                         this.data.err.push('Invalid anomaly: ' + anomaly);
                         delete data.extratags.anomaly;
+                    }
+                }
+
+                if ('community' in data.extratags) {
+                    var community = data.extratags.community;
+
+                    if (community.indexOf(':') === -1) {
+                        this.data.err.push('Invalid community: "' + community + '"');
+                        delete data.extratags.community;
                     }
                 }
 
@@ -218,6 +231,13 @@ window.iidentity = window.iidentity || {};
                         callback(false);
                     }
                 });
+            },
+
+            hasErrors: function () {
+                return this.err.length > 0;
+            },
+            getErrors: function () {
+                return this.err;
             },
         }),
 
@@ -403,6 +423,23 @@ window.iidentity = window.iidentity || {};
                 }
 
                 return this;
+            },
+
+            hasErrors: function () {
+                return this.getSources().some(function (source) {
+                    return source.hasErrors();
+                });
+            },
+            getErrors: function () {
+                var errors = {};
+
+                this.getSources().forEach(function (source) {
+                    if (source.hasErrors()) {
+                        errors[source.getKey()] = source.getErrors();
+                    }
+                });
+
+                return errors;
             },
         }),
 
