@@ -4,6 +4,11 @@
     "name": "Ingress Identity",
     "version": "0.1",
     "description": "Adds Ingress identity to G+ profiles",
+    "icons": {
+        "16":  "img/logo/16.png",
+        "48":  "img/logo/48.png",
+        "128": "img/logo/128.png"
+    },
 
     "permissions": [ "storage" ],
     "optional_permissions": [ "tabs", "https://*.google.com/*" ],
