@@ -94,6 +94,8 @@ window.iidentity = window.iidentity || {};
                         anomalyList.push(
                             $('<img>')
                                 .attr('src', chrome.extension.getURL('img/anomalies/' + anomaly + '.png'))
+                                .attr('alt', anomaly)
+                                .attr('title', anomaly.substr(0, 1).toUpperCase() + anomaly.substr(1))
                                 .addClass('iidentity-anomaly')
                         );
                     });
@@ -167,6 +169,8 @@ window.iidentity = window.iidentity || {};
                         anomalyList.push(
                             $('<img>')
                                 .attr('src', chrome.extension.getURL('img/anomalies/' + anomaly + '.png'))
+                                .attr('alt', anomaly)
+                                .attr('title', anomaly.substr(0, 1).toUpperCase() + anomaly.substr(1))
                                 .addClass('iidentity-anomaly')
                         );
                     });
