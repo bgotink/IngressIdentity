@@ -16,6 +16,36 @@ window.iidentity = window.iidentity || {};
 
     // unexported helper functions and classes
 
+        getExtraDataValueName = function (str) {
+            var i = str.indexOf(':');
+
+            if (i === -1) {
+                return str.trim();
+            } else {
+                return str.substr(0, i).trim();
+            }
+        },
+        addToArray = function (src, dst) {
+            if (!Array.isArray(src)) {
+                src = [ src ];
+            }
+
+            var existing = [],
+                name;
+
+            dst.forEach(function (elem) {
+                existing.push(getExtraDataValueName(elem));
+            });
+
+            src.forEach(function (elem) {
+                name = getExtraDataValueName(elem);
+
+                if (existing.indexOf(name) === -1) {
+                    dst.push(elem);
+                    existing.push(name);
+                }
+            });
+        },
         merge_player = function () {
             if (arguments.length === 0) {
                 return false;
@@ -27,7 +57,8 @@ window.iidentity = window.iidentity || {};
                 src = arguments[1],
                 newArguments,
                 key,
-                extraKey;
+                extraKey,
+                tmp;
 
             if (typeof target.extra !== 'object') {
                 target.extra = {};
@@ -50,12 +81,20 @@ window.iidentity = window.iidentity || {};
                     for (extraKey in src.extra) {
                         if (extraKey in target.extra) {
                             if (Array.isArray(target.extra[extraKey])) {
-                                target.extra[extraKey].push(src.extra[extraKey]);
+                                addToArray(
+                                    src.extra[extraKey],
+                                    target.extra[extraKey]
+                                );
                             } else {
-                                target.extra[extraKey] = [
-                                    target.extra[extraKey],
-                                    src.extra[extraKey]
-                                ];
+                                tmp = [ target.extra[extraKey] ];
+                                addToArray(
+                                    src.extra[extraKey],
+                                    tmp
+                                );
+
+                                if (tmp.length > 1) {
+                                    target.extra[extraKey] = tmp;
+                                }
                             }
                         } else {
                             target.extra[extraKey] = src.extra[extraKey];
