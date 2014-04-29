@@ -67,4 +67,4 @@ end
 git push
 git push --tags
 
-zip -r "versions/v$newversion.zip" . -x versions -x \*.md -x \*.svg -x \*.fish
+git archive -o "versions/v$newversion.zip" HEAD
