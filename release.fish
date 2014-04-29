@@ -2,9 +2,22 @@
 
 cd (dirname (status -f));
 
-if test (count $argv) -ne 1
-    echo 'Please enter a version number, e.g. ./release.sh 0.1.0' >&2
+function usage
+    echo 'Usage: ./release.fish <version> [branch]' >&2
+    echo '    version: major.minor.patch' >&2
+    echo '    branch: branch to merge --no-ff before committing' >&2
     exit 1
+end
+
+set argc (count $argv)
+if test $argc -lt 1
+    usage
+end
+
+if test $argc -eq 2
+    set branch $argv[2]
+else if test $argc -gt 2
+    usage
 end
 
 set newversion $argv[1]
@@ -54,9 +67,19 @@ git diff --quiet --cached; or begin
     exit 6
 end
 
-sed -i'' -e "s/\"version\"\:.*\$/\"version\": \"$newversion\",/" manifest.json
+if set -q branch
+    # merge!
+    git merge --no-ff $branch -m "merge $branch"
+end
 
-git add manifest.json
+# update version
+sed -i'' -e "s/\"version\"\:.*\$/\"version\": \"$newversion\",/" manifest.json
+# set name to non-dev value
+sed -i'' -e 's/"name"\:.*\$/"name": "Ingress Identity",/' manifest.json
+# set logging to false
+sed -i'' -e 's/enableLogging.*\$/enableLogging = false,/' js/log.js
+git add manifest.json js/log.js
+
 git commit -m "[release] v$newversion"
 
 git tag -s "v$newversion"; or begin
