@@ -19,8 +19,8 @@
     font-weight: bold;
 }
 
-.settings p {
-    text-align: justified;
+p {
+    text-align: justify;
 }
 
 @media (min-width: 992px) {
