@@ -152,6 +152,18 @@ window.iidentity = window.iidentity || {};
                     }
                 });
             });
+        },
+
+        addManifest = function () {
+            console.log('Adding manifest %s', $('#manifest_input').val());
+            comm.addManifest($('#manifest_input').val(), function (result) {
+                if (result === 'success') {
+                    reloadManifests();
+                    $('#manifest_input').val('');
+                }
+
+                showAlert('add-' + result);
+            });
         };
 
     $(function () {
@@ -170,16 +182,10 @@ window.iidentity = window.iidentity || {};
             });
         });
 
-        $('#manifest_add').on('click.ii.add', function () {
-            console.log('Adding manifest %s', $('#manifest_input').val());
-            comm.addManifest($('#manifest_input').val(), function (result) {
-                if (result === 'success') {
-                    reloadManifests();
-                    $('#manifest_input').val('');
-                }
-
-                showAlert('add-' + result);
-            });
+        $('button.manifest_add').on('click.ii.add', addManifest);
+        $('form.manifest_add').on('submit.ii.add', function (e) {
+            addManifest();
+            e.preventDefault();
         });
 
         $('#source_list').on('click.ii.remove', '.manifest > .remove', function () {
