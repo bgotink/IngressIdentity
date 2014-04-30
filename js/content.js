@@ -112,8 +112,18 @@ window.iidentity = window.iidentity || {};
                         player.extra.community = [ player.extra.community ];
                     }
 
-                    player.extra.community.forEach(function (community) {
+                    player.extra.community.forEach(function (community, i) {
                         var seperatorposition = community.indexOf(":");
+
+                        if (i > 4) {
+                            return;
+                        }
+                        if (i === 4) {
+                            $groupInfo.append(
+                                $('<div>').html('&ldots;')
+                            );
+                            return;
+                        }
 
                         if(seperatorposition === -1){
                             return;
@@ -128,13 +138,25 @@ window.iidentity = window.iidentity || {};
                                 )
                         );
                     });
-                }if('event' in player.extra){
+                }
+
+                if('event' in player.extra){
                     if (!Array.isArray(player.extra.event)) {
                         player.extra.event = [ player.extra.event ];
                     }
 
-                    player.extra.event.forEach(function (event) {
+                    player.extra.event.forEach(function (event, i) {
                         var seperatorposition = event.indexOf(":");
+
+                        if (i > 4) {
+                            return;
+                        }
+                        if (i === 4) {
+                            $groupInfo.append(
+                                $('<div>').html('&ldots;')
+                            );
+                            return;
+                        }
 
                         if(seperatorposition === -1){
                             return;
@@ -331,74 +353,136 @@ window.iidentity = window.iidentity || {};
             });
         },
 
-        createProfileWrapper = function () {
-            return $('<div>')
-                        .addClass('iidentity-profile-wrapper')
-                        .append(
-                            $('<div>')
-                                .addClass('iidentity-title-wrapper')
-                                .append(
-                                    $('<div>')
-                                        .addClass('F9a', 'iidentity-title')
-                                        .text('Ingress Agent')
-                                )
-                        )
-                        .append(
-                            $('<div>')
-                                .addClass('iidentity-profile')
-                        )
-                        .append(
-                            $('<div>')
-                        );
+        profileHelper = {
+            createWrapper: function () {
+                return $(
+                    '<div class="Ee h5a vna iidentity-profile-wrapper" role="article">' +
+                        '<div class="ZYa ukoEtf">' +
+                            '<div class="Lqc">' +
+                                '<div class="F9a">Ingress Agent Profile</div>' +
+                                '<div class="miIoOb Cdmn9d"></div>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="Uia"><div class="iec Iqc iidentity-profile"></div></div>' +
+                        '<div class="Iqc"></div>' +
+                    '</div>'
+                );
+            },
+
+            createTable: function (rows) {
+                return $('<div class="Qqc wna"></div>')
+                    .append(rows);
+            },
+            createRow: function (left, right) {
+                return $(
+                    '<div class="wna DVb">' +
+                        '<div class="E9a G9a Rqc">' + left + '</div>' +
+                        '<div class="y4 G9a">' + right + '</div>' +
+                    '</div>'
+                );
+            },
+
+            createAnomalySubtitle: function (anomalies) {
+                var nice;
+
+                return $('<div class="wna fa-TCa Ala">')
+                    .append(
+                        $('<div class="Cr Aha">Anomalies</div>')
+                    )
+                    .append(
+                        $('<div class="y4"></div>')
+                            .append(
+                                $('<ul class="Kla yVa">')
+                                    .append(
+                                        $(
+                                            anomalies.map(function (anomaly) {
+                                                nice = anomaly.substr(0, 1).toUpperCase() + anomaly.substr(1);
+
+                                                return $('<li>')
+                                                    .append(
+                                                        $('<img>')
+                                                            .addClass('xfa')
+                                                            .attr('src', chrome.extension.getURL('img/anomalies/' + anomaly + '.png'))
+                                                            .attr('title', nice)
+                                                            .attr('alt', '')
+                                                    )
+                                                    .append(
+                                                        $('<div class="fIa s"></div>')
+                                                            .append(
+                                                                $('<span class="OLa Xvc"></span>')
+                                                                    .text(nice)
+                                                            )
+                                                    )
+                                                    [0];
+                                            })
+                                        )
+                                    )
+                            )
+                    );
+            },
+            createSubtitle: function (subtitle, links, baseUrl) {
+                var url,
+                    title,
+                    i;
+
+                return $('<div class="wna fa-TCa Ala">')
+                    .append(
+                        $('<div class="Cr Aha"></div>')
+                            .text(subtitle)
+                    )
+                    .append(
+                        $('<div class="y4"></div>')
+                            .append(
+                                $('<ul class="Kla yVa">')
+                                    .append(
+                                        $(
+                                            links.map(function (link) {
+                                                i = link.indexOf(':');
+                                                if (i === -1) {
+                                                    return null;
+                                                }
+
+                                                url = baseUrl + link.substr(0, i).trim();
+                                                title = link.substr(i + 1).trim();
+
+                                                return $('<li>')
+                                                    .append(
+                                                        $('<div class="fIa s"></div>')
+                                                            .append(
+                                                                $('<a class="OLa url Xvc"></a>')
+                                                                    .text(title)
+                                                                    .attr('title', title)
+                                                                    .attr('href', url)
+                                                            )
+                                                    )
+                                                    [0];
+                                            })
+                                        )
+                                    )
+                            )
+                    );
+            },
         },
         createProfile = function (player, wrapper) {
             var $wrapper = $(wrapper),
-                $profile = $wrapper.find('> .iidentity-profile'),
+                $profile = $wrapper.find('.iidentity-profile'),
                 tmp;
+
+            if (player.faction === 'enlightened') {
+                $wrapper.removeClass('Mqc').addClass('Hqc');
+            } else if (player.faction === 'resistance') {
+                $wrapper.removeClass('Hqc').addClass('Mqc');
+            }
 
             $profile.html('')
                 .append(
-                    $('<div>')
-                        .append(
-                            $('<div>')
-                                .addClass('iidentity-table')
-                                .append(
-                                    $('<div>')
-                                        .append(
-                                            $('<div>')
-                                                .addClass('iidentity-bold')
-                                                .text('Agent name')
-                                        )
-                                        .append(
-                                            $('<div>')
-                                                .text(player.nickname)
-                                        )
-                                )
-                                .append(
-                                    $('<div>')
-                                        .append(
-                                            $('<div>')
-                                                .addClass('iidentity-bold')
-                                                .text('Level')
-                                        )
-                                        .append(
-                                            $('<div>')
-                                                .text(player.level)
-                                        )
-                                )
-                                .append(
-                                    $('<div>')
-                                        .append(
-                                            $('<div>')
-                                                .addClass('iidentity-bold')
-                                                .text('Faction')
-                                        )
-                                        .append(
-                                            $('<div>')
-                                                .text(player.faction.substr(0, 1).toUpperCase() + player.faction.substr(1))
-                                        )
-                                )
-                        )
+                    profileHelper.createTable(
+                        [
+                            profileHelper.createRow('Agent name', player.nickname),
+                            profileHelper.createRow('Level', 'L' + player.level),
+                            profileHelper.createRow('Faction', player.faction.substr(0, 1).toUpperCase() + player.faction.substr(1))
+                        ]
+                    )
                 );
 
             if ('anomaly' in player.extra) {
@@ -407,32 +491,27 @@ window.iidentity = window.iidentity || {};
                 }
 
                 $profile.append(
-                    $('<div>')
-                        .append(
-                            $('<div>')
-                                .addClass('iidentity-subtitle')
-                                .text('Anomalies')
-                        )
-                        .append(
-                            $(player.extra.anomaly).map(
-                                function (anomaly) {
-                                    tmp = anomaly.substr(0, 1).toUpperCase() + anomaly.substr(1);
+                    profileHelper.createAnomalySubtitle(player.extra.anomaly)
+                );
+            }
 
-                                    return $('<div>')
-                                        .append(
-                                            $('<img>')
-                                                .attr('src', chrome.extension.getURL('img/anomalies/' + anomaly + '.png'))
-                                                .attr('alt', anomaly)
-                                                .attr('title', tmp)
-                                                .addClass('iidentity-anomaly')
-                                        )
-                                        .append(
-                                            $('<span>')
-                                                .text(tmp)
-                                        );
-                                }
-                            )
-                        )
+            if ('community' in player.extra) {
+                if (!Array.isArray(player.extra.community)) {
+                    player.extra.community = [ player.extra.community ];
+                }
+
+                $profile.append(
+                    profileHelper.createSubtitle('Communities', player.extra.community, 'https://plus.google.com/communities/')
+                );
+            }
+
+            if ('event' in player.extra) {
+                if (!Array.isArray(player.extra.event)) {
+                    player.extra.event = [ player.extra.event ];
+                }
+
+                $profile.append(
+                    profileHelper.createSubtitle('Events', player.extra.event, 'https://plus.google.com/event/')
                 );
             }
         },
@@ -472,7 +551,7 @@ window.iidentity = window.iidentity || {};
 
                     if ($elem.length === 0) {
                         module.log.log('Creating profile wrapper');
-                        $elem = createProfileWrapper();
+                        $elem = profileHelper.createWrapper();
                         $root.find('div.Ypa.jw.am').last().prepend($elem);
                     } else {
                         module.log.log('Re-using existing profile wrapper');
