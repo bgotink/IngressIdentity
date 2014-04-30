@@ -128,6 +128,27 @@ window.iidentity = window.iidentity || {};
                                 )
                         );
                     });
+                }if('event' in player.extra){
+                    if (!Array.isArray(player.extra.event)) {
+                        player.extra.event = [ player.extra.event ];
+                    }
+
+                    player.extra.event.forEach(function (event) {
+                        var seperatorposition = event.indexOf(":");
+
+                        if(seperatorposition === -1){
+                            return;
+                        }
+
+                        $groupInfo.append(
+                            $('<div>')
+                                .append(
+                                    $('<a>')
+                                        .attr('href', 'https://plus.google.com/events/' + event.substring(0,seperatorposition).trim())
+                                        .text(event.substring(seperatorposition + 1 ).trim())
+                                )
+                        );
+                    });
                 }
 
                 callback(null, $elem);
