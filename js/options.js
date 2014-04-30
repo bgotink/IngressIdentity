@@ -155,6 +155,11 @@ window.iidentity = window.iidentity || {};
                             )
                             .append(
                                 $('<ul>')
+                                    .addClass('errors')
+                                    .attr('data-key', '__errors')
+                            )
+                            .append(
+                                $('<ul>')
                                     .append(sourceList)
                             )
                     );

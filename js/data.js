@@ -280,6 +280,8 @@ window.iidentity = window.iidentity || {};
 
                 this.cache = {};
                 this.timestamp = +new Date;
+
+                this.loadingErrors = null;
             },
 
             getKey: function () {
@@ -469,8 +471,25 @@ window.iidentity = window.iidentity || {};
                     }
                 });
 
-                return errors;
+                return $.extend(true, {}, errors, this.loadingErrors);
             },
+
+            hasLoadingErrors: function () {
+                return !!this.loadingErrors;
+            },
+            setLoadingErrors: function (err) {
+                if (typeof err === 'undefined' || err === null) {
+                    this.loadingErrors = null;
+                    return;
+                }
+                if ((Array.isArray(err) ? err.length : Object.keys(err).length) === 0) {
+                    this.loadingErrors = null;
+                    return;
+                }
+
+                this.loadingErrors = err;
+                return this;
+            }
         }),
 
         loadSource = function (data, callback) {
@@ -492,26 +511,34 @@ window.iidentity = window.iidentity || {};
             var manifest = new module.spreadsheets.Manifest(key),
                 sources = [];
 
-            manifest.load(function (err, sourcesData) {
+            manifest.load(function (merr, sourcesData) {
+                module.log.log('Loaded manifest ', key, ', got ', sourcesData, 'err: ', merr);
                 if (sourcesData === null) {
-                    callback(err, null);
+                    callback({ __errors: merr }, null);
                     return;
                 }
 
-                err = err || [];
+                var err = {};
+                if (merr !== null) {
+                    err.__errors = merr;
+                }
 
                 var nbSources = sourcesData.length,
                     step = function (i) {
                         if (i >= nbSources) {
                             callback(
-                                err.length > 0 ? err : null,
+                                Object.keys(err).length > 0 ? err : null,
                                 new CombinedPlayerSource(sources, key, manifest)
                             );
                             return;
                         }
 
+                        var skey = sourcesData[i].key;
+
                         loadSource(sourcesData[i], function (err2, source) {
-                            err = err.concat(err2 || []);
+                            if (err2) {
+                                err[skey] = err2;
+                            }
 
                             if (source === null) {
                                 callback(err, null);
@@ -531,24 +558,24 @@ window.iidentity = window.iidentity || {};
         loadManifests = function (keys, callback) {
             var nbKeys = keys.length,
                 sources = [],
-                err = [],
+                err = {},
                 step = function (i) {
                     if (i >= nbKeys) {
                         callback(
-                            err.length > 0 ? err : null,
-                            new CombinedPlayerSource(sources)
+                            Object.keys(err).length > 0 ? err : null,
+                            sources.length > 0 ? new CombinedPlayerSource(sources) : null
                         );
                         return;
                     }
 
                     loadManifest(keys[i], function (err2, manifest) {
-                        err = err.concat(err2 || []);
-
-                        if (manifest === null) {
-                            callback(err, null);
-                            return;
+                        if (err2) {
+                            err[keys[i]] = err2;
                         }
-                        sources.push(manifest);
+
+                        if (manifest !== null) {
+                            sources.push(manifest);
+                        }
 
                         step(i + 1);
                     });
