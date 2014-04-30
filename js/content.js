@@ -518,7 +518,9 @@ window.iidentity = window.iidentity || {};
         checkProfile = function () {
             var $tabs = $('#contentPane div[role="tabpanel"]'),
                 oid,
-                $elem;
+                $root,
+                $elem,
+                dot = doOnceTimestamp;
 
             if ($tabs.length === 0) {
                 // not a profile!
@@ -533,32 +535,60 @@ window.iidentity = window.iidentity || {};
                 return;
             }
 
-            doOnce($('#' + oid + '-about-page').last(), function ($root) {
-                module.log.log('Checking if player with oid %s exists', oid);
-                module.comm.getPlayer(oid, function (err, player) {
-                    if (err) {
-                        if (err === 'not-found') {
-                            module.log.log('No such player found');
-                            return;
-                        }
+            // we use $root as timestamp if the user doesn't exist,
+            // and $elem if he does
 
-                        module.log.error(err);
+            $root = $('#' + oid + '-about-page');
+            $elem = $root.find('div.iidentity-profile-wrapper');
+
+            if ($root.attr('data-iidentity') === dot) {
+                // already checked, user is not a player...
+                return;
+            }
+
+            if ($elem.length > 0 && $elem.attr('data-iidentity') === dot) {
+                // already checked, user is a player
+                return;
+            }
+
+            // set on root to stop duplicate calls
+            $root.attr('data-iidentity', dot);
+
+            module.log.log('Checking if player with oid %s exists', oid);
+            module.comm.getPlayer(oid, function (err, player) {
+                if ($root.attr('data-iidentity') !== dot) {
+                    // we got an update!
+                    // break, we don't want to get in its way
+                    return;
+                }
+
+                if (err) {
+                    // leave the timestamp on $root
+
+                    if (err === 'not-found') {
+                        module.log.log('No such player found');
                         return;
                     }
-                    module.log.log('Player found: ', player);
 
-                    $elem = $root.find('div.iidentity-profile-wrapper');
+                    module.log.error(err);
+                    return;
+                }
 
-                    if ($elem.length === 0) {
-                        module.log.log('Creating profile wrapper');
-                        $elem = profileHelper.createWrapper();
-                        $root.find('div.Ypa.jw.am').last().prepend($elem);
-                    } else {
-                        module.log.log('Re-using existing profile wrapper');
-                    }
+                module.log.log('Player found: ', player);
 
-                    createProfile(player, $elem);
-                });
+                if ($elem.length === 0) {
+                    module.log.log('Creating profile wrapper');
+                    $elem = profileHelper.createWrapper();
+                    $root.find('div.Ypa.jw.am').last().prepend($elem);
+                } else {
+                    module.log.log('Re-using existing profile wrapper');
+                }
+
+                // switch to $elem for timestamping
+                $elem.attr('data-iidentity', dot);
+                $root.attr('data-iidentity', null);
+
+                createProfile(player, $elem);
             });
         },
 
