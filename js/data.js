@@ -23,7 +23,7 @@ window.iidentity = window.iidentity || {};
             for (key in obj) {
                 if (typeof obj[key] === 'object') {
                     filterEmpty(obj[key]);
-                } else if (('' + obj[key]).trim() === '') {
+                } else if (obj[key] === null || ('' + obj[key]).trim() === '') {
                     delete obj[key];
                 }
             }

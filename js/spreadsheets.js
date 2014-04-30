@@ -20,7 +20,7 @@ window.iidentity = window.iidentity || {};
     // unexported helper functions and classes
 
         checkKeyExists = function (arr, key, err, row) {
-            if (!key in arr || ('' + arr[key]).trim() === '') {
+            if (!key in arr || arr[key] === null || ('' + arr[key]).trim() === '') {
                 err.push('Expected key ' + key + ' to exist in row ' + row);
             }
         },
