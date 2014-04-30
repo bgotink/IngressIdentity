@@ -201,8 +201,7 @@ window.iidentity = window.iidentity || {};
         addManifest = function () {
             console.log('Adding manifest %s', $('#manifest_input').val());
             comm.addManifest($('#manifest_input').val(), function (result) {
-                if (result === 'success') {
-                    reloadManifests();
+                if (result !== 'failed') {
                     $('#manifest_input').val('');
                 }
 
@@ -218,12 +217,7 @@ window.iidentity = window.iidentity || {};
         $('#reload_sources').on('click.ii.reload', function () {
             $(this).button('loading');
             comm.reloadData(function (result) {
-                if (result) {
-                    reloadManifests();
-                    showAlert('reload-success');
-                } else {
-                    showAlert('reload-failed');
-                }
+                showAlert('reload-' + result);
             });
         });
 
@@ -237,10 +231,6 @@ window.iidentity = window.iidentity || {};
             comm.removeManifest(
                 $(this).parent().data('key'),
                 function (result) {
-                    if (result === 'success') {
-                        reloadManifests();
-                    }
-
                     showAlert('remove-' + result);
                 }
             );

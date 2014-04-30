@@ -494,18 +494,22 @@ window.iidentity = window.iidentity || {};
                 return;
             }
 
-            var reply = null;
+            var reply = null,
+                realRequest;
 
             if (request.lastUpdate) {
-                reply = { shouldUpdate: data === null ? false : data.shouldUpdateRemote(request.lastUpdate) };
+                reply = {};
 
-                request = request.request;
+                realRequest = request.request;
+            } else {
+                realRequest = request;
             }
 
-            if (request.type in messageListeners) {
-                return messageListeners[request.type](request, sender, function (response) {
+            if (realRequest.type in messageListeners) {
+                return messageListeners[realRequest.type](realRequest, sender, function (response) {
                     if (reply !== null) {
                         reply.reply = response;
+                        reply.shouldUpdate = data === null ? false : data.shouldUpdateRemote(request.lastUpdate);
                     } else {
                         reply = response;
                     }
