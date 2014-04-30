@@ -69,6 +69,8 @@ window.iidentity = window.iidentity || {};
 
         reloadManifestErrorsHelper = function (errors, $elem) {
             if (Array.isArray(errors)) {
+                $elem.find('> p.error').remove();
+
                 errors.forEach(function (err) {
                     $elem.append(
                         $('<p>')
