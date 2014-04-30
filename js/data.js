@@ -17,6 +17,17 @@ window.iidentity = window.iidentity || {};
 
     // unexported helper functions and classes
 
+        filterEmpty = function (obj) {
+            var key;
+
+            for (key in obj) {
+                if (typeof obj[key] === 'object') {
+                    filterEmpty(obj[key]);
+                } else if (('' + obj[key]).trim() === '') {
+                    delete obj[key];
+                }
+            }
+        },
         getExtraDataValueName = function (str) {
             var i = str.indexOf(':');
 
@@ -119,6 +130,8 @@ window.iidentity = window.iidentity || {};
                 this.err = [];
                 this.timestamp = +new Date();
 
+                filterEmpty(data);
+
                 if ('extratags' in data) {
                     try {
                         data.extratags = JSON.parse(data.extratags);
@@ -179,6 +192,8 @@ window.iidentity = window.iidentity || {};
                         player.extra[key] = rawPlayer[key];
                     }
                 }
+
+                filterEmpty(player);
 
                 return $.extend(
                     true,
