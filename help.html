@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>IngressIdentity Help</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="vendor/css/bootstrap.min.css" />
+
+    <!-- Our CSS -->
+    <link rel="stylesheet" href="css/help.css" />
+
+    <!-- jQuery and Bootstrap JS -->
+    <script type="text/javascript" src="vendor/js/jquery.min.js"></script>
+    <script type="text/javascript" src="vendor/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="background"></div>
+
+    <!-- General introduction -->
+    <div class="row">
+        <div class="col-sm-10 col-sm-offset-1 col-md-6 col-md-offset-3">
+            <h1>IngressIdentity Help</h1>
+            <p>
+                Need some help with the extension? Take a look on this page.
+                Chances are the answer to your queries can be found here ;)
+            </p>
+        </div>
+    </div>
+
+    <!-- Manifest Definition -->
+    <div class="row">
+        <div class="col-sm-10 col-sm-offset-1 col-md-6 col-md-offset-3">
+            <h2 name="manifest-and-source">Manifest & Source Files</h2>
+            <p>
+                This extension loads data from different sources. These sources
+                are grouped by manifests. Manifests can have multiple sources and
+                this extension can collect data from different manifests.
+            </p>
+            <h3 name="manifest">Manifest Files</h3>
+            <p>
+                A manifest file is a spreadsheet containing the following columns:
+                <dl class="dl-horizontal">
+                    <dt>lastupdated</dt>
+                    <dd>
+                        <p>
+                            <em>Required.</em>
+                            A unique number. This number has to be updated every
+                            time the source sheet this row describes is updated.
+                        </p>
+                        <p>
+                            Proposed value:
+                            <blockquote>
+                                YYYYMMDDXX
+                            </blockquote>
+                            where YYYY is the year, MM is the month, DD is the day
+                            and XX is the lowest positive number that results in
+                            a unique number, e.g. 2014043001.
+                        </p>
+                    </dd>
+                    <dt>tag</dt>
+                    <dd>
+                        <p>
+                            <em>Required.</em>
+                            A human readable name for the source. The extension will
+                            display this instead of the key.
+                        </p>
+                    </dd>
+                    <dt>faction</dt>
+                    <dd>
+                        <p>
+                            <em>Required.</em>
+                            Either 'enlightened' or 'resistance'.
+                        </p>
+                    </dd>
+                    <dt>key</dt>
+                    <dd>
+                        <p>
+                            <em>Required.</em>
+                            The key of the source file. This tells the extension
+                            where to find the spreadsheet. For more information,
+                            see <a href="#key">this help section on keys</a>.
+                        </p>
+                    </dd>
+                    <dt>refresh</dt>
+                    <dd>
+                        <p>
+                            <em>Required.</em>
+                            The amount of hours to wait before updating this source
+                            file again. The extension may take up to one hour
+                            longer than the alotted refresh rate.
+                        </p>
+                        <p>
+                            All integer values are allowed. Negative values are
+                            the same as 0: reload every hour.
+                        </p>
+                    </dd>
+                    <dt>extratags</dt>
+                    <dd>
+                        <p>
+                            <em>Optional.</em>
+                            A string containing a valid JSON object. The object
+                            contains string values. Currently, the following
+                            values are used if they are included:
+                        </p>
+                        <dl class="dl-horizontal">
+                            <dt>anomaly</dt>
+                            <dd>
+                                <p>
+                                    One of '13magnus', 'recursion' or 'interitus'.
+                                    Other values are ignored. New values will
+                                    be added for future anomalies.
+                                </p>
+                            </dd>
+                            <dt>community</dt>
+                            <dd>
+                                <p>
+                                    A value of type
+                                </p>
+                                <blockquote>OID: name</blockquote>
+                                <p>
+                                    For more information on the OID, see
+                                    <a href="#oid">this help section</a>.
+                                </p>
+                                <p>
+                                    The name can be anything as long as the cell
+                                    contains valid JSON.
+                                </p>
+                            </dd>
+                        </dl>
+                    </dd>
+                </dl>
+            </p>
+        </div>
+    </div>
+    <!--
+        TODO:
+            add sections for
+                            #oid
+                            #key
+    -->
+</body>
