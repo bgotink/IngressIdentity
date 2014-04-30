@@ -56,7 +56,8 @@ window.iidentity = window.iidentity || {};
                     player.level = 0;
                 }
 
-                var $extraInfo,
+                var $groupInfo,
+                    $extraInfo,
                     $name,
                     $elem = $('<div>')
                         .addClass('iidentity-wrapper')
@@ -70,6 +71,10 @@ window.iidentity = window.iidentity || {};
                         .append(
                             $extraInfo = $('<div>')
                                 .addClass('iidentity-extra')
+                        )
+                        .append(
+                            $groupInfo = $('<div>')
+                                .addClass('iidentity-group')
                         );
 
                 $extraInfo.append(
@@ -89,6 +94,8 @@ window.iidentity = window.iidentity || {};
                         anomalyList.push(
                             $('<img>')
                                 .attr('src', chrome.extension.getURL('img/anomalies/' + anomaly + '.png'))
+                                .attr('alt', anomaly)
+                                .attr('title', anomaly.substr(0, 1).toUpperCase() + anomaly.substr(1))
                                 .addClass('iidentity-anomaly')
                         );
                     });
@@ -98,6 +105,72 @@ window.iidentity = window.iidentity || {};
                             .addClass('iidentity-anomalies')
                             .append(anomalyList)
                     );
+                }
+
+                if('community' in player.extra){
+                    if (!Array.isArray(player.extra.community)) {
+                        player.extra.community = [ player.extra.community ];
+                    }
+
+                    player.extra.community.forEach(function (community, i) {
+                        var seperatorposition = community.indexOf(":");
+
+                        if (i > 4) {
+                            return;
+                        }
+                        if (i === 4) {
+                            $groupInfo.append(
+                                $('<div>').html('&ldots;')
+                            );
+                            return;
+                        }
+
+                        if(seperatorposition === -1){
+                            return;
+                        }
+
+                        $groupInfo.append(
+                            $('<div>')
+                                .append(
+                                    $('<a>')
+                                        .attr('href', 'https://plus.google.com/communities/' + community.substring(0,seperatorposition).trim())
+                                        .text(community.substring(seperatorposition + 1 ).trim())
+                                )
+                        );
+                    });
+                }
+
+                if('event' in player.extra){
+                    if (!Array.isArray(player.extra.event)) {
+                        player.extra.event = [ player.extra.event ];
+                    }
+
+                    player.extra.event.forEach(function (event, i) {
+                        var seperatorposition = event.indexOf(":");
+
+                        if (i > 4) {
+                            return;
+                        }
+                        if (i === 4) {
+                            $groupInfo.append(
+                                $('<div>').html('&ldots;')
+                            );
+                            return;
+                        }
+
+                        if(seperatorposition === -1){
+                            return;
+                        }
+
+                        $groupInfo.append(
+                            $('<div>')
+                                .append(
+                                    $('<a>')
+                                        .attr('href', 'https://plus.google.com/events/' + event.substring(0,seperatorposition).trim())
+                                        .text(event.substring(seperatorposition + 1 ).trim())
+                                )
+                        );
+                    });
                 }
 
                 callback(null, $elem);
@@ -140,6 +213,8 @@ window.iidentity = window.iidentity || {};
                         anomalyList.push(
                             $('<img>')
                                 .attr('src', chrome.extension.getURL('img/anomalies/' + anomaly + '.png'))
+                                .attr('alt', anomaly)
+                                .attr('title', anomaly.substr(0, 1).toUpperCase() + anomaly.substr(1))
                                 .addClass('iidentity-anomaly')
                         );
                     });
@@ -188,7 +263,7 @@ window.iidentity = window.iidentity || {};
                                 return;
                             }
 
-                            console.error(err);
+                            modue.log.error(err);
                             return;
                         }
 
@@ -216,7 +291,7 @@ window.iidentity = window.iidentity || {};
                                 return;
                             }
 
-                            console.error(err);
+                            module.log.error(err);
                             return;
                         }
 
@@ -246,7 +321,7 @@ window.iidentity = window.iidentity || {};
                                 return;
                             }
 
-                            console.error(err);
+                            module.log.error(err);
                             return;
                         }
 
@@ -278,9 +353,250 @@ window.iidentity = window.iidentity || {};
             });
         },
 
+        profileHelper = {
+            createWrapper: function () {
+                return $(
+                    '<div class="Ee h5a vna iidentity-profile-wrapper" role="article">' +
+                        '<div class="ZYa ukoEtf">' +
+                            '<div class="Lqc">' +
+                                '<div class="F9a">Ingress Agent Profile</div>' +
+                                '<div class="miIoOb Cdmn9d"></div>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="Uia"><div class="iec Iqc iidentity-profile"></div></div>' +
+                        '<div class="Iqc"></div>' +
+                    '</div>'
+                );
+            },
+
+            createTable: function (rows) {
+                return $('<div class="Qqc wna"></div>')
+                    .append(rows);
+            },
+            createRow: function (left, right) {
+                return $(
+                    '<div class="wna DVb">' +
+                        '<div class="E9a G9a Rqc">' + left + '</div>' +
+                        '<div class="y4 G9a">' + right + '</div>' +
+                    '</div>'
+                );
+            },
+
+            createAnomalySubtitle: function (anomalies) {
+                var nice;
+
+                return $('<div class="wna fa-TCa Ala">')
+                    .append(
+                        $('<div class="Cr Aha">Anomalies</div>')
+                    )
+                    .append(
+                        $('<div class="y4"></div>')
+                            .append(
+                                $('<ul class="Kla yVa">')
+                                    .append(
+                                        $(
+                                            anomalies.map(function (anomaly) {
+                                                nice = anomaly.substr(0, 1).toUpperCase() + anomaly.substr(1);
+
+                                                return $('<li>')
+                                                    .append(
+                                                        $('<img>')
+                                                            .addClass('xfa')
+                                                            .attr('src', chrome.extension.getURL('img/anomalies/' + anomaly + '.png'))
+                                                            .attr('title', nice)
+                                                            .attr('alt', '')
+                                                    )
+                                                    .append(
+                                                        $('<div class="fIa s"></div>')
+                                                            .append(
+                                                                $('<span class="OLa Xvc"></span>')
+                                                                    .text(nice)
+                                                            )
+                                                    )
+                                                    [0];
+                                            })
+                                        )
+                                    )
+                            )
+                    );
+            },
+            createSubtitle: function (subtitle, links, baseUrl) {
+                var url,
+                    title,
+                    i;
+
+                return $('<div class="wna fa-TCa Ala">')
+                    .append(
+                        $('<div class="Cr Aha"></div>')
+                            .text(subtitle)
+                    )
+                    .append(
+                        $('<div class="y4"></div>')
+                            .append(
+                                $('<ul class="Kla yVa">')
+                                    .append(
+                                        $(
+                                            links.map(function (link) {
+                                                i = link.indexOf(':');
+                                                if (i === -1) {
+                                                    return null;
+                                                }
+
+                                                url = baseUrl + link.substr(0, i).trim();
+                                                title = link.substr(i + 1).trim();
+
+                                                return $('<li>')
+                                                    .append(
+                                                        $('<div class="fIa s"></div>')
+                                                            .append(
+                                                                $('<a class="OLa url Xvc"></a>')
+                                                                    .text(title)
+                                                                    .attr('title', title)
+                                                                    .attr('href', url)
+                                                            )
+                                                    )
+                                                    [0];
+                                            })
+                                        )
+                                    )
+                            )
+                    );
+            },
+        },
+        createProfile = function (player, wrapper) {
+            var $wrapper = $(wrapper),
+                $profile = $wrapper.find('.iidentity-profile'),
+                tmp;
+
+            if (player.faction === 'enlightened') {
+                $wrapper.removeClass('Mqc').addClass('Hqc');
+            } else if (player.faction === 'resistance') {
+                $wrapper.removeClass('Hqc').addClass('Mqc');
+            }
+
+            $profile.html('')
+                .append(
+                    profileHelper.createTable(
+                        [
+                            profileHelper.createRow('Agent name', player.nickname),
+                            profileHelper.createRow('Level', 'L' + player.level),
+                            profileHelper.createRow('Faction', player.faction.substr(0, 1).toUpperCase() + player.faction.substr(1))
+                        ]
+                    )
+                );
+
+            if ('anomaly' in player.extra) {
+                if (!Array.isArray(player.extra.anomaly)) {
+                    player.extra.anomaly = [ player.extra.anomaly ];
+                }
+
+                $profile.append(
+                    profileHelper.createAnomalySubtitle(player.extra.anomaly)
+                );
+            }
+
+            if ('community' in player.extra) {
+                if (!Array.isArray(player.extra.community)) {
+                    player.extra.community = [ player.extra.community ];
+                }
+
+                $profile.append(
+                    profileHelper.createSubtitle('Communities', player.extra.community, 'https://plus.google.com/communities/')
+                );
+            }
+
+            if ('event' in player.extra) {
+                if (!Array.isArray(player.extra.event)) {
+                    player.extra.event = [ player.extra.event ];
+                }
+
+                $profile.append(
+                    profileHelper.createSubtitle('Events', player.extra.event, 'https://plus.google.com/event/')
+                );
+            }
+        },
+        checkProfile = function () {
+            var $tabs = $('#contentPane div[role="tabpanel"]'),
+                oid,
+                $root,
+                $elem,
+                dot = doOnceTimestamp;
+
+            if ($tabs.length === 0) {
+                // not a profile!
+                return;
+            }
+
+            oid = $tabs.first().attr('id');
+            oid = oid.substr(0, oid.indexOf('-'));
+
+            if (oid.length !== 21) {
+                module.log.error('Invalid oid: %s', oid);
+                return;
+            }
+
+            // we use $root as timestamp if the user doesn't exist,
+            // and $elem if he does
+
+            $root = $('#' + oid + '-about-page');
+            $elem = $root.find('div.iidentity-profile-wrapper');
+
+            if ($root.attr('data-iidentity') === dot) {
+                // already checked, user is not a player...
+                return;
+            }
+
+            if ($elem.length > 0 && $elem.attr('data-iidentity') === dot) {
+                // already checked, user is a player
+                return;
+            }
+
+            // set on root to stop duplicate calls
+            $root.attr('data-iidentity', dot);
+
+            module.log.log('Checking if player with oid %s exists', oid);
+            module.comm.getPlayer(oid, function (err, player) {
+                if ($root.attr('data-iidentity') !== dot) {
+                    // we got an update!
+                    // break, we don't want to get in its way
+                    return;
+                }
+
+                if (err) {
+                    // leave the timestamp on $root
+
+                    if (err === 'not-found') {
+                        module.log.log('No such player found');
+                        return;
+                    }
+
+                    module.log.error(err);
+                    return;
+                }
+
+                module.log.log('Player found: ', player);
+
+                if ($elem.length === 0) {
+                    module.log.log('Creating profile wrapper');
+                    $elem = profileHelper.createWrapper();
+                    $root.find('div.Ypa.jw.am').last().prepend($elem);
+                } else {
+                    module.log.log('Re-using existing profile wrapper');
+                }
+
+                // switch to $elem for timestamping
+                $elem.attr('data-iidentity', dot);
+                $root.attr('data-iidentity', null);
+
+                createProfile(player, $elem);
+            });
+        },
+
     // Start listening for new nodes to traverse
         observer = new window.MutationObserver(function (mutations) {
             var i;
+
+            checkProfile();
 
             mutations.forEach(function (mutation) {
                 for(i = 0; i < mutation.addedNodes.length; i++) {
@@ -292,12 +608,17 @@ window.iidentity = window.iidentity || {};
         forceUpdate = function () {
             doOnceTimestamp = '' + +new Date;
 
+            checkProfile();
             checkElement(window.document);
         };
 
-    forceUpdate();
+
     module.comm.setOnUpdate(forceUpdate);
 
-    observer.observe(window.document, { childList: true, subtree: true });
+    $(function () {
+        forceUpdate();
+
+        observer.observe(window.document, { childList: true, subtree: true });
+    });
 
 })(window.iidentity, window, window.jQuery);

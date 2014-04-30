@@ -1,3 +1,11 @@
+body {
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+}
+
+span.tt {
+    font-family: "Lucida Console", Monaco, monospace;
+}
+
 .iidentity-faction-enlightened {
     color: green;
 }
@@ -118,4 +126,8 @@
     margin-bottom: auto;
     margin-top: auto;
     margin-left: .4ex;
+}
+
+.iidentity-group a {
+    color: #777;
 }

@@ -14,14 +14,18 @@
     <script type="text/javascript" src="vendor/js/bootstrap.min.js"></script>
 
     <!-- Our JS -->
+    <script type="text/javascript" src="js/log.js"></script>
     <script type="text/javascript" src="js/communication.js"></script>
     <script type="text/javascript" src="js/options.js"></script>
 </head>
 <body>
     <div class="background"></div>
     <div class="row">
-        <div class="col-sm-12 col-md-6 col-md-offset-3">
-            <h1>IngressIdentity Options</h1>
+        <div class="col-sm-10 col-sm-offset-1 col-md-6 col-md-offset-3">
+            <h1>
+                IngressIdentity Options
+                <a target="_blank" href="help.html" class="btn btn-default help pull-right">Help</a> 
+            </h1>
             <p>
                 This options page allows you to configure the manifests to use
                 when identifying people on G+. It also provides some tools to
@@ -30,12 +34,16 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-10 col-sm-offset-1 col-md-4 col-md-offset-4">
+        <div class="col-sm-8 col-sm-offset-2 col-md-4 col-md-offset-4">
             <div class="hide alert alert-success alert-dismissable alert-reload-success">
                 <button type="button" class="close" aria-hidden="true">&times;</button>
                 <strong>Success!</strong> The data was successfully reloaded.
             </div>
-            <div class="hide alert alert-danger alert-dismissable alert-reload-failed">
+            <div class="hide alert alert-warning alert-dismissable alert-reload-warning">
+                <button type="button" class="close" aria-hidden="true">&times;</button>
+                <strong>Warning!</strong> Something went wrong when reloading the data.
+            </div>
+            <div class="hide alert alert- alert-dismissable alert-reload-failed">
                 <button type="button" class="close" aria-hidden="true">&times;</button>
                 <strong>Error!</strong> Something went wrong when reloading the data.
             </div>
@@ -47,6 +55,10 @@
             <div class="hide alert alert-warning alert-dismissable alert-add-duplicate">
                 <button type="button" class="close" aria-hidden="true">&times;</button>
                 <strong>Warning!</strong> The given manifest is already loaded.
+            </div>
+            <div class="hide alert alert-warning alert-dismissable alert-add-warning">
+                <button type="button" class="close" aria-hidden="true">&times;</button>
+                <strong>Warning!</strong> Something went wrong when adding the manifest.
             </div>
             <div class="hide alert alert-danger alert-dismissable alert-add-failed">
                 <button type="button" class="close" aria-hidden="true">&times;</button>
@@ -61,6 +73,10 @@
                 <button type="button" class="close" aria-hidden="true">&times;</button>
                 <strong>Warning!</strong> The given manifest was not loaded.
             </div>
+            <div class="hide alert alert-warning alert-dismissable alert-remove-warning">
+                <button type="button" class="close" aria-hidden="true">&times;</button>
+                <strong>Warning!</strong> Something went wrong when removing the manifest.
+            </div>
             <div class="hide alert alert-danger alert-dismissable alert-remove-failed">
                 <button type="button" class="close" aria-hidden="true">&times;</button>
                 <strong>Error!</strong> Something went wrong when removing the manifest.
@@ -68,8 +84,8 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-12 col-md-6 col-md-offset-3 sources">
-            <h2>Data Sources <button id="reload_sources" type="button" class="btn btn-default btn-sm">
+        <div class="col-sm-10 col-sm-offset-1 col-md-6 col-md-offset-3 sources">
+            <h2>Data Sources <button id="reload_sources" type="button" class="btn btn-default btn-sm" data-loading-text="Reloading...">
                 <span class="glyphicon glyphicon-refresh"></span>
                 Force reload
             </button></h2>
@@ -112,7 +128,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-12 col-md-6 col-md-offset-3 settings">
+        <div class="col-sm-10 col-sm-offset-1 col-md-6 col-md-offset-3 settings">
             <h2>Settings</h2>
             <p>
                 This section contains some settings for the extension. Some settings
@@ -186,6 +202,35 @@
                     </p>
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-10 col-sm-offset-1 col-md-6 col-md-offset-3 about">
+            <h2>About</h2>
+            <p>
+                This extension is written and maintained by <a target="_blank" href="https://github.com/bgotink">Bram Gotink</a>.
+                The code is &copy; 2014 Bram Gotink, licensed under the terms of the <a target="_blank" href="http://en.wikipedia.org/wiki/MIT_License">MIT License</a>.
+                The source of this project can be found on <a target="_blank" href="https://github.com/bgotink/IngressIdentity">GitHub</a>.
+            </p>
+            <h3>Acknowledgements</h3>
+            <p>
+                This project uses code by <a target="_blank" href="https://jquery.org/">jQuery</a>,
+                <a target="_blank" href="http://ejohn.org/blog/simple-javascript-inheritance/">John Resig</a>
+                and <a target="_blank" href="https://github.com/twbs/bootstrap">Twitter's Bootstrap</a>.
+            </p>
+            <p>
+                The logo is derived from the ingress logos created by <a target="_blank" href="https://github.com/cr0ybot/ingress-logos">cr0ybot</a>.
+            </p>
+            <h3>Bug Report / Feature Request</h3>
+            <p>
+                If you've found a bug or have an idea for a killer feature, feel
+                free to let me know <a target="_blank" href="https://github.com/bgotink/IngressIdentity/issues">here</a>.
+            </p>
+            <h3>Disclaimer</h3>
+            <p>
+                The extension is in no way affiliated with Ingress or Google. It merely serves as
+                third-party support for Ingress Players and Ingress Communities living on Google+.
+            </p>
         </div>
     </div>
 </body>

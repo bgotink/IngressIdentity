@@ -21,6 +21,53 @@ window.iidentity = window.iidentity || {};
 
     // storage functions
 
+        disableUpdateListener = false,
+        onDataUpdated = function (changes, areaName) {
+            var update = false,
+                reload = false,
+                key;
+
+            if (disableUpdateListener) {
+                module.log.log('Chrome storage update listener disabled, re-enabling');
+                disableUpdateListener = false;
+                return;
+            }
+
+            module.log.log('Settings updated:');
+            for (key in changes) {
+                if (key in storageCache) {
+                    delete storageCache[key];
+                }
+
+                module.log.log('- %s', key);
+
+                if (key === 'manifest_keys') {
+                    reload = true;
+                } else {
+                    update = true;
+                }
+            }
+
+            if (reload) {
+                module.log.log('Reloading manifests');
+                reloadData(function (err, reloaded) {
+                    if (reloaded) {
+                        module.log.log('Manifests reloaded');
+
+                        if (err) {
+                            err.forEach(module.log.warn);
+                        }
+                    } else {
+                        module.log.error('Error when reloading manifest:');
+                        err.forEach(module.log.error);
+                    }
+                });
+            } else if (update) {
+                module.log.log('Updating tabs');
+                updateTabs();
+            }
+        },
+
         getStoredData = function (key, defaultValue, callback) {
             var request = {};
             request[key] = defaultValue;
@@ -48,10 +95,6 @@ window.iidentity = window.iidentity || {};
 
             module.log.log('Setting storage key %s to %s', key, '' + value);
             storage.set(request, callback);
-
-            if (key in storageCache) {
-                delete storageCache[key];
-            }
         },
 
         getManifestKeys = function (callback) {
@@ -108,11 +151,16 @@ window.iidentity = window.iidentity || {};
                 module.data.loadManifests(storedData, function (err, newData) {
                     if (newData !== null) {
                         data = newData;
+                        data.setLoadingErrors(err);
+
+                        if ('manifests' in storageCache) {
+                            delete storageCache.manifests;
+                        }
 
                         updateTabs();
-                        callback(err, true);
+                        callback(null, data.hasLoadingErrors() ? 'warning' : 'success');
                     } else {
-                        callback(err, false);
+                        callback(err, 'failed');
                     }
                 });
             });
@@ -154,6 +202,14 @@ window.iidentity = window.iidentity || {};
             return false;
         }
 
+        if ('manifests' in storageCache) {
+            module.log.log('Requesting manifests, loaded from cache');
+            sendResponse(storageCache.manifests);
+
+            return false;
+        }
+
+        module.log.log('Requesting manifests, loading from source');
         getManifestKeys(function (keys) {
             var result = {},
                 manifest,
@@ -167,18 +223,17 @@ window.iidentity = window.iidentity || {};
 
                 if (manifest === null) {
                     module.log.error('Strangely this manifest cannot be found');
-                    return;
-                }
-
-                manifest.getSources().forEach(function (source) {
-                    manifestData.push({
-                        key:     source.getKey(),
-                        tag:     source.getTag(),
-                        count:   source.getNbPlayers(),
-                        version: source.getVersion(),
-                        faction: source.getFaction(),
+                } else {
+                    manifest.getSources().forEach(function (source) {
+                        manifestData.push({
+                            key:     source.getKey(),
+                            tag:     source.getTag(),
+                            count:   source.getNbPlayers(),
+                            version: source.getVersion(),
+                            faction: source.getFaction(),
+                        });
                     });
-                });
+                }
 
                 module.log.log('Manifest %s contains the following data:', key);
                 module.log.log(manifestData);
@@ -186,11 +241,29 @@ window.iidentity = window.iidentity || {};
                 result[key] = manifestData;
             });
 
+            storageCache.manifests = result;
+
             module.log.log('Sending result to getManifests: ', result);
             sendResponse(result);
         });
 
         return true;
+    };
+
+    messageListeners.getManifestErrors = function (request, sender, sendResponse) {
+        if (!isOptionsPage(sender.url)) {
+            module.log.error('A \'getManifestErrors\' message can only originate from the options page');
+            // silently die by not sending a response
+            return false;
+        }
+
+        if (data === null) {
+            sendResponse({});
+        } else {
+            sendResponse(data.getErrors());
+        }
+
+        return false;
     };
 
     messageListeners.addManifest = function (request, sender, sendResponse) {
@@ -200,14 +273,17 @@ window.iidentity = window.iidentity || {};
             return false;
         }
 
+        disableUpdateListener = true;
         addManifestKey(request.key, function (added) {
             if (!added) {
+                disableUpdateListener = false;
                 sendResponse({ status: 'duplicate' });
                 return;
             }
 
             reloadData(function (err, status) {
-                sendResponse({ status: status ? 'success' : 'failed', err: err });
+                disableUpdateListener = false;
+                sendResponse({ status: status, err: err });
             });
         });
 
@@ -221,14 +297,17 @@ window.iidentity = window.iidentity || {};
             return false;
         }
 
+        disableUpdateListener = true;
         removeManifestKey(request.key, function (removed) {
             if (!removed) {
+                disableUpdateListener = false;
                 sendResponse({ status: 'nonexistent' });
                 return;
             }
 
             reloadData(function (err, status) {
-                sendResponse({ status: status ? 'success' : 'failed', err: err });
+                disableUpdateListener = false;
+                sendResponse({ status: status, err: err });
             });
         });
 
@@ -243,7 +322,7 @@ window.iidentity = window.iidentity || {};
         }
 
         reloadData(function (err, status) {
-            sendResponse({ status: status ? 'success' : 'failed', err: err });
+            sendResponse({ status: status, err: err });
         });
 
         return true;
@@ -415,18 +494,22 @@ window.iidentity = window.iidentity || {};
                 return;
             }
 
-            var reply = null;
+            var reply = null,
+                realRequest;
 
             if (request.lastUpdate) {
-                reply = { shouldUpdate: data === null ? false : data.shouldUpdateRemote(request.lastUpdate) };
+                reply = {};
 
-                request = request.request;
+                realRequest = request.request;
+            } else {
+                realRequest = request;
             }
 
-            if (request.type in messageListeners) {
-                return messageListeners[request.type](request, sender, function (response) {
+            if (realRequest.type in messageListeners) {
+                return messageListeners[realRequest.type](realRequest, sender, function (response) {
                     if (reply !== null) {
                         reply.reply = response;
+                        reply.shouldUpdate = data === null ? false : data.shouldUpdateRemote(request.lastUpdate);
                     } else {
                         reply = response;
                     }
@@ -470,5 +553,7 @@ window.iidentity = window.iidentity || {};
                 })
             }, 60 * 60 * 1000);
         }});
+
+        chrome.storage.onChanged.addListener(onDataUpdated);
     });
 })(window.iidentity, window.jQuery, window);

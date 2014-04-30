@@ -5,7 +5,7 @@ a player's Google+ profile.
 
 This code is &copy; 2014 [Bram Gotink](https://github.com/bgotink), licensed
 under the MIT license. For more information, see `LICENSE.md`.  
-This project contains code by John Resig and the @twbs project. For
+This project contains code by John Resig, jQuery and the @twbs project. For
 more information, see `NOTICE.md`.
 
 The images in `img/logo` are licensed as `Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported`,
@@ -16,3 +16,8 @@ The images in `img/anomalies` have an unknown origin. If you are the author and
 want me to take down these images, please contact me with your request and proof
 that you're the author. If you know the origin of these files, feel free to share
 that information.
+
+## Disclaimer
+
+The extension is in no way affiliated with Ingress or Google. It merely serves as
+third-party support for Ingress Players and Ingress Communities living on Google+.

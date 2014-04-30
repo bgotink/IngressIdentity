@@ -1,30 +1,9 @@
-.manifest > .remove {
-    margin-left: 1em;
+body {
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
 }
 
-.faction-enlightened {
-    color: green;
-}
-
-.faction-enlightened > a {
-    color: green;
-}
-
-.faction-resistance {
-    color: blue;
-}
-
-.faction-enlightened > a,
-.faction-resistance > a {
-    font-weight: bold;
-}
-
-p {
-    text-align: justify;
-}
-
-p.error {
-    color: red;
+span.tt {
+    font-family: "Lucida Console", Monaco, monospace;
 }
 
 @media (min-width: 992px) {

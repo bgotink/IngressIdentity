@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>IngressIdentity Help</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="vendor/css/bootstrap.min.css" />
+
+    <!-- Our CSS -->
+    <link rel="stylesheet" href="css/help.css" />
+
+    <!-- jQuery and Bootstrap JS -->
+    <script type="text/javascript" src="vendor/js/jquery.min.js"></script>
+    <script type="text/javascript" src="vendor/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="background"></div>
+
+    <!-- General introduction -->
+    <div class="row">
+        <div class="col-sm-10 col-sm-offset-1 col-md-6 col-md-offset-3">
+            <h1>IngressIdentity Help</h1>
+            <p>
+                Need some help with the extension? Take a look on this page.
+                Chances are the answer to your queries can be found here ;)
+            </p>
+        </div>
+    </div>
+
+    <!-- Manifest Definition -->
+    <div class="row">
+        <div class="col-sm-10 col-sm-offset-1 col-md-6 col-md-offset-3">
+            <h2><a name="manifest-and-source"></a>Manifest & Source Files</h2>
+            <p>
+                This extension loads data from different sources. These sources
+                are grouped by manifests. Manifests can have multiple sources and
+                this extension can collect data from different manifests.
+            </p>
+            <h3><a name="manifest"></a>Manifest Files</h3>
+            <p>
+                A manifest file is a spreadsheet containing the following columns:
+            </p>
+            <dl class="dl-horizontal">
+                <dt>lastupdated</dt>
+                <dd>
+                    <p>
+                        <em>Required.</em>
+                        A unique number. This number has to be updated every
+                        time the source sheet this row describes is updated.
+                    </p>
+                    <p>
+                        Proposed value:
+                        <blockquote>
+                            YYYYMMDDXX
+                        </blockquote>
+                        where YYYY is the year, MM is the month, DD is the day
+                        and XX is the lowest positive number that results in
+                        a unique number, e.g. 2014043001.
+                    </p>
+                </dd>
+                <dt>tag</dt>
+                <dd>
+                    <p>
+                        <em>Required.</em>
+                        A human readable name for the source. The extension will
+                        display this instead of the key.
+                    </p>
+                </dd>
+                <dt>faction</dt>
+                <dd>
+                    <p>
+                        <em>Required<sup>1</sup>.</em>
+                        Either 'enlightened' or 'resistance'.
+                    </p>
+                </dd>
+                <dt>key</dt>
+                <dd>
+                    <p>
+                        <em>Required.</em>
+                        The key of the source file. This tells the extension
+                        where to find the spreadsheet. For more information,
+                        see <a href="#key">this help section on keys</a>.
+                    </p>
+                </dd>
+                <dt>refresh</dt>
+                <dd>
+                    <p>
+                        <em>Required.</em>
+                        The amount of hours to wait before updating this source
+                        file again. The extension may take up to one hour
+                        longer than the alotted refresh rate.
+                    </p>
+                    <p>
+                        All integer values are allowed. Negative values are
+                        the same as 0: reload every hour.
+                    </p>
+                </dd>
+                <dt>extratags</dt>
+                <dd>
+                    <p>
+                        <em>Optional.</em>
+                        A string containing a valid JSON object. The object
+                        contains string values. Currently, the following
+                        values are used if they are included:
+                    </p>
+                    <dl class="dl-horizontal">
+                        <dt>anomaly</dt>
+                        <dd>
+                            <p>
+                                One of '13magnus', 'recursion' or 'interitus'.
+                                Other values are ignored. New values will
+                                be added for future anomalies.
+                            </p>
+                        </dd>
+                        <dt>community</dt>
+                        <dd>
+                            <p>
+                                A value of type
+                            </p>
+                            <blockquote>OID: name</blockquote>
+                            <p>
+                                For more information on the OID, see
+                                <a href="#oid">this help section</a>.
+                            </p>
+                            <p>
+                                The name can be anything as long as the cell
+                                contains valid JSON.
+                            </p>
+                        </dd>
+                    </dl>
+                </dd>
+            </dl>
+            <p>
+                Note 1: The faction has to be defined at least <em>once</em> for every
+                player. You can omit this data if you are sure that all players
+                in the source file are already defined elsewhere. This allows you
+                to e.g. have a source for an event where you include both factions
+                at the same time.
+                See <a href="#compat">the section on compatibility</a>.
+            </p>
+            <h3><a name="source"></a>Source Files</h3>
+            <p>
+                A source file is a spreadsheet containing the following columns:
+            </p>
+            <dl class="dl-horizontal">
+                <dt>oid</dt>
+                <dd>
+                    <p>
+                        <em>Required.</em>
+                        The OID of the player. For information about where
+                        to find the OID, see <a href="#oid">this section</a>.
+                    </p>
+                </dd>
+                <dt>name</dt>
+                <dd>
+                    <p>
+                        <em>Required<sup>2</sup>.</em>
+                        The player's real name. This is currently not used.
+                    </p>
+                </dd>
+                <dt>nickname</dt>
+                <dd>
+                    <p>
+                        <em>Required<sup>2</sup>.</em>
+                        The player's in game nickname. This is shown everywhere
+                        this extension adds data.
+                    </p>
+                </dd>
+                <dt>level</dt>
+                <dd>
+                    <p>
+                        <em>Required<sup>2</sup>.</em>
+                        The player's level. This is shown everywhere this
+                        extension adds data.
+                    </p>
+                </dd>
+                <dt>&hellip;</dt>
+                <dd>
+                    <p>
+                        <em>Optional.</em>
+                        You can create other columns at will. These will be
+                        optional, and will be added to the extratags of the
+                        source, but only for the player in the row where the
+                        data is written. If the column name is also added
+                        in extratags, the data in extratags is overwritten.
+                    </p>
+                    <p>
+                        Example: the spreadsheet has a 'anomaly' column. The
+                        data in this column will overwrite any 'anomaly' values
+                        in extratags for the individual players.
+                    </p>
+                </dd>
+            </dl>
+            <p>
+                Note 2: These values are required <em>once</em>. That is, it's
+                perfectly fine for <em>this</em> extension if you don't include
+                this data the second time a player is used. See
+                <a href="#compat">the section on compatibility</a>.
+            </p>
+            <h3><a name="key"></a>Getting the spreadsheet key</h3>
+            <p>
+                The spreadsheet key can be found in the URL of the google drive
+                page.
+                This URL is of the form
+            </p>
+            <blockquote>
+                <span class="tt">https://docs.google.com/spreadsheet/ccc?key=KEY#gid=TAB</span>
+            </blockquote>
+            <p>
+                In this URL, the <span class="tt">KEY</span> is the identifier
+                of the google drive document. The <span class="tt">TAB</span>
+                tells you which spreadsheet in the document is open.
+            </p>
+            <p>
+                The spreadsheet key you have to use is of the form
+            </p>
+            <blockquote>
+                <span class="tt">KEY&amp;gid=TAB</span>
+            </blockquote>
+            <p>
+                If <span class="tt">TAB</span> is <span class="tt">0</span>, you
+                can omit it. That is, the spreadsheet key is simply <span class="tt">KEY</span>.
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-10 col-sm-offset-1 col-md-6 col-md-offset-3">
+            <h2><a name="oid"></a>OIDs</h2>
+            <p>
+                An OID is simply the kind of identifier Google+ uses to denote
+                people, pages, events and communities. You can usually find them
+                in the URL of the person/page/event/community:
+            </p>
+            <blockquote>
+                <dl class="dl-horizontal">
+                    <dt>person</dt>
+                    <dd><span class="tt">https://plus.google.com/OID</span></dd>
+                    <dt>event</dt>
+                    <dd><span class="tt">https://plus.google.com/events/OID</span></dd>
+                    <dt>community</dt>
+                    <dd><span class="tt">https://plus.google.com/communities/OID</span></dd>
+                </dl>
+            </blockquote>
+            <p>
+                Note that a person's URL can be different if they have chosen a
+                URL shorthand. To give an example, the page of <a target="_blank" href="https://plus.google.com/+HankJohnsonNomad">+Hank Johnson</a>.
+            </p>
+            <p>
+                The links to the person's id still contain the OID though. Try
+                hovering over Hank Johnson's name in the first post on his profile
+                page. You'll see that the URL is
+            </p>
+            <blockquote>
+                <span class="tt">https://plus.google.com/117792105926525258257</tt>
+            </blockquote>
+            <p>
+                This contains the OID.
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-10 col-sm-offset-1 col-md-6 col-md-offset-3">
+            <h2><a name="compat"></a>Compatibility with the original extension</h2>
+            <p>
+                Making this extension was not an original idea. We took the manifest
+                files from <a target="_blank" href="https://chrome.google.com/webstore/detail/cemdjcbehkacgpiielmiakooedjkkphk">another extension</a>
+                and implemented a new extension to show this data.
+            </p>
+            <p>
+                Why did we do this? Because we believe in open source. This extension's
+                code is licensed under the MIT license. Anyone can use it, anyone
+                can modify it. Of course we would like for the modified code to
+                be open source as well, but we won't force anyone to open source
+                their code.
+            </p>
+            <p>
+                We also wanted a modern interface, instead of the tables based UI
+                the original extension delivers. No offense to the author, but this
+                isn't the 90s anymore.
+            </p>
+            <h3>Manifest Compatibility</h3>
+            <p>
+                The manifests and sources this extension uses to fetch its data
+                are perfectly compatible with the manifests and sources of the
+                original extension.
+            </p>
+            <p>
+                This has a couple of drawbacks. There are things we would do differently
+                but haven't for the sake of compatibility:
+            </p>
+            <ul>
+                <li>
+                    <p>
+                        The extratags column in the manifest files. We would see that
+                        removed and use extra columns instead.
+                    </p>
+                    <p>
+                        If you have a source file for an anomaly, you often want to
+                        set 'anomaly' to the name of that anomaly, 'community' to the
+                        community you're in for the anomaly and 'event' to the event
+                        you went to. The resulting extratags becomes quite cluttered.
+                    </p>
+                </li>
+                <li>
+                    <p>
+                        See the notes above: we would make the faction, name, level
+                        and nickname optional as long as they're provided at least
+                        <em>once</em> per player.
+                    </p>
+                </li>
+            </ul>
+        </div>
+    </div>
+</body>

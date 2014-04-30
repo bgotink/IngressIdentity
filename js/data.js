@@ -13,9 +13,51 @@ window.iidentity = window.iidentity || {};
     var exports = module.data = {},
 
         anomalies = [ '13magnus', 'recursion', 'interitus' ],
+        mainPlayerData = ['name', 'nickname', 'oid', 'level'],
 
     // unexported helper functions and classes
 
+        filterEmpty = function (obj) {
+            var key;
+
+            for (key in obj) {
+                if (typeof obj[key] === 'object') {
+                    filterEmpty(obj[key]);
+                } else if (obj[key] === null || ('' + obj[key]).trim() === '') {
+                    delete obj[key];
+                }
+            }
+        },
+        getExtraDataValueName = function (str) {
+            var i = str.indexOf(':');
+
+            if (i === -1) {
+                return str.trim();
+            } else {
+                return str.substr(0, i).trim();
+            }
+        },
+        addToArray = function (src, dst) {
+            if (!Array.isArray(src)) {
+                src = [ src ];
+            }
+
+            var existing = [],
+                name;
+
+            dst.forEach(function (elem) {
+                existing.push(getExtraDataValueName(elem));
+            });
+
+            src.forEach(function (elem) {
+                name = getExtraDataValueName(elem);
+
+                if (existing.indexOf(name) === -1) {
+                    dst.push(elem);
+                    existing.push(name);
+                }
+            });
+        },
         merge_player = function () {
             if (arguments.length === 0) {
                 return false;
@@ -27,7 +69,8 @@ window.iidentity = window.iidentity || {};
                 src = arguments[1],
                 newArguments,
                 key,
-                extraKey;
+                extraKey,
+                tmp;
 
             if (typeof target.extra !== 'object') {
                 target.extra = {};
@@ -50,12 +93,20 @@ window.iidentity = window.iidentity || {};
                     for (extraKey in src.extra) {
                         if (extraKey in target.extra) {
                             if (Array.isArray(target.extra[extraKey])) {
-                                target.extra[extraKey].push(src.extra[extraKey]);
+                                addToArray(
+                                    src.extra[extraKey],
+                                    target.extra[extraKey]
+                                );
                             } else {
-                                target.extra[extraKey] = [
-                                    target.extra[extraKey],
-                                    src.extra[extraKey]
-                                ];
+                                tmp = [ target.extra[extraKey] ];
+                                addToArray(
+                                    src.extra[extraKey],
+                                    tmp
+                                );
+
+                                if (tmp.length > 1) {
+                                    target.extra[extraKey] = tmp;
+                                }
                             }
                         } else {
                             target.extra[extraKey] = src.extra[extraKey];
@@ -76,21 +127,37 @@ window.iidentity = window.iidentity || {};
                 this.key = key;
                 this.query = query;
                 this.data = data;
+                this.err = [];
                 this.timestamp = +new Date();
 
+                filterEmpty(data);
+
                 if ('extratags' in data) {
-                    data.extratags = JSON.parse(data.extratags);
+                    try {
+                        data.extratags = JSON.parse(data.extratags);
+                    } catch (e) {
+                        this.err.push('Invalid JSON in extratags: ' + e.message);
+                        data.extratags = {};
+                    }
                 } else {
                     data.extratags = {};
                 }
 
-                if (typeof data.extratags.anomaly !== 'undefined') {
+                if ('anomaly' in data.extratags) {
                     var anomaly = data.extratags.anomaly;
 
                     if (anomalies.indexOf(anomaly) === -1) {
-                        this.data.err = this.data.err || [];
-                        this.data.err.push('Invalid anomaly: ' + anomaly);
+                        this.err.push('Invalid anomaly: ' + anomaly);
                         delete data.extratags.anomaly;
+                    }
+                }
+
+                if ('community' in data.extratags) {
+                    var community = data.extratags.community;
+
+                    if (community.indexOf(':') === -1) {
+                        this.err.push('Invalid community: "' + community + '"');
+                        delete data.extratags.community;
                     }
                 }
 
@@ -113,13 +180,28 @@ window.iidentity = window.iidentity || {};
                     return null;
                 }
 
+                var rawPlayer = this.players[oid],
+                    player = {},
+                    key;
+                player.extra = {};
+
+                for (key in rawPlayer) {
+                    if (mainPlayerData.indexOf(key) !== -1) {
+                        player[key] = rawPlayer[key];
+                    } else {
+                        player.extra[key] = rawPlayer[key];
+                    }
+                }
+
+                filterEmpty(player);
+
                 return $.extend(
                     true,
                     {
                         faction: this.data.faction,
                         extra: this.data.extratags
                     },
-                    this.players[oid]
+                    player
                 );
             },
 
@@ -180,6 +262,13 @@ window.iidentity = window.iidentity || {};
                     }
                 });
             },
+
+            hasErrors: function () {
+                return this.err.length > 0;
+            },
+            getErrors: function () {
+                return this.err;
+            },
         }),
 
         CombinedPlayerSource = Class.extend({
@@ -191,6 +280,8 @@ window.iidentity = window.iidentity || {};
 
                 this.cache = {};
                 this.timestamp = +new Date;
+
+                this.loadingErrors = null;
             },
 
             getKey: function () {
@@ -365,6 +456,40 @@ window.iidentity = window.iidentity || {};
 
                 return this;
             },
+
+            hasErrors: function () {
+                return this.getSources().some(function (source) {
+                    return source.hasErrors();
+                });
+            },
+            getErrors: function () {
+                var errors = {};
+
+                this.getSources().forEach(function (source) {
+                    if (source.hasErrors()) {
+                        errors[source.getKey()] = source.getErrors();
+                    }
+                });
+
+                return $.extend(true, {}, errors, this.loadingErrors);
+            },
+
+            hasLoadingErrors: function () {
+                return !!this.loadingErrors;
+            },
+            setLoadingErrors: function (err) {
+                if (typeof err === 'undefined' || err === null) {
+                    this.loadingErrors = null;
+                    return;
+                }
+                if ((Array.isArray(err) ? err.length : Object.keys(err).length) === 0) {
+                    this.loadingErrors = null;
+                    return;
+                }
+
+                this.loadingErrors = err;
+                return this;
+            }
         }),
 
         loadSource = function (data, callback) {
@@ -386,26 +511,34 @@ window.iidentity = window.iidentity || {};
             var manifest = new module.spreadsheets.Manifest(key),
                 sources = [];
 
-            manifest.load(function (err, sourcesData) {
+            manifest.load(function (merr, sourcesData) {
+                module.log.log('Loaded manifest ', key, ', got ', sourcesData, 'err: ', merr);
                 if (sourcesData === null) {
-                    callback(err, null);
+                    callback({ __errors: merr }, null);
                     return;
                 }
 
-                err = err || [];
+                var err = {};
+                if (merr !== null) {
+                    err.__errors = merr;
+                }
 
                 var nbSources = sourcesData.length,
                     step = function (i) {
                         if (i >= nbSources) {
                             callback(
-                                err.length > 0 ? err : null,
+                                Object.keys(err).length > 0 ? err : null,
                                 new CombinedPlayerSource(sources, key, manifest)
                             );
                             return;
                         }
 
+                        var skey = sourcesData[i].key;
+
                         loadSource(sourcesData[i], function (err2, source) {
-                            err = err.concat(err2 || []);
+                            if (err2) {
+                                err[skey] = err2;
+                            }
 
                             if (source === null) {
                                 callback(err, null);
@@ -425,24 +558,24 @@ window.iidentity = window.iidentity || {};
         loadManifests = function (keys, callback) {
             var nbKeys = keys.length,
                 sources = [],
-                err = [],
+                err = {},
                 step = function (i) {
                     if (i >= nbKeys) {
                         callback(
-                            err.length > 0 ? err : null,
-                            new CombinedPlayerSource(sources)
+                            Object.keys(err).length > 0 ? err : null,
+                            sources.length > 0 ? new CombinedPlayerSource(sources) : null
                         );
                         return;
                     }
 
                     loadManifest(keys[i], function (err2, manifest) {
-                        err = err.concat(err2 || []);
-
-                        if (manifest === null) {
-                            callback(err, null);
-                            return;
+                        if (err2) {
+                            err[keys[i]] = err2;
                         }
-                        sources.push(manifest);
+
+                        if (manifest !== null) {
+                            sources.push(manifest);
+                        }
 
                         step(i + 1);
                     });

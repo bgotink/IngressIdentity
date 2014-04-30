@@ -20,7 +20,7 @@ window.iidentity = window.iidentity || {};
     // unexported helper functions and classes
 
         checkKeyExists = function (arr, key, err, row) {
-            if (!key in arr) {
+            if (!key in arr || arr[key] === null || ('' + arr[key]).trim() === '') {
                 err.push('Expected key ' + key + ' to exist in row ' + row);
             }
         },
@@ -150,8 +150,11 @@ window.iidentity = window.iidentity || {};
 
             data.forEach(function (elem) {
                 checkKeyExists(elem, 'oid',      err, i);
-                checkKeyExists(elem, 'name',     err, i);
-                checkKeyExists(elem, 'nickname', err, i);
+
+                // frankly, we don't care
+                // checkKeyExists(elem, 'name',     err, i);
+                // checkKeyExists(elem, 'nickname', err, i);
+                // checkKeyExists(elem, 'level',    err, i);
 
                 i++;
             });
