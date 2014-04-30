@@ -15,13 +15,16 @@ window.iidentity = window.iidentity || {};
         lastUpdate = +new Date;
 
     exports.send = function (request, callback) {
-        chrome.runtime.sendMessage({ request: request, lastUpdate: lastUpdate },
+        request = { request: request, lastUpdate: lastUpdate };
+        lastUpdate = +new Date;
+
+        chrome.runtime.sendMessage(
+            request,
             function (reply) {
                 callback(reply.reply);
 
+                lastUpdate = +new Date;
                 if (reply.shouldUpdate) {
-                    lastUpdate = +new Date;
-
                     if (onUpdate) {
                         onUpdate();
                     }
@@ -32,7 +35,6 @@ window.iidentity = window.iidentity || {};
 
     chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         if (request.type === 'update') {
-
             lastUpdate = +new Date;
 
             if (onUpdate) {

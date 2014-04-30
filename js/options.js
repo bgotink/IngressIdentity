@@ -62,13 +62,15 @@ window.iidentity = window.iidentity || {};
         },
 
         showAlert = function (id) {
-            console.log('showing alert %s', id);
+            module.log.log('showing alert %s', id);
             $('.alert').addClass('hide');
             $('.alert-' + id).removeClass('hide');
         },
 
         reloadManifestErrorsHelper = function (errors, $elem) {
             if (Array.isArray(errors)) {
+                $elem.find('> p.error').remove();
+
                 errors.forEach(function (err) {
                     $elem.append(
                         $('<p>')
@@ -93,30 +95,30 @@ window.iidentity = window.iidentity || {};
             }
             $('#source_list > ul').data('errors-loaded', true);
 
-            console.log('Reloading manifest errors...');
+            module.log.log('Reloading manifest errors...');
             comm.getManifestErrors(function (result) {
-                console.log('Got manifest errors: ', result);
+                module.log.log('Got manifest errors: ', result);
 
                 reloadManifestErrorsHelper(result, $('#source_list > ul'));
             });
         },
 
         reloadManifests = function () {
-            console.log('Reloading manifests...');
+            module.log.log('Reloading manifests...');
             comm.getManifests(function (result) {
                 var key,
                     manifestList = [],
                     sourceList;
 
-                console.log('Got manifest info: ', result);
+                module.log.log('Got manifest info: ', result);
 
                 for (key in result) {
                     sourceList = [];
 
-                    console.log('Manifest key %s', key);
+                    module.log.log('Manifest key %s', key);
 
                     result[key].forEach(function (source) {
-                        console.log('-- Source key %s', source.key);
+                        module.log.log('-- Source key %s', source.key);
 
                         sourceList.push(
                             $('<li>')
@@ -152,6 +154,11 @@ window.iidentity = window.iidentity || {};
                                     .html('&times;')
                                     .attr('href', '#')
                                     .addClass('remove')
+                            )
+                            .append(
+                                $('<ul>')
+                                    .addClass('errors')
+                                    .attr('data-key', '__errors')
                             )
                             .append(
                                 $('<ul>')
@@ -199,10 +206,9 @@ window.iidentity = window.iidentity || {};
         },
 
         addManifest = function () {
-            console.log('Adding manifest %s', $('#manifest_input').val());
+            module.log.log('Adding manifest %s', $('#manifest_input').val());
             comm.addManifest($('#manifest_input').val(), function (result) {
-                if (result === 'success') {
-                    reloadManifests();
+                if (result !== 'failed') {
                     $('#manifest_input').val('');
                 }
 
@@ -218,12 +224,7 @@ window.iidentity = window.iidentity || {};
         $('#reload_sources').on('click.ii.reload', function () {
             $(this).button('loading');
             comm.reloadData(function (result) {
-                if (result) {
-                    reloadManifests();
-                    showAlert('reload-success');
-                } else {
-                    showAlert('reload-failed');
-                }
+                showAlert('reload-' + result);
             });
         });
 
@@ -237,10 +238,6 @@ window.iidentity = window.iidentity || {};
             comm.removeManifest(
                 $(this).parent().data('key'),
                 function (result) {
-                    if (result === 'success') {
-                        reloadManifests();
-                    }
-
                     showAlert('remove-' + result);
                 }
             );

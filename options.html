@@ -14,6 +14,7 @@
     <script type="text/javascript" src="vendor/js/bootstrap.min.js"></script>
 
     <!-- Our JS -->
+    <script type="text/javascript" src="js/log.js"></script>
     <script type="text/javascript" src="js/communication.js"></script>
     <script type="text/javascript" src="js/options.js"></script>
 </head>
@@ -35,7 +36,11 @@
                 <button type="button" class="close" aria-hidden="true">&times;</button>
                 <strong>Success!</strong> The data was successfully reloaded.
             </div>
-            <div class="hide alert alert-danger alert-dismissable alert-reload-failed">
+            <div class="hide alert alert-warning alert-dismissable alert-reload-warning">
+                <button type="button" class="close" aria-hidden="true">&times;</button>
+                <strong>Warning!</strong> Something went wrong when reloading the data.
+            </div>
+            <div class="hide alert alert- alert-dismissable alert-reload-failed">
                 <button type="button" class="close" aria-hidden="true">&times;</button>
                 <strong>Error!</strong> Something went wrong when reloading the data.
             </div>
@@ -47,6 +52,10 @@
             <div class="hide alert alert-warning alert-dismissable alert-add-duplicate">
                 <button type="button" class="close" aria-hidden="true">&times;</button>
                 <strong>Warning!</strong> The given manifest is already loaded.
+            </div>
+            <div class="hide alert alert-warning alert-dismissable alert-add-warning">
+                <button type="button" class="close" aria-hidden="true">&times;</button>
+                <strong>Warning!</strong> Something went wrong when adding the manifest.
             </div>
             <div class="hide alert alert-danger alert-dismissable alert-add-failed">
                 <button type="button" class="close" aria-hidden="true">&times;</button>
@@ -60,6 +69,10 @@
             <div class="hide alert alert-warning alert-dismissable alert-remove-nonexistent">
                 <button type="button" class="close" aria-hidden="true">&times;</button>
                 <strong>Warning!</strong> The given manifest was not loaded.
+            </div>
+            <div class="hide alert alert-warning alert-dismissable alert-remove-warning">
+                <button type="button" class="close" aria-hidden="true">&times;</button>
+                <strong>Warning!</strong> Something went wrong when removing the manifest.
             </div>
             <div class="hide alert alert-danger alert-dismissable alert-remove-failed">
                 <button type="button" class="close" aria-hidden="true">&times;</button>

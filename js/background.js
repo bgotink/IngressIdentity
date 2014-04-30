@@ -151,15 +151,16 @@ window.iidentity = window.iidentity || {};
                 module.data.loadManifests(storedData, function (err, newData) {
                     if (newData !== null) {
                         data = newData;
+                        data.setLoadingErrors(err);
 
                         if ('manifests' in storageCache) {
                             delete storageCache.manifests;
                         }
 
                         updateTabs();
-                        callback(err, true);
+                        callback(null, data.hasLoadingErrors() ? 'warning' : 'success');
                     } else {
-                        callback(err, false);
+                        callback(err, 'failed');
                     }
                 });
             });
@@ -222,18 +223,17 @@ window.iidentity = window.iidentity || {};
 
                 if (manifest === null) {
                     module.log.error('Strangely this manifest cannot be found');
-                    return;
-                }
-
-                manifest.getSources().forEach(function (source) {
-                    manifestData.push({
-                        key:     source.getKey(),
-                        tag:     source.getTag(),
-                        count:   source.getNbPlayers(),
-                        version: source.getVersion(),
-                        faction: source.getFaction(),
+                } else {
+                    manifest.getSources().forEach(function (source) {
+                        manifestData.push({
+                            key:     source.getKey(),
+                            tag:     source.getTag(),
+                            count:   source.getNbPlayers(),
+                            version: source.getVersion(),
+                            faction: source.getFaction(),
+                        });
                     });
-                });
+                }
 
                 module.log.log('Manifest %s contains the following data:', key);
                 module.log.log(manifestData);
@@ -283,7 +283,7 @@ window.iidentity = window.iidentity || {};
 
             reloadData(function (err, status) {
                 disableUpdateListener = false;
-                sendResponse({ status: status ? 'success' : 'failed', err: err });
+                sendResponse({ status: status, err: err });
             });
         });
 
@@ -307,7 +307,7 @@ window.iidentity = window.iidentity || {};
 
             reloadData(function (err, status) {
                 disableUpdateListener = false;
-                sendResponse({ status: status ? 'success' : 'failed', err: err });
+                sendResponse({ status: status, err: err });
             });
         });
 
@@ -322,7 +322,7 @@ window.iidentity = window.iidentity || {};
         }
 
         reloadData(function (err, status) {
-            sendResponse({ status: status ? 'success' : 'failed', err: err });
+            sendResponse({ status: status, err: err });
         });
 
         return true;
@@ -494,18 +494,22 @@ window.iidentity = window.iidentity || {};
                 return;
             }
 
-            var reply = null;
+            var reply = null,
+                realRequest;
 
             if (request.lastUpdate) {
-                reply = { shouldUpdate: data === null ? false : data.shouldUpdateRemote(request.lastUpdate) };
+                reply = {};
 
-                request = request.request;
+                realRequest = request.request;
+            } else {
+                realRequest = request;
             }
 
-            if (request.type in messageListeners) {
-                return messageListeners[request.type](request, sender, function (response) {
+            if (realRequest.type in messageListeners) {
+                return messageListeners[realRequest.type](realRequest, sender, function (response) {
                     if (reply !== null) {
                         reply.reply = response;
+                        reply.shouldUpdate = data === null ? false : data.shouldUpdateRemote(request.lastUpdate);
                     } else {
                         reply = response;
                     }
