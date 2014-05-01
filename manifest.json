@@ -1,8 +1,8 @@
 {
     "manifest_version": 2,
 
-    "name": "Ingress Identity - dev",
-    "version": "0.3.1",
+    "name": "Ingress Identity",
+    "version": "0.3.2",
     "description": "Adds Ingress identity to G+ profiles",
     "icons": {
         "16":  "img/logo/16.png",
