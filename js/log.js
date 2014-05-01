@@ -11,7 +11,7 @@ window.iidentity = window.iidentity || {};
 
 (function (module, window) {
     var exports = (module.log = {}),
-        enableLogging = false,
+        enableLogging = true,
         proxy = function (func, force) {
             return function () {
                 if (force || enableLogging) {

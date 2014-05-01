@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
 
-    "name": "Ingress Identity",
+    "name": "Ingress Identity - dev",
     "version": "0.3.0",
     "description": "Adds Ingress identity to G+ profiles",
     "icons": {
@@ -19,7 +19,7 @@
 
     "options_page": "options.html",
 
-    "content_security_policy": "script-src 'self' https://www.google.com https://spreadsheets.google.com; object-src 'self'",
+    "content_security_policy": "script-src 'self' https://www.google.com https://spreadsheets.google.com https://docs.google.com; object-src 'self'",
     "content_scripts": [
         {
             "matches": [ "https://plus.google.com/*" ],
