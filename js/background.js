@@ -213,7 +213,8 @@ window.iidentity = window.iidentity || {};
         getManifestKeys(function (keys) {
             var result = {},
                 manifest,
-                manifestData;
+                manifestData,
+                tmp;
 
             module.log.log('Loaded manifests: ', keys);
 
@@ -222,23 +223,32 @@ window.iidentity = window.iidentity || {};
                 manifestData = [];
 
                 if (manifest === null) {
-                    module.log.error('Strangely this manifest cannot be found');
+                    module.log.error('Strangely manifest %s cannot be found', key);
                 } else {
                     manifest.getSources().forEach(function (source) {
-                        manifestData.push({
+                        tmp = {
                             key:     source.getKey(),
                             tag:     source.getTag(),
                             count:   source.getNbPlayers(),
                             version: source.getVersion(),
                             faction: source.getFaction(),
-                        });
+                        };
+
+                        if (source.getUrl() !== null) {
+                            tmp.url = source.getUrl();
+                        }
+
+                        manifestData.push(tmp);
                     });
                 }
 
                 module.log.log('Manifest %s contains the following data:', key);
                 module.log.log(manifestData);
 
-                result[key] = manifestData;
+                result[key] = {
+                    sources: manifestData,
+                    url : manifest ? manifest.getUrl() : null
+                };
             });
 
             storageCache.manifests = result;

@@ -72,11 +72,15 @@ window.iidentity = window.iidentity || {};
                 $elem.find('> p.error').remove();
 
                 errors.forEach(function (err) {
-                    $elem.append(
-                        $('<p>')
-                            .addClass('error')
-                            .text(err)
-                    );
+                    if (err.match(/Sign in/i) && err.subsr(0, 2) == '<a' && err.substr(-4) === '</a>') {
+                        $elem.append($(err));
+                    } else {
+                        $elem.append(
+                            $('<p>')
+                                .addClass('error')
+                                .text(err)
+                        );
+                    }
                 });
             } else {
                 var key;
@@ -116,8 +120,9 @@ window.iidentity = window.iidentity || {};
                     sourceList = [];
 
                     module.log.log('Manifest key %s', key);
+                    module.log.log(result[key]);
 
-                    result[key].forEach(function (source) {
+                    result[key].sources.forEach(function (source) {
                         module.log.log('-- Source key %s', source.key);
 
                         sourceList.push(
@@ -126,10 +131,12 @@ window.iidentity = window.iidentity || {};
                                 .addClass('faction-' + source.faction)
                                 .attr('data-key', source.key)
                                 .append(
-                                    $('<a>')
-                                        .text(source.tag)
-                                        .attr('target', '_blank')
-                                        .attr('href', 'https://docs.google.com/spreadsheet/ccc?key=' + source.key)
+                                    source.url
+                                        ? $('<a>')
+                                            .text(source.tag)
+                                            .attr('target', '_blank')
+                                            .attr('href', source.url)
+                                        : $('<span>').text(source.tag)
                                 )
                                 .append(
                                     $('<p>')
@@ -144,10 +151,12 @@ window.iidentity = window.iidentity || {};
                             .data('key', key)
                             .attr('data-key', key)
                             .append(
-                                $('<a>')
-                                    .text(key)
-                                    .attr('target', '_blank')
-                                    .attr('href', 'https://docs.google.com/spreadsheet/ccc?key=' + key)
+                                result[key].url
+                                    ? $('<a>')
+                                        .text(key)
+                                        .attr('target', '_blank')
+                                        .attr('href', result[key].url)
+                                    : $('<span>').text(key)
                             )
                             .append(
                                 $('<a>')
@@ -207,10 +216,17 @@ window.iidentity = window.iidentity || {};
 
         addManifest = function () {
             module.log.log('Adding manifest %s', $('#manifest_input').val());
+
+            $('#manifest_input').attr('disabled', true);
+            $('button.manifest_add').button('loading');
+
             comm.addManifest($('#manifest_input').val(), function (result) {
                 if (result !== 'failed') {
                     $('#manifest_input').val('');
                 }
+
+                $('#manifest_input').attr('disabled', null);
+                $('button.manifest_add').button('reset');
 
                 showAlert('add-' + result);
             });
