@@ -116,8 +116,9 @@ window.iidentity = window.iidentity || {};
                     sourceList = [];
 
                     module.log.log('Manifest key %s', key);
+                    module.log.log(result[key]);
 
-                    result[key].forEach(function (source) {
+                    result[key].sources.forEach(function (source) {
                         module.log.log('-- Source key %s', source.key);
 
                         sourceList.push(
@@ -126,10 +127,12 @@ window.iidentity = window.iidentity || {};
                                 .addClass('faction-' + source.faction)
                                 .attr('data-key', source.key)
                                 .append(
-                                    $('<a>')
-                                        .text(source.tag)
-                                        .attr('target', '_blank')
-                                        .attr('href', 'https://docs.google.com/spreadsheet/ccc?key=' + source.key)
+                                    source.url
+                                        ? $('<a>')
+                                            .text(source.tag)
+                                            .attr('target', '_blank')
+                                            .attr('href', source.url)
+                                        : $('<span>').text(source.tag)
                                 )
                                 .append(
                                     $('<p>')
@@ -144,10 +147,12 @@ window.iidentity = window.iidentity || {};
                             .data('key', key)
                             .attr('data-key', key)
                             .append(
-                                $('<a>')
-                                    .text(key)
-                                    .attr('target', '_blank')
-                                    .attr('href', 'https://docs.google.com/spreadsheet/ccc?key=' + key)
+                                result[key].url
+                                    ? $('<a>')
+                                        .text(key)
+                                        .attr('target', '_blank')
+                                        .attr('href', result[key].url)
+                                    : $('<span>').text(key)
                             )
                             .append(
                                 $('<a>')
