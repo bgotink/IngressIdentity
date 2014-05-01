@@ -212,10 +212,17 @@ window.iidentity = window.iidentity || {};
 
         addManifest = function () {
             module.log.log('Adding manifest %s', $('#manifest_input').val());
+
+            $('#manifest_input').attr('disabled', true);
+            $('button.manifest_add').button('loading');
+
             comm.addManifest($('#manifest_input').val(), function (result) {
                 if (result !== 'failed') {
                     $('#manifest_input').val('');
                 }
+
+                $('#manifest_input').attr('disabled', null);
+                $('button.manifest_add').button('reset');
 
                 showAlert('add-' + result);
             });
