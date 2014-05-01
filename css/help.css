@@ -6,6 +6,10 @@ span.tt {
     font-family: "Lucida Console", Monaco, monospace;
 }
 
+p {
+    text-align: justify;
+}
+
 @media (min-width: 992px) {
     body > .background {
         background: linear-gradient(rgba(255,255,255,.8), rgba(255,255,255,.8)), url(../img/logo/ingress.png) no-repeat top left;

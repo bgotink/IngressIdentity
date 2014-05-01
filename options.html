@@ -20,217 +20,219 @@
 </head>
 <body>
     <div class="background"></div>
-    <div class="row">
-        <div class="col-sm-10 col-sm-offset-1 col-md-6 col-md-offset-3">
-            <h1>
-                IngressIdentity Options
-                <a target="_blank" href="help.html" class="btn btn-default help pull-right">Help</a> 
-            </h1>
-            <p>
-                This options page allows you to configure the manifests to use
-                when identifying people on G+. It also provides some tools to
-                help acquiring data to put in manifest files or source files.
-            </p>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-8 col-sm-offset-2 col-md-4 col-md-offset-4">
-            <div class="hide alert alert-success alert-dismissable alert-reload-success">
-                <button type="button" class="close" aria-hidden="true">&times;</button>
-                <strong>Success!</strong> The data was successfully reloaded.
-            </div>
-            <div class="hide alert alert-warning alert-dismissable alert-reload-warning">
-                <button type="button" class="close" aria-hidden="true">&times;</button>
-                <strong>Warning!</strong> Something went wrong when reloading the data.
-            </div>
-            <div class="hide alert alert- alert-dismissable alert-reload-failed">
-                <button type="button" class="close" aria-hidden="true">&times;</button>
-                <strong>Error!</strong> Something went wrong when reloading the data.
-            </div>
-
-            <div class="hide alert alert-success alert-dismissable alert-add-success">
-                <button type="button" class="close" aria-hidden="true">&times;</button>
-                <strong>Success!</strong> The manifest file was successfully added.
-            </div>
-            <div class="hide alert alert-warning alert-dismissable alert-add-duplicate">
-                <button type="button" class="close" aria-hidden="true">&times;</button>
-                <strong>Warning!</strong> The given manifest is already loaded.
-            </div>
-            <div class="hide alert alert-warning alert-dismissable alert-add-warning">
-                <button type="button" class="close" aria-hidden="true">&times;</button>
-                <strong>Warning!</strong> Something went wrong when adding the manifest.
-            </div>
-            <div class="hide alert alert-danger alert-dismissable alert-add-failed">
-                <button type="button" class="close" aria-hidden="true">&times;</button>
-                <strong>Error!</strong> Something went wrong when adding the manifest.
-            </div>
-
-            <div class="hide alert alert-success alert-dismissable alert-remove-success">
-                <button type="button" class="close" aria-hidden="true">&times;</button>
-                <strong>Success!</strong> The manifest file was successfully removed.
-            </div>
-            <div class="hide alert alert-warning alert-dismissable alert-remove-nonexistent">
-                <button type="button" class="close" aria-hidden="true">&times;</button>
-                <strong>Warning!</strong> The given manifest was not loaded.
-            </div>
-            <div class="hide alert alert-warning alert-dismissable alert-remove-warning">
-                <button type="button" class="close" aria-hidden="true">&times;</button>
-                <strong>Warning!</strong> Something went wrong when removing the manifest.
-            </div>
-            <div class="hide alert alert-danger alert-dismissable alert-remove-failed">
-                <button type="button" class="close" aria-hidden="true">&times;</button>
-                <strong>Error!</strong> Something went wrong when removing the manifest.
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-10 col-sm-offset-1 col-md-6 col-md-offset-3">
+                <h1>
+                    IngressIdentity Options
+                    <a target="_blank" href="help.html" class="btn btn-default help pull-right">Help</a>
+                </h1>
+                <p>
+                    This options page allows you to configure the manifests to use
+                    when identifying people on G+. It also provides some tools to
+                    help acquiring data to put in manifest files or source files.
+                </p>
             </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-10 col-sm-offset-1 col-md-6 col-md-offset-3 sources">
-            <h2>Data Sources <button id="reload_sources" type="button" class="btn btn-default btn-sm" data-loading-text="Reloading...">
-                <span class="glyphicon glyphicon-refresh"></span>
-                Force reload
-            </button></h2>
-            <div class="row">
-                <div class="col-sm-12 listing">
-                    <div id="source_list"></div>
+        <div class="row">
+            <div class="col-sm-8 col-sm-offset-2 col-md-4 col-md-offset-4">
+                <div class="hide alert alert-success alert-dismissable alert-reload-success">
+                    <button type="button" class="close" aria-hidden="true">&times;</button>
+                    <strong>Success!</strong> The data was successfully reloaded.
+                </div>
+                <div class="hide alert alert-warning alert-dismissable alert-reload-warning">
+                    <button type="button" class="close" aria-hidden="true">&times;</button>
+                    <strong>Warning!</strong> Something went wrong when reloading the data.
+                </div>
+                <div class="hide alert alert- alert-dismissable alert-reload-failed">
+                    <button type="button" class="close" aria-hidden="true">&times;</button>
+                    <strong>Error!</strong> Something went wrong when reloading the data.
+                </div>
+
+                <div class="hide alert alert-success alert-dismissable alert-add-success">
+                    <button type="button" class="close" aria-hidden="true">&times;</button>
+                    <strong>Success!</strong> The manifest file was successfully added.
+                </div>
+                <div class="hide alert alert-warning alert-dismissable alert-add-duplicate">
+                    <button type="button" class="close" aria-hidden="true">&times;</button>
+                    <strong>Warning!</strong> The given manifest is already loaded.
+                </div>
+                <div class="hide alert alert-warning alert-dismissable alert-add-warning">
+                    <button type="button" class="close" aria-hidden="true">&times;</button>
+                    <strong>Warning!</strong> Something went wrong when adding the manifest.
+                </div>
+                <div class="hide alert alert-danger alert-dismissable alert-add-failed">
+                    <button type="button" class="close" aria-hidden="true">&times;</button>
+                    <strong>Error!</strong> Something went wrong when adding the manifest.
+                </div>
+
+                <div class="hide alert alert-success alert-dismissable alert-remove-success">
+                    <button type="button" class="close" aria-hidden="true">&times;</button>
+                    <strong>Success!</strong> The manifest file was successfully removed.
+                </div>
+                <div class="hide alert alert-warning alert-dismissable alert-remove-nonexistent">
+                    <button type="button" class="close" aria-hidden="true">&times;</button>
+                    <strong>Warning!</strong> The given manifest was not loaded.
+                </div>
+                <div class="hide alert alert-warning alert-dismissable alert-remove-warning">
+                    <button type="button" class="close" aria-hidden="true">&times;</button>
+                    <strong>Warning!</strong> Something went wrong when removing the manifest.
+                </div>
+                <div class="hide alert alert-danger alert-dismissable alert-remove-failed">
+                    <button type="button" class="close" aria-hidden="true">&times;</button>
+                    <strong>Error!</strong> Something went wrong when removing the manifest.
                 </div>
             </div>
-            <div class="row">
-                <div class="col-sm-12 input">
-                    <h3>Add a new manifest</h3>
-                    <form class="manifest_add" role="form" action="#">
-                        <div class="form-group">
-                            <label for="manifest_input">Manifest Key</label>
-                            <input id="manifest_input" class="form-control" type="text" placeholer="0AtpJ3MMfk4gjdFJxdW41VHdxVC1nTnU2RVh1RUk4THc">
-                            <div class="help-block">
-                                <p>
-                                    You can find this key in the URL of the google
-                                    drive document:
-                                </p>
-                                <blockquote>
-                                    <p>https://docs.google.com/spreadsheet/ccc?key=THIS_IS_THE_KEY</p>
-                                </blockquote>
-                                <p>
-                                    If you want to see an example of a manifest file, add manifest
+        </div>
+        <div class="row">
+            <div class="col-sm-10 col-sm-offset-1 col-md-6 col-md-offset-3 sources">
+                <h2>Data Sources <button id="reload_sources" type="button" class="btn btn-default btn-sm" data-loading-text="Reloading...">
+                    <span class="glyphicon glyphicon-refresh"></span>
+                    Force reload
+                </button></h2>
+                <div class="row">
+                    <div class="col-sm-12 listing">
+                        <div id="source_list"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 input">
+                        <h3>Add a new manifest</h3>
+                        <form class="manifest_add" role="form" action="#">
+                            <div class="form-group">
+                                <label for="manifest_input">Manifest Key</label>
+                                <input id="manifest_input" class="form-control" type="text" placeholer="0AtpJ3MMfk4gjdFJxdW41VHdxVC1nTnU2RVh1RUk4THc">
+                                <div class="help-block">
+                                    <p>
+                                        You can find this key in the URL of the google
+                                        drive document:
+                                    </p>
                                     <blockquote>
-                                        <a target="_blank" href="https://docs.google.com/spreadsheet/ccc?key=0AlQqEFrEHdKSdG9GTG83T21XZURhZEozd01Lb3BxTmc">0AlQqEFrEHdKSdG9GTG83T21XZURhZEozd01Lb3BxTmc</a>
+                                        <p>https://docs.google.com/spreadsheet/ccc?key=THIS_IS_THE_KEY</p>
                                     </blockquote>
-                                    Then take a look at <a target="_blank" href="https://plus.google.com/+NianticProject/posts/eTDoXUG8TkB">this post by the Niantic Project</a> or <a target="_blank" href="https://plus.google.com/110350977702120778591/posts/GH32VJw1fhA">this post by Klue/ADA</a>.
-                                </p>
+                                    <p>
+                                        If you want to see an example of a manifest file, add manifest
+                                        <blockquote>
+                                            <a target="_blank" href="https://docs.google.com/spreadsheet/ccc?key=0AlQqEFrEHdKSdG9GTG83T21XZURhZEozd01Lb3BxTmc">0AlQqEFrEHdKSdG9GTG83T21XZURhZEozd01Lb3BxTmc</a>
+                                        </blockquote>
+                                        Then take a look at <a target="_blank" href="https://plus.google.com/+NianticProject/posts/eTDoXUG8TkB">this post by the Niantic Project</a> or <a target="_blank" href="https://plus.google.com/110350977702120778591/posts/GH32VJw1fhA">this post by Klue/ADA</a>.
+                                    </p>
+                                </div>
                             </div>
-                        </div>
-                        <button type="button" class="btn btn-primary manifest_add">
-                            <span class="glyphicon glyphicon-plus"></span>
-                            Add manifest
-                        </button>
-                    </form>
+                            <button type="button" class="btn btn-primary manifest_add">
+                                <span class="glyphicon glyphicon-plus"></span>
+                                Add manifest
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-10 col-sm-offset-1 col-md-6 col-md-offset-3 settings">
-            <h2>Settings</h2>
-            <p>
-                This section contains some settings for the extension. Some settings
-                will lead the extension to request extra permissions.
-            </p>
-            <div>
-                <h3><button id="enable_push" type="button" data-loading-text="Storing..." class="btn btn-default btn-sm">Enable</button> Automatically push source updates to the webpages</h3>
+        <div class="row">
+            <div class="col-sm-10 col-sm-offset-1 col-md-6 col-md-offset-3 settings">
+                <h2>Settings</h2>
                 <p>
-                    An extra permission is required in order to send messages from
-                    the extension to the tabs where its content scripts run. Without
-                    this permission, the extension can only reply to messages sent
-                    from those scripts.
+                    This section contains some settings for the extension. Some settings
+                    will lead the extension to request extra permissions.
                 </p>
-                <p>
-                    If this option is disabled (default), the G+ page will update
-                    when the first request has been sent after that update became
-                    availble.
-                </p>
-                <p>
-                    Enabling this extension makes that operation happen automatically,
-                    without the need for the content script to send a request first.
-                </p>
-                <p>
-                    The needed extra permission is 'Access to your tabs and browsing activity'.
-                    This extension does not require it by default because some people don't
-                    trust extensions that require this permission.
-                </p>
-                <p>
-                    You only see the prompt to grant the permission once. Chrome
-                    remembers your choice if you granted the permission and will
-                    automatically grant it again the next time this extension
-                    requests it.
-                </p>
-                <p>
-                    Disabling this option revokes the requested permission.
-                    You can check this by clicking the 'Permissions' link next
-                    to this extension on <a href="chrome://extensions">chrome://extensions</a>.
-                </p>
-            </div>
-            <div>
-                <h3>Layout options</h3>
-                <p>This subsection contains a couple of layout tweaks.</p>
                 <div>
-                    <h4><button id="enable_anomalies" type="button" data-loading-text="Storing..." class="btn btn-default btn-sm">Enable</button> Show anomaly badges</h4>
+                    <h3><button id="enable_push" type="button" data-loading-text="Storing..." class="btn btn-default btn-sm">Enable</button> Automatically push source updates to the webpages</h3>
                     <p>
-                        Enable/disable showing the anomaly badges.
+                        An extra permission is required in order to send messages from
+                        the extension to the tabs where its content scripts run. Without
+                        this permission, the extension can only reply to messages sent
+                        from those scripts.
+                    </p>
+                    <p>
+                        If this option is disabled (default), the G+ page will update
+                        when the first request has been sent after that update became
+                        availble.
+                    </p>
+                    <p>
+                        Enabling this extension makes that operation happen automatically,
+                        without the need for the content script to send a request first.
+                    </p>
+                    <p>
+                        The needed extra permission is 'Access to your tabs and browsing activity'.
+                        This extension does not require it by default because some people don't
+                        trust extensions that require this permission.
+                    </p>
+                    <p>
+                        You only see the prompt to grant the permission once. Chrome
+                        remembers your choice if you granted the permission and will
+                        automatically grant it again the next time this extension
+                        requests it.
+                    </p>
+                    <p>
+                        Disabling this option revokes the requested permission.
+                        You can check this by clicking the 'Permissions' link next
+                        to this extension on <a href="chrome://extensions">chrome://extensions</a>.
                     </p>
                 </div>
                 <div>
-                    <h4>Select matches</h4>
-                    <p>
-                        Enable/disable matching certain elements for players.
-                    </p>
-                    <p>
-                        <button type="button" data-loading-text="Storing..." class="btn btn-default btn-sm" data-match="a.Ug[oid]">
-                            Enable
-                        </button>
-                        Match profile pop-ups.
-                    </p>
-                    <p>
-                        <button type="button" data-loading-text="Storing..." class="btn btn-default btn-sm" data-match="a.ob.tv.Ub[oid]">
-                            Enable
-                        </button>
-                        Match authors of posts and comments, event RSVP, event creator etc.
-                    </p>
-                    <p>
-                        <button type="button" data-loading-text="Storing..." class="btn btn-default btn-sm" data-match="a.proflink.aaTEdf[oid]">
-                            Enable
-                        </button>
-                        Match mentions in posts.
-                    </p>
+                    <h3>Layout options</h3>
+                    <p>This subsection contains a couple of layout tweaks.</p>
+                    <div>
+                        <h4><button id="enable_anomalies" type="button" data-loading-text="Storing..." class="btn btn-default btn-sm">Enable</button> Show anomaly badges</h4>
+                        <p>
+                            Enable/disable showing the anomaly badges.
+                        </p>
+                    </div>
+                    <div>
+                        <h4>Select matches</h4>
+                        <p>
+                            Enable/disable matching certain elements for players.
+                        </p>
+                        <p>
+                            <button type="button" data-loading-text="Storing..." class="btn btn-default btn-sm" data-match="a.Ug[oid]">
+                                Enable
+                            </button>
+                            Match profile pop-ups.
+                        </p>
+                        <p>
+                            <button type="button" data-loading-text="Storing..." class="btn btn-default btn-sm" data-match="a.ob.tv.Ub[oid]">
+                                Enable
+                            </button>
+                            Match authors of posts and comments, event RSVP, event creator etc.
+                        </p>
+                        <p>
+                            <button type="button" data-loading-text="Storing..." class="btn btn-default btn-sm" data-match="a.proflink.aaTEdf[oid]">
+                                Enable
+                            </button>
+                            Match mentions in posts.
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-10 col-sm-offset-1 col-md-6 col-md-offset-3 about">
-            <h2>About</h2>
-            <p>
-                This extension is written and maintained by <a target="_blank" href="https://github.com/bgotink">Bram Gotink</a>.
-                The code is &copy; 2014 Bram Gotink, licensed under the terms of the <a target="_blank" href="http://en.wikipedia.org/wiki/MIT_License">MIT License</a>.
-                The source of this project can be found on <a target="_blank" href="https://github.com/bgotink/IngressIdentity">GitHub</a>.
-            </p>
-            <h3>Acknowledgements</h3>
-            <p>
-                This project uses code by <a target="_blank" href="https://jquery.org/">jQuery</a>,
-                <a target="_blank" href="http://ejohn.org/blog/simple-javascript-inheritance/">John Resig</a>
-                and <a target="_blank" href="https://github.com/twbs/bootstrap">Twitter's Bootstrap</a>.
-            </p>
-            <p>
-                The logo is derived from the ingress logos created by <a target="_blank" href="https://github.com/cr0ybot/ingress-logos">cr0ybot</a>.
-            </p>
-            <h3>Bug Report / Feature Request</h3>
-            <p>
-                If you've found a bug or have an idea for a killer feature, feel
-                free to let me know <a target="_blank" href="https://github.com/bgotink/IngressIdentity/issues">here</a>.
-            </p>
-            <h3>Disclaimer</h3>
-            <p>
-                The extension is in no way affiliated with Ingress or Google. It merely serves as
-                third-party support for Ingress Players and Ingress Communities living on Google+.
-            </p>
+        <div class="row">
+            <div class="col-sm-10 col-sm-offset-1 col-md-6 col-md-offset-3 about">
+                <h2>About</h2>
+                <p>
+                    This extension is written and maintained by <a target="_blank" href="https://github.com/bgotink">Bram Gotink</a>.
+                    The code is &copy; 2014 Bram Gotink, licensed under the terms of the <a target="_blank" href="http://en.wikipedia.org/wiki/MIT_License">MIT License</a>.
+                    The source of this project can be found on <a target="_blank" href="https://github.com/bgotink/IngressIdentity">GitHub</a>.
+                </p>
+                <h3>Acknowledgements</h3>
+                <p>
+                    This project uses code by <a target="_blank" href="https://jquery.org/">jQuery</a>,
+                    <a target="_blank" href="http://ejohn.org/blog/simple-javascript-inheritance/">John Resig</a>
+                    and <a target="_blank" href="https://github.com/twbs/bootstrap">Twitter's Bootstrap</a>.
+                </p>
+                <p>
+                    The logo is derived from the ingress logos created by <a target="_blank" href="https://github.com/cr0ybot/ingress-logos">cr0ybot</a>.
+                </p>
+                <h3>Bug Report / Feature Request</h3>
+                <p>
+                    If you've found a bug or have an idea for a killer feature, feel
+                    free to let me know <a target="_blank" href="https://github.com/bgotink/IngressIdentity/issues">here</a>.
+                </p>
+                <h3>Disclaimer</h3>
+                <p>
+                    The extension is in no way affiliated with Ingress or Google. It merely serves as
+                    third-party support for Ingress Players and Ingress Communities living on Google+.
+                </p>
+            </div>
         </div>
     </div>
 </body>
