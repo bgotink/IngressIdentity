@@ -279,6 +279,7 @@ window.iidentity = window.iidentity || {};
                     // 'a.ob.tv.Ub.TD[oid]',  // comment author
                     // 'a.ob.tv.Ub.ita[oid]', // event creator
                     'a.ob.tv.Ub[oid]',    // event rsvp; also matches all previous entries
+                    'div.o0b[oid]', // friend lists on profile page
                 ],
                 handler: function (elem, match) {
                     var $elem = $(elem),

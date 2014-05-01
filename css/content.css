@@ -30,6 +30,12 @@ a + span.iidentity-spacer {
     margin-left: .4em;
 }
 
+div + span.iidentity-spacer + wbr + .iidentity-iwrapper {
+    display: block;
+    margin-top: -3px;
+    margin-bottom: 3px;
+}
+
 .iidentity-iwrapper {
     margin-right: .4em;
 }
