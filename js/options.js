@@ -72,11 +72,15 @@ window.iidentity = window.iidentity || {};
                 $elem.find('> p.error').remove();
 
                 errors.forEach(function (err) {
-                    $elem.append(
-                        $('<p>')
-                            .addClass('error')
-                            .text(err)
-                    );
+                    if (err.match(/Sign in/i) && err.subsr(0, 2) == '<a' && err.substr(-4) === '</a>') {
+                        $elem.append($(err));
+                    } else {
+                        $elem.append(
+                            $('<p>')
+                                .addClass('error')
+                                .text(err)
+                        );
+                    }
                 });
             } else {
                 var key;
