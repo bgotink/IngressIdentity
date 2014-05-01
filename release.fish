@@ -77,7 +77,7 @@ sed -i'' -e "s/\"version\"\:.*\$/\"version\": \"$newversion\",/" manifest.json
 # set name to non-dev value
 sed -i'' -e 's/"name"\:.*\$/"name": "Ingress Identity",/' manifest.json
 # set logging to false
-sed -i'' -e 's/enableLogging.*\$/enableLogging: false,/' js/log.js
+sed -i'' -e 's/enableLogging.*\$/enableLogging = false,/' js/log.js
 git add manifest.json js/log.js
 
 git commit -m "[release] v$newversion"
