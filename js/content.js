@@ -298,9 +298,8 @@ window.iidentity = window.iidentity || {};
                         $elem.parent().find('.iidentity-iwrapper[data-oid=' + oid + ']').remove();
 
                         $elem.after(
-                            $('<span>')
-                                .text(' ')
-                            ,
+                            $('<span class="iidentity-spacer">'),
+                            $('<wbr>'),
                             $infoElem
                         );
                     });
