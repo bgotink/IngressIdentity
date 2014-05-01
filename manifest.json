@@ -19,7 +19,7 @@
 
     "options_page": "options.html",
 
-    "content_security_policy": "script-src 'self' https://www.google.com https://spreadsheets.google.com; object-src 'self'",
+    "content_security_policy": "script-src 'self' https://www.google.com https://spreadsheets.google.com https://docs.google.com; object-src 'self'",
     "content_scripts": [
         {
             "matches": [ "https://plus.google.com/*" ],

@@ -15,7 +15,10 @@ window.iidentity = window.iidentity || {};
 
     // variables & constants
 
-        baseUrl = 'https://spreadsheets.google.com/tq?tqx=out:html&tq=select%20*&key=',
+        baseUrl = {
+            oldSheet: 'https://docs.google.com/spreadsheet/ccc?key=KEY',
+            newSheet: 'https://docs.google.com/spreadsheets/d/KEY/gviz/tq',
+        },
 
     // unexported helper functions and classes
 
@@ -46,9 +49,26 @@ window.iidentity = window.iidentity || {};
              *      array containing the tuples in the spreadsheet
              */
             loadRaw: function (callback) {
-                (new google.visualization.Query(baseUrl + this.key)).send(function (response) {
+                var self = this,
+                    key = this.key.trim(),
+                    gid = '0',
+                    url,
+                    matches;
+
+                if (matches = this.key.match(/(.*)[&?]gid=(.*)/)) {
+                    gid = matches[2];
+                    key = matches[1];
+                }
+
+                if (key.match(/^[a-zA-Z0-9]+$/)) {
+                    url = baseUrl.oldSheet.replace('KEY', key) + '&gid=' + gid;
+                } else {
+                    url = baseUrl.newSheet.replace('KEY', key) + '?gid=' + gid;
+                }
+
+                (new google.visualization.Query(url)).send(function (response) {
                     if (response.isError()) {
-                        module.log.error('An error occured while fetching data from ' + this.key, response);
+                        module.log.error('An error occured while fetching data from ' + self.key, response);
                         callback(response.getDetailedMessage(), null);
                         return;
                     }
