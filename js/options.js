@@ -32,6 +32,15 @@ window.iidentity = window.iidentity || {};
                 });
             },
 
+            changeManifestOrder: function (oldOrder, newOrder, callback) {
+                module.comm.send(
+                    { type: 'changeManifestOrder', oldOrder: oldOrder, newOrder: newOrder },
+                    function (result) {
+                        callback(result.status);
+                    }
+                );
+            },
+
             reloadData: function (callback) {
                 module.comm.send({ type: 'reloadData' }, function (result) {
                     callback(result.status);
@@ -65,6 +74,38 @@ window.iidentity = window.iidentity || {};
             module.log.log('showing alert %s', id);
             $('.alert').addClass('hide');
             $('.alert-' + id).removeClass('hide');
+        },
+
+        lastOrderRecorded = [],
+        onOrderChanged = function () {
+            var newOrder = $.makeArray(
+                    $('#source_list > ul > li').map(function () {
+                        return $(this).attr('data-key');
+                    })
+                ),
+                i,
+                length = lastOrderRecorded.length,
+                updated = false;
+
+            if (newOrder.length !== length) {
+                // abort, strange things are happening
+                return;
+            }
+
+            for (i = 0; i < length; i++) {
+                if (newOrder[i] !== lastOrderRecorded[i]) {
+                    updated = true;
+                    break;
+                }
+            }
+
+            if (updated) {
+                comm.changeManifestOrder(lastOrderRecorded, newOrder, function (status) {
+                    showAlert('reorder-' + status);
+                });
+
+                lastOrderRecorded = newOrder;
+            }
         },
 
         reloadManifestErrorsHelper = function (errors, $elem) {
@@ -200,13 +241,19 @@ window.iidentity = window.iidentity || {};
                     );
                 $('#reload_sources').button('reset');
 
+
+                lastOrderRecorded = $.makeArray(
+                    $('#source_list > ul > li').map(function () {
+                        return $(this).attr('data-key');
+                    })
+                );
                 $('#source_list > ul').sortable({
                     axis: 'y',
                     containment: 'parent',
                     cursor: '-webkit-grabbing',
-                    // distance: 5,
-                    // revert: true,
-                    // scroll: true
+                    distance: 5,
+                    revert: true,
+                    stop: onOrderChanged
                 });
                 $('#source_list > ul').disableSelection();
 
