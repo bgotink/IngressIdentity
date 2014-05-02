@@ -1,0 +1,33 @@
+#!/bin/bash
+
+log() {
+    echo "$@" >&2
+}
+
+set -e
+
+cd $(dirname "$0")/..
+
+destfile="$1"
+shift
+
+cat js/_header.js > "build/js/$destfile.max.js"
+
+log -n 'Minifying '
+
+while [ $# -gt 0 ]; do
+    log -n "js/$1.js "
+    cat "js/$1.js" >> "build/js/$destfile.max.js"
+    shift
+done
+
+# disable logging by default
+sed -i '' -e 's/enableLogging = true/enableLogging = false/' "build/js/$destfile.max.js"
+
+log "into build/js/$destfile.js"
+
+cat js/_footer.js >> "build/js/$destfile.max.js"
+
+yuicompressor -o "build/js/$destfile.js" "build/js/$destfile.max.js"
+
+rm "build/js/$destfile.max.js"
