@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
 
-    "name": "Ingress Identity - dev",
+    "name": "Ingress Identity",
     "version": "0.3.4",
     "description": "Adds Ingress identity to G+ profiles",
     "icons": {
@@ -25,7 +25,7 @@
             "matches": [ "https://plus.google.com/*" ],
             "run_at": "document_end",
             "css": [ "css/content.css" ],
-            "js": [ "vendor/js/jquery.min.js", "js/log.js", "js/communication.js", "js/content.js" ]
+            "js": [ "vendor/js/jquery.min.js", "js/content.js" ]
         }
     ],
 

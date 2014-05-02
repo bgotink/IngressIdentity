@@ -5,11 +5,11 @@
  * @license MIT
  */
 
-'use strict';
-
 window.iidentity = window.iidentity || {};
 
 (function (module) {
+    'use strict';
+
     var exports = module.comm = {},
         onUpdate = function () {},
         lastUpdate = +new Date;

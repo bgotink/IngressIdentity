@@ -5,11 +5,11 @@
  * @license MIT
  */
 
-'use strict';
-
 window.iidentity = window.iidentity || {};
 
 (function (module, $) {
+    'use strict';
+
     var exports = module.data = {},
 
         anomalies = [ '13magnus', 'recursion', 'interitus' ],
@@ -594,5 +594,4 @@ window.iidentity = window.iidentity || {};
 
     // exported functions
     exports.loadManifests = loadManifests;
-
 })(window.iidentity, window.jQuery);

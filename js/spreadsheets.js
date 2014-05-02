@@ -6,11 +6,11 @@
  * @license MIT
  */
 
-'use strict';
-
 window.iidentity = window.iidentity || {};
 
-(function (module) {
+(function (module, window) {
+    'use strict';
+
     var exports = module.spreadsheets = {},
 
     // variables & constants
@@ -216,5 +216,4 @@ window.iidentity = window.iidentity || {};
             return err;
         }
     });
-
-})(window.iidentity);
+})(window.iidentity, window);

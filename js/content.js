@@ -23,11 +23,10 @@
  * })();
  */
 
-'use strict';
-
 window.iidentity = window.iidentity || {};
 
 (function (module, window, $) {
+    'use strict';
 
     var doOnceTimestamp,
         doOnce = function (elem, callback) {
@@ -279,6 +278,7 @@ window.iidentity = window.iidentity || {};
                     // 'a.ob.tv.Ub.TD[oid]',  // comment author
                     // 'a.ob.tv.Ub.ita[oid]', // event creator
                     'a.ob.tv.Ub[oid]',    // event rsvp; also matches all previous entries
+                    'div.o0b[oid]', // friend lists on profile page
                 ],
                 handler: function (elem, match) {
                     var $elem = $(elem),
@@ -298,9 +298,8 @@ window.iidentity = window.iidentity || {};
                         $elem.parent().find('.iidentity-iwrapper[data-oid=' + oid + ']').remove();
 
                         $elem.after(
-                            $('<span>')
-                                .text(' ')
-                            ,
+                            $('<span class="iidentity-spacer">'),
+                            $('<wbr>'),
                             $infoElem
                         );
                     });
@@ -620,5 +619,4 @@ window.iidentity = window.iidentity || {};
 
         observer.observe(window.document, { childList: true, subtree: true });
     });
-
 })(window.iidentity, window, window.jQuery);

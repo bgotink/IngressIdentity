@@ -5,11 +5,11 @@
  * @license MIT
  */
 
-'use strict';
-
 window.iidentity = window.iidentity || {};
 
-(function (module, $) {
+(function (module, window) {
+    'use strict';
+
     var comm = {
             getManifests: function (callback) {
                 module.comm.send({ type: 'getManifests' }, function (result) {
@@ -55,7 +55,7 @@ window.iidentity = window.iidentity || {};
                 });
             },
             getOption: function (option, defaultValue, callback) {
-                module.comm.send({ type: 'getOption', option: option, default: defaultValue }, function (result) {
+                module.comm.send({ type: 'getOption', option: option, defaultValue: defaultValue }, function (result) {
                     callback(result.value);
                 });
             }
@@ -238,9 +238,13 @@ window.iidentity = window.iidentity || {};
         });
 
         $('#reload_sources').on('click.ii.reload', function () {
-            $(this).button('loading');
+            var $this = $(this);
+
+            $this.button('loading');
+
             comm.reloadData(function (result) {
                 showAlert('reload-' + result);
+                $this.button('reset');
             });
         });
 
@@ -327,4 +331,4 @@ window.iidentity = window.iidentity || {};
             updateButtons();
         });
     });
-})(window.iidentity, window.jQuery);
+})(window.iidentity, window);

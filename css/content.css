@@ -26,8 +26,18 @@ span.tt {
     font-size: 18px;
 }
 
+a + span.iidentity-spacer {
+    margin-left: .4em;
+}
+
+div + span.iidentity-spacer + wbr + .iidentity-iwrapper {
+    display: block;
+    margin-top: -3px;
+    margin-bottom: 3px;
+}
+
 .iidentity-iwrapper {
-    padding-right: .4em;
+    margin-right: .4em;
 }
 
 .iidentity-iwrapper > span {

@@ -6,11 +6,11 @@
  * @license MIT
  */
 
-'use strict';
-
 window.iidentity = window.iidentity || {};
 
 (function (module, $, window) {
+    'use strict';
+
     var storage = chrome.storage.sync,
         data = null,
         storageCache = {},
@@ -426,7 +426,7 @@ window.iidentity = window.iidentity || {};
     };
 
     messageListeners.getOption = function (request, sender, sendResponse) {
-        getStoredData('option-' + request.option, request.default, function (result) {
+        getStoredData('option-' + request.option, request.defaultValue, function (result) {
             sendResponse({ value: result });
         });
 
