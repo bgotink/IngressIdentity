@@ -8,13 +8,14 @@ log() {
     echo "$@" >&2
 }
 
-log "Building..."
-bin/build
-log "Building done"
-
 cd build
 
 buildversion=$(grep -F '"version"' manifest.json | cut -d':' -f2 | tr -d ' ",')
+
+if [ -f "../versions/v$buildversion.zip" ]; then
+    log "Zipped version already exists (versions/v$buildversion.zip), aborting"
+    exit 1
+fi
 
 log "Creating zip..."
 zip -r "../versions/v$buildversion.zip" .

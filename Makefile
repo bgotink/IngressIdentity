@@ -7,6 +7,9 @@ default: all
 
 all: init $(HTMLs) $(JSs) $(CSSs) $(MDs) build/img build/vendor build/manifest.json
 
+dist: all
+	@bin/dist
+
 clean:
 	rm -rf build
 
