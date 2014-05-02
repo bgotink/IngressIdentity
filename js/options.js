@@ -238,9 +238,13 @@ window.iidentity = window.iidentity || {};
         });
 
         $('#reload_sources').on('click.ii.reload', function () {
-            $(this).button('loading');
+            var $this = $(this);
+
+            $this.button('loading');
+
             comm.reloadData(function (result) {
                 showAlert('reload-' + result);
+                $this.button('reset');
             });
         });
 
