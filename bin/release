@@ -64,7 +64,7 @@ case "$branch" in
         ;;
 esac
 
-echo "Updating from version $oldversion to $newversion" >&2
+echo "Updating from version $oldversion to $version" >&2
 
 if ! git diff --quiet; then
     log 'There are untracked changes. Please add and commit all changes before creating a new release'
@@ -77,22 +77,22 @@ if ! git diff --quiet --cached; then
 fi
 
 # update version
-sed -i'' -e "s/\"version\"\:.*\$/\"version\": \"$version\",/" manifest.json*
+sed -i '' -e "s/\"version\"\:.*\$/\"version\": \"$version\",/" manifest.json*
 git add manifest.json*
 
 log "Creating release commit"
-log git commit -m "[release] v$version"
+git commit -m "[release] v$version"
 
-log git checkout master
-log git merge "$branch" || (
+git checkout master
+git merge "$branch" || (
     log "Merging $branch to master failed, please merge manually";
     log "Then create a signed tag called v$version"
     exit 1
 )
-log git tag -s "v$version"
+git tag -s "v$version"
 
-log git push
-log git push --tags
+git push
+git push --tags
 
 log "Creating versions/v$version.zip"
-log dist
+bin/dist
