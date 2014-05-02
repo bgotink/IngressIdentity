@@ -1,0 +1,84 @@
+#!/bin/bash
+
+set -e
+
+cd $(dirname "$0")/..;
+
+log() {
+    echo "$@" >&2
+}
+
+# create /build directory
+
+rm -rf build;
+mkdir -p build/{css,js};
+
+# copy img and vendor
+
+cp -a img vendor build/
+
+# cleanup
+
+cd build
+
+rm -f vendor/css/{bootstrap-theme*,bootstrap.css*} vendor/js/bootstrap.js
+rm -f img/*/README* img/logo/ingress.svg
+
+cd - >/dev/null 2>&1
+
+# less!
+
+do_lessc() {
+    log "Compiling less/$1.less"
+    lessc -x "less/$1.less" "build/css/$1.css"
+}
+
+do_lessc content
+do_lessc help
+do_lessc options
+
+# YUI
+
+do_minify() {
+    destfile="$1"
+    shift
+
+    cat js/_header.js > "build/js/$destfile.max.js"
+
+    log -n 'Minifying '
+
+    while [ $# -gt 0 ]; do
+        log -n "js/$1.js "
+        cat "js/$1.js" >> "build/js/$destfile.max.js"
+        shift
+    done
+
+    # disable logging by default
+    sed -i'' -e 's/enableLogging = true/enableLogging = false/' "build/js/$destfile.max.js"
+
+    log "into build/js/$destfile.js"
+
+    cat js/_footer.js >> "build/js/$destfile.max.js"
+
+    yuicompressor -o "build/js/$destfile.js" "build/js/$destfile.max.js"
+}
+
+do_minify content log communication content
+do_minify background log spreadsheets data background
+cp js/class.js build/js/class.js
+do_minify options log communication options
+
+# manifest
+
+log "Copying manifest"
+cp manifest.json.dist build/manifest.json
+
+# license, notice, readme
+log "Copying LICENSE, NOTICE and README"
+cp *.md build/
+
+# html files
+log "Copying HTML files, replacing js with minified version"
+cp help.html build/help.html
+grep -Ev '<script type="text\/javascript" src="js\/(log|communication|data|spreadsheets)\.js">' background.html > build/background.html
+grep -Ev '<script type="text\/javascript" src="js\/(log|communication|data|spreadsheets)\.js">' options.html > build/options.html
