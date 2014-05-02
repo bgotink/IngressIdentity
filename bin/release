@@ -64,7 +64,10 @@ case "$branch" in
         ;;
 esac
 
-echo "Updating from version $oldversion to $version" >&2
+log "Building..."
+make all
+
+log "Updating from version $oldversion to $version..." >&2
 
 if ! git diff --quiet; then
     log 'There are untracked changes. Please add and commit all changes before creating a new release'
@@ -95,4 +98,4 @@ git push
 git push --tags
 
 log "Creating versions/v$version.zip"
-bin/dist
+make dist
