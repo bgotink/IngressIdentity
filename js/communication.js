@@ -5,74 +5,80 @@
  * @license MIT
  */
 
-var exports = module.comm = {},
-    onUpdate = function () {},
-    lastUpdate = +new Date;
+window.iidentity = window.iidentity || {};
 
-exports.send = function (request, callback) {
-    request = { request: request, lastUpdate: lastUpdate };
-    lastUpdate = +new Date;
+(function (module) {
+    'use strict';
 
-    chrome.runtime.sendMessage(
-        request,
-        function (reply) {
-            callback(reply.reply);
-
-            lastUpdate = +new Date;
-            if (reply.shouldUpdate) {
-                if (onUpdate) {
-                    onUpdate();
-                }
-            }
-        }
-    );
-};
-
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    if (request.type === 'update') {
+    var exports = module.comm = {},
+        onUpdate = function () {},
         lastUpdate = +new Date;
 
-        if (onUpdate) {
-            onUpdate();
+    exports.send = function (request, callback) {
+        request = { request: request, lastUpdate: lastUpdate };
+        lastUpdate = +new Date;
+
+        chrome.runtime.sendMessage(
+            request,
+            function (reply) {
+                callback(reply.reply);
+
+                lastUpdate = +new Date;
+                if (reply.shouldUpdate) {
+                    if (onUpdate) {
+                        onUpdate();
+                    }
+                }
+            }
+        );
+    };
+
+    chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+        if (request.type === 'update') {
+            lastUpdate = +new Date;
+
+            if (onUpdate) {
+                onUpdate();
+            }
+
+            // will not send reply
+            return false;
         }
 
-        // will not send reply
+        // ignore: the options page gets all the messages meant for the background
+        // page as well... logging/throwing here would fill the console with junk
         return false;
-    }
-
-    // ignore: the options page gets all the messages meant for the background
-    // page as well... logging/throwing here would fill the console with junk
-    return false;
-});
-
-exports.hasPlayer = function (oid, callback) {
-    this.send({ type: 'hasPlayer', oid: oid }, function (result) {
-        callback(result.result);
     });
-};
 
-exports.getPlayer = function (oid, callback, extra) {
-    var request = { type: 'getPlayer', oid: oid };
+    exports.hasPlayer = function (oid, callback) {
+        this.send({ type: 'hasPlayer', oid: oid }, function (result) {
+            callback(result.result);
+        });
+    };
 
-    if (typeof extra !== 'undefined' && extra !== null)
-        request.extra = extra;
+    exports.getPlayer = function (oid, callback, extra) {
+        var request = { type: 'getPlayer', oid: oid };
 
-    this.send(request, function (result) {
-        if (result.status !== 'success') {
-            callback(result.status, null);
-            return;
-        }
+        if (typeof extra !== 'undefined' && extra !== null)
+            request.extra = extra;
 
-        callback(null, result.player);
-    });
-};
+        this.send(request, function (result) {
+            if (result.status !== 'success') {
+                callback(result.status, null);
+                return;
+            }
 
-exports.setOnUpdate = function (callback) {
-    onUpdate = callback;
-};
+            callback(null, result.player);
+        });
+    };
 
-exports.hasPermission = function (permission, callback) {
-    this.send({ type: 'hasPermission', permission: permission }, function (result) {
-        callback(result.hasPermission);
-    });
-};
+    exports.setOnUpdate = function (callback) {
+        onUpdate = callback;
+    };
+
+    exports.hasPermission = function (permission, callback) {
+        this.send({ type: 'hasPermission', permission: permission }, function (result) {
+            callback(result.hasPermission);
+        });
+    };
+})(window.iidentity);

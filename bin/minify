@@ -11,7 +11,7 @@ cd $(dirname "$0")/..
 destfile="$1"
 shift
 
-cat js/_header.js > "build/js/$destfile.max.js"
+> "build/js/$destfile.max.js"
 
 log -n 'Minifying '
 
@@ -26,8 +26,10 @@ sed -i '' -e 's/enableLogging = true/enableLogging = false/' "build/js/$destfile
 
 log "into build/js/$destfile.js"
 
-cat js/_footer.js >> "build/js/$destfile.max.js"
+yuicompressor -o "build/js/$destfile.min.js" "build/js/$destfile.max.js"
 
-yuicompressor -o "build/js/$destfile.js" "build/js/$destfile.max.js"
+cat js/_header.js > "build/js/$destfile.js"
+cat "build/js/$destfile.min.js" >> "build/js/$destfile.js"
 
 rm "build/js/$destfile.max.js"
+rm "build/js/$destfile.min.js"

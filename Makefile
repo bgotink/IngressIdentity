@@ -1,5 +1,5 @@
 MDs = build/README.md build/LICENSE.md build/NOTICE.md
-JSs = build/js/content.js build/js/options.js build/js/background.js
+JSs = build/js/content.js build/js/options.js build/js/background.js build/js/class.js
 CSSs = build/css/content.css build/css/options.css build/css/help.css
 HTMLs = build/options.html build/background.html
 
@@ -34,11 +34,14 @@ build/%.html: %.html
 build/css/%.css: css/%.css
 	cleancss -o $@ $<
 
-build/js/content.js: js/content.js js/communication.js js/log.js
+build/js/class.js: js/class.js
+	cp $< $@
+
+build/js/content.js: js/_header.js js/content.js js/communication.js js/log.js
 	@bin/minify content communication log content
 
-build/js/options.js: js/options.js js/communication.js js/log.js
+build/js/options.js: js/_header.js js/options.js js/communication.js js/log.js
 	@bin/minify options communication log options
 
-build/js/background.js: js/log.js js/spreadsheets.js js/data.js js/background.js
+build/js/background.js: js/_header.js js/log.js js/spreadsheets.js js/data.js js/background.js
 	@bin/minify background log spreadsheets data background

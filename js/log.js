@@ -5,25 +5,31 @@
  * @license MIT
  */
 
-var exports = (module.log = {}),
-    enableLogging = true,
-    proxy = function (func, force) {
-        return function () {
-            if (force || enableLogging) {
-                func.apply(window.console, arguments);
-            }
+window.iidentity = window.iidentity || {};
+
+(function (module, window) {
+    'use strict';
+
+    var exports = (module.log = {}),
+        enableLogging = true,
+        proxy = function (func, force) {
+            return function () {
+                if (force || enableLogging) {
+                    func.apply(window.console, arguments);
+                }
+            };
         };
+
+    exports.assert = proxy(window.console.assert);
+
+    exports.trace = proxy(window.console.trace);
+    exports.log   = proxy(window.console.log);
+    exports.debug = proxy(window.console.debug);
+    exports.info  = proxy(window.console.info);
+    exports.warn  = proxy(window.console.warn, true);
+    exports.error = proxy(window.console.error, true);
+
+    exports.setLoggingEnabled = function (enable) {
+        enableLogging = !!enable;
     };
-
-exports.assert = proxy(window.console.assert);
-
-exports.trace = proxy(window.console.trace);
-exports.log   = proxy(window.console.log);
-exports.debug = proxy(window.console.debug);
-exports.info  = proxy(window.console.info);
-exports.warn  = proxy(window.console.warn, true);
-exports.error = proxy(window.console.error, true);
-
-exports.setLoggingEnabled = function (enable) {
-    enableLogging = !!enable;
-};
+})(window.iidentity, window);
