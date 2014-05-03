@@ -32,6 +32,15 @@ window.iidentity = window.iidentity || {};
                 });
             },
 
+            changeManifestOrder: function (oldOrder, newOrder, callback) {
+                module.comm.send(
+                    { type: 'changeManifestOrder', oldOrder: oldOrder, newOrder: newOrder },
+                    function (result) {
+                        callback(result.status);
+                    }
+                );
+            },
+
             reloadData: function (callback) {
                 module.comm.send({ type: 'reloadData' }, function (result) {
                     callback(result.status);
@@ -65,6 +74,38 @@ window.iidentity = window.iidentity || {};
             module.log.log('showing alert %s', id);
             $('.alert').addClass('hide');
             $('.alert-' + id).removeClass('hide');
+        },
+
+        lastOrderRecorded = [],
+        onOrderChanged = function () {
+            var newOrder = $.makeArray(
+                    $('#source_list > ul > li').map(function () {
+                        return $(this).attr('data-key');
+                    })
+                ),
+                i,
+                length = lastOrderRecorded.length,
+                updated = false;
+
+            if (newOrder.length !== length) {
+                // abort, strange things are happening
+                return;
+            }
+
+            for (i = 0; i < length; i++) {
+                if (newOrder[i] !== lastOrderRecorded[i]) {
+                    updated = true;
+                    break;
+                }
+            }
+
+            if (updated) {
+                comm.changeManifestOrder(lastOrderRecorded, newOrder, function (status) {
+                    showAlert('reorder-' + status);
+                });
+
+                lastOrderRecorded = newOrder;
+            }
         },
 
         reloadManifestErrorsHelper = function (errors, $elem) {
@@ -136,7 +177,8 @@ window.iidentity = window.iidentity || {};
                                             .text(source.tag)
                                             .attr('target', '_blank')
                                             .attr('href', source.url)
-                                        : $('<span>').text(source.tag)
+                                        : $('<span>')
+                                            .text(source.tag)
                                 )
                                 .append(
                                     $('<p>')
@@ -151,36 +193,69 @@ window.iidentity = window.iidentity || {};
                             .data('key', key)
                             .attr('data-key', key)
                             .append(
-                                result[key].url
-                                    ? $('<a>')
-                                        .text(key)
-                                        .attr('target', '_blank')
-                                        .attr('href', result[key].url)
-                                    : $('<span>').text(key)
-                            )
-                            .append(
-                                $('<a>')
-                                    .html('&times;')
-                                    .attr('href', '#')
-                                    .addClass('remove')
-                            )
-                            .append(
-                                $('<ul>')
-                                    .addClass('errors')
-                                    .attr('data-key', '__errors')
-                            )
-                            .append(
-                                $('<ul>')
-                                    .append(sourceList)
+                                $('<div class="panel panel-default"></div>')
+                                    .append(
+                                        $('<div class="panel-heading"></div>')
+                                            .append(
+                                                result[key].url
+                                                    ? $('<a>')
+                                                        .text(key)
+                                                        .attr('target', '_blank')
+                                                        .attr('href', result[key].url)
+                                                        .addClass('manifest-key')
+                                                    : $('<span>')
+                                                        .text(key)
+                                                        .addClass('manifest-key')
+                                            )
+                                            .append(
+                                                $('<a>')
+                                                    .html('&times;')
+                                                    .attr('href', '#')
+                                                    .addClass('remove')
+                                                    .addClass('pull-right')
+                                            )
+                                    )
+                                    .append(
+                                        $('<div class="panel-body"></div>')
+                                            .append(
+                                                $('<ul>')
+                                                    .addClass('errors')
+                                                    .addClass('list-unstyled')
+                                                    .attr('data-key', '__errors')
+                                            )
+                                            .append(
+                                                $('<ul>')
+                                                    .addClass('list-unstyled')
+                                                    .append(sourceList)
+                                            )
+                                    )
                             )
                     );
                 }
 
                 $('#source_list').html('')
                     .append(
-                        $('<ul>').append(manifestList)
+                        $('<ul>')
+                            .addClass('list-unstyled')
+                            .append(manifestList)
                     );
                 $('#reload_sources').button('reset');
+
+
+                lastOrderRecorded = $.makeArray(
+                    $('#source_list > ul > li').map(function () {
+                        return $(this).attr('data-key');
+                    })
+                );
+                $('#source_list > ul').sortable({
+                    axis: 'y',
+                    containment: 'parent',
+                    cursor: '-webkit-grabbing',
+                    distance: 5,
+                    revert: true,
+                    stop: onOrderChanged
+                });
+                $('#source_list > ul').disableSelection();
 
                 reloadManifestErrors();
             });
