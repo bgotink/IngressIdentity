@@ -272,7 +272,19 @@ window.iidentity = window.iidentity || {};
 
             getUrl: function () {
                 return this.spreadsheet.getUrl();
-            }
+            },
+
+            hasExtra: function (tag, oid) {
+                if (!(tag in this.data.extratags)
+                        || typeof this.data.extratags[tag] !== 'string') {
+                    return false;
+                }
+
+                var i = this.data.extratags[tag].indexOf(':');
+
+                return (i !== -1)
+                    && (oid === this.data.extratags[tag].substr(0, i).trim());
+            },
         }),
 
         CombinedPlayerSource = Class.extend({
@@ -497,7 +509,26 @@ window.iidentity = window.iidentity || {};
 
             getUrl: function () {
                 return this.spreadsheet ? this.spreadsheet.getUrl() : null;
-            }
+            },
+
+            getSourcesForExtra: function (tag, oid) {
+                var result = [];
+
+                this.getSources().forEach(function (source) {
+                    if (source.isCombined()) {
+                        result.push(source.getSourcesForExtra(tag, oid));
+                    } else if (source.hasExtra(tag, oid)) {
+                        result.push([{
+                            url: source.getUrl(),
+                            key: source.getTag()
+                        }]);
+                    }
+                });
+
+                return result.reduce(function (res, elem) {
+                    return res.concat(elem);
+                }, []);
+            },
         }),
 
         loadSource = function (data, callback) {

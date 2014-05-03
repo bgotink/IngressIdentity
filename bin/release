@@ -87,7 +87,7 @@ log "Creating release commit"
 git commit -m "[release] prepping v$version"
 
 git checkout master
-git merge -m "[release] v$version" "$branch" || (
+git merge --no-ff -m "[release] v$version" "$branch" || (
     log "Merging $branch to master failed, please merge manually";
     log "Then create a signed tag called v$version"
     exit 1

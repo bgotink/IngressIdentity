@@ -144,6 +144,41 @@ window.iidentity = window.iidentity || {};
             });
         },
 
+        changeManifestOrder = function (oldOrder, newOrder, callback) {
+            getManifestKeys(function (currentOrder) {
+                var i,
+                    length = currentOrder.length;
+
+                if (oldOrder.length !== length || newOrder.length !== length) {
+                    callback('failed');
+                    return;
+                }
+
+                // check if old order is still correct
+                for (i = 0; i < length; i++) {
+                    if (oldOrder[i] !== currentOrder[i]) {
+                        callback('failed');
+                        return;
+                    }
+                }
+
+                // check if the keys in the old one are still in the new one
+                // and if the keys of the new one are also in the old one
+                for (i = 0; i < length; i++) {
+                    if (oldOrder.indexOf(newOrder[i]) === -1
+                            || newOrder.indexOf(oldOrder[i]) === -1) {
+                        callback('failed');
+                        return;
+                    }
+                }
+
+                // set new order
+                setManifestKeys(newOrder, function () {
+                    callback('success');
+                })
+            });
+        },
+
     // data functions
 
         reloadData = function (callback) {
@@ -324,11 +359,26 @@ window.iidentity = window.iidentity || {};
         return true;
     };
 
+    messageListeners.changeManifestOrder = function (request, sender, sendResponse) {
+        if (!isOptionsPage(sender.url)) {
+            module.log.error('A \'reloadData\' message can only originate from the options page');
+            // silently die by not sending a response
+            return false;
+        }
+
+        module.log.log('Requesting to change order from ', request.oldOrder, ' to ', request.newOrder);
+        changeManifestOrder(request.oldOrder, request.newOrder, function (status) {
+            sendResponse({ status: status });
+        });
+
+        return true;
+    };
+
     messageListeners.reloadData = function (request, sender, sendResponse) {
         if (!isOptionsPage(sender.url)) {
             module.log.error('A \'reloadData\' message can only originate from the options page');
             // silently die by not sending a response
-            return;
+            return false;
         }
 
         reloadData(function (err, status) {
@@ -342,7 +392,7 @@ window.iidentity = window.iidentity || {};
         if (!isOptionsPage(sender.url)) {
             module.log.error('A \'requestPermission\' message can only originate from the options page');
             // silently die by not sending a response
-            return;
+            return false;
         }
 
         var permissions = { permissions: [ request.permission ]};
@@ -442,6 +492,22 @@ window.iidentity = window.iidentity || {};
 
         return false;
     };
+
+    messageListeners.getSourcesForExtra = function (request, sender, sendResponse) {
+        if (data === null) {
+            sendResponse({ result: [] });
+        } else {
+            getStoredData('option-match-extra-' + request.tag, true, function (match) {
+                if (!match) {
+                    sendResponse({ result: [] });
+                } else {
+                    sendResponse({ result: data.getSourcesForExtra(request.tag, request.oid) });
+                }
+            })
+        }
+
+        return true;
+    },
 
     messageListeners.getPlayer = function (request, sender, sendResponse) {
         if (data === null) {

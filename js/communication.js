@@ -81,4 +81,10 @@ window.iidentity = window.iidentity || {};
             callback(result.hasPermission);
         });
     };
+
+    exports.getSourcesForExtra = function (tag, oid, callback) {
+        this.send({ type: 'getSourcesForExtra', tag: tag, oid: oid }, function (result) {
+            callback(result.result);
+        });
+    };
 })(window.iidentity);

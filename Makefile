@@ -6,6 +6,7 @@ HTMLs = build/options.html build/background.html
 default: all
 
 all: init $(HTMLs) $(JSs) $(CSSs) $(MDs) build/img build/vendor build/manifest.json
+	@find build -iname '.*' -print0 | xargs -0 rm
 
 dist: all
 	@bin/dist
@@ -19,6 +20,7 @@ init:
 build/vendor: vendor
 	rm -rf $@
 	cp -a $< $@
+	rm -rf $@/{css/bootstrap{-theme*,.css*},js/bootstrap.js}
 
 build/img: img
 	rm -rf $@

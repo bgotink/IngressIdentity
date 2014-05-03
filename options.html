@@ -11,6 +11,7 @@
 
     <!-- jQuery and Bootstrap JS -->
     <script type="text/javascript" src="vendor/js/jquery.min.js"></script>
+    <script type="text/javascript" src="vendor/js/jquery-ui.min.js"></script>
     <script type="text/javascript" src="vendor/js/bootstrap.min.js"></script>
 
     <!-- Our JS -->
@@ -81,6 +82,15 @@
                 <div class="hide alert alert-danger alert-dismissable alert-remove-failed">
                     <button type="button" class="close" aria-hidden="true">&times;</button>
                     <strong>Error!</strong> Something went wrong when removing the manifest.
+                </div>
+
+                <div class="hide alert alert-success alert-dismissable alert-reorder-success">
+                    <button type="button" class="close" aria-hidden="true">&times;</button>
+                    <strong>Success!</strong> The order was successfully changed.
+                </div>
+                <div class="hide alert alert-danger alert-dismissable alert-reorder-nonexistent">
+                    <button type="button" class="close" aria-hidden="true">&times;</button>
+                    <strong>Error!</strong> Something went wrong when changing the order.
                 </div>
             </div>
         </div>
@@ -211,6 +221,18 @@
                                 Enable
                             </button>
                             Match people in the 'In common with you', 'In his/her circles' or 'Have him/her in circles' sections.
+                        </p>
+                        <p>
+                            <button type="button" data-loading-text="Storing..." class="btn btn-default btn-sm" data-match="extra-event">
+                                Enable
+                            </button>
+                            Show links to the source spreadsheets linked to an event on the page of that event.
+                        </p>
+                        <p>
+                            <button type="button" data-loading-text="Storing..." class="btn btn-default btn-sm" data-match="extra-community">
+                                Enable
+                            </button>
+                            Show links to the source spreadsheets linked to a community on the page of that community.
                         </p>
                     </div>
                 </div>

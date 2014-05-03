@@ -19,6 +19,10 @@
     font-weight: bold;
 }
 
+#source_list .panel-heading {
+    cursor: -webkit-grab;
+}
+
 p {
     text-align: justify;
 }
