@@ -84,10 +84,10 @@ sed -i '' -e "s/\"version\"\:.*\$/\"version\": \"$version\",/" manifest.json*
 git add manifest.json*
 
 log "Creating release commit"
-git commit -m "[release] v$version"
+git commit -m "[release] prepping v$version"
 
 git checkout master
-git merge "$branch" || (
+git merge -m "[release] v$version" "$branch" || (
     log "Merging $branch to master failed, please merge manually";
     log "Then create a signed tag called v$version"
     exit 1
