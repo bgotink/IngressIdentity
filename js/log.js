@@ -5,11 +5,11 @@
  * @license MIT
  */
 
-'use strict';
-
 window.iidentity = window.iidentity || {};
 
 (function (module, window) {
+    'use strict';
+
     var exports = (module.log = {}),
         enableLogging = true,
         proxy = function (func, force) {

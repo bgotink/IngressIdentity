@@ -6,16 +6,21 @@
  * @license MIT
  */
 
-'use strict';
-
 window.iidentity = window.iidentity || {};
 
-(function (module) {
+(function (module, window) {
+    'use strict';
+
     var exports = module.spreadsheets = {},
 
     // variables & constants
 
         baseUrl = {
+            oldSheet: 'https://docs.google.com/spreadsheet/ccc?key=KEY',
+            newSheet: 'https://docs.google.com/spreadsheets/d/KEY',
+        },
+
+        baseQueryUrl = {
             oldSheet: 'https://docs.google.com/spreadsheet/ccc?key=KEY',
             newSheet: 'https://docs.google.com/spreadsheets/d/KEY/gviz/tq',
         },
@@ -38,7 +43,33 @@ window.iidentity = window.iidentity || {};
              * The constructor. The only parameter is the key/id of the spreadsheet.
              */
             init: function (key) {
-                this.key = key;
+                this.key = key.trim();
+            },
+
+            /**
+             * Get a URL to visit this spreadsheet
+             */
+            getUrl: function () {
+                var key = this.key,
+                    gid = false,
+                    url,
+                    matches;
+
+                if (matches = this.key.match(/(.*)[&?]gid=(.*)/)) {
+                    gid = matches[2];
+                    key = matches[1];
+                }
+
+                if (key.match(/^[a-zA-Z0-9]+$/)) {
+                    url = baseUrl.oldSheet.replace('KEY', key);
+                } else {
+                    url = baseUrl.newSheet.replace('KEY', key);
+                }
+
+                if (gid === false) {
+                    return url;
+                }
+                return url + '#gid=' + gid;
             },
 
             /**
@@ -50,7 +81,7 @@ window.iidentity = window.iidentity || {};
              */
             loadRaw: function (callback) {
                 var self = this,
-                    key = this.key.trim(),
+                    key = this.key,
                     gid = '0',
                     url,
                     matches;
@@ -61,9 +92,9 @@ window.iidentity = window.iidentity || {};
                 }
 
                 if (key.match(/^[a-zA-Z0-9]+$/)) {
-                    url = baseUrl.oldSheet.replace('KEY', key) + '&gid=' + gid;
+                    url = baseQueryUrl.oldSheet.replace('KEY', key) + '&gid=' + gid;
                 } else {
-                    url = baseUrl.newSheet.replace('KEY', key) + '?gid=' + gid;
+                    url = baseQueryUrl.newSheet.replace('KEY', key) + '?gid=' + gid;
                 }
 
                 (new google.visualization.Query(url)).send(function (response) {
@@ -185,5 +216,4 @@ window.iidentity = window.iidentity || {};
             return err;
         }
     });
-
-})(window.iidentity);
+})(window.iidentity, window);

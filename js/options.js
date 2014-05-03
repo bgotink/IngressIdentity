@@ -5,11 +5,11 @@
  * @license MIT
  */
 
-'use strict';
-
 window.iidentity = window.iidentity || {};
 
-(function (module, $) {
+(function (module, window) {
+    'use strict';
+
     var comm = {
             getManifests: function (callback) {
                 module.comm.send({ type: 'getManifests' }, function (result) {
@@ -30,6 +30,15 @@ window.iidentity = window.iidentity || {};
                 module.comm.send({ type: 'removeManifest', key: key }, function (result) {
                     callback(result.status);
                 });
+            },
+
+            changeManifestOrder: function (oldOrder, newOrder, callback) {
+                module.comm.send(
+                    { type: 'changeManifestOrder', oldOrder: oldOrder, newOrder: newOrder },
+                    function (result) {
+                        callback(result.status);
+                    }
+                );
             },
 
             reloadData: function (callback) {
@@ -55,7 +64,7 @@ window.iidentity = window.iidentity || {};
                 });
             },
             getOption: function (option, defaultValue, callback) {
-                module.comm.send({ type: 'getOption', option: option, default: defaultValue }, function (result) {
+                module.comm.send({ type: 'getOption', option: option, defaultValue: defaultValue }, function (result) {
                     callback(result.value);
                 });
             }
@@ -67,16 +76,52 @@ window.iidentity = window.iidentity || {};
             $('.alert-' + id).removeClass('hide');
         },
 
+        lastOrderRecorded = [],
+        onOrderChanged = function () {
+            var newOrder = $.makeArray(
+                    $('#source_list > ul > li').map(function () {
+                        return $(this).attr('data-key');
+                    })
+                ),
+                i,
+                length = lastOrderRecorded.length,
+                updated = false;
+
+            if (newOrder.length !== length) {
+                // abort, strange things are happening
+                return;
+            }
+
+            for (i = 0; i < length; i++) {
+                if (newOrder[i] !== lastOrderRecorded[i]) {
+                    updated = true;
+                    break;
+                }
+            }
+
+            if (updated) {
+                comm.changeManifestOrder(lastOrderRecorded, newOrder, function (status) {
+                    showAlert('reorder-' + status);
+                });
+
+                lastOrderRecorded = newOrder;
+            }
+        },
+
         reloadManifestErrorsHelper = function (errors, $elem) {
             if (Array.isArray(errors)) {
                 $elem.find('> p.error').remove();
 
                 errors.forEach(function (err) {
-                    $elem.append(
-                        $('<p>')
-                            .addClass('error')
-                            .text(err)
-                    );
+                    if (err.match(/Sign in/i) && err.subsr(0, 2) == '<a' && err.substr(-4) === '</a>') {
+                        $elem.append($(err));
+                    } else {
+                        $elem.append(
+                            $('<p>')
+                                .addClass('error')
+                                .text(err)
+                        );
+                    }
                 });
             } else {
                 var key;
@@ -116,8 +161,9 @@ window.iidentity = window.iidentity || {};
                     sourceList = [];
 
                     module.log.log('Manifest key %s', key);
+                    module.log.log(result[key]);
 
-                    result[key].forEach(function (source) {
+                    result[key].sources.forEach(function (source) {
                         module.log.log('-- Source key %s', source.key);
 
                         sourceList.push(
@@ -126,10 +172,13 @@ window.iidentity = window.iidentity || {};
                                 .addClass('faction-' + source.faction)
                                 .attr('data-key', source.key)
                                 .append(
-                                    $('<a>')
-                                        .text(source.tag)
-                                        .attr('target', '_blank')
-                                        .attr('href', 'https://docs.google.com/spreadsheet/ccc?key=' + source.key)
+                                    source.url
+                                        ? $('<a>')
+                                            .text(source.tag)
+                                            .attr('target', '_blank')
+                                            .attr('href', source.url)
+                                        : $('<span>')
+                                            .text(source.tag)
                                 )
                                 .append(
                                     $('<p>')
@@ -144,34 +193,69 @@ window.iidentity = window.iidentity || {};
                             .data('key', key)
                             .attr('data-key', key)
                             .append(
-                                $('<a>')
-                                    .text(key)
-                                    .attr('target', '_blank')
-                                    .attr('href', 'https://docs.google.com/spreadsheet/ccc?key=' + key)
-                            )
-                            .append(
-                                $('<a>')
-                                    .html('&times;')
-                                    .attr('href', '#')
-                                    .addClass('remove')
-                            )
-                            .append(
-                                $('<ul>')
-                                    .addClass('errors')
-                                    .attr('data-key', '__errors')
-                            )
-                            .append(
-                                $('<ul>')
-                                    .append(sourceList)
+                                $('<div class="panel panel-default"></div>')
+                                    .append(
+                                        $('<div class="panel-heading"></div>')
+                                            .append(
+                                                result[key].url
+                                                    ? $('<a>')
+                                                        .text(key)
+                                                        .attr('target', '_blank')
+                                                        .attr('href', result[key].url)
+                                                        .addClass('manifest-key')
+                                                    : $('<span>')
+                                                        .text(key)
+                                                        .addClass('manifest-key')
+                                            )
+                                            .append(
+                                                $('<a>')
+                                                    .html('&times;')
+                                                    .attr('href', '#')
+                                                    .addClass('remove')
+                                                    .addClass('pull-right')
+                                            )
+                                    )
+                                    .append(
+                                        $('<div class="panel-body"></div>')
+                                            .append(
+                                                $('<ul>')
+                                                    .addClass('errors')
+                                                    .addClass('list-unstyled')
+                                                    .attr('data-key', '__errors')
+                                            )
+                                            .append(
+                                                $('<ul>')
+                                                    .addClass('list-unstyled')
+                                                    .append(sourceList)
+                                            )
+                                    )
                             )
                     );
                 }
 
                 $('#source_list').html('')
                     .append(
-                        $('<ul>').append(manifestList)
+                        $('<ul>')
+                            .addClass('list-unstyled')
+                            .append(manifestList)
                     );
                 $('#reload_sources').button('reset');
+
+
+                lastOrderRecorded = $.makeArray(
+                    $('#source_list > ul > li').map(function () {
+                        return $(this).attr('data-key');
+                    })
+                );
+                $('#source_list > ul').sortable({
+                    axis: 'y',
+                    containment: 'parent',
+                    cursor: '-webkit-grabbing',
+                    distance: 5,
+                    revert: true,
+                    stop: onOrderChanged
+                });
+                $('#source_list > ul').disableSelection();
 
                 reloadManifestErrors();
             });
@@ -207,10 +291,17 @@ window.iidentity = window.iidentity || {};
 
         addManifest = function () {
             module.log.log('Adding manifest %s', $('#manifest_input').val());
+
+            $('#manifest_input').attr('disabled', true);
+            $('button.manifest_add').button('loading');
+
             comm.addManifest($('#manifest_input').val(), function (result) {
                 if (result !== 'failed') {
                     $('#manifest_input').val('');
                 }
+
+                $('#manifest_input').attr('disabled', null);
+                $('button.manifest_add').button('reset');
 
                 showAlert('add-' + result);
             });
@@ -222,9 +313,13 @@ window.iidentity = window.iidentity || {};
         });
 
         $('#reload_sources').on('click.ii.reload', function () {
-            $(this).button('loading');
+            var $this = $(this);
+
+            $this.button('loading');
+
             comm.reloadData(function (result) {
                 showAlert('reload-' + result);
+                $this.button('reset');
             });
         });
 
@@ -311,4 +406,4 @@ window.iidentity = window.iidentity || {};
             updateButtons();
         });
     });
-})(window.iidentity, window.jQuery);
+})(window.iidentity, window);

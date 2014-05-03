@@ -5,11 +5,11 @@
  * @license MIT
  */
 
-'use strict';
-
 window.iidentity = window.iidentity || {};
 
 (function (module) {
+    'use strict';
+
     var exports = module.comm = {},
         onUpdate = function () {},
         lastUpdate = +new Date;
@@ -79,6 +79,12 @@ window.iidentity = window.iidentity || {};
     exports.hasPermission = function (permission, callback) {
         this.send({ type: 'hasPermission', permission: permission }, function (result) {
             callback(result.hasPermission);
+        });
+    };
+
+    exports.getSourcesForExtra = function (tag, oid, callback) {
+        this.send({ type: 'getSourcesForExtra', tag: tag, oid: oid }, function (result) {
+            callback(result.result);
         });
     };
 })(window.iidentity);

@@ -5,11 +5,11 @@
  * @license MIT
  */
 
-'use strict';
-
 window.iidentity = window.iidentity || {};
 
 (function (module, $) {
+    'use strict';
+
     var exports = module.data = {},
 
         anomalies = [ '13magnus', 'recursion', 'interitus' ],
@@ -123,9 +123,9 @@ window.iidentity = window.iidentity || {};
         },
 
         PlayerSource = Class.extend({
-            init: function (key, query, data, players) {
+            init: function (key, spreadsheet, data, players) {
                 this.key = key;
-                this.query = query;
+                this.spreadsheet = spreadsheet;
                 this.data = data;
                 this.err = [];
                 this.timestamp = +new Date();
@@ -244,7 +244,7 @@ window.iidentity = window.iidentity || {};
                 var self = this;
 
                 module.log.log('Updating source %s', this.getKey());
-                this.query.load(function (err, players) {
+                this.spreadsheet.load(function (err, players) {
                     if (players) {
                         module.log.log('Had %d players, now %d', self.players.length, players.length);
                         self.setPlayers(players);
@@ -269,14 +269,30 @@ window.iidentity = window.iidentity || {};
             getErrors: function () {
                 return this.err;
             },
+
+            getUrl: function () {
+                return this.spreadsheet.getUrl();
+            },
+
+            hasExtra: function (tag, oid) {
+                if (!(tag in this.data.extratags)
+                        || typeof this.data.extratags[tag] !== 'string') {
+                    return false;
+                }
+
+                var i = this.data.extratags[tag].indexOf(':');
+
+                return (i !== -1)
+                    && (oid === this.data.extratags[tag].substr(0, i).trim());
+            },
         }),
 
         CombinedPlayerSource = Class.extend({
-            init: function (sources, key, query) {
+            init: function (sources, key, spreadsheet) {
                 this.sources = sources;
 
                 this.key = key || 0;
-                this.query = query || null;
+                this.spreadsheet = spreadsheet || null;
 
                 this.cache = {};
                 this.timestamp = +new Date;
@@ -380,13 +396,13 @@ window.iidentity = window.iidentity || {};
                     origCallback(updated);
                 }
 
-                if (this.query) {
+                if (this.spreadsheet) {
                     var source,
                         step,
                         length;
 
                     module.log.log('Updating manifest %s', this.key);
-                    this.query.load(function (err, data) {
+                    this.spreadsheet.load(function (err, data) {
                         length = data.length;
 
                         step = function (i, updated) {
@@ -489,7 +505,30 @@ window.iidentity = window.iidentity || {};
 
                 this.loadingErrors = err;
                 return this;
-            }
+            },
+
+            getUrl: function () {
+                return this.spreadsheet ? this.spreadsheet.getUrl() : null;
+            },
+
+            getSourcesForExtra: function (tag, oid) {
+                var result = [];
+
+                this.getSources().forEach(function (source) {
+                    if (source.isCombined()) {
+                        result.push(source.getSourcesForExtra(tag, oid));
+                    } else if (source.hasExtra(tag, oid)) {
+                        result.push([{
+                            url: source.getUrl(),
+                            key: source.getTag()
+                        }]);
+                    }
+                });
+
+                return result.reduce(function (res, elem) {
+                    return res.concat(elem);
+                }, []);
+            },
         }),
 
         loadSource = function (data, callback) {
@@ -586,5 +625,4 @@ window.iidentity = window.iidentity || {};
 
     // exported functions
     exports.loadManifests = loadManifests;
-
 })(window.iidentity, window.jQuery);
