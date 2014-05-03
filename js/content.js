@@ -591,11 +591,119 @@ window.iidentity = window.iidentity || {};
             });
         },
 
+        checkEvent = function () {
+            var $elem = $('[token]'),
+                str,
+                match,
+                oid;
+
+            if ($elem.length === 0) {
+                str = window.document.location.pathname;
+            } else {
+                str = $elem.first().attr('token');
+            }
+
+            if (!(match = str.match(/(^|\/)events\/([a-zA-Z0-9]+)$/))) {
+                return;
+            }
+
+            oid = match[2];
+
+            doOnce($('div.Ee.fP.Ue.eZ'), function ($parent) {
+                module.comm.getSourcesForExtra('event', oid, function (sources) {
+                    module.log.log('Sources for this event (oid=%s): ', oid);
+                    module.log.log(sources);
+
+                    $parent.find('.iidentity-event').remove();
+
+                    if (sources === null || !Array.isArray(sources) || sources.length === 0) {
+                        return;
+                    }
+
+                    $parent.find('div.pD')
+                        .after(
+                            $('<div class="pD iidentity-event"></pd>')
+                                .append(
+                                    $('<b>')
+                                        .text('IngressIdentity Source Files')
+                                )
+                                .append(
+                                    $(
+                                        sources.map(function (source) {
+                                            return $('<div>')
+                                                .append(
+                                                    $('<a>')
+                                                        .addClass('Ub')
+                                                        .attr('href', source.url)
+                                                        .attr('target', '_blank')
+                                                        .text(source.key)
+                                                )
+                                                [0];
+                                        })
+                                    )
+                                )
+                        );
+                });
+            });
+        },
+
+        checkCommunity = function () {
+            var match,
+                oid;
+
+            if (!(match = window.document.location.pathname.match(
+                    /(^|\/)communities\/([a-zA-Z0-9]+)$/
+                    ))) {
+                return;
+            }
+
+            oid = match[2];
+
+            doOnce($('div.MZd.uTc'), function ($parent) {
+                module.comm.getSourcesForExtra('community', oid, function (sources) {
+                    module.log.log('Sources for this community (oid=%s): ', oid);
+                    module.log.log(sources);
+
+                    $parent.find('.iidentity-community').remove();
+
+                    if (sources === null || !Array.isArray(sources) || sources.length === 0) {
+                        return;
+                    }
+
+                    $parent.find('div.LEd')
+                        .before(
+                            $('<div class="g0d iidentity-community"></pd>')
+                                .append(
+                                    $('<b>')
+                                        .text('IngressIdentity Source Files')
+                                )
+                                .append(
+                                    $(
+                                        sources.map(function (source) {
+                                            return $('<div>')
+                                                .append(
+                                                    $('<a>')
+                                                        .addClass('Ub')
+                                                        .attr('href', source.url)
+                                                        .attr('target', '_blank')
+                                                        .text(source.key)
+                                                )
+                                                [0];
+                                        })
+                                    )
+                                )
+                        );
+                });
+            });
+        },
+
     // Start listening for new nodes to traverse
         observer = new window.MutationObserver(function (mutations) {
             var i;
 
             checkProfile();
+            checkEvent();
+            checkCommunity();
 
             mutations.forEach(function (mutation) {
                 for(i = 0; i < mutation.addedNodes.length; i++) {
@@ -608,6 +716,9 @@ window.iidentity = window.iidentity || {};
             doOnceTimestamp = '' + +new Date;
 
             checkProfile();
+            checkEvent();
+            checkCommunity();
+
             checkElement(window.document);
         };
 

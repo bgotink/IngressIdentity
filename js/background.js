@@ -443,6 +443,22 @@ window.iidentity = window.iidentity || {};
         return false;
     };
 
+    messageListeners.getSourcesForExtra = function (request, sender, sendResponse) {
+        if (data === null) {
+            sendResponse({ result: [] });
+        } else {
+            getStoredData('option-match-extra-' + request.tag, true, function (match) {
+                if (!match) {
+                    sendResponse({ result: [] });
+                } else {
+                    sendResponse({ result: data.getSourcesForExtra(request.tag, request.oid) });
+                }
+            })
+        }
+
+        return true;
+    },
+
     messageListeners.getPlayer = function (request, sender, sendResponse) {
         if (data === null) {
             sendResponse({ status: 'not-found' });
