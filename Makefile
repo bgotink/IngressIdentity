@@ -1,7 +1,7 @@
 MDs = build/README.md build/LICENSE.md build/NOTICE.md
 JSs = build/js/content.js build/js/options.js build/js/background.js build/js/class.js
 CSSs = build/css/content.css build/css/options.css build/css/help.css
-HTMLs = build/options.html build/background.html
+HTMLs = build/options.html build/background.html build/help.html
 
 default: all
 
