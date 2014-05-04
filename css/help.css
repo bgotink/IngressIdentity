@@ -2,8 +2,9 @@ body {
     font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
 }
 
-span.tt {
+.tt {
     font-family: "Lucida Console", Monaco, monospace;
+    text-align: left;
 }
 
 p {
@@ -76,6 +77,10 @@ blockquote > dl {
     font-size: 12px;
     font-weight: 500;
     color: #999;
+}
+
+span.tab {
+    padding-left: 2em;
 }
 
 @media (min-width: 992px) {
