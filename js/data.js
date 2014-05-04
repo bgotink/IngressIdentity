@@ -121,6 +121,26 @@ window.iidentity = window.iidentity || {};
             newArguments[0] = target;
             return merge_player.apply(null, newArguments);
         },
+        checkValidAnomaly = function (data, key, err) {
+            if (key in data) {
+                var value = ('' + data[key]).trim();
+
+                if (anomalies.indexOf(value) === -1) {
+                    err.push('Invalid anomaly: ' + value);
+                    delete data[key];
+                }
+            }
+        },
+        checkValidPageValue = function (data, key, err) {
+            if (key in data) {
+                var value = data[key];
+
+                if (value.indexOf(':') === -1) {
+                    err.push('Invalid ' + key + ': ' + value);
+                    delete data[key];
+                }
+            }
+        },
 
         PlayerSource = Class.extend({
             init: function (key, spreadsheet, data, players) {
@@ -143,23 +163,10 @@ window.iidentity = window.iidentity || {};
                     data.extratags = {};
                 }
 
-                if ('anomaly' in data.extratags) {
-                    var anomaly = data.extratags.anomaly;
+                checkValidAnomaly(data.extratags, 'anomaly', this.err);
 
-                    if (anomalies.indexOf(anomaly) === -1) {
-                        this.err.push('Invalid anomaly: ' + anomaly);
-                        delete data.extratags.anomaly;
-                    }
-                }
-
-                if ('community' in data.extratags) {
-                    var community = data.extratags.community;
-
-                    if (community.indexOf(':') === -1) {
-                        this.err.push('Invalid community: "' + community + '"');
-                        delete data.extratags.community;
-                    }
-                }
+                checkValidPageValue(data.extratags, 'community', this.err);
+                checkValidPageValue(data.extratags, 'event', this.err);
 
                 this.setPlayers(players);
             },
