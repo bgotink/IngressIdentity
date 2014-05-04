@@ -2,15 +2,13 @@
     margin-left: 1em;
 }
 
-.faction-enlightened {
-    color: green;
-}
-
+.faction-enlightened,
 .faction-enlightened > a {
     color: green;
 }
 
-.faction-resistance {
+.faction-resistance,
+.faction-resistance > a {
     color: blue;
 }
 
@@ -50,4 +48,8 @@ span.tt {
         width: 100%;
         height: 100%;
     }
+}
+
+.ui-sortable-placeholder {
+    margin-bottom: 20px;
 }

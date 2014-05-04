@@ -624,6 +624,11 @@ window.iidentity = window.iidentity || {};
                 data.update(function (updated) {
                     if (updated) {
                         data.invalidateCache();
+
+                        if ('manifests' in storageCache) {
+                            delete storageCache.manifests;
+                        }
+
                         updateTabs();
                     }
                 })
