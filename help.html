@@ -227,8 +227,19 @@
                     If <span class="tt">TAB</span> is <span class="tt">0</span>, you
                     can omit it. That is, the spreadsheet key is simply <span class="tt">KEY</span>.
                 </p>
+                <h3><a name="maniforder"></a>Order of manifests</h3>
+                <p>
+                    The order of the manifests matters! The data from the different
+                    sources is merged in order to get all the data for every
+                    player. <em>Contrary to the original extension</em>, the last
+                    manifest/source has precedence. That is, if two sources define
+                    the level for one player, the level of the merged data will be
+                    that found in the latter of the two sources.
+                </p>
             </div>
         </div>
+
+        <!-- OIDs -->
         <div class="row">
             <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
                 <h2><a name="oid"></a>OIDs</h2>
@@ -257,13 +268,15 @@
                     page. You'll see that the URL is
                 </p>
                 <blockquote>
-                    <span class="tt">https://plus.google.com/117792105926525258257</tt>
+                    <span class="tt">https://plus.google.com/117792105926525258257</span>
                 </blockquote>
                 <p>
                     This contains the OID.
                 </p>
             </div>
         </div>
+
+        <!-- Notes on compatibility -->
         <div class="row">
             <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
                 <h2><a name="compat"></a>Compatibility with the original extension</h2>
