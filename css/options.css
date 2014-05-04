@@ -49,3 +49,7 @@ span.tt {
         height: 100%;
     }
 }
+
+.ui-sortable-placeholder {
+    margin-bottom: 20px;
+}
