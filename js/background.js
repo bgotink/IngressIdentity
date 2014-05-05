@@ -246,6 +246,13 @@ window.iidentity = window.iidentity || {};
 
             module.log.log('Loaded manifests: ', keys);
 
+            if (data === null) {
+                module.log.log('Data not loaded, yet, returning empty reply');
+                sendResponse({});
+
+                return false;
+            }
+
             keys.each(function (key) {
                 manifest = data.getSource(key);
                 manifestData = [];
