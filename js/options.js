@@ -113,7 +113,7 @@ window.iidentity = window.iidentity || {};
                 $elem.find('> p.error').remove();
 
                 errors.forEach(function (err) {
-                    if (err.match(/Sign in/i) && err.subsr(0, 2) == '<a' && err.substr(-4) === '</a>') {
+                    if (err.match(/Sign in/i) && err.substr(0, 2) == '<a' && err.substr(-4) === '</a>') {
                         $elem.append($(err));
                     } else {
                         $elem.append(
