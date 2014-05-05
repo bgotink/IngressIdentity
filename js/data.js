@@ -168,6 +168,11 @@ window.iidentity = window.iidentity || {};
                 this.players = {};
                 var newPlayers = this.players;
                 players.each(function (player) {
+                    if (!(Object.isNumber(player.oid) || Object.isString(player.oid))
+                                || ('' + player.oid).match(/^9*$/)) {
+                        return;
+                    }
+
                     newPlayers[player.oid] = player;
                 });
             },
