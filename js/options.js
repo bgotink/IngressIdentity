@@ -326,9 +326,9 @@ window.iidentity = window.iidentity || {};
             e.preventDefault();
         });
 
-        $('#source_list').on('click.ii.remove', '.manifest > .remove', function () {
+        $('#source_list').on('click.ii.remove', '.manifest .remove', function () {
             comm.removeManifest(
-                $(this).parent().data('key'),
+                $(this).closest('.manifest').data('key'),
                 function (result) {
                     showAlert('remove-' + result);
                 }
