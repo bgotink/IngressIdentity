@@ -16,7 +16,7 @@ window.iidentity = window.iidentity || {};
         storageCache = {},
 
         isOptionsPage = function (url) {
-            return url.match(new RegExp('chrome-extension:\\/\\/' + chrome.runtime.id + '/options.html.*'));
+            return !!url.match(new RegExp('chrome-extension:\\/\\/' + chrome.runtime.id + '/options.html.*'));
         },
 
     // storage functions
@@ -24,8 +24,7 @@ window.iidentity = window.iidentity || {};
         disableUpdateListener = false,
         onDataUpdated = function (changes, areaName) {
             var update = false,
-                reload = false,
-                key;
+                reload = false;
 
             if (disableUpdateListener) {
                 module.log.log('Chrome storage update listener disabled, re-enabling');
@@ -34,8 +33,8 @@ window.iidentity = window.iidentity || {};
             }
 
             module.log.log('Settings updated:');
-            for (key in changes) {
-                if (key in storageCache) {
+            Object.each(changes, function (key) {
+                if (Object.has(storageCache, key)) {
                     delete storageCache[key];
                 }
 
@@ -46,7 +45,7 @@ window.iidentity = window.iidentity || {};
                 } else {
                     update = true;
                 }
-            }
+            });
 
             if (reload) {
                 module.log.log('Reloading manifests');
@@ -55,11 +54,11 @@ window.iidentity = window.iidentity || {};
                         module.log.log('Manifests reloaded');
 
                         if (err) {
-                            err.forEach(module.log.warn);
+                            err.each(module.log.warn);
                         }
                     } else {
                         module.log.error('Error when reloading manifest:');
-                        err.forEach(module.log.error);
+                        err.each(module.log.error);
                     }
                 });
             } else if (update) {
@@ -72,7 +71,7 @@ window.iidentity = window.iidentity || {};
             var request = {};
             request[key] = defaultValue;
 
-            if (key in storageCache && storageCache[key].expires > (+new Date)) {
+            if (Object.has(storageCache, key) && storageCache[key].expires > (+new Date)) {
                 module.log.log('Got storage { key: %s, value: %s } from storage cache', key, '' + storageCache[key].result);
                 callback(storageCache[key].result);
             } else {
@@ -83,7 +82,6 @@ window.iidentity = window.iidentity || {};
                         result: result[key],
                         expires: (+new Date()) + 60 * 1000
                     };
-
                     callback(result[key]);
                 });
             }
@@ -111,7 +109,7 @@ window.iidentity = window.iidentity || {};
 
         addManifestKey = function (key, callback) {
             getManifestKeys(function (keys) {
-                if (keys.indexOf(key) !== -1) {
+                if (!keys.none(key)) {
                     module.log.log('manifest key %s already loaded', key);
                     callback(false);
                     return;
@@ -128,15 +126,12 @@ window.iidentity = window.iidentity || {};
 
         removeManifestKey = function (key, callback) {
             getManifestKeys(function (keys) {
-                if (keys.indexOf(key) === -1) {
+                if (keys.none(key)) {
                     callback(false);
                     return;
                 }
 
-                keys.splice(
-                    keys.indexOf(key),
-                    1
-                );
+                keys.remove(key);
 
                 setManifestKeys(keys, function () {
                     callback(true);
@@ -165,8 +160,8 @@ window.iidentity = window.iidentity || {};
                 // check if the keys in the old one are still in the new one
                 // and if the keys of the new one are also in the old one
                 for (i = 0; i < length; i++) {
-                    if (oldOrder.indexOf(newOrder[i]) === -1
-                            || newOrder.indexOf(oldOrder[i]) === -1) {
+                    if (oldOrder.none(newOrder[i])
+                            || newOrder.none(oldOrder[i])) {
                         callback('failed');
                         return;
                     }
@@ -188,7 +183,7 @@ window.iidentity = window.iidentity || {};
                         data = newData;
                         data.setLoadingErrors(err);
 
-                        if ('manifests' in storageCache) {
+                        if (Object.has(storageCache, 'manifests')) {
                             delete storageCache.manifests;
                         }
 
@@ -212,15 +207,13 @@ window.iidentity = window.iidentity || {};
                     }
 
                     chrome.tabs.query({}, function(tabs) {
-                        var i,
-                            length = tabs.length,
-                            message = { type: 'update' };
-                        module.log.log('Sending update message to %d tabs', length);
+                        var message = { type: 'update' };
+                        module.log.log('Sending update message to %d tabs', tabs.length);
 
-                        for (i = 0; i < length; i++) {
-                            module.log.log('-- tab ', tabs[i]);
-                            chrome.tabs.sendMessage(tabs[i].id, message);
-                        }
+                        tabs.each(function (tab) {
+                            module.log.log('-- tab ', tab);
+                            chrome.tabs.sendMessage(tab.id, message);
+                        });
                     });
                 }
             );
@@ -237,7 +230,7 @@ window.iidentity = window.iidentity || {};
             return false;
         }
 
-        if ('manifests' in storageCache) {
+        if (Object.has(storageCache, 'manifests')) {
             module.log.log('Requesting manifests, loaded from cache');
             sendResponse(storageCache.manifests);
 
@@ -253,14 +246,14 @@ window.iidentity = window.iidentity || {};
 
             module.log.log('Loaded manifests: ', keys);
 
-            keys.forEach(function (key) {
+            keys.each(function (key) {
                 manifest = data.getSource(key);
                 manifestData = [];
 
                 if (manifest === null) {
                     module.log.error('Strangely manifest %s cannot be found', key);
                 } else {
-                    manifest.getSources().forEach(function (source) {
+                    manifest.getSources().each(function (source) {
                         tmp = {
                             key:     source.getKey(),
                             tag:     source.getTag(),
@@ -522,7 +515,7 @@ window.iidentity = window.iidentity || {};
                     return false;
                 }
 
-                if ('anomaly' in player.extra) {
+                if (Object.has(player.extra, 'anomaly')) {
                     getStoredData('option-show-anomalies', true, function (showAnomalies) {
                         if (!showAnomalies) {
                             delete player.extra.anomaly;
@@ -535,9 +528,11 @@ window.iidentity = window.iidentity || {};
                 }
 
                 sendResponse({ status: 'success', player: player });
+
+                return false;
             };
 
-            if (!('extra' in request) || !('match' in request.extra)) {
+            if (!Object.has(request, 'extra') || !Object.has(request.extra, 'match')) {
                 return doGetPlayer();
             }
 
@@ -581,7 +576,7 @@ window.iidentity = window.iidentity || {};
                 realRequest = request;
             }
 
-            if (realRequest.type in messageListeners) {
+            if (Object.has(messageListeners, realRequest.type)) {
                 return messageListeners[realRequest.type](realRequest, sender, function (response) {
                     if (reply !== null) {
                         reply.reply = response;
@@ -625,7 +620,7 @@ window.iidentity = window.iidentity || {};
                     if (updated) {
                         data.invalidateCache();
 
-                        if ('manifests' in storageCache) {
+                        if (Object.has(storageCache, 'manifests')) {
                             delete storageCache.manifests;
                         }
 

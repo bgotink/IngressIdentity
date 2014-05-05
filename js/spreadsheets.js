@@ -16,19 +16,19 @@ window.iidentity = window.iidentity || {};
     // variables & constants
 
         baseUrl = {
-            oldSheet: 'https://docs.google.com/spreadsheet/ccc?key=KEY',
-            newSheet: 'https://docs.google.com/spreadsheets/d/KEY',
+            oldSheet: 'https://docs.google.com/spreadsheet/ccc?key={key}',
+            newSheet: 'https://docs.google.com/spreadsheets/d/{key}',
         },
 
         baseQueryUrl = {
-            oldSheet: 'https://docs.google.com/spreadsheet/ccc?key=KEY',
-            newSheet: 'https://docs.google.com/spreadsheets/d/KEY/gviz/tq',
+            oldSheet: 'https://docs.google.com/spreadsheet/ccc?key={key}',
+            newSheet: 'https://docs.google.com/spreadsheets/d/{key}/gviz/tq',
         },
 
     // unexported helper functions and classes
 
         checkKeyExists = function (arr, key, err, row) {
-            if (!key in arr || arr[key] === null || ('' + arr[key]).trim() === '') {
+            if (!key in arr || arr[key] === null || ('' + arr[key]).isBlank()) {
                 err.push('Expected key ' + key + ' to exist in row ' + row);
             }
         },
@@ -43,7 +43,7 @@ window.iidentity = window.iidentity || {};
              * The constructor. The only parameter is the key/id of the spreadsheet.
              */
             init: function (key) {
-                this.key = key.trim();
+                this.key = key.compact();
             },
 
             /**
@@ -61,9 +61,9 @@ window.iidentity = window.iidentity || {};
                 }
 
                 if (key.match(/^[a-zA-Z0-9]+$/)) {
-                    url = baseUrl.oldSheet.replace('KEY', key);
+                    url = baseUrl.oldSheet.assign({ key: key });
                 } else {
-                    url = baseUrl.newSheet.replace('KEY', key);
+                    url = baseUrl.newSheet.assign({ key: key });
                 }
 
                 if (gid === false) {
@@ -92,9 +92,9 @@ window.iidentity = window.iidentity || {};
                 }
 
                 if (key.match(/^[a-zA-Z0-9]+$/)) {
-                    url = baseQueryUrl.oldSheet.replace('KEY', key) + '&gid=' + gid;
+                    url = baseQueryUrl.oldSheet.assign({ key: key }) + '&gid=' + gid;
                 } else {
-                    url = baseQueryUrl.newSheet.replace('KEY', key) + '?gid=' + gid;
+                    url = baseQueryUrl.newSheet.assign({ key: key }) + '?gid=' + gid;
                 }
 
                 (new google.visualization.Query(url)).send(function (response) {
@@ -161,7 +161,7 @@ window.iidentity = window.iidentity || {};
                         }
                     }
 
-                    if (err && (typeof err === 'string')) {
+                    if (err && Object.isString(err)) {
                         err = [ err ];
                     }
 

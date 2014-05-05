@@ -9,7 +9,7 @@ This code is &copy; 2014 [Bram Gotink et al.](https://github.com/bgotink/Ingress
 under the MIT license. For more information, see `LICENSE.md`.  
 
 ## Notice
-This project contains code by John Resig, jQuery and the @twbs project. For
+This project contains code by John Resig, jQuery, Sugar and the @twbs project. For
 more information, see `NOTICE.md`.
 
 The images in `img/logo` are licensed as `Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported`,

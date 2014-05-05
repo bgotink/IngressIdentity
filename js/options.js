@@ -112,7 +112,7 @@ window.iidentity = window.iidentity || {};
             if (Array.isArray(errors)) {
                 $elem.find('> p.error').remove();
 
-                errors.forEach(function (err) {
+                errors.each(function (err) {
                     if (err.match(/Sign in/i) && err.substr(0, 2) == '<a' && err.substr(-4) === '</a>') {
                         $elem.append($(err));
                     } else {
@@ -124,14 +124,12 @@ window.iidentity = window.iidentity || {};
                     }
                 });
             } else {
-                var key;
-
-                for (key in errors) {
+                Object.each(errors, function (key, value) {
                     reloadManifestErrorsHelper(
-                        errors[key],
+                        value,
                         $elem.find('[data-key="' + key + '"]')
                     );
-                }
+                });
             }
         },
         reloadManifestErrors = function () {
@@ -151,19 +149,18 @@ window.iidentity = window.iidentity || {};
         reloadManifests = function () {
             module.log.log('Reloading manifests...');
             comm.getManifests(function (result) {
-                var key,
-                    manifestList = [],
+                var manifestList = [],
                     sourceList;
 
                 module.log.log('Got manifest info: ', result);
 
-                for (key in result) {
+                Object.each(result, function (key, value) {
                     sourceList = [];
 
                     module.log.log('Manifest key %s', key);
-                    module.log.log(result[key]);
+                    module.log.log(value);
 
-                    result[key].sources.forEach(function (source) {
+                    value.sources.each(function (source) {
                         module.log.log('-- Source key %s', source.key);
 
                         sourceList.push(
@@ -197,7 +194,7 @@ window.iidentity = window.iidentity || {};
                                     .append(
                                         $('<div class="panel-heading"></div>')
                                             .append(
-                                                result[key].url
+                                                value.url
                                                     ? $('<a>')
                                                         .text(key)
                                                         .attr('target', '_blank')
@@ -231,7 +228,7 @@ window.iidentity = window.iidentity || {};
                                     )
                             )
                     );
-                }
+                });
 
                 $('#source_list').html('')
                     .append(

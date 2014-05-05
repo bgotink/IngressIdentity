@@ -23,7 +23,7 @@ window.iidentity = window.iidentity || {};
             for (key in obj) {
                 if (typeof obj[key] === 'object') {
                     filterEmpty(obj[key]);
-                } else if (obj[key] === null || ('' + obj[key]).trim() === '') {
+                } else if (obj[key] === null || ('' + obj[key]).isBlank()) {
                     delete obj[key];
                 }
             }
@@ -32,9 +32,9 @@ window.iidentity = window.iidentity || {};
             var i = str.indexOf(':');
 
             if (i === -1) {
-                return str.trim();
+                return str.compact();
             } else {
-                return str.substr(0, i).trim();
+                return str.to(i).trim();
             }
         },
         addToArray = function (src, dst) {
@@ -45,11 +45,11 @@ window.iidentity = window.iidentity || {};
             var existing = [],
                 name;
 
-            dst.forEach(function (elem) {
+            dst.each(function (elem) {
                 existing.push(getExtraDataValueName(elem));
             });
 
-            src.forEach(function (elem) {
+            src.each(function (elem) {
                 name = getExtraDataValueName(elem);
 
                 if (existing.indexOf(name) === -1) {
@@ -72,7 +72,7 @@ window.iidentity = window.iidentity || {};
                 extraKey,
                 tmp;
 
-            if (typeof target.extra !== 'object') {
+            if (!Object.isObject(target.extra)) {
                 target.extra = {};
             }
 
@@ -167,7 +167,7 @@ window.iidentity = window.iidentity || {};
             setPlayers: function (players) {
                 this.players = {};
                 var newPlayers = this.players;
-                players.forEach(function (player) {
+                players.each(function (player) {
                     newPlayers[player.oid] = player;
                 });
             },
@@ -206,7 +206,7 @@ window.iidentity = window.iidentity || {};
             },
 
             getNbPlayers: function () {
-                return Object.keys(this.players).length;
+                return Object.size(this.players);
             },
 
             getKey: function () {
@@ -276,14 +276,14 @@ window.iidentity = window.iidentity || {};
 
             hasExtra: function (tag, oid) {
                 if (!(tag in this.data.extratags)
-                        || typeof this.data.extratags[tag] !== 'string') {
+                        || !Object.isString(this.data.extratags[tag])) {
                     return false;
                 }
 
                 var i = this.data.extratags[tag].indexOf(':');
 
                 return (i !== -1)
-                    && (oid === this.data.extratags[tag].substr(0, i).trim());
+                    && (oid === this.data.extratags[tag].to(i).trim());
             },
         }),
 
@@ -368,7 +368,7 @@ window.iidentity = window.iidentity || {};
             },
 
             invalidateCache: function () {
-                this.getSources().forEach(function (source) {
+                this.getSources().each(function (source) {
                     if (source.isCombined()) {
                         source.invalidateCache();
                     }
@@ -498,7 +498,7 @@ window.iidentity = window.iidentity || {};
                     this.loadingErrors = null;
                     return;
                 }
-                if ((Array.isArray(err) ? err.length : Object.keys(err).length) === 0) {
+                if ((Array.isArray(err) ? err.length : Object.size(err)) === 0) {
                     this.loadingErrors = null;
                     return;
                 }
@@ -514,7 +514,7 @@ window.iidentity = window.iidentity || {};
             getSourcesForExtra: function (tag, oid) {
                 var result = [];
 
-                this.getSources().forEach(function (source) {
+                this.getSources().each(function (source) {
                     if (source.isCombined()) {
                         result.push(source.getSourcesForExtra(tag, oid));
                     } else if (source.hasExtra(tag, oid)) {
@@ -566,7 +566,7 @@ window.iidentity = window.iidentity || {};
                     step = function (i) {
                         if (i >= nbSources) {
                             callback(
-                                Object.keys(err).length > 0 ? err : null,
+                                Object.size(err) > 0 ? err : null,
                                 new CombinedPlayerSource(sources, key, manifest)
                             );
                             return;
@@ -601,7 +601,7 @@ window.iidentity = window.iidentity || {};
                 step = function (i) {
                     if (i >= nbKeys) {
                         callback(
-                            Object.keys(err).length > 0 ? err : null,
+                            Object.size(err) > 0 ? err : null,
                             sources.length > 0 ? new CombinedPlayerSource(sources) : null
                         );
                         return;
