@@ -85,6 +85,7 @@ git add manifest.json*
 
 log "Creating release commit"
 git commit -m "[release] prepping v$version"
+git push
 
 git checkout master
 git merge --no-ff -m "[release] v$version" "$branch" || (

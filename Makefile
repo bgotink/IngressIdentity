@@ -1,7 +1,7 @@
 MDs = build/README.md build/LICENSE.md build/NOTICE.md
-JSs = build/js/content.js build/js/options.js build/js/background.js build/js/class.js
+JSs = build/js/content.js build/js/options.js build/js/background.js build/js/help.js
 CSSs = build/css/content.css build/css/options.css build/css/help.css
-HTMLs = build/options.html build/background.html
+HTMLs = build/options.html build/background.html build/help.html
 
 default: all
 
@@ -34,13 +34,13 @@ build/%.md: %.md
 	cp $< $@
 
 build/%.html: %.html
-	grep -Ev '<script type="text\/javascript" src="js\/(log|communication|data|spreadsheets)\.js">' $< > $@
+	grep -Ev '<script type="text\/javascript" src="js\/(class|log|communication|data|spreadsheets)\.js">' $< > $@
 
 build/css/%.css: css/%.css
 	cleancss -o $@ $<
 
-build/js/class.js: js/class.js
-	cp $< $@
+build/js/help.js: js/help.js
+	@bin/minify help help
 
 build/js/content.js: js/_header.js js/content.js js/communication.js js/log.js
 	@bin/minify content communication log content
@@ -48,5 +48,5 @@ build/js/content.js: js/_header.js js/content.js js/communication.js js/log.js
 build/js/options.js: js/_header.js js/options.js js/communication.js js/log.js
 	@bin/minify options communication log options
 
-build/js/background.js: js/_header.js js/log.js js/spreadsheets.js js/data.js js/background.js
-	@bin/minify background log spreadsheets data background
+build/js/background.js: js/_header.js js/log.js js/spreadsheets.js js/data.js js/background.js js/class.js
+	@bin/minify background class log spreadsheets data background
