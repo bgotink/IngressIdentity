@@ -306,7 +306,7 @@ window.iidentity = window.iidentity || {};
 
             hasPlayer: function (oid) {
                 if (typeof this.cache[oid] !== 'undefined') {
-                    return true;
+                    return this.cache[oid] !== null;
                 }
 
                 return this.sources.some(function (source) {
@@ -331,7 +331,7 @@ window.iidentity = window.iidentity || {};
                 });
 
                 if (data.length < 2) {
-                    return null;
+                    return this.cache[oid] = null;
                 }
 
                 faction = data[1].faction;
