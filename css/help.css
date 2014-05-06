@@ -7,7 +7,8 @@ body {
     text-align: left;
 }
 
-p {
+p,
+dt, dd {
     text-align: justify;
 }
 
@@ -94,4 +95,30 @@ span.tab {
         width: 100%;
         height: 100%;
     }
+}
+
+.faction-enlightened,
+.faction-enlightened > a {
+    color: green;
+}
+
+.faction-resistance,
+.faction-resistance > a {
+    color: blue;
+}
+
+.faction-enlightened > a,
+.faction-resistance > a {
+    font-weight: bold;
+}
+
+.panel-heading {
+    padding-right: 35px;
+}
+
+.panel-heading > .remove {
+    position: relative;
+    top: -1px;
+    right: -21px;
+    color: inherit;
 }

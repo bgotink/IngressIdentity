@@ -19,9 +19,11 @@
 <body>
     <div class="background"></div>
     <div class="container">
-        <!-- General introduction -->
         <div class="row">
             <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
+                <!--
+                    Introduction to help page
+                -->
                 <div>
                     <h1 id="top"><a name="top"></a>IngressIdentity Help</h1>
                     <p>
@@ -30,14 +32,228 @@
                     </p>
                 </div>
 
-                <!-- Manifest Definition -->
+                <!--
+                    Introduction to extension
+                -->
+                <div>
+                    <h2 id="intro"><a name="intro"></a>Introduction</h2>
+                    <p>
+                        This extension links ingress players with Google+ identities.
+                        It does that using data provided by its user. Yes, that's you.
+                        You provide the extension with information regarding a player's
+                        Google+ userid, their nickname, their level and even which anomalies
+                        they went to and in which Google+ communities they're active.
+                    </p>
+                    <p>
+                        This information should be put on Google Drive spreadsheets.
+                        We'll use two kinds of spreadsheets: sources and manifests:
+                    </p>
+                    <dl class="dl-horizontal">
+                        <dt>Source</dt>
+                        <dd>
+                            A source spreadsheet contains information about players.
+                            Most important are their &ldquo;oid&rdquo;, their in-game
+                            nickname and their level.
+                        </dd>
+                        <dt>Manifest</dt>
+                        <dd>
+                            A manifest is merely a collection of sources. It tells us which
+                            sources are linked to it, how often we should check for updates,
+                            gives the source a name (also called &ldquo;tag&rdquo;) and
+                            give general metadata.
+                        </dd>
+                    </dl>
+                </div>
+
+                <!--
+                    Options page
+                -->
+                <div>
+                    <h2 id="options"><a name="options"></a>The Options Page</h2>
+                    <p>
+                        The options page allows you to add and remove manifests, as well
+                        as change their order. It also sets various options like whether
+                        or not you want Ingress player info to be shown for user mentions
+                        in posts and comments.
+                    </p>
+
+                    <!-- Adding manifests -->
+                    <h3 id="add-manifest"><a name="add-manifest"></a>Adding a manifest</h3>
+                    <p>
+                        You can add a manifest using the &ldquo;Add manifest&rdquo; button.
+                        Before you press this button, you'll have to find the key of the manifest
+                        though. For more information, see our section on <a href="#key">keys</a>.
+                    </p>
+                    <p>
+                        If you want to try this out without having to create a manifest first,
+                        you can add the following key:
+                    </p>
+                    <blockquote>
+                        <a target="_blank" href="https://docs.google.com/spreadsheet/ccc?key=0AlQqEFrEHdKSdG9GTG83T21XZURhZEozd01Lb3BxTmc">0AlQqEFrEHdKSdG9GTG83T21XZURhZEozd01Lb3BxTmc</a>
+                    </blockquote>
+                    <p>
+                        Then take a look at <a target="_blank" href="https://plus.google.com/+NianticProject/posts/eTDoXUG8TkB">
+                        this post by the Niantic Project</a> or
+                        <a target="_blank" href="https://plus.google.com/110350977702120778591/posts/GH32VJw1fhA">
+                        this post by Klue/ADA</a>.
+                    </p>
+
+                    <!-- Removing manifests -->
+                    <h3 id="remove-manifest"><a name="remove-manifest"></a>Removing a manifest</h3>
+                    <p>
+                        You can remove a manifest by clicking the &ldquo;&times;&rdquo; on the right
+                        side of the info panel containing the manifest.
+                    </p>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <a target="_blank" href="https://docs.google.com/spreadsheet/ccc?key=0AlQqEFrEHdKSdG9GTG83T21XZURhZEozd01Lb3BxTmc" class="manifest-key">0AlQqEFrEHdKSdG9GTG83T21XZURhZEozd01Lb3BxTmc</a>
+                            <button type="button" aria-hidden="true" class="remove close">&times;</button>
+                        </div>
+                        <div class="panel-body">
+                            <ul class="list-unstyled">
+                                <li class="source faction-resistance" data-key="0AlQqEFrEHdKSdG9GTG83T21XZURhZEozd01Lb3BxTmc&amp;gid=2">
+                                    <a target="_blank" href="https://docs.google.com/spreadsheet/ccc?key=0AlQqEFrEHdKSdG9GTG83T21XZURhZEozd01Lb3BxTmc#gid=2">
+                                        13M Resistance
+                                    </a>
+                                    <p>Faction: resistance, 1 players, version 2014042901</p>
+                                </li>
+                                <li class="source faction-enlightened" data-key="0AlQqEFrEHdKSdG9GTG83T21XZURhZEozd01Lb3BxTmc&amp;gid=5">
+                                    <a target="_blank" href="https://docs.google.com/spreadsheet/ccc?key=0AlQqEFrEHdKSdG9GTG83T21XZURhZEozd01Lb3BxTmc#gid=5">
+                                        13M Enlightened
+                                    </a>
+                                    <p>Faction: enlightened, 2 players, version 2014042901</p>
+                                </li>
+                                <li class="source faction-resistance" data-key="0AlQqEFrEHdKSdG9GTG83T21XZURhZEozd01Lb3BxTmc&amp;gid=6">
+                                    <a target="_blank" href="https://docs.google.com/spreadsheet/ccc?key=0AlQqEFrEHdKSdG9GTG83T21XZURhZEozd01Lb3BxTmc#gid=6">
+                                        REC Resistance
+                                    </a>
+                                    <p>Faction: resistance, 1 players, version 2014042903</p>
+                                </li>
+                                <li class="source faction-enlightened" data-key="0AlQqEFrEHdKSdG9GTG83T21XZURhZEozd01Lb3BxTmc&amp;gid=7">
+                                    <a target="_blank" href="https://docs.google.com/spreadsheet/ccc?key=0AlQqEFrEHdKSdG9GTG83T21XZURhZEozd01Lb3BxTmc#gid=7">
+                                        REC Enlightened
+                                    </a>
+                                    <p>Faction: enlightened, 1 players, version 2014043001</p>
+                                </li>
+                                <li class="source faction-resistance" data-key="0AlQqEFrEHdKSdG9GTG83T21XZURhZEozd01Lb3BxTmc&amp;gid=8">
+                                    <a target="_blank" href="https://docs.google.com/spreadsheet/ccc?key=0AlQqEFrEHdKSdG9GTG83T21XZURhZEozd01Lb3BxTmc#gid=8">
+                                        INT Resistance
+                                    </a>
+                                    <p>Faction: resistance, 1 players, version 2014042901</p>
+                                </li>
+                                <li class="source faction-enlightened" data-key="0AlQqEFrEHdKSdG9GTG83T21XZURhZEozd01Lb3BxTmc&amp;gid=9">
+                                    <a target="_blank" href="https://docs.google.com/spreadsheet/ccc?key=0AlQqEFrEHdKSdG9GTG83T21XZURhZEozd01Lb3BxTmc#gid=9">
+                                        INT Enlightened
+                                    </a>
+                                    <p>Faction: enlightened, 1 players, version 2014042901</p>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Reordering manifests -->
+                    <h3 id="reorder-manifests"><a name="reorder-manifests"></a>Reordering the manifests</h3>
+                    <p>
+                        The order of the source files matters! If two sources define the same attribute, e.g.
+                        two source files declare a player's level, the latter of the two will have precedence.
+                        If the two values differ, the last one will be the value shown.
+                    </p>
+                    <p>
+                        This means that you'll have to maintain the right order of source files withina single
+                        manifest. Put the ones that are updated the most last, so they can override any outdated
+                        values defined in earlier sources.
+                    </p>
+                    <p>
+                        The same goes for the manifests themselves. The order shown on the options page is
+                        the order in which the manifests are loaded. The source files of the last manifest
+                        have precedence over the source files of all other manifests, so be sure to put the
+                        manifests that are regularly updated last.
+                    </p>
+                    <p>
+                        You could also put the manifests/sources you trust the most last. If, for example, you
+                        have a manifest for the Recursion anomaly you went to nearby and a manifest for the
+                        players (enlightened and resistance) in your town. You'll want to put the local manifest
+                        last, because you can trust its values more than you can trust the other manifest. The
+                        other contains a lot of players. A mistake is easy to make, or an enemy player could've
+                        snuck in. If you have that enemy player in the correct faction in the other manifest,
+                        the extension will show that faction, being the correct one.
+                    </p>
+                    <p>
+                        You can change the order of the manifests by simply dragging and dropping the panels
+                        shown on the option page (an example of such a panel is shown above).
+                    </p>
+
+                    <!-- Push updates -->
+                    <h3 id="push"><a name="push"></a>Push source updates</h3>
+                    <p>
+                        You may have noticed during installation that this extension only requires access to the
+                        websites at <span class="tt">https://plus.google.com/*</span>. We wanted to keep the required
+                        permissions to the bare minimum and that is this. We need those permissions in order to have
+                        our scripts run on the Google+ website.
+                    </p>
+                    <p>
+                        There is one drawback though. We cannot send messages from the &ldquo;background script&rdquo; to
+                        the scripts running on the Google+ website. This means that we cannot let the Google+ page know
+                        we have an update.
+                    </p>
+                    <p>
+                        An update is whenever we update the data and discover it has changed, when you add or
+                        remove amanifest, when you re-order the manifests or when you change one of the layout options.
+                    </p>
+                    <p>
+                        If you do not enable the &ldquo;Automatically push source updates to the webpages&rdquo; option,
+                        the Google+ page will have to pull the update. This is done every time it has to fetch data from
+                        our &ldquo;background script&rdquo;, e.g. when you refresh a Google+ tab, scroll for a while in
+                        such a tab or when you hover over a person's name.
+                    </p>
+                    <p>
+                        If you want near-instant updates on the Google+ pages, you can enable the option. The extension
+                        should ask for extra permissions the first time you press enable. If that doesn't happen, don't
+                        panic. That means the version of Chrome you're using has a small bug which doesn't allow us to
+                        ask for the permission. You'll have to wait until it is fixed or switch to Google Chrome Canary
+                        before being able to enable the option.
+                    </p>
+                    <p>
+                        The extra permission the extension requests is &ldquo;Access to your tabs and browsing activity&rdquo;.
+                        That sounds evil, which is why we decided to make it optional. This permission lets the extension
+                        send messages from the &ldquo;background script&rdquo; to the tabs, meaning we can send a message
+                        telling the Google+ script to update. This permission allows us to do much more as well, but we don't.
+                        You can verify this by looking at the code (more info <a href="#code">below</a>).
+                    </p>
+
+                    <!-- Layout options -->
+                    <h3 id="layout-options"><a name="layout-options"></a>Layout options</h3>
+                    <p>
+                        The options page contains a lot of layout options. You can decide whether you want anomaly badges
+                        to be shown, whether you want player info next to mentions in posts or whether you want links to
+                        the source files to be added to community pages. All the options are enabled when installing this
+                        extension for the first time.
+                    </p>
+                    <p>
+                        The buttons look like this:
+                        <ul class="list-unstyled">
+                            <li>
+                                <button type="button" class="btn btn-default btn-sm">Enable</button>
+                                Disabled
+                            </li>
+                            <li>
+                                <button type="button" class="btn btn-default btn-sm active">Enable</button>
+                                Enabled
+                            </li>
+                        </ul>
+                    </p>
+                </div>
+
+                <!--
+                    Manifest Definition
+                -->
                 <div>
                     <h2 id="manifest-and-source"><a name="manifest-and-source"></a>Manifest &amp; Source Files</h2>
                     <p>
-                        This extension loads data from different sources. These sources
-                        are grouped by manifests. Manifests can have multiple sources and
-                        this extension can collect data from different manifests.
+                        This section describes what manifest and sources files look like.
                     </p>
+
+                    <!-- Manifests -->
                     <h3 id="manifest"><a name="manifest"></a>Manifest Files</h3>
                     <p>
                         A manifest file is a spreadsheet containing the following columns:
@@ -151,6 +367,8 @@
                         at the same time.
                         See <a href="#compat">the section on compatibility</a>.
                     </p>
+
+                    <!-- Sources -->
                     <h3 id="source"><a name="source"></a>Source Files</h3>
                     <p>
                         A source file is a spreadsheet containing the following columns:
@@ -218,11 +436,12 @@
                         rows not being discovered. This requirement stems from the
                         Google Visualization API, which we use to read the spreadsheets.
                     </p>
+
+                    <!-- Key -->
                     <h3 id="key"><a name="key"></a>Getting the spreadsheet key</h3>
                     <p>
                         The spreadsheet key can be found in the URL of the google drive
-                        page.
-                        This URL is of old spreadsheets is of the form
+                        page. For an old Google Drive spreadsheet, this URL is of the form
                     </p>
                     <blockquote>
                         <p class="tt">https://docs.google.com/spreadsheet/ccc?key=KEY#gid=TAB</p>
@@ -248,18 +467,11 @@
                         If <span class="tt">TAB</span> is <span class="tt">0</span>, you
                         can omit it. That is, the spreadsheet key is simply <span class="tt">KEY</span>.
                     </p>
-                    <h3 id="maniforder"><a name="maniforder"></a>Order of manifests</h3>
-                    <p>
-                        The order of the manifests matters! The data from the different
-                        sources is merged in order to get all the data for every
-                        player. <em>Contrary to the original extension</em>, the last
-                        manifest/source has precedence. That is, if two sources define
-                        the level for one player, the level of the merged data will be
-                        that found in the latter of the two sources.
-                    </p>
                 </div>
 
-                <!-- OIDs -->
+                <!--
+                    OIDs
+                -->
                 <div>
                     <h2 id="oid"><a name="oid"></a>OIDs</h2>
                     <p>
@@ -292,11 +504,30 @@
                     <p>
                         This contains the OID.
                     </p>
+                    <p>
+                        Sometimes, Google+ will add <span class="tt">/u/0</span> to the URL.
+                        You can simply ignore this. The profile of Hank Johnson can also be
+                        found at
+                    </p>
+                    <blockquote>
+                        <p class="tt">https://plus.google.com/u/0/117792105926525258257</p>
+                    </blockquote>
                 </div>
 
-                <!-- Notes on compatibility -->
+                <!--
+                    About the extension
+                -->
                 <div>
-                    <h2 id="compat"><a name="compat"></a>Compatibility with the original extension</h2>
+                    <h2 id="about"><a name="about"></a>About the extension</h2>
+                    <p>
+                        We are active ingress players. All our local and not-so-local
+                        communities use Google+ to communicate. The number of people
+                        we've met both online and offline due to ingress is grwoing so
+                        large that we can't keep up with remembering who's who. When
+                        playing we wonder who this player is, and whether that player
+                        is on holiday. When active on Google+, we're wondering who exactly
+                        asks for help or notifies us of enemy player activity.
+                    </p>
                     <p>
                         Making this extension was not an original idea. We took the manifest
                         files from <a target="_blank" href="https://chrome.google.com/webstore/detail/cemdjcbehkacgpiielmiakooedjkkphk">another extension</a>
@@ -314,7 +545,9 @@
                         the original extension delivers. No offense to the author, but this
                         isn't the 90s anymore.
                     </p>
-                    <h3>Manifest Compatibility</h3>
+
+                    <!-- Notes on compatibility -->
+                    <h3 id="compat"><a name="compat"></a>Compatibility with the original extension</h3>
                     <p>
                         The manifests and sources this extension uses to fetch its data
                         are perfectly compatible with the manifests and sources of the
@@ -345,23 +578,64 @@
                             </p>
                         </li>
                     </ul>
+
+                    <!-- Copyright, acknowledgements, disclaimer and source link -->
+                    <h3 id="code"><a name="code"></a>License, acknowledgements, disclaimer</h3>
+                    <p>
+                        This extension is written and maintained by <a target="_blank" href="https://github.com/bgotink">Bram Gotink</a>.
+                        The code is &copy; 2014 Bram Gotink, licensed under the terms of the <a target="_blank" href="http://en.wikipedia.org/wiki/MIT_License">MIT License</a>.
+                        The source of this project can be found on <a target="_blank" href="https://github.com/bgotink/IngressIdentity">GitHub</a>.
+                    </p>
+                    <p>
+                        This project uses code by <a target="_blank" href="https://jquery.org/">jQuery</a>,
+                        <a target="_blank" href="http://ejohn.org/blog/simple-javascript-inheritance/">John Resig</a>
+                        and <a target="_blank" href="https://github.com/twbs/bootstrap">Twitter's Bootstrap</a>.
+                        The logo is derived from the ingress logos created by <a target="_blank" href="https://github.com/cr0ybot/ingress-logos">cr0ybot</a>.
+                    </p>
+                    <p>
+                        If you've found a bug or have an idea for a killer feature, feel
+                        free to let me know <a target="_blank" href="https://github.com/bgotink/IngressIdentity/issues">here</a>.
+                    </p>
+                    <p>
+                        The extension and its author(s) are in no way affiliated with
+                        Ingress, Google or NianticLabs@Google. This extension merely
+                        serves as third-party tool to support Ingress players and their
+                        communities living on Google+.
+                    </p>
                 </div>
             </div>
+
+            <!-- side bar navigation -->
             <div class="col-md-2 invisible-xs invisible-sm hidden-print">
                 <div class="help-nav">
                     <ul class="nav">
-                        <li><a href="#top">Intro</a></li>
+                        <li><a href="#intro">Introduction</a></li>
+                        <li>
+                            <a href="#options">The Options Page</a>
+                            <ul class="nav">
+                                <li><a href="#add-manifest">Adding a manifest</a></li>
+                                <li><a href="#remove-manifest">Removing a manifest</a></li>
+                                <li><a href="#reorder-manifests">Reordering the manifests</a></li>
+                                <li><a href="#push">Push source updates</a></li>
+                                <li><a href="#layout-options">Layout options</a></li>
+                            </ul>
+                        </li>
                         <li>
                             <a href="#manifest-and-source">Manifest and Source Files</a>
                             <ul class="nav">
                                 <li><a href="#manifest">Manifest files</a></li>
                                 <li><a href="#source">Source Files</a></li>
                                 <li><a href="#key">Getting the spreadsheet key</a></li>
-                                <li><a href="#maniforder">Order of manifests</a></li>
                             </ul>
                         </li>
                         <li><a href="#oid">OIDs</a></li>
-                        <li><a href="#compat">Compatibility</a></li>
+                        <li>
+                            <a href="#about">About the extension</a>
+                            <ul class="nav">
+                                <li><a href="#compat">Compatibility</a></li>
+                                <li><a href="#code">License, acknowledgements, disclaimer</a></li>
+                            </ul>
+                        </li>
                     </ul>
                     <a href="#top">Back to top</a>
                 </div>
