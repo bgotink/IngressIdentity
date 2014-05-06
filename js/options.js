@@ -342,8 +342,18 @@ window.iidentity = window.iidentity || {};
         $('button.manifest_add').on('click.ii.add', addManifest);
         $('form.manifest_add').on('submit.ii.add', function (e) {
             addManifest();
-            e.preventDefault();
+
+            return false;
         });
+
+        // make enter submit a form
+        $('input[type="text"]').on('keypress', function (e) {
+            if (e.which === 13) {
+                $(this).closest('form').submit();
+
+                return false;
+            }
+        })
 
         $('#source_list').on('click.ii.remove', '.manifest .remove', function () {
             comm.removeManifest(
