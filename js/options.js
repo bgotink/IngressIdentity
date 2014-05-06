@@ -186,8 +186,7 @@ window.iidentity = window.iidentity || {};
 
                         sourceList.push(
                             $('<li>')
-                                .addClass('source')
-                                .addClass('faction-' + source.faction)
+                                .addClass('source faction-' + source.faction)
                                 .attr('data-key', source.key)
                                 .append(
                                     source.url
@@ -226,19 +225,18 @@ window.iidentity = window.iidentity || {};
                                                         .addClass('manifest-key')
                                             )
                                             .append(
-                                                $('<a>')
+                                                $('<button>')
+                                                    .attr('type', 'button')
+                                                    .attr('aria-hidden', 'true')
+                                                    .addClass('close remove')
                                                     .html('&times;')
-                                                    .attr('href', '#')
-                                                    .addClass('remove')
-                                                    .addClass('pull-right')
                                             )
                                     )
                                     .append(
                                         $('<div class="panel-body"></div>')
                                             .append(
                                                 $('<ul>')
-                                                    .addClass('errors')
-                                                    .addClass('list-unstyled')
+                                                    .addClass('errors list-unstyled')
                                                     .attr('data-key', '__errors')
                                             )
                                             .append(

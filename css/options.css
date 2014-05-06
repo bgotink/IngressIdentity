@@ -1,4 +1,4 @@
-.manifest > .remove {
+.manifest .remove {
     margin-left: 1em;
 }
 
@@ -52,4 +52,15 @@ span.tt {
 
 .ui-sortable-placeholder {
     margin-bottom: 20px;
+}
+
+.panel-heading {
+    padding-right: 35px;
+}
+
+.panel-heading > .remove {
+    position: relative;
+    top: -1px;
+    right: -21px;
+    color: inherit;
 }
