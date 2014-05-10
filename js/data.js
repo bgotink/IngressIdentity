@@ -21,7 +21,7 @@ window.iidentity = window.iidentity || {};
             var key;
 
             for (key in obj) {
-                if (typeof obj[key] === 'object') {
+                if (Object.isObject(obj[key])) {
                     filterEmpty(obj[key]);
                 } else if (obj[key] === null || ('' + obj[key]).isBlank()) {
                     delete obj[key];
@@ -79,7 +79,7 @@ window.iidentity = window.iidentity || {};
             for (key in src) {
                 if (key === 'err') {
                     if (Array.isArray(src.err)) {
-                        if ('err' in target) {
+                        if (Object.has(target, 'err')) {
                             if (Array.isArray(target.err)) {
                                 target.err = target.err.join(src.err);
                             } else {
@@ -91,7 +91,7 @@ window.iidentity = window.iidentity || {};
                     }
                 } else if (key === 'extra') {
                     for (extraKey in src.extra) {
-                        if (extraKey in target.extra) {
+                        if (Object.has(target.extra, extraKey)) {
                             if (Array.isArray(target.extra[extraKey])) {
                                 addToArray(
                                     src.extra[extraKey],
@@ -122,7 +122,7 @@ window.iidentity = window.iidentity || {};
             return merge_player.apply(null, newArguments);
         },
         checkValidAnomaly = function (data, key, err) {
-            if (key in data) {
+            if (Object.has(data, key)) {
                 var value = ('' + data[key]).trim();
 
                 if (anomalies.indexOf(value) === -1) {
@@ -132,7 +132,7 @@ window.iidentity = window.iidentity || {};
             }
         },
         checkValidPageValue = function (data, key, err) {
-            if (key in data) {
+            if (Object.has(data, key)) {
                 var value = data[key];
 
                 if (value.indexOf(':') === -1) {
@@ -197,13 +197,13 @@ window.iidentity = window.iidentity || {};
                     key;
                 player.extra = {};
 
-                for (key in rawPlayer) {
+                Object.each(rawPlayer, function (key, value) {
                     if (mainPlayerData.indexOf(key) !== -1) {
-                        player[key] = rawPlayer[key];
+                        player[key] = value;
                     } else {
-                        player.extra[key] = rawPlayer[key];
+                        player.extra[key] = value;
                     }
-                }
+                });
 
                 filterEmpty(player);
 
@@ -353,7 +353,9 @@ window.iidentity = window.iidentity || {};
                     data[0].err = ['Player ' + data[0].name + ' [' + data[0].nickname + '] has been registered as both enlightened and resistance'];
                 }
 
+                module.log.log('Merging ', data, ' into one player object:');
                 this.cache[oid] = merge_player.apply(null, data);
+                module.log.log('Got', this.cache[oid]);
 
                 return this.cache[oid];
             },
