@@ -414,6 +414,7 @@ window.iidentity = window.iidentity || {};
 
             var $this = $(this),
                 $manifest = $this.closest('.manifest'),
+                key = $manifest.data('key'),
                 oldName = $this.data('old-name'),
                 newName = $this.val(),
                 $replacement;
@@ -423,15 +424,19 @@ window.iidentity = window.iidentity || {};
                     newName = null;
                 }
 
+                if (oldName.compact() === key.compact()) {
+                    oldName = null;
+                }
+
                 module.log.log(
                     'Renaming manifest %s from %s to %s',
-                    $manifest.data('key'),
+                    key,
                     oldName,
                     newName !== null ? newName : ''
                 );
 
                 comm.renameManifest(
-                    $manifest.data('key'),
+                    key,
                     oldName,
                     newName,
                     function (status) {
@@ -447,7 +452,7 @@ window.iidentity = window.iidentity || {};
                 $replacement = $('<p>');
             }
 
-            $replacement.text($this.val())
+            $replacement.text($this.val().isBlank() ? key : $this.val())
                 .addClass('manifest-key');
 
             $this.replaceWith($replacement);

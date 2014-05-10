@@ -159,7 +159,7 @@ window.iidentity = window.iidentity || {};
                 return;
             }
 
-            if (oldName.compact() === newName.compact()) {
+            if (('' + oldName).compact() === ('' + newName).compact()) {
                 callback(true);
                 return;
             }
