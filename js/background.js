@@ -581,7 +581,7 @@ window.iidentity = window.iidentity || {};
             })
         }
 
-        return true;
+        return false;
     },
 
     messageListeners.getPlayer = function (request, sender, sendResponse) {
