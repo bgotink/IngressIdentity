@@ -67,10 +67,8 @@ span.tt {
     margin-left: 1em;
 }
 
-.panel-heading > .manifest-key,
-.panel-heading > input.manifest-key {
+.panel-heading > .key-container {
     flex: 1 0 auto;
-    width: auto;
 }
 
 button {

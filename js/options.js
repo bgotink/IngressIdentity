@@ -219,15 +219,18 @@ window.iidentity = window.iidentity || {};
                                     .append(
                                         $('<div class="panel-heading"></div>')
                                             .append(
-                                                value.url
-                                                    ? $('<a>')
-                                                        .text((Object.isString(value.name) && !value.name.isBlank()) ? value.name : key)
-                                                        .attr('target', '_blank')
-                                                        .attr('href', value.url)
-                                                        .addClass('manifest-key')
-                                                    : $('<span>')
-                                                        .text((Object.isString(value.name) && !value.name.isBlank()) ? value.name : key)
-                                                        .addClass('manifest-key')
+                                                $('<span class="key-container"></span>')
+                                                    .append(
+                                                        value.url
+                                                            ? $('<a>')
+                                                                .text((Object.isString(value.name) && !value.name.isBlank()) ? value.name : key)
+                                                                .attr('target', '_blank')
+                                                                .attr('href', value.url)
+                                                                .addClass('manifest-key')
+                                                            : $('<span>')
+                                                                .text((Object.isString(value.name) && !value.name.isBlank()) ? value.name : key)
+                                                                .addClass('manifest-key')
+                                                    )
                                             )
                                             .append(
                                                 $('<span>')
