@@ -21,8 +21,13 @@ window.iidentity = window.iidentity || {};
                     callback(result);
                 });
             },
-            addManifest: function (key, callback) {
-                module.comm.send({ type: 'addManifest', key: key }, function (result) {
+            addManifest: function (key, name, callback) {
+                module.comm.send({ type: 'addManifest', key: key, name: (Object.isString(name) ? name : '') }, function (result) {
+                    callback(result.status);
+                });
+            },
+            renameManifest: function (key, oldName, newName, callback) {
+                module.comm.send({type: 'renameManifest', key: key, oldName: oldName, newName: newName}, function (result) {
                     callback(result.status);
                 });
             },
@@ -216,20 +221,37 @@ window.iidentity = window.iidentity || {};
                                             .append(
                                                 value.url
                                                     ? $('<a>')
-                                                        .text(key)
+                                                        .text((Object.isString(value.name) && !value.name.isBlank()) ? value.name : key)
                                                         .attr('target', '_blank')
-                                                        .attr('href', result[key].url)
+                                                        .attr('href', value.url)
                                                         .addClass('manifest-key')
                                                     : $('<span>')
-                                                        .text(key)
+                                                        .text((Object.isString(value.name) && !value.name.isBlank()) ? value.name : key)
                                                         .addClass('manifest-key')
                                             )
                                             .append(
-                                                $('<button>')
-                                                    .attr('type', 'button')
-                                                    .attr('aria-hidden', 'true')
-                                                    .addClass('close remove')
-                                                    .html('&times;')
+                                                $('<span>')
+                                                    .addClass('buttons')
+                                                    .append(
+                                                        $('<button>')
+                                                            .attr('type', 'button')
+                                                            .attr('aria-hidden', 'true')
+                                                            .attr('title', 'Rename')
+                                                            .addClass('rename')
+                                                            .append(
+                                                                $('<span class="glyphicon glyphicon-pencil"></span>')
+                                                            )
+                                                    )
+                                                    .append(
+                                                        $('<button>')
+                                                            .attr('type', 'button')
+                                                            .attr('aria-hidden', 'true')
+                                                            .attr('title', 'Remove')
+                                                            .addClass('remove')
+                                                            .append(
+                                                                $('<span class="glyphicon glyphicon-remove"></span>')
+                                                            )
+                                                    )
                                             )
                                     )
                                     .append(
@@ -309,14 +331,17 @@ window.iidentity = window.iidentity || {};
             module.log.log('Adding manifest %s', $('#manifest_input').val());
 
             $('#manifest_input').attr('disabled', true);
+            $('#name_input').attr('disabled', true);
             $('button.manifest_add').button('loading');
 
-            comm.addManifest($('#manifest_input').val(), function (result) {
+            comm.addManifest($('#manifest_input').val(), $('#name_input').val(), function (result) {
                 if (result !== 'failed') {
                     $('#manifest_input').val('');
+                    $('#name_input').val('');
                 }
 
                 $('#manifest_input').attr('disabled', null);
+                $('#name_input').attr('disabled', null);
                 $('button.manifest_add').button('reset');
 
                 showAlert('add-' + result);
@@ -362,6 +387,72 @@ window.iidentity = window.iidentity || {};
                     showAlert('remove-' + result);
                 }
             );
+        });
+        $('#source_list').on('click.ii.rename', '.manifest .rename', function () {
+            var $this = $(this),
+                $manifest = $this.closest('.manifest'),
+                $key = $manifest.find('.manifest-key');
+
+            if ($key.hasClass('form-control')) {
+                // already done...
+                return;
+            }
+
+            module.log.log('Creating input to rename manifest %s', $key.text());
+
+            $key.replaceWith(
+                $('<input type="text" class="form-control manifest-key"></input>')
+                    .val(($key.text() === $manifest.data('key')) ? '' : $key.text())
+                    .data('old-name', $key.text())
+                    .data('url', $key.prop('tagName') === 'A' ? $key.attr('href') : null)
+            );
+        });
+        $('#source_list').on('keypress', 'input.manifest-key', function (e) {
+            if (e.which !== 13) {
+                return;
+            }
+
+            var $this = $(this),
+                $manifest = $this.closest('.manifest'),
+                oldName = $this.data('old-name'),
+                newName = $this.val(),
+                $replacement;
+
+            if (oldName.compact() !== newName.compact()) {
+                if (newName.isBlank()) {
+                    newName = null;
+                }
+
+                module.log.log(
+                    'Renaming manifest %s from %s to %s',
+                    $manifest.data('key'),
+                    oldName,
+                    newName !== null ? newName : ''
+                );
+
+                comm.renameManifest(
+                    $manifest.data('key'),
+                    oldName,
+                    newName,
+                    function (status) {
+                        showAlert('rename-' + status);
+                    }
+                );
+            }
+
+            if (Object.isString($this.data('url'))) {
+                $replacement = $('<a target="_blank">')
+                    .attr('href', $this.data('url'));
+            } else {
+                $replacement = $('<p>');
+            }
+
+            $replacement.text($this.val())
+                .addClass('manifest-key');
+
+            $this.replaceWith($replacement);
+
+            return false;
         });
 
         reloadManifests();

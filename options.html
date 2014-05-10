@@ -93,6 +93,15 @@
                     <button type="button" class="close" aria-hidden="true">&times;</button>
                     <strong>Error!</strong> Something went wrong when changing the order.
                 </div>
+
+                <div class="hide alert alert-success alert-dismissable alert-rename-success">
+                    <button type="button" class="close" aria-hidden="true">&times;</button>
+                    <strong>Success!</strong> The manifest was successfully renamed.
+                </div>
+                <div class="hide alert alert-danger alert-dismissable alert-rename-failed">
+                    <button type="button" class="close" aria-hidden="true">&times;</button>
+                    <strong>Error!</strong> Something went wrong when renaming the manifest.
+                </div>
             </div>
         </div>
         <div class="row">
@@ -123,6 +132,15 @@
                                 </div>
                             </div>
                             <div class="form-group">
+                                <label for="name_input">Manifest Name</label>
+                                <input id="name_input" class="form-control" type="text">
+                                <div class="help-block">
+                                    <p>
+                                        <em>Optional</em>. A human-readable name for your manifest.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="form-group">
                                 <button type="button" class="btn btn-primary manifest_add" data-loading-text="Adding...">
                                     <span class="glyphicon glyphicon-plus"></span>
                                     Add manifest
@@ -130,7 +148,7 @@
                             </div>
                             <div>
                                 <p>
-                                    If you want to see an example of a manifest file, add manifest
+                                    If you want to see an example of a manifest file, add manifest key
                                 </p>
                                 <blockquote>
                                     <a target="_blank" href="https://docs.google.com/spreadsheet/ccc?key=0AlQqEFrEHdKSdG9GTG83T21XZURhZEozd01Lb3BxTmc">0AlQqEFrEHdKSdG9GTG83T21XZURhZEozd01Lb3BxTmc</a>

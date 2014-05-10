@@ -1,7 +1,3 @@
-.manifest .remove {
-    margin-left: 1em;
-}
-
 .faction-enlightened,
 .faction-enlightened > a {
     color: green;
@@ -50,17 +46,50 @@ span.tt {
     }
 }
 
+.manifest .remove {
+    margin-left: .2em;
+}
+
 .ui-sortable-placeholder {
     margin-bottom: 20px;
 }
 
 .panel-heading {
-    padding-right: 35px;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
 }
 
-.panel-heading > .remove {
-    position: relative;
-    top: -1px;
-    right: -21px;
+.panel-heading > .buttons {
     color: inherit;
+    flex: none;
+    height: 23px;
+    margin-left: 1em;
+}
+
+.panel-heading > .manifest-key,
+.panel-heading > input.manifest-key {
+    flex: 1 0 auto;
+    width: auto;
+}
+
+button {
+    padding: 0;
+    cursor: pointer;
+    background: 0 0;
+    border: 0;
+    -webkit-appearance: none;
+}
+
+.panel-heading button {
+    font-size: 21px;
+    font-weight: 700;
+    line-height: 1;
+    color: #000;
+    text-shadow: 0 1px 0 #fff;
+    opacity: .2;
+}
+
+.panel-heading button:hover {
+    opacity: 1;
 }

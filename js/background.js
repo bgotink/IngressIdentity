@@ -107,8 +107,10 @@ window.iidentity = window.iidentity || {};
             storage.set({ manifest_keys: keys }, callback);
         },
 
-        addManifestKey = function (key, callback) {
+        addManifestKey = function (key, name, callback) {
             getManifestKeys(function (keys) {
+                key = key.compact();
+
                 if (!keys.none(key)) {
                     module.log.log('manifest key %s already loaded', key);
                     callback(false);
@@ -119,7 +121,18 @@ window.iidentity = window.iidentity || {};
                 keys.push(key);
 
                 setManifestKeys(keys, function () {
-                    callback(true);
+                    if (!Object.isString(name) || name.isBlank()) {
+                        callback(true);
+                        return;
+                    }
+
+                    getStoredData('manifest_names', {}, function (names) {
+                        names[key] = name.compact();
+
+                        setStoredData('manifest_names', names, function () {
+                            callback(true);
+                        });
+                    });
                 });
             });
         },
@@ -134,6 +147,50 @@ window.iidentity = window.iidentity || {};
                 keys.remove(key);
 
                 setManifestKeys(keys, function () {
+                    callback(true);
+                });
+            });
+        },
+
+        renameManifest = function (key, oldName, newName, callback) {
+            if ((!Object.isString(oldName) || oldName.isBlank())
+                    && (!Object.isString(newName) || newName.isBlank())) {
+                callback(true);
+                return;
+            }
+
+            if (oldName.compact() === newName.compact()) {
+                callback(true);
+                return;
+            }
+
+            getStoredData('manifest_names', {}, function (names) {
+                if (Object.isString(oldName) && !oldName.isBlank()) {
+                    if (!Object.has(names, key) || names[key] !== oldName) {
+                        callback(false);
+                        return;
+                    }
+                } else {
+                    if (Object.has(names, key) && !names[key].isBlank()) {
+                        callback(false);
+                        return;
+                    }
+                }
+
+                if (Object.isString(newName) && !newName.isBlank()) {
+                    names[key] = newName.compact();
+                } else {
+                    delete names[key];
+                }
+
+                setStoredData('manifest_names', names, function () {
+                    if (Object.has(storageCache, 'manifest_names')) {
+                        delete storageCache.manifest_names;
+                    }
+                    if (Object.has(storageCache, 'manifests')) {
+                        delete storageCache.manifests;
+                    }
+
                     callback(true);
                 });
             });
@@ -239,57 +296,60 @@ window.iidentity = window.iidentity || {};
 
         module.log.log('Requesting manifests, loading from source');
         getManifestKeys(function (keys) {
-            var result = {},
-                manifest,
-                manifestData,
-                tmp;
+            getStoredData('manifest_names', {} , function (names) {
+                var result = {},
+                    manifest,
+                    manifestData,
+                    tmp;
 
-            module.log.log('Loaded manifests: ', keys);
+                module.log.log('Loaded manifests: ', keys);
 
-            if (data === null) {
-                module.log.log('Data not loaded, yet, returning empty reply');
-                sendResponse({});
+                if (data === null) {
+                    module.log.log('Data not loaded, yet, returning empty reply');
+                    sendResponse({});
 
-                return false;
-            }
-
-            keys.each(function (key) {
-                manifest = data.getSource(key);
-                manifestData = [];
-
-                if (manifest === null) {
-                    module.log.error('Strangely manifest %s cannot be found', key);
-                } else {
-                    manifest.getSources().each(function (source) {
-                        tmp = {
-                            key:     source.getKey(),
-                            tag:     source.getTag(),
-                            count:   source.getNbPlayers(),
-                            version: source.getVersion(),
-                            faction: source.getFaction(),
-                        };
-
-                        if (source.getUrl() !== null) {
-                            tmp.url = source.getUrl();
-                        }
-
-                        manifestData.push(tmp);
-                    });
+                    return false;
                 }
 
-                module.log.log('Manifest %s contains the following data:', key);
-                module.log.log(manifestData);
+                keys.each(function (key) {
+                    manifest = data.getSource(key);
+                    manifestData = [];
 
-                result[key] = {
-                    sources: manifestData,
-                    url : manifest ? manifest.getUrl() : null
-                };
+                    if (manifest === null) {
+                        module.log.error('Strangely manifest %s cannot be found', key);
+                    } else {
+                        manifest.getSources().each(function (source) {
+                            tmp = {
+                                key:     source.getKey(),
+                                tag:     source.getTag(),
+                                count:   source.getNbPlayers(),
+                                version: source.getVersion(),
+                                faction: source.getFaction(),
+                            };
+
+                            if (source.getUrl() !== null) {
+                                tmp.url = source.getUrl();
+                            }
+
+                            manifestData.push(tmp);
+                        });
+                    }
+
+                    module.log.log('Manifest %s contains the following data:', key);
+                    module.log.log(manifestData);
+
+                    result[key] = {
+                        name: Object.has(names, key) ? names[key] : null,
+                        sources: manifestData,
+                        url : manifest ? manifest.getUrl() : null
+                    };
+                });
+
+                storageCache.manifests = result;
+
+                module.log.log('Sending result to getManifests: ', result);
+                sendResponse(result);
             });
-
-            storageCache.manifests = result;
-
-            module.log.log('Sending result to getManifests: ', result);
-            sendResponse(result);
         });
 
         return true;
@@ -319,7 +379,7 @@ window.iidentity = window.iidentity || {};
         }
 
         disableUpdateListener = true;
-        addManifestKey(request.key, function (added) {
+        addManifestKey(request.key, request.name, function (added) {
             if (!added) {
                 disableUpdateListener = false;
                 sendResponse({ status: 'duplicate' });
@@ -359,9 +419,24 @@ window.iidentity = window.iidentity || {};
         return true;
     };
 
+    messageListeners.renameManifest = function (request, sender, sendResponse) {
+        if (!isOptionsPage(sender.url)) {
+            module.log.error('A \'renameManifest\' message can only originate from the options page');
+            // silently die by not sending a response
+            return false;
+        }
+
+        module.log.log('Renaming manifest ', request.key, ' from ', request.oldName, ' to ', request.newName);
+        renameManifest(request.key, request.oldName, request.newName, function (status) {
+            sendResponse({ status: status ? 'success' : 'failed' });
+        });
+
+        return true;
+    };
+
     messageListeners.changeManifestOrder = function (request, sender, sendResponse) {
         if (!isOptionsPage(sender.url)) {
-            module.log.error('A \'reloadData\' message can only originate from the options page');
+            module.log.error('A \'changeManifestOrder\' message can only originate from the options page');
             // silently die by not sending a response
             return false;
         }
