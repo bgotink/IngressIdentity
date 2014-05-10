@@ -121,12 +121,12 @@ window.iidentity = window.iidentity || {};
                     player.extra.community.each(function (community, i) {
                         var seperatorposition = community.indexOf(":");
 
-                        if (i > 4) {
+                        if (i > 3) {
                             return;
                         }
-                        if (i === 4) {
+                        if (i === 3) {
                             $groupInfo.append(
-                                $('<div>').html('&ldots;')
+                                $('<div>').html('&hellip;')
                             );
                             return;
                         }
@@ -154,12 +154,12 @@ window.iidentity = window.iidentity || {};
                     player.extra.event.each(function (event, i) {
                         var seperatorposition = event.indexOf(":");
 
-                        if (i > 4) {
+                        if (i > 3) {
                             return;
                         }
-                        if (i === 4) {
+                        if (i === 3) {
                             $groupInfo.append(
-                                $('<div>').html('&ldots;')
+                                $('<div>').html('&hellip;')
                             );
                             return;
                         }
