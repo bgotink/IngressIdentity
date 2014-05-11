@@ -51,13 +51,10 @@ window.iidentity = window.iidentity || {};
                     return;
                 }
 
-                if ((typeof player.level === 'string') && !player.level.match(/([0-9]|1[0-6])/)) {
-                    player.level = 0;
-                }
-
                 var $groupInfo,
                     $extraInfo,
                     $name,
+                    level,
                     $elem = $('<div>')
                         .addClass('iidentity-wrapper')
                         .attr('data-oid', oid)
@@ -76,25 +73,35 @@ window.iidentity = window.iidentity || {};
                                 .addClass('iidentity-group')
                         );
 
+                if (Object.isNumber(player.level)) {
+                    level = '' + Number.range(0, 16).clamp(player.level);
+                } else {
+                    if (Object.isString(player.level) && player.level.match(/([0-9]|1[0-6])/)) {
+                        level = player.level;
+                    } else {
+                        level = '0';
+                    }
+                }
+
                 $extraInfo.append(
                     $('<span>')
-                        .addClass('iidentity-level iidentity-level' + player.level)
-                        .text('L' + ('0' == player.level ? '?' : player.level))
+                        .addClass('iidentity-level iidentity-level' + level)
+                        .text('L' + ('0' == level ? '?' : level))
                 );
 
-                if ('anomaly' in player.extra) {
+                if (Object.has(player.extra, 'anomaly')) {
                     if (!Array.isArray(player.extra.anomaly)) {
                         player.extra.anomaly = [ player.extra.anomaly ];
                     }
 
                     var anomalyList = [];
 
-                    player.extra.anomaly.forEach(function (anomaly) {
+                    player.extra.anomaly.each(function (anomaly) {
                         anomalyList.push(
                             $('<img>')
                                 .attr('src', chrome.extension.getURL('img/anomalies/' + anomaly + '.png'))
                                 .attr('alt', anomaly)
-                                .attr('title', anomaly.substr(0, 1).toUpperCase() + anomaly.substr(1))
+                                .attr('title', anomaly.capitalize(true))
                                 .addClass('iidentity-anomaly')
                         );
                     });
@@ -106,25 +113,25 @@ window.iidentity = window.iidentity || {};
                     );
                 }
 
-                if('community' in player.extra){
+                if (Object.has(player.extra, 'community')) {
                     if (!Array.isArray(player.extra.community)) {
                         player.extra.community = [ player.extra.community ];
                     }
 
-                    player.extra.community.forEach(function (community, i) {
+                    player.extra.community.each(function (community, i) {
                         var seperatorposition = community.indexOf(":");
 
-                        if (i > 4) {
+                        if (i > 3) {
                             return;
                         }
-                        if (i === 4) {
+                        if (i === 3) {
                             $groupInfo.append(
-                                $('<div>').html('&ldots;')
+                                $('<div>').html('&hellip;')
                             );
                             return;
                         }
 
-                        if(seperatorposition === -1){
+                        if (seperatorposition === -1) {
                             return;
                         }
 
@@ -132,32 +139,32 @@ window.iidentity = window.iidentity || {};
                             $('<div>')
                                 .append(
                                     $('<a>')
-                                        .attr('href', 'https://plus.google.com/communities/' + community.substring(0,seperatorposition).trim())
-                                        .text(community.substring(seperatorposition + 1 ).trim())
+                                        .attr('href', 'https://plus.google.com/communities/' + community.to(seperatorposition).compact())
+                                        .text(community.from(seperatorposition + 1).compact())
                                 )
                         );
                     });
                 }
 
-                if('event' in player.extra){
+                if (Object.has(player.extra, 'event')) {
                     if (!Array.isArray(player.extra.event)) {
                         player.extra.event = [ player.extra.event ];
                     }
 
-                    player.extra.event.forEach(function (event, i) {
+                    player.extra.event.each(function (event, i) {
                         var seperatorposition = event.indexOf(":");
 
-                        if (i > 4) {
+                        if (i > 3) {
                             return;
                         }
-                        if (i === 4) {
+                        if (i === 3) {
                             $groupInfo.append(
-                                $('<div>').html('&ldots;')
+                                $('<div>').html('&hellip;')
                             );
                             return;
                         }
 
-                        if(seperatorposition === -1){
+                        if (seperatorposition === -1) {
                             return;
                         }
 
@@ -165,8 +172,8 @@ window.iidentity = window.iidentity || {};
                             $('<div>')
                                 .append(
                                     $('<a>')
-                                        .attr('href', 'https://plus.google.com/events/' + event.substring(0,seperatorposition).trim())
-                                        .text(event.substring(seperatorposition + 1 ).trim())
+                                        .attr('href', 'https://plus.google.com/events/' + event.to(seperatorposition).compact())
+                                        .text(event.from(seperatorposition + 1).compact())
                                 )
                         );
                     });
@@ -182,8 +189,16 @@ window.iidentity = window.iidentity || {};
                     return;
                 }
 
-                if ((typeof player.level === 'string') && !player.level.match(/([0-9]|1[0-6])/)) {
-                    player.level = 0;
+                var level;
+
+                if (Object.isNumber(player.level)) {
+                    level = '' + Number.range(0, 16).clamp(player.level);
+                } else {
+                    if (Object.isString(player.level) && player.level.match(/([0-9]|1[0-6])/)) {
+                        level = player.level;
+                    } else {
+                        level = '0';
+                    }
                 }
 
                 var $wrapper = $('<span>')
@@ -197,23 +212,23 @@ window.iidentity = window.iidentity || {};
                     )
                     .append(
                         $('<span>')
-                            .addClass('iidentity-level iidentity-level' + player.level)
-                            .text('L' + ('0' == player.level ? '?' : player.level))
+                            .addClass('iidentity-level iidentity-level' + level)
+                            .text('L' + ('0' === level ? '?' : level))
                     );
 
-                if ('anomaly' in player.extra) {
+                if (Object.has(player.extra, 'anomaly')) {
                     if (!Array.isArray(player.extra.anomaly)) {
                         player.extra.anomaly = [ player.extra.anomaly ];
                     }
 
                     var anomalyList = [];
 
-                    player.extra.anomaly.forEach(function (anomaly) {
+                    player.extra.anomaly.each(function (anomaly) {
                         anomalyList.push(
                             $('<img>')
                                 .attr('src', chrome.extension.getURL('img/anomalies/' + anomaly + '.png'))
                                 .attr('alt', anomaly)
-                                .attr('title', anomaly.substr(0, 1).toUpperCase() + anomaly.substr(1))
+                                .attr('title', anomaly.capitalize(true))
                                 .addClass('iidentity-anomaly')
                         );
                     });
@@ -339,8 +354,8 @@ window.iidentity = window.iidentity || {};
         checkElement = function (element) {
             var $root = (element === window.document) ? $(document) : $(element).parent();
 
-            handlers.forEach(function (handler) {
-                handler.matches.forEach(function (match) {
+            handlers.each(function (handler) {
+                handler.matches.each(function (match) {
                     $root.find(match).each(function () {
                         if ($(this).attr('data-iidentity') == 'matched') {
                             return;
@@ -395,7 +410,7 @@ window.iidentity = window.iidentity || {};
                                     .append(
                                         $(
                                             anomalies.map(function (anomaly) {
-                                                nice = anomaly.substr(0, 1).toUpperCase() + anomaly.substr(1);
+                                                nice = anomaly.capitalize(true);
 
                                                 return $('<li>')
                                                     .append(
@@ -441,8 +456,8 @@ window.iidentity = window.iidentity || {};
                                                     return null;
                                                 }
 
-                                                url = baseUrl + link.substr(0, i).trim();
-                                                title = link.substr(i + 1).trim();
+                                                url = baseUrl + link.to(i).compact();
+                                                title = link.from(i + 1).compact();
 
                                                 return $('<li>')
                                                     .append(
@@ -465,7 +480,8 @@ window.iidentity = window.iidentity || {};
         createProfile = function (player, wrapper) {
             var $wrapper = $(wrapper),
                 $profile = $wrapper.find('.iidentity-profile'),
-                tmp;
+                tmp,
+                level;
 
             if (player.faction === 'enlightened') {
                 $wrapper.removeClass('Mqc').addClass('Hqc');
@@ -473,18 +489,28 @@ window.iidentity = window.iidentity || {};
                 $wrapper.removeClass('Hqc').addClass('Mqc');
             }
 
+            if (Object.isNumber(player.level)) {
+                level = '' + Number.range(0, 16).clamp(player.level);
+            } else {
+                if (Object.isString(player.level) && player.level.match(/([0-9]|1[0-6])/)) {
+                    level = player.level;
+                } else {
+                    level = '0';
+                }
+            }
+
             $profile.html('')
                 .append(
                     profileHelper.createTable(
                         [
                             profileHelper.createRow('Agent name', player.nickname),
-                            profileHelper.createRow('Level', 'L' + player.level),
+                            profileHelper.createRow('Level', 'L' + (level === '0' ? '?' : level)),
                             profileHelper.createRow('Faction', player.faction.substr(0, 1).toUpperCase() + player.faction.substr(1))
                         ]
                     )
                 );
 
-            if ('anomaly' in player.extra) {
+            if (Object.has(player.extra, 'anomaly')) {
                 if (!Array.isArray(player.extra.anomaly)) {
                     player.extra.anomaly = [ player.extra.anomaly ];
                 }
@@ -494,7 +520,7 @@ window.iidentity = window.iidentity || {};
                 );
             }
 
-            if ('community' in player.extra) {
+            if (Object.has(player.extra, 'community')) {
                 if (!Array.isArray(player.extra.community)) {
                     player.extra.community = [ player.extra.community ];
                 }
@@ -504,7 +530,7 @@ window.iidentity = window.iidentity || {};
                 );
             }
 
-            if ('event' in player.extra) {
+            if (Object.has(player.extra, 'event')) {
                 if (!Array.isArray(player.extra.event)) {
                     player.extra.event = [ player.extra.event ];
                 }
@@ -652,7 +678,7 @@ window.iidentity = window.iidentity || {};
                 oid;
 
             if (!(match = window.document.location.pathname.match(
-                    /(^|\/)communities\/([a-zA-Z0-9]+)$/
+                        /(^|\/)communities\/([a-zA-Z0-9]+)$/
                     ))) {
                 return;
             }
@@ -705,7 +731,7 @@ window.iidentity = window.iidentity || {};
             checkEvent();
             checkCommunity();
 
-            mutations.forEach(function (mutation) {
+            mutations.each(function (mutation) {
                 for(i = 0; i < mutation.addedNodes.length; i++) {
                     checkElement(mutation.addedNodes[i]);
                 }

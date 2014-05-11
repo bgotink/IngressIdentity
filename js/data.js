@@ -21,9 +21,9 @@ window.iidentity = window.iidentity || {};
             var key;
 
             for (key in obj) {
-                if (typeof obj[key] === 'object') {
+                if (Object.isObject(obj[key])) {
                     filterEmpty(obj[key]);
-                } else if (obj[key] === null || ('' + obj[key]).trim() === '') {
+                } else if (obj[key] === null || ('' + obj[key]).isBlank()) {
                     delete obj[key];
                 }
             }
@@ -32,9 +32,9 @@ window.iidentity = window.iidentity || {};
             var i = str.indexOf(':');
 
             if (i === -1) {
-                return str.trim();
+                return str.compact();
             } else {
-                return str.substr(0, i).trim();
+                return str.to(i).trim();
             }
         },
         addToArray = function (src, dst) {
@@ -45,11 +45,11 @@ window.iidentity = window.iidentity || {};
             var existing = [],
                 name;
 
-            dst.forEach(function (elem) {
+            dst.each(function (elem) {
                 existing.push(getExtraDataValueName(elem));
             });
 
-            src.forEach(function (elem) {
+            src.each(function (elem) {
                 name = getExtraDataValueName(elem);
 
                 if (existing.indexOf(name) === -1) {
@@ -72,14 +72,14 @@ window.iidentity = window.iidentity || {};
                 extraKey,
                 tmp;
 
-            if (typeof target.extra !== 'object') {
+            if (!Object.isObject(target.extra)) {
                 target.extra = {};
             }
 
             for (key in src) {
                 if (key === 'err') {
                     if (Array.isArray(src.err)) {
-                        if ('err' in target) {
+                        if (Object.has(target, 'err')) {
                             if (Array.isArray(target.err)) {
                                 target.err = target.err.join(src.err);
                             } else {
@@ -91,7 +91,7 @@ window.iidentity = window.iidentity || {};
                     }
                 } else if (key === 'extra') {
                     for (extraKey in src.extra) {
-                        if (extraKey in target.extra) {
+                        if (Object.has(target.extra, extraKey)) {
                             if (Array.isArray(target.extra[extraKey])) {
                                 addToArray(
                                     src.extra[extraKey],
@@ -121,6 +121,26 @@ window.iidentity = window.iidentity || {};
             newArguments[0] = target;
             return merge_player.apply(null, newArguments);
         },
+        checkValidAnomaly = function (data, key, err) {
+            if (Object.has(data, key)) {
+                var value = ('' + data[key]).trim();
+
+                if (anomalies.indexOf(value) === -1) {
+                    err.push('Invalid anomaly: ' + value);
+                    delete data[key];
+                }
+            }
+        },
+        checkValidPageValue = function (data, key, err) {
+            if (Object.has(data, key)) {
+                var value = data[key];
+
+                if (value.indexOf(':') === -1) {
+                    err.push('Invalid ' + key + ': ' + value);
+                    delete data[key];
+                }
+            }
+        },
 
         PlayerSource = Class.extend({
             init: function (key, spreadsheet, data, players) {
@@ -143,23 +163,10 @@ window.iidentity = window.iidentity || {};
                     data.extratags = {};
                 }
 
-                if ('anomaly' in data.extratags) {
-                    var anomaly = data.extratags.anomaly;
+                checkValidAnomaly(data.extratags, 'anomaly', this.err);
 
-                    if (anomalies.indexOf(anomaly) === -1) {
-                        this.err.push('Invalid anomaly: ' + anomaly);
-                        delete data.extratags.anomaly;
-                    }
-                }
-
-                if ('community' in data.extratags) {
-                    var community = data.extratags.community;
-
-                    if (community.indexOf(':') === -1) {
-                        this.err.push('Invalid community: "' + community + '"');
-                        delete data.extratags.community;
-                    }
-                }
+                checkValidPageValue(data.extratags, 'community', this.err);
+                checkValidPageValue(data.extratags, 'event', this.err);
 
                 this.setPlayers(players);
             },
@@ -167,7 +174,12 @@ window.iidentity = window.iidentity || {};
             setPlayers: function (players) {
                 this.players = {};
                 var newPlayers = this.players;
-                players.forEach(function (player) {
+                players.each(function (player) {
+                    if (!(Object.isNumber(player.oid) || Object.isString(player.oid))
+                                || ('' + player.oid).match(/^9*$/)) {
+                        return;
+                    }
+
                     newPlayers[player.oid] = player;
                 });
             },
@@ -185,13 +197,13 @@ window.iidentity = window.iidentity || {};
                     key;
                 player.extra = {};
 
-                for (key in rawPlayer) {
+                Object.each(rawPlayer, function (key, value) {
                     if (mainPlayerData.indexOf(key) !== -1) {
-                        player[key] = rawPlayer[key];
+                        player[key] = value;
                     } else {
-                        player.extra[key] = rawPlayer[key];
+                        player.extra[key] = value;
                     }
-                }
+                });
 
                 filterEmpty(player);
 
@@ -206,7 +218,7 @@ window.iidentity = window.iidentity || {};
             },
 
             getNbPlayers: function () {
-                return Object.keys(this.players).length;
+                return Object.size(this.players);
             },
 
             getKey: function () {
@@ -276,14 +288,14 @@ window.iidentity = window.iidentity || {};
 
             hasExtra: function (tag, oid) {
                 if (!(tag in this.data.extratags)
-                        || typeof this.data.extratags[tag] !== 'string') {
+                        || !Object.isString(this.data.extratags[tag])) {
                     return false;
                 }
 
                 var i = this.data.extratags[tag].indexOf(':');
 
                 return (i !== -1)
-                    && (oid === this.data.extratags[tag].substr(0, i).trim());
+                    && (oid === this.data.extratags[tag].to(i).trim());
             },
         }),
 
@@ -306,7 +318,7 @@ window.iidentity = window.iidentity || {};
 
             hasPlayer: function (oid) {
                 if (typeof this.cache[oid] !== 'undefined') {
-                    return true;
+                    return this.cache[oid] !== null;
                 }
 
                 return this.sources.some(function (source) {
@@ -331,7 +343,7 @@ window.iidentity = window.iidentity || {};
                 });
 
                 if (data.length < 2) {
-                    return null;
+                    return this.cache[oid] = null;
                 }
 
                 faction = data[1].faction;
@@ -341,7 +353,9 @@ window.iidentity = window.iidentity || {};
                     data[0].err = ['Player ' + data[0].name + ' [' + data[0].nickname + '] has been registered as both enlightened and resistance'];
                 }
 
+                module.log.log('Merging ', data, ' into one player object:');
                 this.cache[oid] = merge_player.apply(null, data);
+                module.log.log('Got', this.cache[oid]);
 
                 return this.cache[oid];
             },
@@ -368,7 +382,7 @@ window.iidentity = window.iidentity || {};
             },
 
             invalidateCache: function () {
-                this.getSources().forEach(function (source) {
+                this.getSources().each(function (source) {
                     if (source.isCombined()) {
                         source.invalidateCache();
                     }
@@ -498,7 +512,7 @@ window.iidentity = window.iidentity || {};
                     this.loadingErrors = null;
                     return;
                 }
-                if ((Array.isArray(err) ? err.length : Object.keys(err).length) === 0) {
+                if ((Array.isArray(err) ? err.length : Object.size(err)) === 0) {
                     this.loadingErrors = null;
                     return;
                 }
@@ -514,7 +528,7 @@ window.iidentity = window.iidentity || {};
             getSourcesForExtra: function (tag, oid) {
                 var result = [];
 
-                this.getSources().forEach(function (source) {
+                this.getSources().each(function (source) {
                     if (source.isCombined()) {
                         result.push(source.getSourcesForExtra(tag, oid));
                     } else if (source.hasExtra(tag, oid)) {
@@ -566,7 +580,7 @@ window.iidentity = window.iidentity || {};
                     step = function (i) {
                         if (i >= nbSources) {
                             callback(
-                                Object.keys(err).length > 0 ? err : null,
+                                Object.size(err) > 0 ? err : null,
                                 new CombinedPlayerSource(sources, key, manifest)
                             );
                             return;
@@ -601,7 +615,7 @@ window.iidentity = window.iidentity || {};
                 step = function (i) {
                     if (i >= nbKeys) {
                         callback(
-                            Object.keys(err).length > 0 ? err : null,
+                            Object.size(err) > 0 ? err : null,
                             sources.length > 0 ? new CombinedPlayerSource(sources) : null
                         );
                         return;

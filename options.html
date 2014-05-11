@@ -9,9 +9,10 @@
     <!-- Our CSS -->
     <link rel="stylesheet" href="css/options.css" />
 
-    <!-- jQuery and Bootstrap JS -->
+    <!-- jQuery, Sugar and Bootstrap JS -->
     <script type="text/javascript" src="vendor/js/jquery.min.js"></script>
     <script type="text/javascript" src="vendor/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="vendor/js/sugar.min.js"></script>
     <script type="text/javascript" src="vendor/js/bootstrap.min.js"></script>
 
     <!-- Our JS -->
@@ -92,6 +93,15 @@
                     <button type="button" class="close" aria-hidden="true">&times;</button>
                     <strong>Error!</strong> Something went wrong when changing the order.
                 </div>
+
+                <div class="hide alert alert-success alert-dismissable alert-rename-success">
+                    <button type="button" class="close" aria-hidden="true">&times;</button>
+                    <strong>Success!</strong> The manifest was successfully renamed.
+                </div>
+                <div class="hide alert alert-danger alert-dismissable alert-rename-failed">
+                    <button type="button" class="close" aria-hidden="true">&times;</button>
+                    <strong>Error!</strong> Something went wrong when renaming the manifest.
+                </div>
             </div>
         </div>
         <div class="row">
@@ -102,7 +112,9 @@
                 </button></h2>
                 <div class="row">
                     <div class="col-sm-12 listing">
-                        <div id="source_list"></div>
+                        <div id="source_list">
+                            <p>Loading the data...</p>
+                        </div>
                     </div>
                 </div>
                 <div class="row">
@@ -120,6 +132,15 @@
                                 </div>
                             </div>
                             <div class="form-group">
+                                <label for="name_input">Manifest Name</label>
+                                <input id="name_input" class="form-control" type="text">
+                                <div class="help-block">
+                                    <p>
+                                        <em>Optional</em>. A human-readable name for your manifest.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="form-group">
                                 <button type="button" class="btn btn-primary manifest_add" data-loading-text="Adding...">
                                     <span class="glyphicon glyphicon-plus"></span>
                                     Add manifest
@@ -127,7 +148,8 @@
                             </div>
                             <div>
                                 <p>
-                                If you want to see an example of a manifest file, add manifest
+                                    If you want to see an example of a manifest file, add manifest key
+                                </p>
                                 <blockquote>
                                     <a target="_blank" href="https://docs.google.com/spreadsheet/ccc?key=0AlQqEFrEHdKSdG9GTG83T21XZURhZEozd01Lb3BxTmc">0AlQqEFrEHdKSdG9GTG83T21XZURhZEozd01Lb3BxTmc</a>
                                 </blockquote>
@@ -147,56 +169,17 @@
             <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 settings">
                 <h2>Settings</h2>
                 <p>
-                    This section contains some settings for the extension. Some settings
-                    will lead the extension to request extra permissions.
+                    This section contains some settings for the extension.
                 </p>
-                <div>
-                    <h3><button id="enable_push" type="button" data-loading-text="Storing..." class="btn btn-default btn-sm">Enable</button> Automatically push source updates to the webpages</h3>
-                    <p>
-                        An extra permission is required in order to send messages from
-                        the extension to the tabs where its content scripts run. Without
-                        this permission, the extension can only reply to messages sent
-                        from those scripts.
-                    </p>
-                    <p>
-                        If this option is disabled (default), the G+ page will update
-                        when the first request has been sent after that update became
-                        availble.
-                    </p>
-                    <p>
-                        Enabling this extension makes that operation happen automatically,
-                        without the need for the content script to send a request first.
-                    </p>
-                    <p>
-                        The needed extra permission is 'Access to your tabs and browsing activity'.
-                        This extension does not require it by default because some people don't
-                        trust extensions that require this permission.
-                    </p>
-                    <p>
-                        You only see the prompt to grant the permission once. Chrome
-                        remembers your choice if you granted the permission and will
-                        automatically grant it again the next time this extension
-                        requests it.
-                    </p>
-                    <p>
-                        Disabling this option revokes the requested permission.
-                        You can check this by clicking the 'Permissions' link next
-                        to this extension on <a href="chrome://extensions">chrome://extensions</a>.
-                    </p>
-                </div>
                 <div>
                     <h3>Layout options</h3>
                     <p>This subsection contains a couple of layout tweaks.</p>
                     <div>
-                        <h4><button id="enable_anomalies" type="button" data-loading-text="Storing..." class="btn btn-default btn-sm">Enable</button> Show anomaly badges</h4>
                         <p>
-                            Enable/disable showing the anomaly badges.
-                        </p>
-                    </div>
-                    <div>
-                        <h4>Select matches</h4>
-                        <p>
-                            Enable/disable matching certain elements for players.
+                            <button type="button" data-loading-text="Storing..." class="btn btn-default btn-sm" id="enable_anomalies">
+                                Enable
+                            </button>
+                            Show anomaly badges
                         </p>
                         <p>
                             <button type="button" data-loading-text="Storing..." class="btn btn-default btn-sm" data-match="a.Ug[oid]">
@@ -249,8 +232,10 @@
                 <h3>Acknowledgements</h3>
                 <p>
                     This project uses code by <a target="_blank" href="https://jquery.org/">jQuery</a>,
+                    <a target="_blank" href="http://sugarjs.com/">Sugar.js</a>,
                     <a target="_blank" href="http://ejohn.org/blog/simple-javascript-inheritance/">John Resig</a>
                     and <a target="_blank" href="https://github.com/twbs/bootstrap">Twitter's Bootstrap</a>.
+                    The logo is derived from the ingress logos created by <a target="_blank" href="https://github.com/cr0ybot/ingress-logos">cr0ybot</a>.
                 </p>
                 <p>
                     The logo is derived from the ingress logos created by <a target="_blank" href="https://github.com/cr0ybot/ingress-logos">cr0ybot</a>.
@@ -258,7 +243,9 @@
                 <h3>Bug Report / Feature Request</h3>
                 <p>
                     If you've found a bug or have an idea for a killer feature, feel
-                    free to let me know <a target="_blank" href="https://github.com/bgotink/IngressIdentity/issues">here</a>.
+                    free to let us know <a target="_blank" href="https://github.com/bgotink/IngressIdentity/issues">here</a>
+                    if you have a GitHub account or using the feedback feature in the
+                    Chrome Web Store found <a target="_blank" href="https://chrome.google.com/webstore/support/pjhgnhcijlkffbncjecmcdpndjckcbik">here</a>.
                 </p>
                 <h3>Disclaimer</h3>
                 <p>

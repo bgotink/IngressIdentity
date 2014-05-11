@@ -2,16 +2,86 @@ body {
     font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
 }
 
-span.tt {
+.tt {
     font-family: "Lucida Console", Monaco, monospace;
+    text-align: left;
 }
 
-p {
+p,
+dt, dd {
     text-align: justify;
 }
 
 blockquote > dl {
     margin-bottom: 0;
+}
+
+.help-nav {
+    position: fixed;
+    margin-top: 20px;
+}
+
+.help-nav .nav > li > a {
+    font-weight: 500;
+    color: #999;
+    padding: 4px 20px;
+    font-size: 13px;
+}
+
+.help-nav .nav > li > a:hover,
+.help-nav .nav > li > a:focus {
+    padding-left: 19px;
+    border-left: 1px solid #606060;
+    color: #404040;
+    background: transparent;
+}
+
+.help-nav .nav > li.active > a {
+    padding-left: 18px;
+    border-left: 2px solid #606060;
+    color: #404040;
+}
+
+.help-nav .nav .nav > li > a {
+    padding-top: 1px;
+    padding-bottom: 1px;
+    padding-left: 30px;
+    font-size: 12px;
+    font-weight: 400;
+}
+
+.help-nav .nav .nav > li > a:hover,
+.help-nav .nav .nav > li > a:focus {
+    padding-left: 29px;
+    border-left: 1px solid #606060;
+    color: #404040;
+}
+
+.help-nav .nav .nav > li.active > a {
+    font-weight: 500;
+    padding-left: 28px;
+}
+
+.help-nav > .nav > li > ul {
+    display: none;
+}
+
+.help-nav > .nav > li.active > ul {
+    display: block;
+}
+
+.help-nav > a {
+    display: block;
+    margin-top: 10px;
+    margin-left: 10px;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #999;
+}
+
+span.tab {
+    padding-left: 2em;
 }
 
 @media (min-width: 992px) {
@@ -25,4 +95,57 @@ blockquote > dl {
         width: 100%;
         height: 100%;
     }
+}
+
+.faction-enlightened,
+.faction-enlightened > a {
+    color: green;
+}
+
+.faction-resistance,
+.faction-resistance > a {
+    color: blue;
+}
+
+.faction-enlightened > a,
+.faction-resistance > a {
+    font-weight: bold;
+}
+
+.panel-heading {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+}
+
+.panel-heading > .buttons {
+    color: inherit;
+    flex: none;
+    height: 23px;
+    margin-left: 1em;
+}
+
+.panel-heading > .key-container {
+    flex: 1 0 auto;
+}
+
+button {
+    padding: 0;
+    cursor: pointer;
+    background: 0 0;
+    border: 0;
+    -webkit-appearance: none;
+}
+
+.panel-heading button {
+    font-size: 21px;
+    font-weight: 700;
+    line-height: 1;
+    color: #000;
+    text-shadow: 0 1px 0 #fff;
+    opacity: .2;
+}
+
+.panel-heading button:hover {
+    opacity: 1;
 }

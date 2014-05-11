@@ -1,11 +1,3 @@
-body {
-    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
-}
-
-span.tt {
-    font-family: "Lucida Console", Monaco, monospace;
-}
-
 .iidentity-faction-enlightened {
     color: green;
 }
@@ -140,4 +132,15 @@ div + span.iidentity-spacer + wbr + .iidentity-iwrapper {
 
 .iidentity-group a {
     color: #777;
+    white-space: nowrap;
+}
+
+.iidentity-group > div {
+    overflow-x: hidden;
+    -webkit-mask: linear-gradient(
+        to right,
+        rgba(255,255,255,1),
+        rgba(255,255,255,1) 90%,
+        rgba(255,255,255,0)
+    );
 }

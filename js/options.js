@@ -21,8 +21,13 @@ window.iidentity = window.iidentity || {};
                     callback(result);
                 });
             },
-            addManifest: function (key, callback) {
-                module.comm.send({ type: 'addManifest', key: key }, function (result) {
+            addManifest: function (key, name, callback) {
+                module.comm.send({ type: 'addManifest', key: key, name: (Object.isString(name) ? name : '') }, function (result) {
+                    callback(result.status);
+                });
+            },
+            renameManifest: function (key, oldName, newName, callback) {
+                module.comm.send({type: 'renameManifest', key: key, oldName: oldName, newName: newName}, function (result) {
                     callback(result.status);
                 });
             },
@@ -45,17 +50,6 @@ window.iidentity = window.iidentity || {};
                 module.comm.send({ type: 'reloadData' }, function (result) {
                     callback(result.status);
                 });
-            },
-
-            requestPermission: function (permission, callback) {
-                module.comm.send({ type: 'requestPermission', permission: permission }, function (result) {
-                    callback(result.granted);
-                });
-            },
-            revokePermission: function (permission, callback) {
-                module.comm.send({ type: 'revokePermission', permission: permission }, function (result) {
-                    callback(result.revoked);
-                })
             },
 
             setOption: function (option, value, callback) {
@@ -112,8 +106,8 @@ window.iidentity = window.iidentity || {};
             if (Array.isArray(errors)) {
                 $elem.find('> p.error').remove();
 
-                errors.forEach(function (err) {
-                    if (err.match(/Sign in/i) && err.subsr(0, 2) == '<a' && err.substr(-4) === '</a>') {
+                errors.each(function (err) {
+                    if (err.match(/Sign in/i) && err.substr(0, 2) == '<a' && err.substr(-4) === '</a>') {
                         $elem.append($(err));
                     } else {
                         $elem.append(
@@ -124,14 +118,12 @@ window.iidentity = window.iidentity || {};
                     }
                 });
             } else {
-                var key;
-
-                for (key in errors) {
+                Object.each(errors, function (key, value) {
                     reloadManifestErrorsHelper(
-                        errors[key],
+                        value,
                         $elem.find('[data-key="' + key + '"]')
                     );
-                }
+                });
             }
         },
         reloadManifestErrors = function () {
@@ -151,25 +143,44 @@ window.iidentity = window.iidentity || {};
         reloadManifests = function () {
             module.log.log('Reloading manifests...');
             comm.getManifests(function (result) {
-                var key,
-                    manifestList = [],
+                var manifestList = [],
                     sourceList;
 
                 module.log.log('Got manifest info: ', result);
 
-                for (key in result) {
+                if (Object.isEmpty(result)) {
+                    $('#source_list').html('')
+                        .append(
+                            $('<p>')
+                                .text('No manifests loaded right now, try adding some!')
+                        )
+                        .append(
+                            $('<p>')
+                                .text('If you have just reloaded the extension and push is enabled, '
+                                    + 'the manifests will automatically be shown here when the data '
+                                    + 'is ready.')
+                        )
+                        .append(
+                            $('<p>')
+                                .text('If you believe this is in error or if push is not enabled, '
+                                    + 'try reloading this page or pressing "Force reload".')
+                        );
+
+                    return;
+                }
+
+                Object.each(result, function (key, value) {
                     sourceList = [];
 
                     module.log.log('Manifest key %s', key);
-                    module.log.log(result[key]);
+                    module.log.log(value);
 
-                    result[key].sources.forEach(function (source) {
+                    value.sources.each(function (source) {
                         module.log.log('-- Source key %s', source.key);
 
                         sourceList.push(
                             $('<li>')
-                                .addClass('source')
-                                .addClass('faction-' + source.faction)
+                                .addClass('source faction-' + source.faction)
                                 .attr('data-key', source.key)
                                 .append(
                                     source.url
@@ -197,30 +208,49 @@ window.iidentity = window.iidentity || {};
                                     .append(
                                         $('<div class="panel-heading"></div>')
                                             .append(
-                                                result[key].url
-                                                    ? $('<a>')
-                                                        .text(key)
-                                                        .attr('target', '_blank')
-                                                        .attr('href', result[key].url)
-                                                        .addClass('manifest-key')
-                                                    : $('<span>')
-                                                        .text(key)
-                                                        .addClass('manifest-key')
+                                                $('<span class="key-container"></span>')
+                                                    .append(
+                                                        value.url
+                                                            ? $('<a>')
+                                                                .text((Object.isString(value.name) && !value.name.isBlank()) ? value.name : key)
+                                                                .attr('target', '_blank')
+                                                                .attr('href', value.url)
+                                                                .addClass('manifest-key')
+                                                            : $('<span>')
+                                                                .text((Object.isString(value.name) && !value.name.isBlank()) ? value.name : key)
+                                                                .addClass('manifest-key')
+                                                    )
                                             )
                                             .append(
-                                                $('<a>')
-                                                    .html('&times;')
-                                                    .attr('href', '#')
-                                                    .addClass('remove')
-                                                    .addClass('pull-right')
+                                                $('<span>')
+                                                    .addClass('buttons')
+                                                    .append(
+                                                        $('<button>')
+                                                            .attr('type', 'button')
+                                                            .attr('aria-hidden', 'true')
+                                                            .attr('title', 'Rename')
+                                                            .addClass('rename')
+                                                            .append(
+                                                                $('<span class="glyphicon glyphicon-pencil"></span>')
+                                                            )
+                                                    )
+                                                    .append(
+                                                        $('<button>')
+                                                            .attr('type', 'button')
+                                                            .attr('aria-hidden', 'true')
+                                                            .attr('title', 'Remove')
+                                                            .addClass('remove')
+                                                            .append(
+                                                                $('<span class="glyphicon glyphicon-remove"></span>')
+                                                            )
+                                                    )
                                             )
                                     )
                                     .append(
                                         $('<div class="panel-body"></div>')
                                             .append(
                                                 $('<ul>')
-                                                    .addClass('errors')
-                                                    .addClass('list-unstyled')
+                                                    .addClass('errors list-unstyled')
                                                     .attr('data-key', '__errors')
                                             )
                                             .append(
@@ -231,7 +261,7 @@ window.iidentity = window.iidentity || {};
                                     )
                             )
                     );
-                }
+                });
 
                 $('#source_list').html('')
                     .append(
@@ -262,12 +292,6 @@ window.iidentity = window.iidentity || {};
         },
 
         updateButtons = function () {
-            module.comm.hasPermission('tabs', function (hasPermission) {
-                if (hasPermission) {
-                    $('#enable_push').addClass('active');
-                }
-            });
-
             comm.getOption('show-anomalies', true, function (state) {
                 if (state) {
                     $('#enable_anomalies').addClass('active');
@@ -293,14 +317,17 @@ window.iidentity = window.iidentity || {};
             module.log.log('Adding manifest %s', $('#manifest_input').val());
 
             $('#manifest_input').attr('disabled', true);
+            $('#name_input').attr('disabled', true);
             $('button.manifest_add').button('loading');
 
-            comm.addManifest($('#manifest_input').val(), function (result) {
+            comm.addManifest($('#manifest_input').val(), $('#name_input').val(), function (result) {
                 if (result !== 'failed') {
                     $('#manifest_input').val('');
+                    $('#name_input').val('');
                 }
 
                 $('#manifest_input').attr('disabled', null);
+                $('#name_input').attr('disabled', null);
                 $('button.manifest_add').button('reset');
 
                 showAlert('add-' + result);
@@ -326,50 +353,100 @@ window.iidentity = window.iidentity || {};
         $('button.manifest_add').on('click.ii.add', addManifest);
         $('form.manifest_add').on('submit.ii.add', function (e) {
             addManifest();
-            e.preventDefault();
+
+            return false;
         });
 
-        $('#source_list').on('click.ii.remove', '.manifest > .remove', function () {
+        // make enter submit a form
+        $('input[type="text"]').on('keypress', function (e) {
+            if (e.which === 13) {
+                $(this).closest('form').submit();
+
+                return false;
+            }
+        })
+
+        $('#source_list').on('click.ii.remove', '.manifest .remove', function () {
             comm.removeManifest(
-                $(this).parent().data('key'),
+                $(this).closest('.manifest').data('key'),
                 function (result) {
                     showAlert('remove-' + result);
                 }
             );
         });
+        $('#source_list').on('click.ii.rename', '.manifest .rename', function () {
+            var $this = $(this),
+                $manifest = $this.closest('.manifest'),
+                $key = $manifest.find('.manifest-key');
 
-        reloadManifests();
-
-        $('#enable_push').on('click.request-permission', function () {
-            var $this = $(this);
-
-            if ($this.data('iidentity-working') == true) {
-                // already requesting...
+            if ($key.hasClass('form-control')) {
+                // already done...
                 return;
             }
-            $this.data('iidentity-working', true);
-            $this.button('loading');
 
-            if ($this.hasClass('active')) {
-                comm.revokePermission('tabs', function (revoked) {
-                    if (revoked) {
-                        $this.removeClass('active');
-                    }
+            module.log.log('Creating input to rename manifest %s', $key.text());
 
-                    $this.data('iidentity-working', false);
-                    $this.button('reset');
-                });
-            } else {
-                comm.requestPermission('tabs', function (granted) {
-                    if (granted) {
-                        $this.addClass('active');
-                    }
-
-                    $this.data('iidentity-working', false);
-                    $this.button('reset');
-                })
-            }
+            $key.replaceWith(
+                $('<input type="text" class="form-control manifest-key"></input>')
+                    .val(($key.text() === $manifest.data('key')) ? '' : $key.text())
+                    .data('old-name', $key.text())
+                    .data('url', $key.prop('tagName') === 'A' ? $key.attr('href') : null)
+            );
         });
+        $('#source_list').on('keypress', 'input.manifest-key', function (e) {
+            if (e.which !== 13) {
+                return;
+            }
+
+            var $this = $(this),
+                $manifest = $this.closest('.manifest'),
+                key = $manifest.data('key'),
+                oldName = $this.data('old-name'),
+                newName = $this.val(),
+                $replacement;
+
+            if (oldName.compact() !== newName.compact()) {
+                if (newName.isBlank()) {
+                    newName = null;
+                }
+
+                if (oldName.compact() === key.compact()) {
+                    oldName = null;
+                }
+
+                module.log.log(
+                    'Renaming manifest %s from %s to %s',
+                    key,
+                    oldName,
+                    newName !== null ? newName : ''
+                );
+
+                comm.renameManifest(
+                    key,
+                    oldName,
+                    newName,
+                    function (status) {
+                        showAlert('rename-' + status);
+                    }
+                );
+            }
+
+            if (Object.isString($this.data('url'))) {
+                $replacement = $('<a target="_blank">')
+                    .attr('href', $this.data('url'));
+            } else {
+                $replacement = $('<p>');
+            }
+
+            $replacement.text($this.val().isBlank() ? key : $this.val())
+                .addClass('manifest-key');
+
+            $this.replaceWith($replacement);
+
+            return false;
+        });
+
+        reloadManifests();
 
         $('#enable_anomalies').on('click.set-option', function () {
             var $this = $(this);
