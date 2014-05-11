@@ -33,7 +33,7 @@ window.iidentity = window.iidentity || {};
         );
     };
 
-    chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+    chrome.runtime.onMessage.addListener(function (request) {
         if (request.type === 'update') {
             lastUpdate = +new Date;
 

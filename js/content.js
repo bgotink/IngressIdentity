@@ -480,7 +480,6 @@ window.iidentity = window.iidentity || {};
         createProfile = function (player, wrapper) {
             var $wrapper = $(wrapper),
                 $profile = $wrapper.find('.iidentity-profile'),
-                tmp,
                 level;
 
             if (player.faction === 'enlightened') {

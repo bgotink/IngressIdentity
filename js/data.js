@@ -193,8 +193,7 @@ window.iidentity = window.iidentity || {};
                 }
 
                 var rawPlayer = this.players[oid],
-                    player = {},
-                    key;
+                    player = {};
                 player.extra = {};
 
                 Object.each(rawPlayer, function (key, value) {

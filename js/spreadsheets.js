@@ -8,7 +8,7 @@
 
 window.iidentity = window.iidentity || {};
 
-(function (module, window) {
+(function (module) {
     'use strict';
 
     var exports = module.spreadsheets = {},
@@ -216,4 +216,4 @@ window.iidentity = window.iidentity || {};
             return err;
         }
     });
-})(window.iidentity, window);
+})(window.iidentity);

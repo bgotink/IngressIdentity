@@ -7,7 +7,7 @@
 
 window.iidentity = window.iidentity || {};
 
-(function (module, window) {
+(function (module, $) {
     'use strict';
 
     var comm = {
@@ -351,7 +351,7 @@ window.iidentity = window.iidentity || {};
         });
 
         $('button.manifest_add').on('click.ii.add', addManifest);
-        $('form.manifest_add').on('submit.ii.add', function (e) {
+        $('form.manifest_add').on('submit.ii.add', function () {
             addManifest();
 
             return false;
@@ -483,4 +483,4 @@ window.iidentity = window.iidentity || {};
             updateButtons();
         });
     });
-})(window.iidentity, window);
+})(window.iidentity, window.jQuery);
