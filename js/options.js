@@ -52,17 +52,6 @@ window.iidentity = window.iidentity || {};
                 });
             },
 
-            requestPermission: function (permission, callback) {
-                module.comm.send({ type: 'requestPermission', permission: permission }, function (result) {
-                    callback(result.granted);
-                });
-            },
-            revokePermission: function (permission, callback) {
-                module.comm.send({ type: 'revokePermission', permission: permission }, function (result) {
-                    callback(result.revoked);
-                })
-            },
-
             setOption: function (option, value, callback) {
                 module.comm.send({ type: 'setOption', option: option, value: value }, function (result) {
                     callback(result.result);
@@ -303,12 +292,6 @@ window.iidentity = window.iidentity || {};
         },
 
         updateButtons = function () {
-            module.comm.hasPermission('tabs', function (hasPermission) {
-                if (hasPermission) {
-                    $('#enable_push').addClass('active');
-                }
-            });
-
             comm.getOption('show-anomalies', true, function (state) {
                 if (state) {
                     $('#enable_anomalies').addClass('active');
@@ -464,37 +447,6 @@ window.iidentity = window.iidentity || {};
         });
 
         reloadManifests();
-
-        $('#enable_push').on('click.request-permission', function () {
-            var $this = $(this);
-
-            if ($this.data('iidentity-working') == true) {
-                // already requesting...
-                return;
-            }
-            $this.data('iidentity-working', true);
-            $this.button('loading');
-
-            if ($this.hasClass('active')) {
-                comm.revokePermission('tabs', function (revoked) {
-                    if (revoked) {
-                        $this.removeClass('active');
-                    }
-
-                    $this.data('iidentity-working', false);
-                    $this.button('reset');
-                });
-            } else {
-                comm.requestPermission('tabs', function (granted) {
-                    if (granted) {
-                        $this.addClass('active');
-                    }
-
-                    $this.data('iidentity-working', false);
-                    $this.button('reset');
-                })
-            }
-        });
 
         $('#enable_anomalies').on('click.set-option', function () {
             var $this = $(this);

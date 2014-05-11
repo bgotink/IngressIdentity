@@ -76,12 +76,6 @@ window.iidentity = window.iidentity || {};
         onUpdate = callback;
     };
 
-    exports.hasPermission = function (permission, callback) {
-        this.send({ type: 'hasPermission', permission: permission }, function (result) {
-            callback(result.hasPermission);
-        });
-    };
-
     exports.getSourcesForExtra = function (tag, oid, callback) {
         this.send({ type: 'getSourcesForExtra', tag: tag, oid: oid }, function (result) {
             callback(result.result);

@@ -256,24 +256,15 @@ window.iidentity = window.iidentity || {};
     // communication functions
 
         updateTabs = function () {
-            chrome.permissions.contains(
-                { permissions: ['tabs'] },
-                function (hasPermission) {
-                    if (!hasPermission) {
-                        return;
-                    }
+            chrome.tabs.query({}, function(tabs) {
+                var message = { type: 'update' };
+                module.log.log('Sending update message to %d tabs', tabs.length);
 
-                    chrome.tabs.query({}, function(tabs) {
-                        var message = { type: 'update' };
-                        module.log.log('Sending update message to %d tabs', tabs.length);
-
-                        tabs.each(function (tab) {
-                            module.log.log('-- tab ', tab);
-                            chrome.tabs.sendMessage(tab.id, message);
-                        });
-                    });
-                }
-            );
+                tabs.each(function (tab) {
+                    module.log.log('-- tab ', tab);
+                    chrome.tabs.sendMessage(tab.id, message);
+                });
+            });
         },
 
     // communication listeners
@@ -459,77 +450,6 @@ window.iidentity = window.iidentity || {};
         reloadData(function (err, status) {
             sendResponse({ status: status, err: err });
         });
-
-        return true;
-    };
-
-    messageListeners.requestPermission = function (request, sender, sendResponse) {
-        if (!isOptionsPage(sender.url)) {
-            module.log.error('A \'requestPermission\' message can only originate from the options page');
-            // silently die by not sending a response
-            return false;
-        }
-
-        var permissions = { permissions: [ request.permission ]};
-        module.log.log('Requesting premission %s', request.permission);
-
-        chrome.permissions.contains(
-            permissions,
-            function (alreadyGranted) {
-                if (alreadyGranted) {
-                    sendResponse({ granted: true});
-                    return;
-                }
-
-                chrome.permissions.request(
-                    permissions,
-                    function (granted) {
-                        sendResponse({ granted: granted });
-                    }
-                );
-            }
-        );
-
-        return true;
-    };
-
-    messageListeners.hasPermission = function (request, sender, sendResponse) {
-        chrome.permissions.contains(
-            { permissions: [ request.permission ]},
-            function (granted) {
-                sendResponse({ hasPermission: granted });
-            }
-        );
-
-        return true;
-    };
-
-    messageListeners.revokePermission = function (request, sender, sendResponse) {
-        if (!isOptionsPage(sender.url)) {
-            module.log.error('A \'revokePermission\' message can only originate from the options page');
-            // silently die by not sending a response
-            return false;
-        }
-
-        var permissions = { permissions: [ request.permission ]};
-        module.log.log('Revoking premission %s', request.permission);
-
-        chrome.permissions.contains(
-            permissions,
-            function (granted) {
-                if (!granted) {
-                    sendResponse({ revoked: true});
-                    return;
-                }
-
-                chrome.permissions.remove(
-                    permissions,
-                    function (revoked) {
-                        sendResponse({ revoked: revoked });
-                    }
-                );
-            }
-        );
 
         return true;
     };

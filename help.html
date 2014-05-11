@@ -203,44 +203,6 @@
                         shown on the option page (an example of such a panel is shown above).
                     </p>
 
-                    <!-- Push updates -->
-                    <h3 id="push"><a name="push"></a>Push source updates</h3>
-                    <p>
-                        You may have noticed during installation that this extension only requires access to the
-                        websites at <span class="tt">https://plus.google.com/*</span>. We wanted to keep the required
-                        permissions to the bare minimum and this is it. We need those permissions in order to have
-                        our scripts run on the Google+ website.
-                    </p>
-                    <p>
-                        There is one drawback though. We cannot send messages from the &ldquo;background script&rdquo; to
-                        the scripts running on the Google+ website. This means that we cannot let the Google+ page know
-                        when we have an update.
-                    </p>
-                    <p>
-                        An update means we've updated the data and discovered it has changed, you've added or removed a
-                        manifest, you re-ordered the manifests or you changed one of the layout options.
-                    </p>
-                    <p>
-                        If you do not enable the &ldquo;Automatically push source updates to the webpages&rdquo; option,
-                        the Google+ page will have to pull the update. This is done every time it has to fetch data from
-                        our &ldquo;background script&rdquo;, e.g. when you refresh a Google+ tab, scroll for a while in
-                        such a tab or when you hover over a person's name.
-                    </p>
-                    <p>
-                        If you want near-instant updates on the Google+ pages, you can enable the option. The extension
-                        should ask for extra permissions the first time you press enable. If that doesn't happen, don't
-                        panic. That means the version of Chrome you're using has a small bug which doesn't allow us to
-                        ask for the permission. You'll have to wait until it is fixed or switch to Google Chrome Canary
-                        before being able to enable the option.
-                    </p>
-                    <p>
-                        The extra permission the extension requests is &ldquo;Access to your tabs and browsing activity&rdquo;.
-                        That sounds evil, which is why we decided to make it optional. This permission lets the extension
-                        send messages from the &ldquo;background script&rdquo; to the tabs, meaning we can send a message
-                        telling the Google+ script to update. This permission allows us to do much more as well, but we don't.
-                        You can verify this by looking at the code (more info <a href="#code">below</a>).
-                    </p>
-
                     <!-- Layout options -->
                     <h3 id="layout-options"><a name="layout-options"></a>Layout options</h3>
                     <p>
@@ -640,7 +602,6 @@
                                 <li><a href="#rename-manifest">Renaming a manifest</a></li>
                                 <li><a href="#remove-manifest">Removing a manifest</a></li>
                                 <li><a href="#reorder-manifests">Reordering the manifests</a></li>
-                                <li><a href="#push">Push source updates</a></li>
                                 <li><a href="#layout-options">Layout options</a></li>
                             </ul>
                         </li>
