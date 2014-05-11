@@ -501,7 +501,7 @@ window.iidentity = window.iidentity || {};
             })
         }
 
-        return false;
+        return true;
     };
 
     messageListeners.getPlayer = function (request, sender, sendResponse) {
