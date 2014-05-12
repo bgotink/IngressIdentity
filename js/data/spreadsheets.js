@@ -11,7 +11,7 @@ window.iidentity = window.iidentity || {};
 (function (module, window) {
     'use strict';
 
-    var exports = module.spreadsheets = {},
+    var exports = (Object.has(module, 'data') ? module.data : (module.data = {})).spreadsheets = {},
 
     // variables & constants
 

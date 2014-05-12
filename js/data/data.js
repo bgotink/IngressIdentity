@@ -10,7 +10,7 @@ window.iidentity = window.iidentity || {};
 (function (module, $) {
     'use strict';
 
-    var exports = module.data = {},
+    var exports = (Object.has(module, 'data') ? module.data : (module.data = {})),
 
         anomalies = [ '13magnus', 'recursion', 'interitus' ],
         mainPlayerData = ['name', 'nickname', 'oid', 'level'],
@@ -547,7 +547,7 @@ window.iidentity = window.iidentity || {};
 
         loadSource = function (data, callback) {
             var key = data.key,
-                source = new module.spreadsheets.Source(key);
+                source = new exports.spreadsheets.Source(key);
             delete data.key;
 
             source.load(function (err, players) {
@@ -561,7 +561,7 @@ window.iidentity = window.iidentity || {};
         },
 
         loadManifest = function (key, callback) {
-            var manifest = new module.spreadsheets.Manifest(key),
+            var manifest = new exports.spreadsheets.Manifest(key),
                 sources = [];
 
             manifest.load(function (merr, sourcesData) {
