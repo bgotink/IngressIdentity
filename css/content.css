@@ -144,3 +144,7 @@ div + span.iidentity-spacer + wbr + .iidentity-iwrapper {
         rgba(255,255,255,0)
     );
 }
+
+.iidentity-profile .fIa:first-child {
+    padding-left: 0px;
+}
