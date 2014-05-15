@@ -97,6 +97,8 @@ window.iidentity = window.iidentity || {};
                                     src.extra[extraKey],
                                     target.extra[extraKey]
                                 );
+                            } else if (Object.isBoolean(target.extra[extraKey])) {
+                                target.extra[extraKey] = target.extra[extraKey] || src.extra[extraKey];
                             } else {
                                 tmp = [ target.extra[extraKey] ];
                                 addToArray(

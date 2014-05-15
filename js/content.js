@@ -195,7 +195,7 @@ window.iidentity = window.iidentity || {};
 
                         if (value.any(function (e) { return e === true; })) {
                             $extraInfo.append(
-                                $('<span>').text(name.compact().capitalize())
+                                $('<span>').text(name.humanize())
                             );
 
                             return;
@@ -206,7 +206,7 @@ window.iidentity = window.iidentity || {};
                                 .addClass('iidentity-custom-extratag')
                                 .append(
                                     $('<b>')
-                                        .text(name.compact().capitalize(true) + ':')
+                                        .text(name.humanize() + ':')
                                 )
                                 .append(
                                     $(value).map(function () {
@@ -472,11 +472,7 @@ window.iidentity = window.iidentity || {};
                             )
                     );
             },
-            createSubtitle: function (subtitle, links, baseUrl) {
-                var url,
-                    title,
-                    i;
-
+            createSubtitle: function (subtitle, items) {
                 return $('<div class="wna fa-TCa Ala">')
                     .append(
                         $('<div class="Cr Aha"></div>')
@@ -488,37 +484,46 @@ window.iidentity = window.iidentity || {};
                                 $('<ul class="Kla yVa">')
                                     .append(
                                         $(
-                                            links.map(function (link) {
-                                                i = link.indexOf(':');
-                                                if (i === -1) {
-                                                    return null;
-                                                }
-
-                                                url = baseUrl + link.to(i).compact();
-                                                title = link.from(i + 1).compact();
-
-                                                return $('<li>')
-                                                    .append(
-                                                        $('<div class="fIa s"></div>')
-                                                            .append(
-                                                                $('<a class="OLa url Xvc"></a>')
-                                                                    .text(title)
-                                                                    .attr('title', title)
-                                                                    .attr('href', url)
-                                                            )
-                                                    )
-                                                    [0];
+                                            items.map(function () {
+                                                return $('<li>').append(this)[0];
                                             })
                                         )
                                     )
                             )
                     );
             },
+            createLinkedSubtitle: function (subtitle, links, baseUrl) {
+                var url,
+                    title,
+                    i;
+
+                return profileHelper.createSubtitle(subtitle, $(
+                    links.map(function (link) {
+                        i = link.indexOf(':');
+                        if (i === -1) {
+                            return null;
+                        }
+
+                        url = baseUrl + link.to(i).compact();
+                        title = link.from(i + 1).compact();
+
+                        return $('<div class="fIa s"></div>')
+                            .append(
+                                $('<a class="OLa url Xvc"></a>')
+                                    .text(title)
+                                    .attr('title', title)
+                                    .attr('href', url)
+                            )
+                            [0];
+                    })
+                ));
+            }
         },
         createProfile = function (player, wrapper) {
             var $wrapper = $(wrapper),
                 $profile = $wrapper.find('.iidentity-profile'),
-                level;
+                level,
+                customExtra;
 
             if (player.faction === 'enlightened') {
                 $wrapper.removeClass('Mqc').addClass('Hqc');
@@ -536,6 +541,8 @@ window.iidentity = window.iidentity || {};
                 }
             }
 
+            customExtra = Object.extended(player.extra).reject('anomaly', 'community', 'event');
+
             $profile.html('')
                 .append(
                     profileHelper.createTable(
@@ -543,7 +550,33 @@ window.iidentity = window.iidentity || {};
                             profileHelper.createRow('Agent name', player.nickname),
                             profileHelper.createRow('Level', 'L' + (level === '0' ? '?' : level)),
                             profileHelper.createRow('Faction', player.faction.substr(0, 1).toUpperCase() + player.faction.substr(1))
-                        ]
+                        ].concat(
+                            customExtra.keys().filter(
+                                function (e) {
+                                    var v = customExtra[e];
+
+                                    if (Array.isArray(v)) {
+                                        if (v.length !== 1) {
+                                            return false;
+                                        }
+
+                                        v = v[0];
+                                    }
+
+                                    return Object.isString(v);
+                                }
+                            )
+                            .map(
+                                function (e) {
+                                    var v = customExtra[e];
+
+                                    return profileHelper.createRow(
+                                        e.humanize(),
+                                        (Array.isArray(v) ? v[0] : v).compact().capitalize()
+                                    );
+                                }
+                            )
+                        )
                     )
                 );
 
@@ -563,7 +596,7 @@ window.iidentity = window.iidentity || {};
                 }
 
                 $profile.append(
-                    profileHelper.createSubtitle('Communities', player.extra.community, 'https://plus.google.com/communities/')
+                    profileHelper.createLinkedSubtitle('Communities', player.extra.community, 'https://plus.google.com/communities/')
                 );
             }
 
@@ -573,9 +606,27 @@ window.iidentity = window.iidentity || {};
                 }
 
                 $profile.append(
-                    profileHelper.createSubtitle('Events', player.extra.event, 'https://plus.google.com/event/')
+                    profileHelper.createLinkedSubtitle('Events', player.extra.event, 'https://plus.google.com/event/')
                 );
             }
+
+            customExtra.keys().filter(
+                function (e) {
+                    var v = customExtra[e];
+
+                    return Array.isArray(v) && v.count(function (e) { return Object.isString(e); }) > 1;
+                }
+            ).each(function (name) {
+                $profile.append(
+                    profileHelper.createSubtitle(name.humanize().pluralize(), $(
+                        customExtra[name].map(function (value) {
+                            return $('<div class="fIa s"></div>')
+                                .text(value)
+                                [0];
+                        })
+                    ))
+                );
+            });
         },
         checkProfile = function () {
             var $tabs = $('#contentPane div[role="tabpanel"]'),
