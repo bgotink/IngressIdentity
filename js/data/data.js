@@ -12,22 +12,8 @@ window.iidentity = window.iidentity || {};
 
     var exports = (Object.has(module, 'data') ? module.data : (module.data = {})),
 
-        anomalies = [ '13magnus', 'recursion', 'interitus' ],
-        mainPlayerData = ['name', 'nickname', 'oid', 'level'],
-
     // unexported helper functions and classes
 
-        filterEmpty = function (obj) {
-            var key;
-
-            for (key in obj) {
-                if (Object.isObject(obj[key])) {
-                    filterEmpty(obj[key]);
-                } else if (obj[key] === null || ('' + obj[key]).isBlank()) {
-                    delete obj[key];
-                }
-            }
-        },
         getExtraDataValueName = function (str) {
             var i = str.indexOf(':');
 
@@ -121,52 +107,14 @@ window.iidentity = window.iidentity || {};
             newArguments[0] = target;
             return merge_player.apply(null, newArguments);
         },
-        checkValidAnomaly = function (data, key, err) {
-            if (Object.has(data, key)) {
-                var value = ('' + data[key]).trim();
-
-                if (anomalies.indexOf(value) === -1) {
-                    err.push('Invalid anomaly: ' + value);
-                    delete data[key];
-                }
-            }
-        },
-        checkValidPageValue = function (data, key, err) {
-            if (Object.has(data, key)) {
-                var value = data[key];
-
-                if (value.indexOf(':') === -1) {
-                    err.push('Invalid ' + key + ': ' + value);
-                    delete data[key];
-                }
-            }
-        },
 
         PlayerSource = Class.extend({
             init: function (key, spreadsheet, data, players) {
                 this.key = key;
                 this.spreadsheet = spreadsheet;
                 this.data = data;
-                this.err = [];
+                this.err = data.getErr();
                 this.timestamp = +new Date();
-
-                filterEmpty(data);
-
-                if ('extratags' in data) {
-                    try {
-                        data.extratags = JSON.parse(data.extratags);
-                    } catch (e) {
-                        this.err.push('Invalid JSON in extratags: ' + e.message);
-                        data.extratags = {};
-                    }
-                } else {
-                    data.extratags = {};
-                }
-
-                checkValidAnomaly(data.extratags, 'anomaly', this.err);
-
-                checkValidPageValue(data.extratags, 'community', this.err);
-                checkValidPageValue(data.extratags, 'event', this.err);
 
                 this.setPlayers(players);
             },
@@ -192,28 +140,9 @@ window.iidentity = window.iidentity || {};
                     return null;
                 }
 
-                var rawPlayer = this.players[oid],
-                    player = {},
-                    key;
-                player.extra = {};
-
-                Object.each(rawPlayer, function (key, value) {
-                    if (mainPlayerData.indexOf(key) !== -1) {
-                        player[key] = value;
-                    } else {
-                        player.extra[key] = value;
-                    }
-                });
-
-                filterEmpty(player);
-
-                return $.extend(
-                    true,
-                    {
-                        faction: this.data.faction,
-                        extra: this.data.extratags
-                    },
-                    player
+                return exports.interpreter.interpretSourceEntry(
+                    this.data,
+                    this.players[oid]
                 );
             },
 
@@ -225,13 +154,13 @@ window.iidentity = window.iidentity || {};
                 return this.key;
             },
             getTag: function () {
-                return this.data.tag;
+                return this.data.getTag();
             },
             getVersion: function () {
-                return this.data.lastupdated;
+                return this.data.getVersion();
             },
             getFaction: function () {
-                return this.data.faction;
+                return this.data.getFaction();
             },
 
             getTimestamp: function () {
@@ -287,15 +216,7 @@ window.iidentity = window.iidentity || {};
             },
 
             hasExtra: function (tag, oid) {
-                if (!(tag in this.data.extratags)
-                        || !Object.isString(this.data.extratags[tag])) {
-                    return false;
-                }
-
-                var i = this.data.extratags[tag].indexOf(':');
-
-                return (i !== -1)
-                    && (oid === this.data.extratags[tag].to(i).trim());
+                return this.data.hasExtra(tag, oid);
             },
         }),
 
@@ -548,7 +469,6 @@ window.iidentity = window.iidentity || {};
         loadSource = function (data, callback) {
             var key = data.key,
                 source = new exports.spreadsheets.Source(key);
-            delete data.key;
 
             source.load(function (err, players) {
                 if (players === null) {
@@ -556,7 +476,12 @@ window.iidentity = window.iidentity || {};
                     return;
                 }
 
-                callback(err, new PlayerSource(key, source, data, players));
+                callback(err, new PlayerSource(
+                    key,
+                    source,
+                    exports.interpreter.interpretManifestEntry(data),
+                    players
+                ));
             });
         },
 
