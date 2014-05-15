@@ -55,6 +55,7 @@ window.iidentity = window.iidentity || {};
                     $extraInfo,
                     $name,
                     level,
+                    customExtra,
                     $elem = $('<div>')
                         .addClass('iidentity-wrapper')
                         .attr('data-oid', oid)
@@ -177,6 +178,43 @@ window.iidentity = window.iidentity || {};
                                 )
                         );
                     });
+
+                    customExtra = Object.extended(player.extra)
+                        .reject('anomaly', 'community', 'event');
+
+                    customExtra.each(function (name, value) {
+                        if (!Array.isArray(value)) {
+                            value = [ value ];
+                        }
+
+                        // allow two kinds of custom extra tags:
+                        // boolean & string
+                        // boolean: if array contains a true value, show name
+                        //          in $extraInfo
+                        // otherwise: show extra div etc.
+
+                        if (value.any(function (e) { return e === true; })) {
+                            $extraInfo.append(
+                                $('<span>').text(name.compact().capitalize())
+                            );
+
+                            return;
+                        }
+
+                        $groupInfo.append(
+                            $('<div>')
+                                .addClass('iidentity-custom-extratag')
+                                .append(
+                                    $('<b>')
+                                        .text(name.compact().capitalize(true) + ':')
+                                )
+                                .append(
+                                    $(value).map(function () {
+                                        return $('<span>').text(this.compact().capitalize())[0];
+                                    })
+                                )
+                        );
+                    })
                 }
 
                 callback(null, $elem);
