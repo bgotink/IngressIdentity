@@ -130,9 +130,14 @@ div + span.iidentity-spacer + wbr + .iidentity-iwrapper {
     margin-left: .4ex;
 }
 
-.iidentity-group a {
+.iidentity-group a,
+.iidentity-custom-extratag > span {
     color: #777;
     white-space: nowrap;
+}
+
+.iidentity-custom-extratag > b {
+    padding-right: 1ex;
 }
 
 .iidentity-group > div {
@@ -143,4 +148,8 @@ div + span.iidentity-spacer + wbr + .iidentity-iwrapper {
         rgba(255,255,255,1) 90%,
         rgba(255,255,255,0)
     );
+}
+
+.iidentity-profile .fIa:first-child {
+    padding-left: 0px;
 }

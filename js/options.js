@@ -7,7 +7,7 @@
 
 window.iidentity = window.iidentity || {};
 
-(function (module, window) {
+(function (module, $) {
     'use strict';
 
     var comm = {
@@ -156,14 +156,13 @@ window.iidentity = window.iidentity || {};
                         )
                         .append(
                             $('<p>')
-                                .text('If you have just reloaded the extension and push is enabled, '
-                                    + 'the manifests will automatically be shown here when the data '
-                                    + 'is ready.')
+                                .text('If you have just reloaded the extension, the manifests '
+                                    + 'will automatically be shown here when the data is ready.')
                         )
                         .append(
                             $('<p>')
-                                .text('If you believe this is in error or if push is not enabled, '
-                                    + 'try reloading this page or pressing "Force reload".')
+                                .text('If you believe this is in error, try reloading '
+                                    + 'this page or pressing "Force reload".')
                         );
 
                     return;
@@ -351,7 +350,7 @@ window.iidentity = window.iidentity || {};
         });
 
         $('button.manifest_add').on('click.ii.add', addManifest);
-        $('form.manifest_add').on('submit.ii.add', function (e) {
+        $('form.manifest_add').on('submit.ii.add', function () {
             addManifest();
 
             return false;
@@ -483,4 +482,4 @@ window.iidentity = window.iidentity || {};
             updateButtons();
         });
     });
-})(window.iidentity, window);
+})(window.iidentity, window.jQuery);

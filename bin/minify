@@ -9,27 +9,28 @@ set -e
 cd $(dirname "$0")/..
 
 destfile="$1"
+sources=""
 shift
-
-> "build/js/$destfile.max.js"
 
 log -n 'Minifying '
 
-while [ $# -gt 0 ]; do
-    log -n "js/$1.js "
-    cat "js/$1.js" >> "build/js/$destfile.max.js"
-    shift
+for i in "$@"; do
+    log -n "js/$i.js "
+    sources="$sources js/$i.js"
 done
 
 # disable logging by default
-sed -i '' -e 's/enableLogging = true/enableLogging = false/' "build/js/$destfile.max.js"
+sed -i '' -e 's/enableLogging = true/enableLogging = false/' "js/log.js"
 
 log "into build/js/$destfile.js"
 
-yuicompressor -o "build/js/$destfile.min.js" "build/js/$destfile.max.js"
+uglifyjs $sources -o "build/js/$destfile.js" --screw-ie8 --mangle toplevel --compress --preamble "/**
+ * This file is part of IngressIdentity
+ *
+ * @author Bram Gotink (@bgotink)
+ * @license MIT
+ * @url https://github.com/bgotink/IngressIdentity
+ */"
 
-cat js/_header.js > "build/js/$destfile.js"
-cat "build/js/$destfile.min.js" >> "build/js/$destfile.js"
-
-rm "build/js/$destfile.max.js"
-rm "build/js/$destfile.min.js"
+# re-esable logging
+sed -i '' -e 's/enableLogging = false/enableLogging = true/' "js/log.js"

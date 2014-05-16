@@ -22,7 +22,7 @@ window.iidentity = window.iidentity || {};
     // storage functions
 
         disableUpdateListener = false,
-        onDataUpdated = function (changes, areaName) {
+        onDataUpdated = function (changes) {
             var update = false,
                 reload = false;
 
@@ -501,8 +501,8 @@ window.iidentity = window.iidentity || {};
             })
         }
 
-        return false;
-    },
+        return true;
+    };
 
     messageListeners.getPlayer = function (request, sender, sendResponse) {
         if (data === null) {

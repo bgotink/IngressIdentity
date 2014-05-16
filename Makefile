@@ -42,11 +42,11 @@ build/css/%.css: css/%.css
 build/js/help.js: js/help.js
 	@bin/minify help help
 
-build/js/content.js: js/_header.js js/content.js js/communication.js js/log.js
+build/js/content.js: js/content.js js/communication.js js/log.js
 	@bin/minify content communication log content
 
-build/js/options.js: js/_header.js js/options.js js/communication.js js/log.js
+build/js/options.js: js/options.js js/communication.js js/log.js
 	@bin/minify options communication log options
 
-build/js/background.js: js/_header.js js/log.js js/spreadsheets.js js/data.js js/background.js js/class.js
+build/js/background.js: js/log.js js/spreadsheets.js js/data.js js/background.js js/class.js
 	@bin/minify background class log spreadsheets data background

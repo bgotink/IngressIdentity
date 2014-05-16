@@ -97,6 +97,8 @@ window.iidentity = window.iidentity || {};
                                     src.extra[extraKey],
                                     target.extra[extraKey]
                                 );
+                            } else if (Object.isBoolean(target.extra[extraKey])) {
+                                target.extra[extraKey] = target.extra[extraKey] || src.extra[extraKey];
                             } else {
                                 tmp = [ target.extra[extraKey] ];
                                 addToArray(
@@ -193,8 +195,7 @@ window.iidentity = window.iidentity || {};
                 }
 
                 var rawPlayer = this.players[oid],
-                    player = {},
-                    key;
+                    player = {};
                 player.extra = {};
 
                 Object.each(rawPlayer, function (key, value) {
