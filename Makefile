@@ -34,7 +34,7 @@ build/%.md: %.md
 	cp $< $@
 
 build/%.html: %.html
-	grep -Ev '<script type="text\/javascript" src="js\/(class|log|communication|data|spreadsheets)\.js">' $< > $@
+	grep -Ev '<script type="text\/javascript" src="js\/(class|log|communication|data\/(data|interpreter|spreadsheets)|spreadsheets)\.js">' $< > $@
 
 build/css/%.css: css/%.css
 	cleancss -o $@ $<
