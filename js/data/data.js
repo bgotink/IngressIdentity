@@ -10,24 +10,34 @@ window.iidentity = window.iidentity || {};
 (function (module, $) {
     'use strict';
 
-    var exports = module.data = {},
-
-        anomalies = [ '13magnus', 'recursion', 'interitus' ],
-        mainPlayerData = ['name', 'nickname', 'oid', 'level'],
+    var exports = (Object.has(module, 'data') ? module.data : (module.data = {})),
 
     // unexported helper functions and classes
 
-        filterEmpty = function (obj) {
-            var key;
+        resolveKey = function (key, parent, err) {
+            var data = exports.spreadsheets.parseKey(key),
+                parentData;
 
-            for (key in obj) {
-                if (Object.isObject(obj[key])) {
-                    filterEmpty(obj[key]);
-                } else if (obj[key] === null || ('' + obj[key]).isBlank()) {
-                    delete obj[key];
+            if (!Object.isString(data.key) || data.key.isBlank()) {
+                parentData = exports.spreadsheets.parseKey(parent);
+
+                if (!Object.isString(parentData.key) || parentData.key.isBlank()) {
+                    if (err) {
+                        err.push('Cannot resolve key ' + key);
+                    }
+                    return false;
                 }
+
+                data.key = exports.spreadsheets.parseKey(parent).key;
             }
+
+            if (!Object.has(data, 'gid')) {
+                return data.key;
+            }
+
+            return '{key}?gid={gid}'.assign(data);
         },
+
         getExtraDataValueName = function (str) {
             var i = str.indexOf(':');
 
@@ -123,52 +133,14 @@ window.iidentity = window.iidentity || {};
             newArguments[0] = target;
             return merge_player.apply(null, newArguments);
         },
-        checkValidAnomaly = function (data, key, err) {
-            if (Object.has(data, key)) {
-                var value = ('' + data[key]).trim();
-
-                if (anomalies.indexOf(value) === -1) {
-                    err.push('Invalid anomaly: ' + value);
-                    delete data[key];
-                }
-            }
-        },
-        checkValidPageValue = function (data, key, err) {
-            if (Object.has(data, key)) {
-                var value = data[key];
-
-                if (value.indexOf(':') === -1) {
-                    err.push('Invalid ' + key + ': ' + value);
-                    delete data[key];
-                }
-            }
-        },
 
         PlayerSource = Class.extend({
             init: function (key, spreadsheet, data, players) {
                 this.key = key;
                 this.spreadsheet = spreadsheet;
                 this.data = data;
-                this.err = [];
+                this.err = data.getErr();
                 this.timestamp = +new Date();
-
-                filterEmpty(data);
-
-                if ('extratags' in data) {
-                    try {
-                        data.extratags = JSON.parse(data.extratags);
-                    } catch (e) {
-                        this.err.push('Invalid JSON in extratags: ' + e.message);
-                        data.extratags = {};
-                    }
-                } else {
-                    data.extratags = {};
-                }
-
-                checkValidAnomaly(data.extratags, 'anomaly', this.err);
-
-                checkValidPageValue(data.extratags, 'community', this.err);
-                checkValidPageValue(data.extratags, 'event', this.err);
 
                 this.setPlayers(players);
             },
@@ -194,27 +166,9 @@ window.iidentity = window.iidentity || {};
                     return null;
                 }
 
-                var rawPlayer = this.players[oid],
-                    player = {};
-                player.extra = {};
-
-                Object.each(rawPlayer, function (key, value) {
-                    if (mainPlayerData.indexOf(key) !== -1) {
-                        player[key] = value;
-                    } else {
-                        player.extra[key] = value;
-                    }
-                });
-
-                filterEmpty(player);
-
-                return $.extend(
-                    true,
-                    {
-                        faction: this.data.faction,
-                        extra: this.data.extratags
-                    },
-                    player
+                return exports.interpreter.interpretSourceEntry(
+                    this.data,
+                    this.players[oid]
                 );
             },
 
@@ -226,13 +180,13 @@ window.iidentity = window.iidentity || {};
                 return this.key;
             },
             getTag: function () {
-                return this.data.tag;
+                return this.data.getTag();
             },
             getVersion: function () {
-                return this.data.lastupdated;
+                return this.data.getVersion();
             },
             getFaction: function () {
-                return this.data.faction;
+                return this.data.getFaction();
             },
 
             getTimestamp: function () {
@@ -288,15 +242,7 @@ window.iidentity = window.iidentity || {};
             },
 
             hasExtra: function (tag, oid) {
-                if (!(tag in this.data.extratags)
-                        || !Object.isString(this.data.extratags[tag])) {
-                    return false;
-                }
-
-                var i = this.data.extratags[tag].indexOf(':');
-
-                return (i !== -1)
-                    && (oid === this.data.extratags[tag].to(i).trim());
+                return this.data.hasExtra(tag, oid);
             },
         }),
 
@@ -369,6 +315,8 @@ window.iidentity = window.iidentity || {};
                     length = sources.length,
                     i;
 
+                key = resolveKey(key, '', []);
+
                 for (i = 0; i < length; i++) {
                     if (sources[i].getKey() == key) {
                         return sources[i];
@@ -428,7 +376,7 @@ window.iidentity = window.iidentity || {};
 
                             source = self.getSource(data[i].key);
                             if (source === null) {
-                                loadSource(data[i], function (err, source) {
+                                loadSource(data[i], self.key, function (err, source) {
                                     if (source) {
                                         module.log.log('Adding new source sheet %s', data[i].key)
                                         self.sources.push(source);
@@ -546,23 +494,32 @@ window.iidentity = window.iidentity || {};
             },
         }),
 
-        loadSource = function (data, callback) {
-            var key = data.key,
-                source = new module.spreadsheets.Source(key);
-            delete data.key;
+        loadSource = function (data, parentKey, callback) {
+            var err = [],
+                key = resolveKey(data.key, parentKey || '', err),
+                source = new exports.spreadsheets.Source(key);
 
-            source.load(function (err, players) {
+            source.load(function (err2, players) {
+                if (err2 != null) {
+                    err = err.concat(err2);
+                }
+
                 if (players === null) {
                     callback(err, null);
                     return;
                 }
 
-                callback(err, new PlayerSource(key, source, data, players));
+                callback(err, new PlayerSource(
+                    key,
+                    source,
+                    exports.interpreter.interpretManifestEntry(data),
+                    players
+                ));
             });
         },
 
         loadManifest = function (key, callback) {
-            var manifest = new module.spreadsheets.Manifest(key),
+            var manifest = new exports.spreadsheets.Manifest(key),
                 sources = [];
 
             manifest.load(function (merr, sourcesData) {
@@ -589,7 +546,7 @@ window.iidentity = window.iidentity || {};
 
                         var skey = sourcesData[i].key;
 
-                        loadSource(sourcesData[i], function (err2, source) {
+                        loadSource(sourcesData[i], key, function (err2, source) {
                             if (err2) {
                                 err[skey] = err2;
                             }
@@ -613,6 +570,7 @@ window.iidentity = window.iidentity || {};
             var nbKeys = keys.length,
                 sources = [],
                 err = {},
+                key,
                 step = function (i) {
                     if (i >= nbKeys) {
                         callback(
@@ -622,7 +580,9 @@ window.iidentity = window.iidentity || {};
                         return;
                     }
 
-                    loadManifest(keys[i], function (err2, manifest) {
+                    key = resolveKey(keys[i], '', err);
+
+                    loadManifest(key, function (err2, manifest) {
                         if (err2) {
                             err[keys[i]] = err2;
                         }
@@ -640,4 +600,6 @@ window.iidentity = window.iidentity || {};
 
     // exported functions
     exports.loadManifests = loadManifests;
+
+    exports.resolveKey = resolveKey;
 })(window.iidentity, window.jQuery);

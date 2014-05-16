@@ -48,5 +48,5 @@ build/js/content.js: js/content.js js/communication.js js/log.js
 build/js/options.js: js/options.js js/communication.js js/log.js
 	@bin/minify options communication log options
 
-build/js/background.js: js/log.js js/spreadsheets.js js/data.js js/background.js js/class.js
+build/js/background.js: js/_header.js js/log.js js/data/spreadsheets.js js/data/interpreter.js js/data/data.js js/background.js js/class.js
 	@bin/minify background class log spreadsheets data background
