@@ -21,8 +21,8 @@ window.iidentity = window.iidentity || {};
         },
 
         baseQueryUrl = {
-            oldSheet: 'https://docs.google.com/spreadsheet/ccc?key={key}',
-            newSheet: 'https://docs.google.com/spreadsheets/d/{key}/gviz/tq',
+            oldSheet: 'https://docs.google.com/spreadsheet/ccc?key={key}&gid={gid}',
+            newSheet: 'https://docs.google.com/spreadsheets/d/{key}/gviz/tq?gid={gid}',
         },
 
     // unexported helper functions and classes
@@ -31,6 +31,20 @@ window.iidentity = window.iidentity || {};
             if (!key in arr || arr[key] === null || ('' + arr[key]).isBlank()) {
                 err.push('Expected key ' + key + ' to exist in row ' + row);
             }
+        },
+
+        parseKey = function (key) {
+            var matches;
+            key = (key || '').compact();
+
+            if (matches = key.match(/(.*)[#&?]gid=(.*)/)) {
+                return {
+                    key: matches[1],
+                    gid: matches[2]
+                };
+            }
+
+            return { key: key };
         },
 
         /**
@@ -50,26 +64,20 @@ window.iidentity = window.iidentity || {};
              * Get a URL to visit this spreadsheet
              */
             getUrl: function () {
-                var key = this.key,
-                    gid = false,
+                var key = parseKey(this.key),
                     url,
                     matches;
 
-                if (matches = this.key.match(/(.*)[&?]gid=(.*)/)) {
-                    gid = matches[2];
-                    key = matches[1];
-                }
-
-                if (key.match(/^[a-zA-Z0-9]+$/)) {
-                    url = baseUrl.oldSheet.assign({ key: key });
+                if (key.key.match(/^[a-zA-Z0-9]+$/)) {
+                    url = baseUrl.oldSheet.assign(key);
                 } else {
-                    url = baseUrl.newSheet.assign({ key: key });
+                    url = baseUrl.newSheet.assign(key);
                 }
 
-                if (gid === false) {
+                if (!Object.has(key, 'gid')) {
                     return url;
                 }
-                return url + '#gid=' + gid;
+                return url + '#gid=' + key.gid;
             },
 
             /**
@@ -81,20 +89,18 @@ window.iidentity = window.iidentity || {};
              */
             loadRaw: function (callback) {
                 var self = this,
-                    key = this.key,
-                    gid = '0',
+                    key = parseKey(this.key),
                     url,
                     matches;
 
-                if (matches = this.key.match(/(.*)[&?]gid=(.*)/)) {
-                    gid = matches[2];
-                    key = matches[1];
+                if (!Object.has(key, 'gid')) {
+                    key.gid = 0;
                 }
 
-                if (key.match(/^[a-zA-Z0-9]+$/)) {
-                    url = baseQueryUrl.oldSheet.assign({ key: key }) + '&gid=' + gid;
+                if (key.key.match(/^[a-zA-Z0-9]+$/)) {
+                    url = baseQueryUrl.oldSheet.assign(key);
                 } else {
-                    url = baseQueryUrl.newSheet.assign({ key: key }) + '?gid=' + gid;
+                    url = baseQueryUrl.newSheet.assign(key);
                 }
 
                 (new google.visualization.Query(url)).send(function (response) {
@@ -169,6 +175,10 @@ window.iidentity = window.iidentity || {};
                 });
             }
         });
+
+    // exported function
+
+    exports.parseKey = parseKey;
 
     // exported classes
 

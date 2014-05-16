@@ -14,6 +14,30 @@ window.iidentity = window.iidentity || {};
 
     // unexported helper functions and classes
 
+        resolveKey = function (key, parent, err) {
+            var data = exports.spreadsheets.parseKey(key),
+                parentData;
+
+            if (!Object.isString(data.key) || data.key.isBlank()) {
+                parentData = exports.spreadsheets.parseKey(parent);
+
+                if (!Object.isString(parentData.key) || parentData.key.isBlank()) {
+                    if (err) {
+                        err.push('Cannot resolve key ' + key);
+                    }
+                    return false;
+                }
+
+                data.key = exports.spreadsheets.parseKey(parent).key;
+            }
+
+            if (!Object.has(data, 'gid')) {
+                return data.key;
+            }
+
+            return '{key}?gid={gid}'.assign(data);
+        },
+
         getExtraDataValueName = function (str) {
             var i = str.indexOf(':');
 
@@ -289,6 +313,8 @@ window.iidentity = window.iidentity || {};
                     length = sources.length,
                     i;
 
+                key = resolveKey(key, '', []);
+
                 for (i = 0; i < length; i++) {
                     if (sources[i].getKey() == key) {
                         return sources[i];
@@ -348,7 +374,7 @@ window.iidentity = window.iidentity || {};
 
                             source = self.getSource(data[i].key);
                             if (source === null) {
-                                loadSource(data[i], function (err, source) {
+                                loadSource(data[i], self.key, function (err, source) {
                                     if (source) {
                                         module.log.log('Adding new source sheet %s', data[i].key)
                                         self.sources.push(source);
@@ -466,11 +492,16 @@ window.iidentity = window.iidentity || {};
             },
         }),
 
-        loadSource = function (data, callback) {
-            var key = data.key,
+        loadSource = function (data, parentKey, callback) {
+            var err = [],
+                key = resolveKey(data.key, parentKey || '', err),
                 source = new exports.spreadsheets.Source(key);
 
-            source.load(function (err, players) {
+            source.load(function (err2, players) {
+                if (err2 != null) {
+                    err = err.concat(err2);
+                }
+
                 if (players === null) {
                     callback(err, null);
                     return;
@@ -513,7 +544,7 @@ window.iidentity = window.iidentity || {};
 
                         var skey = sourcesData[i].key;
 
-                        loadSource(sourcesData[i], function (err2, source) {
+                        loadSource(sourcesData[i], key, function (err2, source) {
                             if (err2) {
                                 err[skey] = err2;
                             }
@@ -537,6 +568,7 @@ window.iidentity = window.iidentity || {};
             var nbKeys = keys.length,
                 sources = [],
                 err = {},
+                key,
                 step = function (i) {
                     if (i >= nbKeys) {
                         callback(
@@ -546,7 +578,9 @@ window.iidentity = window.iidentity || {};
                         return;
                     }
 
-                    loadManifest(keys[i], function (err2, manifest) {
+                    key = resolveKey(keys[i], '', err);
+
+                    loadManifest(key, function (err2, manifest) {
                         if (err2) {
                             err[keys[i]] = err2;
                         }
@@ -564,4 +598,6 @@ window.iidentity = window.iidentity || {};
 
     // exported functions
     exports.loadManifests = loadManifests;
+
+    exports.resolveKey = resolveKey;
 })(window.iidentity, window.jQuery);
