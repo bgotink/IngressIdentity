@@ -7,7 +7,7 @@
 
 window.iidentity = window.iidentity || {};
 
-(function (module, $) { // TODO: use filterEmpty! (nu worden lege levels nog geïncluded enzo...)
+(function (module, $) {
 
     var exports = (Object.has(module, 'data') ? module.data : (module.data = {})).interpreter = {},
 
@@ -15,15 +15,6 @@ window.iidentity = window.iidentity || {};
         standardSourceKeys = [ 'oid', 'nickname', 'name', 'level' ],
 
         anomalies = [ '13magnus', 'recursion', 'interitus' ],
-
-        createPageValidator = function (key) {
-            return function (value, err) {
-                if (value.indexOf(':') === -1) {
-                    err.push('Invalid ' + key + ': ' + value);
-                    delete data[key];
-                }
-            };
-        },
 
         filterEmpty = function (obj) {
             return Object.each(obj, function (key, value) {
@@ -33,31 +24,7 @@ window.iidentity = window.iidentity || {};
                     delete obj[key];
                 }
             });
-        },
-        validators = {
-            anomaly: function (value, err) {
-                value = ('' + value).compact();
-
-                if (anomalies.indexOf(value) === -1) {
-                    err.push('Invalid anomaly: ' + value);
-                    delete data[key];
-                }
-            },
-            community: createPageValidator('community'),
-            event: createPageValidator('event')
-        },
-        validateObject = function (object, err, validator) {
-            if (Object.isFunction(validator)) {
-                validator(object, err);
-                return;
-            } else if (!Object.isObject(validator)) {
-                return;
-            }
-
-            if (!Object.isObject(object)) {
-                // ermh, validator expects object
-            }
-        }
+        };
 
         /**
          * An instance of ManifestEntry represents one row in a manifest.

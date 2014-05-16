@@ -65,8 +65,7 @@ window.iidentity = window.iidentity || {};
              */
             getUrl: function () {
                 var key = parseKey(this.key),
-                    url,
-                    matches;
+                    url;
 
                 if (key.key.match(/^[a-zA-Z0-9]+$/)) {
                     url = baseUrl.oldSheet.assign(key);
@@ -90,8 +89,7 @@ window.iidentity = window.iidentity || {};
             loadRaw: function (callback) {
                 var self = this,
                     key = parseKey(this.key),
-                    url,
-                    matches;
+                    url;
 
                 if (!Object.has(key, 'gid')) {
                     key.gid = 0;
