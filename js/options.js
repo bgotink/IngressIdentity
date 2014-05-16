@@ -156,14 +156,13 @@ window.iidentity = window.iidentity || {};
                         )
                         .append(
                             $('<p>')
-                                .text('If you have just reloaded the extension and push is enabled, '
-                                    + 'the manifests will automatically be shown here when the data '
-                                    + 'is ready.')
+                                .text('If you have just reloaded the extension, the manifests '
+                                    + 'will automatically be shown here when the data is ready.')
                         )
                         .append(
                             $('<p>')
-                                .text('If you believe this is in error or if push is not enabled, '
-                                    + 'try reloading this page or pressing "Force reload".')
+                                .text('If you believe this is in error, try reloading '
+                                    + 'this page or pressing "Force reload".')
                         );
 
                     return;
