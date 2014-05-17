@@ -98,7 +98,9 @@ window.iidentity = window.iidentity || {};
         getManifestKeys = function (callback) {
             module.log.log('Fetching manifest keys...');
             storage.get({ manifest_keys: [] }, function (result) {
-                callback(result.manifest_keys);
+                callback(result.manifest_keys.map(function (e) {
+                    return module.data.resolveKey(e, '');
+                }));
             });
         },
 
