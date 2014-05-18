@@ -38,102 +38,6 @@ window.iidentity = window.iidentity || {};
             return '{key}?gid={gid}'.assign(data);
         },
 
-        getExtraDataValueName = function (str) {
-            var i = str.indexOf(':');
-
-            if (i === -1) {
-                return str.compact();
-            } else {
-                return str.to(i).trim();
-            }
-        },
-        addToArray = function (src, dst) {
-            if (!Array.isArray(src)) {
-                src = [ src ];
-            }
-
-            var existing = [],
-                name;
-
-            dst.each(function (elem) {
-                existing.push(getExtraDataValueName(elem));
-            });
-
-            src.each(function (elem) {
-                name = getExtraDataValueName(elem);
-
-                if (existing.indexOf(name) === -1) {
-                    dst.push(elem);
-                    existing.push(name);
-                }
-            });
-        },
-        merge_player = function () {
-            if (arguments.length === 0) {
-                return false;
-            } else if (arguments.length == 1) {
-                return arguments[0];
-            }
-
-            var target = arguments[0],
-                src = arguments[1],
-                newArguments,
-                key,
-                extraKey,
-                tmp;
-
-            if (!Object.isObject(target.extra)) {
-                target.extra = {};
-            }
-
-            for (key in src) {
-                if (key === 'err') {
-                    if (Array.isArray(src.err)) {
-                        if (Object.has(target, 'err')) {
-                            if (Array.isArray(target.err)) {
-                                target.err = target.err.join(src.err);
-                            } else {
-                                target.err = src.err;
-                            }
-                        } else {
-                            target.err = src.err;
-                        }
-                    }
-                } else if (key === 'extra') {
-                    for (extraKey in src.extra) {
-                        if (Object.has(target.extra, extraKey)) {
-                            if (Array.isArray(target.extra[extraKey])) {
-                                addToArray(
-                                    src.extra[extraKey],
-                                    target.extra[extraKey]
-                                );
-                            } else if (Object.isBoolean(target.extra[extraKey])) {
-                                target.extra[extraKey] = target.extra[extraKey] || src.extra[extraKey];
-                            } else {
-                                tmp = [ target.extra[extraKey] ];
-                                addToArray(
-                                    src.extra[extraKey],
-                                    tmp
-                                );
-
-                                if (tmp.length > 1) {
-                                    target.extra[extraKey] = tmp;
-                                }
-                            }
-                        } else {
-                            target.extra[extraKey] = src.extra[extraKey];
-                        }
-                    }
-                } else {
-                    target[key] = src[key];
-                }
-            }
-
-            newArguments = Array.prototype.slice.call(arguments, 1);
-            newArguments[0] = target;
-            return merge_player.apply(null, newArguments);
-        },
-
         PlayerSource = Class.extend({
             init: function (key, spreadsheet, data, players) {
                 this.key = key;
@@ -257,6 +161,14 @@ window.iidentity = window.iidentity || {};
                 this.timestamp = +new Date;
 
                 this.loadingErrors = null;
+
+                this.topLevel = false;
+            },
+
+            setTopLevel: function () {
+                this.topLevel = true;
+
+                return this;
             },
 
             getKey: function () {
@@ -273,13 +185,13 @@ window.iidentity = window.iidentity || {};
                 });
             },
             getPlayer: function (oid) {
-                if (typeof this.cache[oid] !== 'undefined') {
+                if (Object.has(this.cache, oid)) {
                     return this.cache[oid];
                 }
 
                 var data = [ {} ],
                     result,
-                    faction;
+                    err = [];
 
                 this.sources.forEach(function (source) {
                     result = source.getPlayer(oid);
@@ -293,18 +205,22 @@ window.iidentity = window.iidentity || {};
                     return this.cache[oid] = null;
                 }
 
-                faction = data[1].faction;
-                if (data.some(function (elem) {
-                    return elem.faction && (elem.faction !== faction);
-                })) {
-                    data[0].err = ['Player ' + data[0].name + ' [' + data[0].nickname + '] has been registered as both enlightened and resistance'];
+                module.log.log('Merging ', data, ' into one player object:');
+
+                result = exports.merge(data, err);
+                if (this.topLevel) {
+                    exports.merge.validate(result, err);
                 }
 
-                module.log.log('Merging ', data, ' into one player object:');
-                this.cache[oid] = merge_player.apply(null, data);
-                module.log.log('Got', this.cache[oid]);
+                module.log.log('Got', result, 'errors', err);
 
-                return this.cache[oid];
+                if (Object.has(result, 'err')) {
+                    result.err = result.err.concat(err);
+                } else {
+                    result.err = err;
+                }
+
+                return this.cache[oid] = result;
             },
 
             getSources: function () {
@@ -575,7 +491,7 @@ window.iidentity = window.iidentity || {};
                     if (i >= nbKeys) {
                         callback(
                             Object.size(err) > 0 ? err : null,
-                            sources.length > 0 ? new CombinedPlayerSource(sources) : null
+                            sources.length > 0 ? (new CombinedPlayerSource(sources)).setTopLevel() : null
                         );
                         return;
                     }
