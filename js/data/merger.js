@@ -17,15 +17,21 @@ window.iidentity = window.iidentity || {};
 
     // general helpers
 
-        doEach = function (objOrArr, func) {
-            if (Array.isArray(objOrArr)) {
-                objOrArr.each(function (e) {
+        doEach = function (obj, key, func) {
+            if (!Object.has(obj, key)) {
+                return;
+            }
+
+            if (Array.isArray(obj[key])) {
+                obj[key].each(function (e) {
                     if (func(e) === false) {
-                        objOrArr.remove(e);
+                        obj[key].remove(e);
                     }
                 });
             } else {
-                func(objOrArr);
+                if (func(obj[key] === false) {
+                    delete obj[key];
+                }
             }
         },
 
@@ -38,26 +44,22 @@ window.iidentity = window.iidentity || {};
                 }
             },
             checkValidPage: function (obj, key, err) {
-                if (Object.has(obj, key)) {
-                    doEach(obj[key], function (value) {
-                        if (!Object.isString(value) || value.indexOf(':') === -1) {
-                            err.push('Invalid ' + key + ': "' + value + '"');
-                            return false;
-                        }
-                    });
-                }
+                doEach(obj, key, function (value) {
+                    if (!Object.isString(value) || value.indexOf(':') === -1) {
+                        err.push('Invalid ' + key + ': "' + value + '"');
+                        return false;
+                    }
+                });
             },
             checkValidAnomaly: function (obj, key, err) {
-                if (Object.has(obj, key)) {
-                    doEach(obj[key], function (value) {
-                        if (!Object.isString(value) || anomalies.indexOf(
-                                    value.compact().toLowerCase()
-                                ) === -1) {
-                            err.push('Invalid anomaly: "' + value + '"');
-                            return false;
-                        }
-                    })
-                }
+                doEach(obj, key, function (value) {
+                    if (!Object.isString(value) || anomalies.indexOf(
+                                value.compact().toLowerCase()
+                            ) === -1) {
+                        err.push('Invalid anomaly: "' + value + '"');
+                        return false;
+                    }
+                });
             },
             checkFactions: function (arr, err) {
                 if (arr.length === 0) {
