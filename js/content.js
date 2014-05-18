@@ -610,6 +610,22 @@ window.iidentity = window.iidentity || {};
                 );
             }
 
+            if (Object.has(player, 'err') && !(Array.isArray(player.err) && player.err.length === 0)) {
+                if (!Array.isArray(player.err)) {
+                    player.err = [ player.err ];
+                }
+
+                $profile.append(
+                    profileHelper.createSubtitle('Errors', $(
+                        player.err.map(function (e) {
+                            return $('<div class="fIa s"></div>')
+                                .text(e)
+                                [0];
+                        })
+                    ))
+                );
+            }
+
             customExtra.keys().filter(
                 function (e) {
                     var v = customExtra[e];
