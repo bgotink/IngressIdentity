@@ -10,138 +10,32 @@ window.iidentity = window.iidentity || {};
 (function (module, $) {
     'use strict';
 
-    var exports = module.data = {},
-
-        anomalies = [ '13magnus', 'recursion', 'interitus' ],
-        mainPlayerData = ['name', 'nickname', 'oid', 'level'],
+    var exports = (Object.has(module, 'data') ? module.data : (module.data = {})),
 
     // unexported helper functions and classes
 
-        filterEmpty = function (obj) {
-            var key;
+        resolveKey = function (key, parent, err) {
+            var data = exports.spreadsheets.parseKey(key),
+                parentData;
 
-            for (key in obj) {
-                if (Object.isObject(obj[key])) {
-                    filterEmpty(obj[key]);
-                } else if (obj[key] === null || ('' + obj[key]).isBlank()) {
-                    delete obj[key];
-                }
-            }
-        },
-        getExtraDataValueName = function (str) {
-            var i = str.indexOf(':');
+            if (!Object.isString(data.key) || data.key.isBlank()) {
+                parentData = exports.spreadsheets.parseKey(parent);
 
-            if (i === -1) {
-                return str.compact();
-            } else {
-                return str.to(i).trim();
-            }
-        },
-        addToArray = function (src, dst) {
-            if (!Array.isArray(src)) {
-                src = [ src ];
-            }
-
-            var existing = [],
-                name;
-
-            dst.each(function (elem) {
-                existing.push(getExtraDataValueName(elem));
-            });
-
-            src.each(function (elem) {
-                name = getExtraDataValueName(elem);
-
-                if (existing.indexOf(name) === -1) {
-                    dst.push(elem);
-                    existing.push(name);
-                }
-            });
-        },
-        merge_player = function () {
-            if (arguments.length === 0) {
-                return false;
-            } else if (arguments.length == 1) {
-                return arguments[0];
-            }
-
-            var target = arguments[0],
-                src = arguments[1],
-                newArguments,
-                key,
-                extraKey,
-                tmp;
-
-            if (!Object.isObject(target.extra)) {
-                target.extra = {};
-            }
-
-            for (key in src) {
-                if (key === 'err') {
-                    if (Array.isArray(src.err)) {
-                        if (Object.has(target, 'err')) {
-                            if (Array.isArray(target.err)) {
-                                target.err = target.err.join(src.err);
-                            } else {
-                                target.err = src.err;
-                            }
-                        } else {
-                            target.err = src.err;
-                        }
+                if (!Object.isString(parentData.key) || parentData.key.isBlank()) {
+                    if (err) {
+                        err.push('Cannot resolve key ' + key);
                     }
-                } else if (key === 'extra') {
-                    for (extraKey in src.extra) {
-                        if (Object.has(target.extra, extraKey)) {
-                            if (Array.isArray(target.extra[extraKey])) {
-                                addToArray(
-                                    src.extra[extraKey],
-                                    target.extra[extraKey]
-                                );
-                            } else if (Object.isBoolean(target.extra[extraKey])) {
-                                target.extra[extraKey] = target.extra[extraKey] || src.extra[extraKey];
-                            } else {
-                                tmp = [ target.extra[extraKey] ];
-                                addToArray(
-                                    src.extra[extraKey],
-                                    tmp
-                                );
-
-                                if (tmp.length > 1) {
-                                    target.extra[extraKey] = tmp;
-                                }
-                            }
-                        } else {
-                            target.extra[extraKey] = src.extra[extraKey];
-                        }
-                    }
-                } else {
-                    target[key] = src[key];
+                    return false;
                 }
+
+                data.key = exports.spreadsheets.parseKey(parent).key;
             }
 
-            newArguments = Array.prototype.slice.call(arguments, 1);
-            newArguments[0] = target;
-            return merge_player.apply(null, newArguments);
-        },
-        checkValidAnomaly = function (data, key, err) {
-            if (Object.has(data, key)) {
-                var value = ('' + data[key]).trim();
-
-                if (anomalies.indexOf(value) === -1) {
-                    err.push('Invalid anomaly: ' + value);
-                    delete data[key];
-                }
+            if (!Object.has(data, 'gid')) {
+                return data.key;
             }
-        },
-        checkValidPageValue = function (data, key, err) {
-            if (Object.has(data, key)) {
-                var value = data[key];
 
-                if (value.indexOf(':') === -1) {
-                    err.push('Invalid ' + key + ': ' + value);
-                    delete data[key];
-                }
-            }
+            return '{key}?gid={gid}'.assign(data);
         },
 
         PlayerSource = Class.extend({
@@ -149,26 +43,8 @@ window.iidentity = window.iidentity || {};
                 this.key = key;
                 this.spreadsheet = spreadsheet;
                 this.data = data;
-                this.err = [];
+                this.err = data.getErr();
                 this.timestamp = +new Date();
-
-                filterEmpty(data);
-
-                if ('extratags' in data) {
-                    try {
-                        data.extratags = JSON.parse(data.extratags);
-                    } catch (e) {
-                        this.err.push('Invalid JSON in extratags: ' + e.message);
-                        data.extratags = {};
-                    }
-                } else {
-                    data.extratags = {};
-                }
-
-                checkValidAnomaly(data.extratags, 'anomaly', this.err);
-
-                checkValidPageValue(data.extratags, 'community', this.err);
-                checkValidPageValue(data.extratags, 'event', this.err);
 
                 this.setPlayers(players);
             },
@@ -194,27 +70,9 @@ window.iidentity = window.iidentity || {};
                     return null;
                 }
 
-                var rawPlayer = this.players[oid],
-                    player = {};
-                player.extra = {};
-
-                Object.each(rawPlayer, function (key, value) {
-                    if (mainPlayerData.indexOf(key) !== -1) {
-                        player[key] = value;
-                    } else {
-                        player.extra[key] = value;
-                    }
-                });
-
-                filterEmpty(player);
-
-                return $.extend(
-                    true,
-                    {
-                        faction: this.data.faction,
-                        extra: this.data.extratags
-                    },
-                    player
+                return exports.interpreter.interpretSourceEntry(
+                    this.data,
+                    this.players[oid]
                 );
             },
 
@@ -226,13 +84,13 @@ window.iidentity = window.iidentity || {};
                 return this.key;
             },
             getTag: function () {
-                return this.data.tag;
+                return this.data.getTag();
             },
             getVersion: function () {
-                return this.data.lastupdated;
+                return this.data.getVersion();
             },
             getFaction: function () {
-                return this.data.faction;
+                return this.data.getFaction();
             },
 
             getTimestamp: function () {
@@ -288,15 +146,67 @@ window.iidentity = window.iidentity || {};
             },
 
             hasExtra: function (tag, oid) {
-                if (!(tag in this.data.extratags)
-                        || !Object.isString(this.data.extratags[tag])) {
-                    return false;
-                }
+                return this.data.hasExtra(tag, oid);
+            },
+        }),
 
-                var i = this.data.extratags[tag].indexOf(':');
+        ErroredPlayerSource = Class.extend({
+            init: function (key, data) {
+                this.key = key;
+                this.data = data;
+            },
 
-                return (i !== -1)
-                    && (oid === this.data.extratags[tag].to(i).trim());
+            getKey: function () {
+                return this.key;
+            },
+            getTag: function () {
+                return this.data.getTag();
+            },
+            getVersion: function () {
+                return this.data.getVersion();
+            },
+            getFaction: function () {
+                return this.data.getFaction();
+            },
+
+            getNbPlayers: function () {
+                return 0;
+            },
+
+            getUrl: function () {
+                return null;
+            },
+
+            hasErrors: function () {
+                return false;
+            },
+            getErrors: function () {
+                return [];
+            },
+
+            hasExtra: function () {
+                return false;
+            },
+
+            getTimestamp: function () {
+                return +new Date;
+            },
+            getUpdateInterval: function () {
+                return Infinity;
+            },
+
+            isCombined: function () {
+                return false;
+            },
+
+            shouldUpdate: function () {
+                return false;
+            },
+            setUpdated: function () {
+                return this;
+            },
+            update: function (callback) {
+                callback(false);
             },
         }),
 
@@ -311,6 +221,14 @@ window.iidentity = window.iidentity || {};
                 this.timestamp = +new Date;
 
                 this.loadingErrors = null;
+
+                this.topLevel = false;
+            },
+
+            setTopLevel: function () {
+                this.topLevel = true;
+
+                return this;
             },
 
             getKey: function () {
@@ -327,13 +245,13 @@ window.iidentity = window.iidentity || {};
                 });
             },
             getPlayer: function (oid) {
-                if (typeof this.cache[oid] !== 'undefined') {
+                if (Object.has(this.cache, oid)) {
                     return this.cache[oid];
                 }
 
                 var data = [ {} ],
                     result,
-                    faction;
+                    err = [];
 
                 this.sources.forEach(function (source) {
                     result = source.getPlayer(oid);
@@ -347,18 +265,22 @@ window.iidentity = window.iidentity || {};
                     return this.cache[oid] = null;
                 }
 
-                faction = data[1].faction;
-                if (data.some(function (elem) {
-                    return elem.faction && (elem.faction !== faction);
-                })) {
-                    data[0].err = ['Player ' + data[0].name + ' [' + data[0].nickname + '] has been registered as both enlightened and resistance'];
+                module.log.log('Merging ', data, ' into one player object:');
+
+                result = exports.merge(data, err);
+                if (this.topLevel) {
+                    exports.merge.validate(result, err);
                 }
 
-                module.log.log('Merging ', data, ' into one player object:');
-                this.cache[oid] = merge_player.apply(null, data);
-                module.log.log('Got', this.cache[oid]);
+                module.log.log('Got', result, 'errors', err);
 
-                return this.cache[oid];
+                if (Object.has(result, 'err')) {
+                    result.err = result.err.concat(err);
+                } else {
+                    result.err = err;
+                }
+
+                return this.cache[oid] = result;
             },
 
             getSources: function () {
@@ -368,6 +290,8 @@ window.iidentity = window.iidentity || {};
                 var sources = this.sources,
                     length = sources.length,
                     i;
+
+                key = resolveKey(key, '', []);
 
                 for (i = 0; i < length; i++) {
                     if (sources[i].getKey() == key) {
@@ -428,7 +352,7 @@ window.iidentity = window.iidentity || {};
 
                             source = self.getSource(data[i].key);
                             if (source === null) {
-                                loadSource(data[i], function (err, source) {
+                                loadSource(data[i], self.key, function (err, source) {
                                     if (source) {
                                         module.log.log('Adding new source sheet %s', data[i].key)
                                         self.sources.push(source);
@@ -546,23 +470,38 @@ window.iidentity = window.iidentity || {};
             },
         }),
 
-        loadSource = function (data, callback) {
-            var key = data.key,
-                source = new module.spreadsheets.Source(key);
-            delete data.key;
+        loadSource = function (data, parentKey, callback) {
+            var err = [],
+                key = resolveKey(data.key, parentKey || '', err),
+                source = new exports.spreadsheets.Source(key);
 
-            source.load(function (err, players) {
+            // ignore dummy rows!
+            if (key.compact().match(/^9+$/)) {
+                callback(null, null);
+                return;
+            }
+
+            source.load(function (err2, players) {
+                if (err2 != null) {
+                    err = err.concat(err2);
+                }
+
                 if (players === null) {
-                    callback(err, null);
+                    callback(err, new ErroredPlayerSource(key, exports.interpreter.interpretManifestEntry(data)));
                     return;
                 }
 
-                callback(err, new PlayerSource(key, source, data, players));
+                callback(err, new PlayerSource(
+                    key,
+                    source,
+                    exports.interpreter.interpretManifestEntry(data),
+                    players
+                ));
             });
         },
 
         loadManifest = function (key, callback) {
-            var manifest = new module.spreadsheets.Manifest(key),
+            var manifest = new exports.spreadsheets.Manifest(key),
                 sources = [];
 
             manifest.load(function (merr, sourcesData) {
@@ -589,17 +528,14 @@ window.iidentity = window.iidentity || {};
 
                         var skey = sourcesData[i].key;
 
-                        loadSource(sourcesData[i], function (err2, source) {
+                        loadSource(sourcesData[i], key, function (err2, source) {
                             if (err2) {
-                                err[skey] = err2;
+                                err[(source === null) ? skey : source.getKey()] = err2;
                             }
 
-                            if (source === null) {
-                                callback(err, null);
-                                return;
+                            if (source !== null) {
+                                sources.push(source);
                             }
-
-                            sources.push(source);
 
                             step(i + 1);
                         });
@@ -613,16 +549,19 @@ window.iidentity = window.iidentity || {};
             var nbKeys = keys.length,
                 sources = [],
                 err = {},
+                key,
                 step = function (i) {
                     if (i >= nbKeys) {
                         callback(
                             Object.size(err) > 0 ? err : null,
-                            sources.length > 0 ? new CombinedPlayerSource(sources) : null
+                            sources.length > 0 ? (new CombinedPlayerSource(sources)).setTopLevel() : null
                         );
                         return;
                     }
 
-                    loadManifest(keys[i], function (err2, manifest) {
+                    key = resolveKey(keys[i], '', err);
+
+                    loadManifest(key, function (err2, manifest) {
                         if (err2) {
                             err[keys[i]] = err2;
                         }
@@ -640,4 +579,6 @@ window.iidentity = window.iidentity || {};
 
     // exported functions
     exports.loadManifests = loadManifests;
+
+    exports.resolveKey = resolveKey;
 })(window.iidentity, window.jQuery);

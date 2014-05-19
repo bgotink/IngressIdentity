@@ -20,7 +20,7 @@ init:
 build/vendor: vendor
 	rm -rf $@
 	cp -a $< $@
-	rm -rf $@/{css/bootstrap{-theme*,.css*},js/bootstrap.js}
+	rm -rf $@/{css/bootstrap{-theme*,.css*},js/bootstrap.js,js/class.js}
 
 build/img: img
 	rm -rf $@
@@ -34,7 +34,7 @@ build/%.md: %.md
 	cp $< $@
 
 build/%.html: %.html
-	grep -Ev '<script type="text\/javascript" src="js\/(class|log|communication|data|spreadsheets)\.js">' $< > $@
+	grep -Ev '<script type="text\/javascript" src="js\/(log|communication|data\/(data|interpreter|merger|spreadsheets))\.js">' $< > $@
 
 build/css/%.css: css/%.css
 	cleancss -o $@ $<
@@ -48,5 +48,5 @@ build/js/content.js: js/content.js js/communication.js js/log.js
 build/js/options.js: js/options.js js/communication.js js/log.js
 	@bin/minify options communication log options
 
-build/js/background.js: js/log.js js/spreadsheets.js js/data.js js/background.js js/class.js
-	@bin/minify background class log spreadsheets data background
+build/js/background.js: js/log.js js/data/spreadsheets.js js/data/interpreter.js js/data/merger.js js/data/data.js js/background.js
+	@bin/minify background log data/spreadsheets data/interpreter data/merger data/data background

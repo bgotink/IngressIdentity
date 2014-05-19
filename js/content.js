@@ -529,7 +529,11 @@ window.iidentity = window.iidentity || {};
                 $wrapper.removeClass('Mqc').addClass('Hqc');
             } else if (player.faction === 'resistance') {
                 $wrapper.removeClass('Hqc').addClass('Mqc');
+            } else {
+                $wrapper.removeClass('Mqc Hqc');
             }
+            $wrapper.removeClass('iidentity-faction-enlightened iidentity-faction-resistance iidentity-faction-error iidentity-faction-unknown')
+                .addClass('iidentity-faction-' + player.faction);
 
             if (Object.isNumber(player.level)) {
                 level = '' + Number.range(0, 16).clamp(player.level);
@@ -549,7 +553,7 @@ window.iidentity = window.iidentity || {};
                         [
                             profileHelper.createRow('Agent name', player.nickname),
                             profileHelper.createRow('Level', 'L' + (level === '0' ? '?' : level)),
-                            profileHelper.createRow('Faction', player.faction.substr(0, 1).toUpperCase() + player.faction.substr(1))
+                            profileHelper.createRow('Faction', player.faction.capitalize())
                         ].concat(
                             customExtra.keys().filter(
                                 function (e) {
@@ -607,6 +611,22 @@ window.iidentity = window.iidentity || {};
 
                 $profile.append(
                     profileHelper.createLinkedSubtitle('Events', player.extra.event, 'https://plus.google.com/event/')
+                );
+            }
+
+            if (Object.has(player, 'err') && !(Array.isArray(player.err) && player.err.length === 0)) {
+                if (!Array.isArray(player.err)) {
+                    player.err = [ player.err ];
+                }
+
+                $profile.append(
+                    profileHelper.createSubtitle('Errors', $(
+                        player.err.map(function (e) {
+                            return $('<div class="fIa s"></div>')
+                                .text(e)
+                                [0];
+                        })
+                    ))
                 );
             }
 
@@ -840,8 +860,10 @@ window.iidentity = window.iidentity || {};
     module.comm.setOnUpdate(forceUpdate);
 
     $(function () {
-        forceUpdate();
+        setTimeout(function () {
+            forceUpdate();
 
-        observer.observe(window.document, { childList: true, subtree: true });
+            observer.observe(window.document, { childList: true, subtree: true });
+        }, 0);
     });
 })(window.iidentity, window, window.jQuery);
