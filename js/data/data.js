@@ -464,15 +464,12 @@ window.iidentity = window.iidentity || {};
 
                         loadSource(sourcesData[i], key, function (err2, source) {
                             if (err2) {
-                                err[skey] = err2;
+                                err[(source === null) ? skey : source.getKey()] = err2;
                             }
 
-                            if (source === null) {
-                                callback(err, null);
-                                return;
+                            if (source !== null) {
+                                sources.push(source);
                             }
-
-                            sources.push(source);
 
                             step(i + 1);
                         });
