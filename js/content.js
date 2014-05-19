@@ -529,7 +529,11 @@ window.iidentity = window.iidentity || {};
                 $wrapper.removeClass('Mqc').addClass('Hqc');
             } else if (player.faction === 'resistance') {
                 $wrapper.removeClass('Hqc').addClass('Mqc');
+            } else {
+                $wrapper.removeClass('Mqc Hqc');
             }
+            $wrapper.removeClass('iidentity-faction-enlightened iidentity-faction-resistance iidentity-faction-error iidentity-faction-unknown')
+                .addClass('iidentity-faction-' + player.faction);
 
             if (Object.isNumber(player.level)) {
                 level = '' + Number.range(0, 16).clamp(player.level);
@@ -549,7 +553,7 @@ window.iidentity = window.iidentity || {};
                         [
                             profileHelper.createRow('Agent name', player.nickname),
                             profileHelper.createRow('Level', 'L' + (level === '0' ? '?' : level)),
-                            profileHelper.createRow('Faction', player.faction.substr(0, 1).toUpperCase() + player.faction.substr(1))
+                            profileHelper.createRow('Faction', player.faction.capitalize())
                         ].concat(
                             customExtra.keys().filter(
                                 function (e) {

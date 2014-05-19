@@ -6,6 +6,14 @@
     color: blue;
 }
 
+.iidentity-faction-error {
+    color: red;
+}
+
+.iidentity-faction-unknown {
+    color: #222;
+}
+
 .iidentity-wrapper {
     padding: 4px 8px 10px;
 }
@@ -152,4 +160,20 @@ div + span.iidentity-spacer + wbr + .iidentity-iwrapper {
 
 .iidentity-profile .fIa:first-child {
     padding-left: 0px;
+}
+
+.iidentity-profile-wrapper.iidentity-faction-enlightened {
+    border-top-color: green;
+}
+
+.iidentity-profile-wrapper.iidentity-faction-resistance {
+    border-top-color: blue;
+}
+
+.iidentity-profile-wrapper.iidentity-faction-error {
+    border-top-color: red;
+}
+
+.iidentity-profile-wrapper.iidentity-faction-unknown {
+    border-top-color: #222;
 }

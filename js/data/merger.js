@@ -14,6 +14,7 @@ window.iidentity = window.iidentity || {};
     // variables
 
         anomalies = [ '13magnus', 'recursion', 'interitus' ],
+        validFactions = [ 'enlightened', 'resistance', 'unknown', 'error' ],
 
     // general helpers
 
@@ -29,7 +30,7 @@ window.iidentity = window.iidentity || {};
                     }
                 });
             } else {
-                if (func(obj[key] === false) {
+                if (func(obj[key]) === false) {
                     delete obj[key];
                 }
             }
@@ -68,7 +69,7 @@ window.iidentity = window.iidentity || {};
 
                 var factions = {};
 
-                arr.each(function (object) {
+                arr.exclude({ faction: 'unknown' }, { faction: 'error' }).each(function (object) {
                     if (Object.has(object, 'faction')) {
                         factions[
                             ('' + object.faction).compact().toLowerCase()
@@ -76,8 +77,32 @@ window.iidentity = window.iidentity || {};
                     }
                 });
 
-                if (factions.length > 1) {
+                if (Object.size(factions) > 1) {
                     err.push('Player has multiple factions: ' + Object.keys(factions).join(', '));
+                    arr.each(function (object) {
+                        object.faction = 'error';
+                    });
+                }
+            },
+            checkValidLevel: function (object, err) {
+                if (!Object.has(object, 'level')) {
+                    return;
+                }
+
+                if (!(Object.isString(object.level) || Object.isNumber(object.level))
+                        && !('' + object.level).compact().match(/^([0-9]|1[0-6]|\?|)$/)) {
+                    err.push('Invalid level: "' + object.level + '"');
+                    delete object.level;
+                }
+            },
+            checkValidFaction: function (object, err) {
+                if (!Object.has(object, 'faction')) {
+                    return;
+                }
+
+                if (validFactions.indexOf(object.faction) === -1) {
+                    err.push('Invalid faction: "' + object.faction + '"');
+                    delete object.faction;
                 }
             }
         },
@@ -92,6 +117,9 @@ window.iidentity = window.iidentity || {};
 
                     helpers.checkValidAnomaly(object.extra, 'anomaly', err);
                 }
+
+                helpers.checkValidLevel(object, err);
+                helpers.checkValidFaction(object, err);
             });
 
             helpers.checkFactions(arr, err);
@@ -195,6 +223,11 @@ window.iidentity = window.iidentity || {};
                         } else {
                             target.extra[extraKey] = src.extra[extraKey];
                         }
+                    }
+                } else if (key === 'faction') {
+                    if (src.faction !== 'unknown'
+                            && !(Object.has(target, 'faction') && target.faction === 'error')) {
+                        target.faction = src.faction;
                     }
                 } else {
                     target[key] = src[key];
