@@ -860,8 +860,10 @@ window.iidentity = window.iidentity || {};
     module.comm.setOnUpdate(forceUpdate);
 
     $(function () {
-        forceUpdate();
+        setTimeout(function () {
+            forceUpdate();
 
-        observer.observe(window.document, { childList: true, subtree: true });
+            observer.observe(window.document, { childList: true, subtree: true });
+        }, 0);
     });
 })(window.iidentity, window, window.jQuery);
