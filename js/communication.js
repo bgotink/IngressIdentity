@@ -18,19 +18,30 @@ window.iidentity = window.iidentity || {};
         request = { request: request, lastUpdate: lastUpdate };
         lastUpdate = +new Date;
 
-        chrome.runtime.sendMessage(
-            request,
-            function (reply) {
-                callback(reply.reply);
+        try {
+            chrome.runtime.sendMessage(
+                request,
+                function (reply) {
+                    if (typeof reply === 'undefined') {
+                        module.log.error(chrome.runtime.lastError);
+                    }
 
-                lastUpdate = +new Date;
-                if (reply.shouldUpdate) {
-                    if (onUpdate) {
-                        onUpdate();
+                    callback(reply.reply);
+
+                    lastUpdate = +new Date;
+                    if (reply.shouldUpdate) {
+                        if (onUpdate) {
+                            onUpdate();
+                        }
                     }
                 }
-            }
-        );
+            );
+        } catch (e) {
+            // couldn't contact the extension
+            // that can only mean one thing: extension has been reloaded, disabled or removed
+            // -> reload this page
+            window.document.location.reload();
+        }
     };
 
     chrome.runtime.onMessage.addListener(function (request) {
