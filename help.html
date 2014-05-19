@@ -232,7 +232,21 @@
                 <div>
                     <h2 id="manifest-and-source"><a name="manifest-and-source"></a>Manifest &amp; Source Files</h2>
                     <p>
-                        This section describes what manifest and sources files look like.
+                        Manifest and source files are Google Drive spreadsheets. Their structure
+                        is described in this section.
+                    </p>
+                    <p>
+                        It is <b>important</b> to note that the first data row of a
+                        Google Drive spreadsheet <em>must</em> contain a value for all columns!
+                        Not complying with this requirement will result in rows or columns
+                        not being discovered. This requirement stems from the
+                        Google API we use to read the spreadsheets.
+                    </p>
+                    <p>
+                        Using a dummy in the first row is advised, cf. the example
+                        document. Be sure to use a key containing only 9s for the
+                        dummy in a manifest spreadsheeet and an oid with only 9s for
+                        the dummy in a source file, a the extension will ignore these.
                     </p>
 
                     <!-- Manifests -->
@@ -270,7 +284,7 @@
                         <dd>
                             <p>
                                 <em>Required<sup>1</sup>.</em>
-                                Either 'enlightened' or 'resistance'.
+                                Either 'enlightened', 'resistance' or 'unknown'.
                             </p>
                         </dd>
                         <dt>key</dt>
@@ -409,14 +423,6 @@
                         perfectly fine for <em>this</em> extension if you don't include
                         this data the second time a player is used. See
                         <a href="#compat">the section on compatibility</a>.
-                    </p>
-                    <p>
-                        It is <b>important</b> to note that the first data row of the
-                        source file <em>must</em> contain a value for all columns!
-                        Using a dummy in the first row is advised, cf. the example
-                        document. Not complying with this requirement will result in
-                        rows not being discovered. This requirement stems from the
-                        Google Visualization API, which we use to read the spreadsheets.
                     </p>
 
                     <!-- Key -->

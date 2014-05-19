@@ -150,6 +150,66 @@ window.iidentity = window.iidentity || {};
             },
         }),
 
+        ErroredPlayerSource = Class.extend({
+            init: function (key, data) {
+                this.key = key;
+                this.data = data;
+            },
+
+            getKey: function () {
+                return this.key;
+            },
+            getTag: function () {
+                return this.data.getTag();
+            },
+            getVersion: function () {
+                return this.data.getVersion();
+            },
+            getFaction: function () {
+                return this.data.getFaction();
+            },
+
+            getNbPlayers: function () {
+                return 0;
+            },
+
+            getUrl: function () {
+                return null;
+            },
+
+            hasErrors: function () {
+                return false;
+            },
+            getErrors: function () {
+                return [];
+            },
+
+            hasExtra: function () {
+                return false;
+            },
+
+            getTimestamp: function () {
+                return +new Date;
+            },
+            getUpdateInterval: function () {
+                return Infinity;
+            },
+
+            isCombined: function () {
+                return false;
+            },
+
+            shouldUpdate: function () {
+                return false;
+            },
+            setUpdated: function () {
+                return this;
+            },
+            update: function (callback) {
+                callback(false);
+            },
+        }),
+
         CombinedPlayerSource = Class.extend({
             init: function (sources, key, spreadsheet) {
                 this.sources = sources;
@@ -415,13 +475,19 @@ window.iidentity = window.iidentity || {};
                 key = resolveKey(data.key, parentKey || '', err),
                 source = new exports.spreadsheets.Source(key);
 
+            // ignore dummy rows!
+            if (key.compact().match(/^9+$/)) {
+                callback(null, null);
+                return;
+            }
+
             source.load(function (err2, players) {
                 if (err2 != null) {
                     err = err.concat(err2);
                 }
 
                 if (players === null) {
-                    callback(err, null);
+                    callback(err, new ErroredPlayerSource(key, exports.interpreter.interpretManifestEntry(data)));
                     return;
                 }
 
