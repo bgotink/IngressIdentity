@@ -197,6 +197,20 @@ window.iidentity = window.iidentity || {};
                         }
                     });
                 },
+                level: function (target, src) {
+                    // target has level, see merge function
+                    var level = +src.level;
+
+                    if (isNaN(level)) {
+                        return;
+                    }
+
+                    level = Number.range(0, 16).clamp(level);
+
+                    if (level > target.level) {
+                        target.level = level;
+                    }
+                }
             },
         },
 
