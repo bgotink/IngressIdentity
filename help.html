@@ -312,7 +312,8 @@
                         <dt>extratags</dt>
                         <dd>
                             <p>
-                                <em>Optional.</em>
+                                <em>Optional</em> and <em>Deprecated</em> (use extra columns
+                                instead).
                                 A string containing a valid JSON object. The object
                                 contains string values. Currently, the following
                                 values are used if they are included:
@@ -353,6 +354,20 @@
                                     }
                                 </p>
                             </blockquote>
+                        </dd>
+                        <dt>&hellip;</dt>
+                        <dd>
+                            <p>
+                                <em>Optional.</em>
+                                You can create other columns at will. These will be
+                                optional, and will be seen as extratags. If the column name is also added
+                                in extratags, the data in extratags is overwritten.
+                            </p>
+                            <p>
+                                Example: the spreadsheet has a 'anomaly' column. The
+                                data in this column will overwrite the 'anomaly' value
+                                in extratags if that value exists.
+                            </p>
                         </dd>
                     </dl>
                     <p>
