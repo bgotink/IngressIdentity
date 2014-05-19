@@ -291,7 +291,7 @@ window.iidentity = window.iidentity || {};
                     length = sources.length,
                     i;
 
-                key = resolveKey(key, '', []);
+                key = resolveKey(key, this.getKey(), []);
 
                 for (i = 0; i < length; i++) {
                     if (sources[i].getKey() == key) {
@@ -362,8 +362,10 @@ window.iidentity = window.iidentity || {};
 
                                         step(i + 1, true);
                                     } else {
-                                        module.log.error('Error occured while adding source');
-                                        err.forEach(module.log.error);
+                                        if (err !== null && err.length !== 0) {
+                                            module.log.error('Error occured while adding source');
+                                            err.forEach(module.log.error);
+                                        }
 
                                         step(i + 1, updated);
                                     }
