@@ -291,7 +291,7 @@ window.iidentity = window.iidentity || {};
                     length = sources.length,
                     i;
 
-                key = resolveKey(key, '', []);
+                key = resolveKey(key, this.getKey(), []);
 
                 for (i = 0; i < length; i++) {
                     if (sources[i].getKey() == key) {
