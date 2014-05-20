@@ -8,6 +8,7 @@
 window.iidentity = window.iidentity || {};
 
 (function (module) {
+    'use strict';
 
     var exports = (Object.has(module, 'data') ? module.data : (module.data = {})),
 

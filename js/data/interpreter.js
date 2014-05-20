@@ -8,6 +8,7 @@
 window.iidentity = window.iidentity || {};
 
 (function (module, $) {
+    'use strict';
 
     var exports = (Object.has(module, 'data') ? module.data : (module.data = {})).interpreter = {},
 
@@ -24,7 +25,7 @@ window.iidentity = window.iidentity || {};
                     delete obj[key];
                 }
             });
-        };
+        },
 
         /**
          * An instance of ManifestEntry represents one row in a manifest.
