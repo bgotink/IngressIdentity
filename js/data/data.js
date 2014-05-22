@@ -47,6 +47,8 @@ window.iidentity = window.iidentity || {};
                 this.timestamp = +new Date();
 
                 this.setPlayers(players);
+
+                this.loadingErrors = null;
             },
 
             setPlayers: function (players) {
@@ -138,7 +140,18 @@ window.iidentity = window.iidentity || {};
                 return this.err.length > 0;
             },
             getErrors: function () {
-                return this.err;
+                return $.extend({}, this.err, this.loadingErrors);
+            },
+
+            hasLoadingErrors: function () {
+                return !!this.loadingErrors;
+            },
+            setLoadingErrors: function (err) {
+                if (!err || !Array.isArray(err)) {
+                    this.loadingErrors = null;
+                } else {
+                    this.loadingErrors = err.length === 0 ? null : err;
+                }
             },
 
             getUrl: function () {
@@ -151,22 +164,23 @@ window.iidentity = window.iidentity || {};
         }),
 
         ErroredPlayerSource = Class.extend({
-            init: function (key, data) {
+            init: function (key, err, data) {
                 this.key = key;
-                this.data = data;
+                this.err = err;
+                this.data = data || null;
             },
 
             getKey: function () {
                 return this.key;
             },
             getTag: function () {
-                return this.data.getTag();
+                return this.data && this.data.getTag();
             },
             getVersion: function () {
-                return this.data.getVersion();
+                return this.data && this.data.getVersion();
             },
             getFaction: function () {
-                return this.data.getFaction();
+                return this.data && this.data.getFaction();
             },
 
             getNbPlayers: function () {
@@ -174,14 +188,23 @@ window.iidentity = window.iidentity || {};
             },
 
             getUrl: function () {
-                return null;
+                return exports.spreadsheets.keyToUrl(this.key);
             },
 
             hasErrors: function () {
-                return false;
+                return true;
             },
             getErrors: function () {
-                return [];
+                return this.err;
+            },
+
+            hasLoadingErrors: function () {
+                return true;
+            },
+            setLoadingErrors: function (err) {
+                if (err) {
+                    this.loadingErrors = err;
+                }
             },
 
             hasExtra: function () {
@@ -291,7 +314,7 @@ window.iidentity = window.iidentity || {};
                     length = sources.length,
                     i;
 
-                key = resolveKey(key, '', []);
+                key = resolveKey(key, this.getKey(), []);
 
                 for (i = 0; i < length; i++) {
                     if (sources[i].getKey() == key) {
@@ -362,8 +385,10 @@ window.iidentity = window.iidentity || {};
 
                                         step(i + 1, true);
                                     } else {
-                                        module.log.error('Error occured while adding source');
-                                        err.forEach(module.log.error);
+                                        if (err !== null && err.length !== 0) {
+                                            module.log.error('Error occured while adding source');
+                                            err.forEach(module.log.error);
+                                        }
 
                                         step(i + 1, updated);
                                     }
@@ -430,19 +455,26 @@ window.iidentity = window.iidentity || {};
             },
 
             hasLoadingErrors: function () {
-                return !!this.loadingErrors;
+                return !!this.loadingErrors || this.getSources().some(function (source) { return source.hasLoadingErrors(); });
             },
             setLoadingErrors: function (err) {
-                if (typeof err === 'undefined' || err === null) {
+                if (!err || !Array.isArray(err)) {
                     this.loadingErrors = null;
-                    return;
-                }
-                if ((Array.isArray(err) ? err.length : Object.size(err)) === 0) {
-                    this.loadingErrors = null;
+                } else {
+                    this.loadingErrors = err.length === 0 ? null : err;
                     return;
                 }
 
-                this.loadingErrors = err;
+                this.getSources().each(function (source) {
+                    if (Object.isObject(err) && Object.has(err, source.getKey())) {
+                        source.setLoadingErrors(
+                            err[source.getKey()]
+                        );
+                    } else {
+                        source.setLoadingErrors(null);
+                    }
+                });
+
                 return this;
             },
 
@@ -487,7 +519,7 @@ window.iidentity = window.iidentity || {};
                 }
 
                 if (players === null) {
-                    callback(err, new ErroredPlayerSource(key, exports.interpreter.interpretManifestEntry(data)));
+                    callback(err, new ErroredPlayerSource(key, err, exports.interpreter.interpretManifestEntry(data)));
                     return;
                 }
 
@@ -506,14 +538,15 @@ window.iidentity = window.iidentity || {};
 
             manifest.load(function (merr, sourcesData) {
                 module.log.log('Loaded manifest ', key, ', got ', sourcesData, 'err: ', merr);
-                if (sourcesData === null) {
-                    callback({ __errors: merr }, null);
-                    return;
-                }
 
                 var err = {};
                 if (merr !== null) {
                     err.__errors = merr;
+                }
+
+                if (sourcesData === null) {
+                    callback(err, new ErroredPlayerSource(key, err));
+                    return;
                 }
 
                 var nbSources = sourcesData.length,
