@@ -155,7 +155,7 @@ window.iidentity = window.iidentity || {};
             },
 
             getUrl: function () {
-                return exports.spreadsheets.keyToUrl(this.key);
+                return this.spreadsheet.getUrl();
             },
 
             hasExtra: function (tag, oid) {
@@ -164,23 +164,23 @@ window.iidentity = window.iidentity || {};
         }),
 
         ErroredPlayerSource = Class.extend({
-            init: function (key, data, err) {
+            init: function (key, err, data) {
                 this.key = key;
-                this.data = data;
                 this.err = err;
+                this.data = data || null;
             },
 
             getKey: function () {
                 return this.key;
             },
             getTag: function () {
-                return this.data.getTag();
+                return this.data && this.data.getTag();
             },
             getVersion: function () {
-                return this.data.getVersion();
+                return this.data && this.data.getVersion();
             },
             getFaction: function () {
-                return this.data.getFaction();
+                return this.data && this.data.getFaction();
             },
 
             getNbPlayers: function () {
@@ -188,7 +188,7 @@ window.iidentity = window.iidentity || {};
             },
 
             getUrl: function () {
-                return null;
+                return exports.spreadsheets.keyToUrl(this.key);
             },
 
             hasErrors: function () {
@@ -519,7 +519,7 @@ window.iidentity = window.iidentity || {};
                 }
 
                 if (players === null) {
-                    callback(err, new ErroredPlayerSource(key, exports.interpreter.interpretManifestEntry(data), err));
+                    callback(err, new ErroredPlayerSource(key, err, exports.interpreter.interpretManifestEntry(data)));
                     return;
                 }
 
@@ -538,14 +538,15 @@ window.iidentity = window.iidentity || {};
 
             manifest.load(function (merr, sourcesData) {
                 module.log.log('Loaded manifest ', key, ', got ', sourcesData, 'err: ', merr);
-                if (sourcesData === null) {
-                    callback({ __errors: merr }, null);
-                    return;
-                }
 
                 var err = {};
                 if (merr !== null) {
                     err.__errors = merr;
+                }
+
+                if (sourcesData === null) {
+                    callback(err, new ErroredPlayerSource(key, err));
+                    return;
                 }
 
                 var nbSources = sourcesData.length,
