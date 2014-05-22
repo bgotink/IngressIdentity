@@ -47,6 +47,25 @@ window.iidentity = window.iidentity || {};
             return { key: key };
         },
 
+        keyToUrl = function (key) {
+            var url;
+
+            if (!Object.isObject(key)) {
+                key = parseKey(key);
+            }
+
+            if (key.key.match(/^[a-zA-Z0-9]+$/)) {
+                url = baseUrl.oldSheet.assign(key);
+            } else {
+                url = baseUrl.newSheet.assign(key);
+            }
+
+            if (!Object.has(key, 'gid')) {
+                return url;
+            }
+            return url + '#gid=' + key.gid;
+        },
+
         /**
          * This class loads google drive documents.
          *
@@ -64,19 +83,7 @@ window.iidentity = window.iidentity || {};
              * Get a URL to visit this spreadsheet
              */
             getUrl: function () {
-                var key = parseKey(this.key),
-                    url;
-
-                if (key.key.match(/^[a-zA-Z0-9]+$/)) {
-                    url = baseUrl.oldSheet.assign(key);
-                } else {
-                    url = baseUrl.newSheet.assign(key);
-                }
-
-                if (!Object.has(key, 'gid')) {
-                    return url;
-                }
-                return url + '#gid=' + key.gid;
+                return keyToUrl(this.key);
             },
 
             /**
@@ -177,6 +184,8 @@ window.iidentity = window.iidentity || {};
     // exported function
 
     exports.parseKey = parseKey;
+
+    exports.keyToUrl = keyToUrl;
 
     // exported classes
 

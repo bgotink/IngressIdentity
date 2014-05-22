@@ -142,7 +142,7 @@ window.iidentity = window.iidentity || {};
             },
 
             getUrl: function () {
-                return this.spreadsheet.getUrl();
+                return exports.spreadsheets.keyToUrl(this.key);
             },
 
             hasExtra: function (tag, oid) {
