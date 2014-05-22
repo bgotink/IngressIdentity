@@ -155,7 +155,7 @@ window.iidentity = window.iidentity || {};
             },
 
             getUrl: function () {
-                return exports.spreadsheets.keyToUrl(this.key);
+                return this.spreadsheet.getUrl();
             },
 
             hasExtra: function (tag, oid) {
@@ -188,7 +188,7 @@ window.iidentity = window.iidentity || {};
             },
 
             getUrl: function () {
-                return null;
+                return exports.spreadsheets.keyToUrl(this.key);
             },
 
             hasErrors: function () {
