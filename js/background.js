@@ -310,7 +310,7 @@ window.iidentity = window.iidentity || {};
 
                     if (manifest === null) {
                         module.log.error('Strangely manifest %s cannot be found', key);
-                    } else {
+                    } else if (manifest.isCombined()) {
                         manifest.getSources().each(function (source) {
                             tmp = {
                                 key:     source.getKey(),
