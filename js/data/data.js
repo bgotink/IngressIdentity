@@ -47,6 +47,8 @@ window.iidentity = window.iidentity || {};
                 this.timestamp = +new Date();
 
                 this.setPlayers(players);
+
+                this.loadingErrors = null;
             },
 
             setPlayers: function (players) {
@@ -138,11 +140,22 @@ window.iidentity = window.iidentity || {};
                 return this.err.length > 0;
             },
             getErrors: function () {
-                return this.err;
+                return $.extend({}, this.err, this.loadingErrors);
+            },
+
+            hasLoadingErrors: function () {
+                return !!this.loadingErrors;
+            },
+            setLoadingErrors: function (err) {
+                if (!err || !Array.isArray(err)) {
+                    this.loadingErrors = null;
+                } else {
+                    this.loadingErrors = err.length === 0 ? null : err;
+                }
             },
 
             getUrl: function () {
-                return this.spreadsheet.getUrl();
+                return exports.spreadsheets.keyToUrl(this.key);
             },
 
             hasExtra: function (tag, oid) {
@@ -151,9 +164,10 @@ window.iidentity = window.iidentity || {};
         }),
 
         ErroredPlayerSource = Class.extend({
-            init: function (key, data) {
+            init: function (key, data, err) {
                 this.key = key;
                 this.data = data;
+                this.err = err;
             },
 
             getKey: function () {
@@ -178,10 +192,19 @@ window.iidentity = window.iidentity || {};
             },
 
             hasErrors: function () {
-                return false;
+                return true;
             },
             getErrors: function () {
-                return [];
+                return this.err;
+            },
+
+            hasLoadingErrors: function () {
+                return true;
+            },
+            setLoadingErrors: function (err) {
+                if (err) {
+                    this.loadingErrors = err;
+                }
             },
 
             hasExtra: function () {
@@ -432,19 +455,26 @@ window.iidentity = window.iidentity || {};
             },
 
             hasLoadingErrors: function () {
-                return !!this.loadingErrors;
+                return !!this.loadingErrors || this.getSources().some(function (source) { return source.hasLoadingErrors(); });
             },
             setLoadingErrors: function (err) {
-                if (typeof err === 'undefined' || err === null) {
+                if (!err || !Array.isArray(err)) {
                     this.loadingErrors = null;
-                    return;
-                }
-                if ((Array.isArray(err) ? err.length : Object.size(err)) === 0) {
-                    this.loadingErrors = null;
+                } else {
+                    this.loadingErrors = err.length === 0 ? null : err;
                     return;
                 }
 
-                this.loadingErrors = err;
+                this.getSources().each(function (source) {
+                    if (Object.isObject(err) && Object.has(err, source.getKey())) {
+                        source.setLoadingErrors(
+                            err[source.getKey()]
+                        );
+                    } else {
+                        source.setLoadingErrors(null);
+                    }
+                });
+
                 return this;
             },
 
@@ -489,7 +519,7 @@ window.iidentity = window.iidentity || {};
                 }
 
                 if (players === null) {
-                    callback(err, new ErroredPlayerSource(key, exports.interpreter.interpretManifestEntry(data)));
+                    callback(err, new ErroredPlayerSource(key, exports.interpreter.interpretManifestEntry(data), err));
                     return;
                 }
 
