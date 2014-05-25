@@ -1,0 +1,106 @@
+#!/usr/bin/env node
+
+"use strict";
+
+var fs = require('fs'),
+    exec = require('child_process').exec,
+    dirname = require('path').dirname,
+
+    __slice = [].slice,
+
+    files = [
+        {
+            files: {
+                'css/content.css': genLessDependencies('less/content.less'),
+                'css/options.css': genLessDependencies('less/general_background.less', 'less/options.less'),
+                'css/help.css':    genLessDependencies('less/general_background.less', 'less/help.less'),
+            },
+            compile: function (target, sources) {
+                do_exec('lessc "' + sources[sources.length - 1] + '" "' + target + '"');
+            }
+        }
+    ];
+
+function genLessDependencies() {
+    return [ 'less/variables.less', 'less/general.less' ].concat(
+        __slice.call(arguments)
+    );
+}
+
+function isDirectory(filename, callback) {
+    fs.exists(filename, function (exists) {
+        if (!exists) {
+            fs.mkdir(filename, function (err) {
+                if (err) {
+                    callback(err, null);
+                } else {
+                    callback(null, true);
+                }
+            });
+        } else {
+            fs.stat(filename, function (err, stat) {
+                if (stat == null) {
+                    callback(err, null);
+                } else {
+                    callback(null, stat.isDirectory());
+                }
+            });
+        }
+    });
+}
+
+function log() {
+    var args = __slice.call(arguments);
+
+    if (args.length === 0) {
+        return;
+    }
+    args[0] = '[' + new Date().toISOString() + '] ' + args[0];
+
+    console.log.apply(console, args);
+}
+
+function do_exec(program) {
+    exec(program, function (error, out, err) {
+        if (error !== null) {
+            log('An error occurred when executing %s:', program, error.stack);
+        } else {
+            log('Executed %s', program);
+        }
+    });
+}
+
+// chdir
+process.chdir(dirname(__dirname));
+
+isDirectory('css', function (err, isDirectory) {
+    if (!isDirectory) {
+        if (err) {
+            console.error('Error while creating %s/css directory:', __dirname);
+            console.error(err.stack ? err.stack : err);
+        } else {
+            console.error('Please ensure that %s/css is a directory', __dirname);
+        }
+
+        process.exit(1);
+    }
+
+    // watch
+    files.forEach(function (fileData) {
+        Object.keys(fileData.files).forEach(function (target) {
+            var sources = fileData.files[target],
+                rebuild = fileData.compile.bind(null, target, sources);
+
+            sources.forEach(function (source) {
+                fs.watch(source, function (event, filename) {
+                    log('Event: %s, source: %s', event, source);
+
+                    rebuild();
+                });
+            });
+            
+            // also, rebuild once now
+            rebuild();
+        });
+    });
+});

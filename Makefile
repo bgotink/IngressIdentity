@@ -36,8 +36,11 @@ build/%.md: %.md
 build/%.html: %.html
 	grep -Ev '<script type="text\/javascript" src="js\/(log|communication|data\/(data|interpreter|merger|spreadsheets))\.js">' $< > $@
 
-build/css/%.css: css/%.css
-	cleancss -o $@ $<
+build/css/content.css: less/content.less less/variables.less less/general.less
+	lessc -x $< $@
+
+build/css/%.css: less/%.less less/variables.less less/general.less less/general_background.less
+	lessc -x $< $@
 
 build/js/help.js: js/help.js
 	@bin/minify help help
