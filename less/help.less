@@ -1,0 +1,71 @@
+@import 'general_background.less';
+
+.help-nav {
+    position: fixed;
+    margin-top: 20px;
+
+    .nav > li {
+        > a {
+            font-weight: 500;
+            color: #999;
+            padding: 4px 20px;
+            font-size: 13px;
+
+            &:hover,
+            &:focus {
+                padding-left: 19px;
+                border-left: 1px solid #606060;
+                color: #404040;
+                background: transparent;
+            }
+        }
+
+        &.active > a {
+            padding-left: 18px;
+            border-left: 2px solid #606060;
+            color: #404040;
+        }
+    }
+
+    > .nav > li {
+        > ul {
+            display: none;
+        }
+
+        &.active > ul {
+            display: block;
+        }
+    }
+
+    .nav .nav > li {
+        > a {
+            padding-top: 1px;
+            padding-bottom: 1px;
+            padding-left: 30px;
+            font-size: 12px;
+            font-weight: 400;
+
+            &:hover,
+            &:focus {
+                padding-left: 29px;
+                border-left: 1px solid #606060;
+                color: #404040;
+            }
+        }
+
+        &.active > a {
+            font-weight: 500;
+            padding-left: 28px;
+        }
+    }
+
+    > a {
+        display: block;
+        margin-top: 10px;
+        margin-left: 10px;
+        padding: 4px 10px;
+        font-size: 12px;
+        font-weight: 500;
+        color: #999;
+    }
+}

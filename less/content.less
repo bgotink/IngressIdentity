@@ -1,0 +1,126 @@
+@import 'general.less';
+
+// Profile popup
+
+.iidentity-wrapper {
+    padding: 4px 8px 10px;
+
+    > .iidentity-name {
+        font-size: 24px;
+    }
+
+    > .iidentity-extra {
+        font-size: 18px;
+    }
+}
+
+// inline: comment/post author etc.
+
+a + span.iidentity-spacer {
+    margin-left: .4em;
+}
+
+div + span.iidentity-spacer + wbr + .iidentity-iwrapper {
+    display: block;
+    margin-top: -3px;
+    margin-bottom: 3px;
+}
+
+.iidentity-iwrapper {
+    margin-right: .4em;
+
+    > span {
+        white-space: nowrap;
+    }
+}
+
+.iidentity-wrapper > .iidentity-extra > span ~ span,
+.iidentity-iwrapper > span ~ span {
+    padding-left:  .2em;
+
+    &::before {
+        content: '//';
+        padding-right: .2em;
+        color: @c_extra;
+    }
+}
+
+// concise inline
+
+.iidentity-ciwrapper {
+    white-space: nowrap;
+
+    &::before {
+        content: '[';
+        padding-right: .2ex;
+        color: @c_extra;
+    }
+
+    &::after {
+        content: ']';
+        padding-left: .2ex;
+        color: @c_extra;
+    }
+}
+
+// anomaly badges
+
+.iidentity-anomalies {
+    display: inline;
+    position: relative;
+}
+
+.iidentity-anomaly {
+    width: auto;
+    height: .8em;
+
+    margin-bottom: auto;
+    margin-top: auto;
+    margin-left: .4ex;
+}
+
+// extra info
+
+.iidentity-group a,
+.iidentity-custom-extratag > span {
+    color: @c_extra;
+    white-space: nowrap;
+}
+
+.iidentity-custom-extratag > b {
+    padding-right: 1ex;
+}
+
+.iidentity-group > div {
+    overflow-x: hidden;
+    -webkit-mask: linear-gradient(
+        to right,
+        rgba(255,255,255,1),
+        rgba(255,255,255,1) 90%,
+        rgba(255,255,255,0)
+    );
+}
+
+// profile page
+
+.iidentity-profile .fIa:first-child {
+    padding-left: 0px;
+}
+
+.iidentity-profile-wrapper {
+    &.iidentity-faction-enlightened {
+        color: @c_enlightened;
+    }
+
+    &.iidentity-faction-resistance {
+        color: @c_resistance;
+    }
+
+    &.iidentity-faction-error {
+        color: @c_error;
+    }
+
+    &.iidentity-faction-unknown {
+        color: @c_unknown;
+    }
+}

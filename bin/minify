@@ -16,21 +16,20 @@ log -n 'Minifying '
 
 for i in "$@"; do
     log -n "js/$i.js "
-    sources="$sources js/$i.js"
+    sources="$sources coffee/$i.coffee"
 done
-
-# disable logging by default
-sed -i '' -e 's/enableLogging = true/enableLogging = false/' "js/log.js"
 
 log "into build/js/$destfile.js"
 
-uglifyjs $sources -o "build/js/$destfile.js" --screw-ie8 --mangle toplevel --compress --preamble "/**
+# coffee -> js
+# => disable logging by default
+# => uglify
+coffee --no-header -pc $sources \
+    | sed -e 's/enableLogging = true/enableLogging = false/' \
+    | uglifyjs - -o "build/js/$destfile.js" --screw-ie8 --mangle toplevel --compress --preamble "/**
  * This file is part of IngressIdentity
  *
  * @author Bram Gotink (@bgotink)
  * @license MIT
  * @url https://github.com/bgotink/IngressIdentity
  */"
-
-# re-esable logging
-sed -i '' -e 's/enableLogging = false/enableLogging = true/' "js/log.js"

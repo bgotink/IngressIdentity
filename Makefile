@@ -36,17 +36,20 @@ build/%.md: %.md
 build/%.html: %.html
 	grep -Ev '<script type="text\/javascript" src="js\/(log|communication|data\/(data|interpreter|merger|spreadsheets))\.js">' $< > $@
 
-build/css/%.css: css/%.css
-	cleancss -o $@ $<
+build/css/content.css: less/content.less less/variables.less less/general.less
+	lessc -x $< $@
 
-build/js/help.js: js/help.js
+build/css/%.css: less/%.less less/variables.less less/general.less less/general_background.less
+	lessc -x $< $@
+
+build/js/help.js: coffee/help.coffee
 	@bin/minify help help
 
-build/js/content.js: js/content.js js/communication.js js/log.js
+build/js/content.js: coffee/content.coffee coffee/communication.coffee coffee/log.coffee
 	@bin/minify content communication log content
 
-build/js/options.js: js/options.js js/communication.js js/log.js
+build/js/options.js: coffee/options.coffee coffee/communication.coffee coffee/log.coffee
 	@bin/minify options communication log options
 
-build/js/background.js: js/log.js js/data/spreadsheets.js js/data/interpreter.js js/data/merger.js js/data/data.js js/background.js
+build/js/background.js: coffee/log.coffee coffee/data/spreadsheets.coffee coffee/data/interpreter.coffee coffee/data/merger.coffee coffee/data/data.coffee coffee/background.coffee
 	@bin/minify background log data/spreadsheets data/interpreter data/merger data/data background
