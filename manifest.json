@@ -26,7 +26,7 @@
             "run_at": "document_end",
             "all_frames": true,
             "css": [ "css/content.css" ],
-            "js": [ "vendor/js/jquery.min.js", "vendor/js/sugar.min.js", "js/log.js", "js/communication.js", "js/content.js" ]
+            "js": [ "vendor/js/jquery.min.js", "vendor/js/sugar.min.js", "js/content.js" ]
         }
     ],
 

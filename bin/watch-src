@@ -18,6 +18,24 @@ var fs = require('fs'),
             compile: function (target, sources) {
                 do_exec('lessc "' + sources[sources.length - 1] + '" "' + target + '"');
             }
+        },
+        {
+            files: {
+                'js/content.js':     [ 'coffee/log.coffee', 'coffee/communication.coffee', 'coffee/content.coffee'],
+                'js/background.js' : [
+                    'coffee/log.coffee',
+                    'coffee/data/spreadsheets.coffee',
+                    'coffee/data/interpreter.coffee',
+                    'coffee/data/merger.coffee',
+                    'coffee/data/data.coffee',
+                    'coffee/background.coffee',
+                ],
+                'js/options.js':     [ 'coffee/log.coffee', 'coffee/communication.coffee', 'coffee/options.coffee' ],
+                'js/help.js':        [ 'coffee/help.coffee' ],
+            },
+            compile: function (target, sources) {
+                do_exec('coffee --no-header -cm -j "' + target + '" -o js "' + sources.join ('" "') + '"');
+            }
         }
     ];
 
@@ -32,9 +50,9 @@ function isDirectory(filename, callback) {
         if (!exists) {
             fs.mkdir(filename, function (err) {
                 if (err) {
-                    callback(err, null);
+                    callback(err || ('Please ensure that ' + __dirname + '/' + filename + ' is a directory'), null);
                 } else {
-                    callback(null, true);
+                    callback(null , true);
                 }
             });
         } else {
@@ -47,6 +65,31 @@ function isDirectory(filename, callback) {
             });
         }
     });
+}
+
+function areDirectories(filenames, callback) {
+    if (filenames.length === 0) {
+        callback(null, true);
+    }
+
+    var err = [],
+        length = filenames.length,
+        step = function (i, result) {
+            if (i === length) {
+                callback(err.length === 0 ? null : err, result);
+                return;
+            }
+
+            isDirectory(filenames[i], function (err2, isDirectory) {
+                if (err2) {
+                    err.push(err2);
+                }
+
+                step(i + 1, result && isDirectory);
+            });
+        };
+
+    step(0, true);
 }
 
 function log() {
@@ -73,13 +116,10 @@ function do_exec(program) {
 // chdir
 process.chdir(dirname(__dirname));
 
-isDirectory('css', function (err, isDirectory) {
+areDirectories([ 'css', 'js' ], function (err, isDirectory) {
     if (!isDirectory) {
         if (err) {
-            console.error('Error while creating %s/css directory:', __dirname);
-            console.error(err.stack ? err.stack : err);
-        } else {
-            console.error('Please ensure that %s/css is a directory', __dirname);
+            err.forEach(function () { console.error.apply(console.error, arguments); });
         }
 
         process.exit(1);
@@ -98,7 +138,7 @@ isDirectory('css', function (err, isDirectory) {
                     rebuild();
                 });
             });
-            
+
             // also, rebuild once now
             rebuild();
         });
