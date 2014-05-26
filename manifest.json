@@ -33,6 +33,9 @@
     "web_accessible_resources": [
         "img/anomalies/13magnus.png",
         "img/anomalies/recursion.png",
-        "img/anomalies/interitus.png"
+        "img/anomalies/interitus.png",
+        "js/*.map",
+        "js/data/*.map",
+        "coffee/*"
     ]
 }
