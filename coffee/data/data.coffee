@@ -87,7 +87,7 @@
 
                     callback false
 
-        hasErrors: -> @err.length > 0
+        hasErrors: -> @err isnt null and @err.length > 0
         getErrors: -> $.extend {}, @err, @loadingErrors
 
         hasLoadingErrors: -> !!@loadingErrors
