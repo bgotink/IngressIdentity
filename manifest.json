@@ -33,7 +33,6 @@
     "web_accessible_resources": [
         "img/anomalies/*.png",
         "js/*.map",
-        "js/data/*.map",
         "coffee/*"
     ]
 }
