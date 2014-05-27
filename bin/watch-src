@@ -34,7 +34,7 @@ var fs = require('fs'),
                 'js/help.js':        [ 'coffee/help.coffee' ],
             },
             compile: function (target, sources) {
-                do_exec('coffee --no-header -cm -j "' + target + '" -o js "' + sources.join ('" "') + '"');
+                do_exec('cat "' + sources.join('" "') + '" | coffee --no-header -cms > "' + target + '"');
             }
         }
     ];
