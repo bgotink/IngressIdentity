@@ -92,4 +92,4 @@
 
     exports.interpretSourceEntry = (manifestEntry, data) ->
         manifestEntry.getPlayerData readSource data
-)(window.iidentity = (window.iidentity || {}), window.jQuery)
+)(iidentity or (iidentity = window.iidentity = {}), window.jQuery)

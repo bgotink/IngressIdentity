@@ -23,4 +23,4 @@
 
     exports.setLoggingEnabled = (enable) ->
         enableLogging = !!enable
-)(window.iidentity = (window.iidentity || {}), window)
+)(iidentity or (iidentity = window.iidentity = {}), window)
