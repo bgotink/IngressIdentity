@@ -31,8 +31,8 @@
             module.listSources()
 
             mutations.each (mutation) ->
-                for i in [0..mutation.addedNodes.length-1]
-                    module.checkElement mutation.addedNodes[i]
+                Array.prototype.each.call mutation.addedNodes, (node) ->
+                    module.checkElement node
 
     forceUpdate = ->
         module.log.log 'forceUpdate'
@@ -44,11 +44,10 @@
 
         module.checkElement window.document
 
-    module.comm.setOnUpdate doDeferred.bind null, forceUpdate
+    module.comm.setOnUpdate forceUpdate
 
     $ ->
-        doDeferred ->
-            forceUpdate()
-            observer.observe window.document, { childList: true, subtree: true }
+        forceUpdate()
+        observer.observe window.document, { childList: true, subtree: true }
 
 )(iidentity or (iidentity = window.iidentity = {}), window.jQuery, window)
