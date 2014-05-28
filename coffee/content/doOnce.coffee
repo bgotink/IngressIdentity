@@ -7,17 +7,13 @@
     timestamp = '0'
 
     module.doOnce = (elem, callback) ->
-        module.log.log 'doOnce'
-
         $elem = $ elem
         callbackArguments = Array.prototype.slice.call arguments, 1
         callbackArguments[0] = elem
 
-        if timestamp == (oldTimestamp = $elem.attr 'data-iidentity')
+        if timestamp is $elem.attr 'data-iidentity'
             # already performed
             return
-
-        module.log.log 'actually doing once, timestamp change: %s -> %s', oldTimestamp, timestamp
 
         $elem.attr 'data-iidentity', timestamp
 

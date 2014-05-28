@@ -190,8 +190,6 @@
                         [0]
 
     module.checkProfile = ->
-        module.log.log 'checkProfile!'
-
         $tabs = $ '#contentPane div[role="tabpanel"]'
         dot = module.doOnce.timestamp()
 

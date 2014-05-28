@@ -20,23 +20,15 @@
 # })();
 
 ((module, $, window) ->
-    doDeferred = (func) ->
-        setTimeout func, 0
-
     observer = new window.MutationObserver (mutations) ->
-        doDeferred ->
-            module.log.log 'observer.onMutate'
+        module.checkProfile()
+        module.listSources()
 
-            module.checkProfile()
-            module.listSources()
-
-            mutations.each (mutation) ->
-                Array.prototype.each.call mutation.addedNodes, (node) ->
-                    module.checkElement node
+        mutations.each (mutation) ->
+            Array.prototype.each.call mutation.addedNodes, (node) ->
+                module.checkElement node
 
     forceUpdate = ->
-        module.log.log 'forceUpdate'
-
         module.doOnce.update()
 
         module.checkProfile()

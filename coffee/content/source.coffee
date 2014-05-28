@@ -86,7 +86,6 @@
                     )
 
     module.listSources = ->
-        module.log.log 'listSources'
         checkEvent()
         checkCommunity()
 )(iidentity or (iidentity = window.iidentity = {}), window.jQuery, window)

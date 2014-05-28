@@ -299,8 +299,6 @@
     ]
 
     module.checkElement = (element) ->
-        module.log.log 'checkElement'
-
         $root = if element == window.document then $ document else $(element).parent()
 
         handlers.each (handler) ->
