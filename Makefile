@@ -3,6 +3,8 @@ JSs = build/js/content.js build/js/options.js build/js/background.js build/js/he
 CSSs = build/css/content.css build/css/options.css build/css/help.css
 HTMLs = build/options.html build/background.html build/help.html
 
+.PHONY: all init dist default clean
+
 default: all
 
 all: init $(HTMLs) $(JSs) $(CSSs) $(MDs) build/img build/vendor build/manifest.json
