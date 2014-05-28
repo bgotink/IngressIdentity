@@ -74,7 +74,7 @@
                                 .append(
                                     $ items.map ->
                                             $ '<li>'
-                                                .append(this)[0]
+                                                .append(@)[0]
                                 )
                         )
                 )
@@ -176,8 +176,7 @@
 
             $profile.append helper.createSubtitle 'Errors', $ player.err.map (e) ->
                 $ '<div class="fIa s"></div>'
-                    .text e
-                    [0]
+                    .text(e)[0]
 
         customExtra.keys().filter (e) ->
                 v = customExtra[e]
@@ -186,8 +185,7 @@
             .each (name) ->
                 $profile.append helper.createSubtitle name.humanize().pluralize(), $ customExtra[name].map (value) ->
                     $ '<div class="fIa s"></div>'
-                        .text value
-                        [0]
+                        .text(value)[0]
 
     module.checkProfile = ->
         $tabs = $ '#contentPane div[role="tabpanel"]'
@@ -253,5 +251,5 @@
             $elem.attr 'data-iidentity', dot
             $root.attr 'data-iidentity', null
 
-            createProfile player, $elem
+            create player, $elem
 )(iidentity or (iidentity = window.iidentity = {}), window.jQuery)
