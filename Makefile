@@ -45,10 +45,10 @@ build/css/%.css: less/%.less less/variables.less less/general.less less/general_
 build/js/help.js: coffee/help.coffee
 	@bin/minify help help
 
-build/js/content.js: coffee/content.coffee coffee/communication.coffee coffee/log.coffee
-	@bin/minify content communication log content
+build/js/content.js: coffee/communication.coffee coffee/log.coffee coffee/content/doOnce.coffee coffee/content/main.coffee coffee/content/mentions.coffee coffee/content/profile.coffee coffee/content/source.coffee
+	@bin/minify content communication log content/doOnce content/mentions content/profile content/source content/main
 
-build/js/options.js: coffee/options.coffee coffee/communication.coffee coffee/log.coffee
+build/js/options.js: coffee/communication.coffee coffee/log.coffee coffee/options.coffee
 	@bin/minify options communication log options
 
 build/js/background.js: coffee/log.coffee coffee/data/spreadsheets.coffee coffee/data/interpreter.coffee coffee/data/merger.coffee coffee/data/data.coffee coffee/background.coffee

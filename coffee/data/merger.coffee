@@ -201,4 +201,4 @@
     exports.merge.validate = (obj, err) ->
         post_validate obj, err
 
-)(window.iidentity = (window.iidentity || {}))
+)(iidentity or (iidentity = window.iidentity = {}))

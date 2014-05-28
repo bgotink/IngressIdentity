@@ -21,7 +21,15 @@ var fs = require('fs'),
         },
         {
             files: {
-                'js/content.js':     [ 'coffee/log.coffee', 'coffee/communication.coffee', 'coffee/content.coffee'],
+                'js/content.js':     [
+                    'coffee/log.coffee',
+                    'coffee/communication.coffee',
+                    'coffee/content/doOnce.coffee',
+                    'coffee/content/mentions.coffee',
+                    'coffee/content/profile.coffee',
+                    'coffee/content/source.coffee',
+                    'coffee/content/main.coffee'
+                ],
                 'js/background.js' : [
                     'coffee/log.coffee',
                     'coffee/data/spreadsheets.coffee',
@@ -34,7 +42,7 @@ var fs = require('fs'),
                 'js/help.js':        [ 'coffee/help.coffee' ],
             },
             compile: function (target, sources) {
-                do_exec('coffee --no-header -cm -j "' + target + '" -o js "' + sources.join ('" "') + '"');
+                do_exec('cat "' + sources.join('" "') + '" | coffee --no-header -cms > "' + target + '"');
             }
         }
     ];

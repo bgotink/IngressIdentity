@@ -408,4 +408,4 @@
 
     exports.loadManifests = loadManifests
     exports.resolveKey = resolveKey
-)(window.iidentity = (window.iidentity || {}), window.jQuery)
+)(iidentity or (iidentity = window.iidentity = {}), window.jQuery)

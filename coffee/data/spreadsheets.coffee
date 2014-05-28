@@ -177,4 +177,4 @@
 
     exports.Manifest = Manifest
     exports.Source = Source
-)(window.iidentity = (window.iidentity || {}))
+)(iidentity or (iidentity = window.iidentity = {}))

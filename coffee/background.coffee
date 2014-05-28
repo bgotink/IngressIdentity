@@ -490,4 +490,4 @@
 
         chrome.storage.onChanged.addListener onDataUpdated
 
-)(window.iidentity = (window.iidentity || {}), window.jQuery, window)
+)(iidentity or (iidentity = window.iidentity = {}), window.jQuery, window)

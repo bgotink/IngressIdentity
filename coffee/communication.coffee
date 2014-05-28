@@ -69,4 +69,4 @@
     exports.getSourcesForExtra = (tag, oid, callback) ->
         @send { type: 'getSourcesForExtra', tag: tag, oid: oid }, (result) ->
             callback result.result
-)(window.iidentity = (window.iidentity || {}))
+)(iidentity or (iidentity = window.iidentity = {}))
