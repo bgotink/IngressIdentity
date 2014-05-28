@@ -203,11 +203,12 @@
                 callback err, null
                 return
 
-            callback null, $ '<span>'
-                    .addClass 'iidentity-ciwrapper'
-                    .addClass 'iidentity-faction-' + player.faction
-                    .attr 'data-oid', oid
-                    .text player.nickname
+            callback(null, $ '<span>'
+                .addClass 'iidentity-ciwrapper'
+                .addClass 'iidentity-faction-' + player.faction
+                .attr 'data-oid', oid
+                .text player.nickname
+            )
         , { match: match }
 
     handlers = [
