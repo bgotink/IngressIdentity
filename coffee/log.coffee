@@ -9,7 +9,7 @@
 
     proxy = (func, force) ->
         ->
-            if (force || enableLogging)
+            if force or enableLogging
                 func.apply window.console, arguments
 
     exports.assert = proxy window.console.assert

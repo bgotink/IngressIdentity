@@ -16,14 +16,14 @@
 
         try
             chrome.runtime.sendMessage request, (reply) ->
-                    if (typeof reply == 'undefined')
+                    if typeof reply is 'undefined'
                         module.log.error chrome.runtime.lastError
 
                     callback reply.reply
 
                     lastUpdate = +new Date
-                    if (reply.shouldUpdate)
-                        if (onUpdate)
+                    if reply.shouldUpdate
+                        if onUpdate
                             onUpdate()
         catch e
             # couldn't contact the extension
@@ -32,10 +32,10 @@
             window.document.location.reload()
 
     chrome.runtime.onMessage.addListener (request) ->
-        if (request.type == 'update')
+        if request.type is 'update'
             lastUpdate = +new Date
 
-            if (onUpdate)
+            if onUpdate
                 onUpdate()
 
             # will not send reply
@@ -54,11 +54,11 @@
             type: 'getPlayer'
             oid: oid
 
-        if (typeof extra != 'undefined' && extra != null)
+        if typeof extra isnt 'undefined' and extra?
             request.extra = extra
 
         @send request, (result) ->
-            if (result.status != 'success')
+            if result.status isnt 'success'
                 callback result.status, null
                 return
 

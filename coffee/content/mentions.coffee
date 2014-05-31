@@ -18,7 +18,7 @@
 
     createBlockElement = (oid, match, callback) ->
         module.comm.getPlayer oid, (err, player) ->
-            if err != null
+            if err?
                 callback err, null
                 return
 
@@ -44,7 +44,7 @@
                 level = '' + Number.range 0, 16
                     .clamp player.level
             else
-                if Object.isString(player.level) and player.level.match(/([0-9]|1[0-6])/)
+                if Object.isString(player.level) and player.level.match /([0-9]|1[0-6])/
                     level = player.level
                 else
                     level = '0'
@@ -73,14 +73,14 @@
 
                 if i > 3
                     return false
-                if i == 3
+                if i is 3
                     $groupInfo.append(
                         $ '<div>'
                             .html '&hellip;'
                     )
                     return false
 
-                if seperatorposition == -1
+                if seperatorposition is -1
                     return
 
                 $groupInfo.append(
@@ -97,14 +97,14 @@
 
                 if i > 3
                     return false
-                if i == 3
+                if i is 3
                     $groupInfo.append(
                         $ '<div>'
                             .html '&hellip;'
                     )
                     return false
 
-                if seperatorposition == -1
+                if seperatorposition is -1
                     return
 
                 $groupInfo.append(
@@ -128,7 +128,7 @@
                     #          in $extraInfo
                     # otherwise: show extra div etc.
 
-                    if (value.any (e) -> (e == true))
+                    if (value.any (e) -> (e is true))
                         $extraInfo.append(
                             $ '<span>'
                                 .text name.humanize()
@@ -155,14 +155,14 @@
         , { match: match }
     createInlineElement = (oid, match, callback) ->
         module.comm.getPlayer oid, (err, player) ->
-            if err != null
+            if err?
                 callback err, null
                 return
 
             if Object.isNumber player.level
                 level = '' + Number.range(0, 16).clamp(player.level)
             else
-                if Object.isString(player.level) and player.level.match(/([0-9]|1[0-6])/)
+                if Object.isString(player.level) and player.level.match /([0-9]|1[0-6])/
                     level = player.level
                 else
                     level = '0'
@@ -199,7 +199,7 @@
         , { match: match }
     createConciseInlineElement = (oid, match, callback) ->
         module.comm.getPlayer oid, (err, player) ->
-            if err != null
+            if err?
                 callback err, null
                 return
 
@@ -221,7 +221,7 @@
                 oid = $elem.attr 'oid'
 
                 createBlockElement oid, match, (err, $infoElem) ->
-                    if err
+                    if err?
                         if err == 'not-found'
                             $elem
                                 .parent()
@@ -253,7 +253,7 @@
                 oid = $elem.attr 'oid'
 
                 createInlineElement oid, match, (err, $infoElem) ->
-                    if err
+                    if err?
                         if err == 'not-found'
                             $elem
                                 .parent()
@@ -280,7 +280,7 @@
                 oid = $elem.attr 'oid'
 
                 createConciseInlineElement oid, match, (err, $infoElem) ->
-                    if err
+                    if err?
                         if err == 'not-found'
                             $elem
                                 .parent()
@@ -301,15 +301,15 @@
     ]
 
     module.checkElement = (element) ->
-        $root = if element == window.document then $ document else $(element).parent()
+        $root = if element is window.document then $ document else $(element).parent()
 
         handlers.each (handler) ->
             handler.matches.each (match) ->
                 $root
                     .find match
                     .each ->
-                        if 'matched' == $(this).attr 'data-iidentity'
+                        if 'matched' is $(@).attr 'data-iidentity'
                             return
 
-                        module.doOnce this, handler.handler, match
+                        module.doOnce @, handler.handler, match
 )(iidentity or (iidentity = window.iidentity = {}), window.jQuery, window)

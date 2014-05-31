@@ -20,11 +20,11 @@
     # unexported helper functions and classes
 
     checkKeyExists = (arr, key, err, row) ->
-        if (!key in arr || arr[key] == null || ('' + arr[key]).isBlank())
+        if not key in arr or arr[key] is null or ('' + arr[key]).isBlank()
             err.push('Expected key ' + key + ' to exist in row ' + row)
 
     parseKey = (key) ->
-        key = (key || '').compact()
+        key = (key or '').compact()
 
         if (matches = key.match /(.*)[#&?]gid=(.*)/)
             {
@@ -35,15 +35,15 @@
             { key: key }
 
     keyToUrl = (key) ->
-        if (!Object.isObject key)
+        if not Object.isObject key
             key = parseKey key
 
-        if (key.key.match /^[a-zA-Z0-9]+$/)
+        if key.key.match /^[a-zA-Z0-9]+$/
             url = baseUrl.oldSheet.assign key
         else
             url = baseUrl.newSheet.assign key
 
-        if (!Object.has key, 'gid')
+        if not Object.has key, 'gid'
             url
         else
             url + '#gid=' + key.gid
@@ -66,19 +66,19 @@
         # data will be null only if an error occured, otherwise it will be an
         #      array containing the tuples in the spreadsheet
         loadRaw: (callback) ->
-            self = this
+            self = @
             key = parseKey @key
 
-            if (!Object.has key, 'gid')
+            if not Object.has key, 'gid'
                 key.gid = 0
 
-            if (key.key.match /^[a-zA-Z0-9]+$/)
+            if key.key.match /^[a-zA-Z0-9]+$/
                 url = baseQueryUrl.oldSheet.assign key
             else
                 url = baseQueryUrl.newSheet.assign key
 
             (new google.visualization.Query(url)).send (response) ->
-                if (response.isError())
+                if response.isError()
                     module.log.error 'An error occured while fetching data from ' + self.key, response
                     callback response.getDetailedMessage(), null
                     return
@@ -113,18 +113,18 @@
         # data will be null only if an error occured, otherwise it will be an
         #      array containing the tuples in the spreadsheet
         load: (callback) ->
-            self = this;
+            self = @
             @loadRaw (err, data) ->
-                if (null != data)
+                if data?
                     dataErr = self.isValid data
-                    if (true != dataErr)
-                        if (null == err)
+                    if dataErr isnt true
+                        if not err?
                             err = dataErr
                         else
                             dataErr.push err
                             err = dataErr
 
-                if (err && Object.isString err)
+                if err? and Object.isString err
                     err = [ err ]
 
                 callback err, data
@@ -150,7 +150,7 @@
 
                 i++
 
-            if (err.length == 0)
+            if err.length is 0
                 true
             else
                 err
@@ -170,7 +170,7 @@
 
                 i++
 
-            if (err.length == 0)
+            if err.length is 0
                 true
             else
                 err

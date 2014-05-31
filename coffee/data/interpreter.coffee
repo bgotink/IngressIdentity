@@ -13,9 +13,9 @@
 
     filterEmpty = (obj) ->
         Object.each obj, (key, value) ->
-            if (Object.isObject value)
+            if Object.isObject value
                 filterEmpty obj[key]
-            else if (value == undefined || value == null || ('' + value).isBlank())
+            else if value is undefined or value is null or ('' + value).isBlank()
                 delete obj[key]
 
     # An instance of ManifestEntry represents one row in a manifest.
@@ -23,7 +23,7 @@
         constructor: (data) ->
             @err = [];
 
-            data = filterEmpty Object.clone(data, true)
+            data = filterEmpty Object.clone data, true
 
             @manifestData = Object.select data, standardManifestKeys
             @nonManifestData = Object.reject data, standardManifestKeys
@@ -32,22 +32,22 @@
             # todo: use validators to check extra data
 
         checkValid: ->
-            if (Object.has @nonManifestData, 'extratags')
+            if Object.has @nonManifestData, 'extratags'
                 # old-school stuff
-                if (!Object.extended(@nonManifestData).reject('extratags').isEmpty())
+                if not Object.extended(@nonManifestData).reject('extratags').isEmpty()
                     @err.push 'Using old-type extratags combined with extra columns is discouraged.'
 
         getExtraData: ->
             extratags = null;
 
-            if (Object.has @nonManifestData, 'extratags')
+            if Object.has @nonManifestData, 'extratags'
                 try
                     extratags = JSON.parse @nonManifestData.extratags
                 catch e
                     @err.push 'Invalid JSON in extratags: ' + e
                     extratags = null
 
-            if (extratags == null)
+            if not extratags?
                 Object.reject @nonManifestData, 'extratags'
             else
                 # extra columns override extratags
@@ -55,7 +55,7 @@
 
         getManifestData: -> @manifestData;
         getData: ->
-            if (Object.has this, 'data')
+            if Object.has @, 'data'
                 return @data
 
             @data =
@@ -74,11 +74,11 @@
         hasExtra: (tag, oid) ->
             extra = @getData().extra
 
-            if (!Object.has(extra, tag) || !Object.isString(extra[tag]))
+            if not Object.has(extra, tag) or not Object.isString(extra[tag])
                 return false
 
             i = extra[tag].indexOf ':'
-            (i != -1) && (oid == extra[tag].to(i).compact());
+            (i isnt -1) and (oid is extra[tag].to(i).compact());
 
         getErr: -> if @err.length > 0 then @err else null
 

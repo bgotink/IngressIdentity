@@ -81,7 +81,7 @@
         createLinkedSubtitle: (subtitle, links, baseUrl) ->
             helper.createSubtitle subtitle, $ links.map (link) ->
                 i = link.indexOf ':'
-                if i == -1
+                if i is -1
                     return null
 
                 url = baseUrl + link.to(i).compact()
@@ -99,11 +99,11 @@
         $wrapper = $ wrapper
         $profile = $wrapper.find '.iidentity-profile'
 
-        if player.faction == 'enlightened'
+        if player.faction is 'enlightened'
             $wrapper
                 .removeClass 'Mqc'
                 .addClass 'Hqc'
-        else if player.faction == 'resistance'
+        else if player.faction is 'resistance'
             $wrapper
                 .removeClass 'Hqc'
                 .addClass 'Mqc'
@@ -117,7 +117,7 @@
         if Object.isNumber player.level
             level = '' + Number.range(0, 16).clamp(player.level)
         else
-            if Object.isString(player.level) and player.level.match(/([0-9]|1[0-6])/)
+            if Object.isString(player.level) and player.level.match /([0-9]|1[0-6])/
                 level = player.level
             else
                 level = '0'
@@ -138,7 +138,7 @@
                             v = customExtra[e];
 
                             if Array.isArray v
-                                if v.length != 1
+                                if v.length isnt 1
                                     false
 
                                 v = v[0]
@@ -170,7 +170,7 @@
 
             $profile.append helper.createLinkedSubtitle 'Events', player.extra.event, 'https://plus.google.com/event/'
 
-        if Object.has(player, 'err') and not (Array.isArray(player.err) and player.err.length == 0)
+        if Object.has(player, 'err') and not (Array.isArray(player.err) and player.err.length is 0)
             if not Array.isArray player.err
                 player.err = [ player.err ]
 
@@ -191,14 +191,14 @@
         $tabs = $ '#contentPane div[role="tabpanel"]'
         dot = module.doOnce.timestamp()
 
-        if $tabs.length == 0
+        if $tabs.length is 0
             # not a profile!
             return
 
         oid = $tabs.first().attr 'id'
         oid = oid.to oid.indexOf '-'
 
-        if oid.length != 21
+        if oid.length isnt 21
             module.log.error 'Invalid oid: %s', oid
             return
 
@@ -208,11 +208,11 @@
         $root = $ '#' + oid + '-about-page'
         $elem = $root.find 'div.iidentity-profile-wrapper'
 
-        if dot == $root.attr 'data-iidentity'
+        if dot is $root.attr 'data-iidentity'
             # already checked, user is not a player...
             return
 
-        if $elem.length > 0 and dot == $elem.attr 'data-iidentity'
+        if $elem.length > 0 and dot is $elem.attr 'data-iidentity'
             # already checked, user is a player
             return
 
@@ -221,15 +221,15 @@
 
         module.log.log 'Checking if player with oid %s exists', oid
         module.comm.getPlayer oid, (err, player) ->
-            if dot != $root.attr 'data-iidentity'
+            if dot isnt $root.attr 'data-iidentity'
                 # we got an update!
                 # abort, we don't want to get in its way
                 return
 
-            if err
+            if err?
                 # leave the timestamp on $root
 
-                if err == 'not-found'
+                if err is 'not-found'
                     module.log.log 'No such player found'
                     return
 
@@ -238,7 +238,7 @@
 
             module.log.log 'Player found: ', player
 
-            if $elem.length == 0
+            if $elem.length is 0
                 module.log.log 'Creating profile wrapper'
                 $elem = helper.createWrapper()
                 $root.find 'div.Ypa.jw.am'

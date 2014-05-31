@@ -19,35 +19,35 @@
         update = false
         reload = false
 
-        if (disableUpdateListener)
+        if disableUpdateListener
             module.log.log 'Chrome storage update listener disabled, re-enabling'
             disableUpdateListener = false
             return
 
         module.log.log 'Settings updated:'
         Object.each changes, (key) ->
-            if (Object.has storageCache, key)
+            if Object.has storageCache, key
                 delete storageCache[key]
 
             module.log.log '- %s', key
 
-            if (key == 'manifest_keys')
+            if key is 'manifest_keys'
                 reload = true
             else
                 update = true
 
-        if (reload)
+        if reload
             module.log.log 'Reloading manifests'
             reloadData (err, reloaded) ->
-                if (reloaded)
+                if reloaded
                     module.log.log 'Manifests reloaded'
 
-                    if (err)
+                    if err
                         err.each module.log.warn
                 else
                     module.log.error 'Error when reloading manifest:'
                     err.each module.log.error
-        else if (update)
+        else if update
             module.log.log 'Updating tabs'
             updateTabs()
 
@@ -55,7 +55,7 @@
         request = {}
         request[key] = defaultValue
 
-        if (Object.has(storageCache, key) && storageCache[key].expires > (+new Date))
+        if Object.has(storageCache, key) and storageCache[key].expires > (+new Date)
             module.log.log 'Got storage { key: %s, value: %s } from storage cache', key, '' + storageCache[key].result
             callback storageCache[key].result
         else
@@ -88,7 +88,7 @@
         getManifestKeys (keys) ->
             key = key.compact()
 
-            if (!keys.none key)
+            if not keys.none key
                 module.log.log 'manifest key %s already loaded', key
                 callback false
                 return
@@ -97,7 +97,7 @@
             keys.push key
 
             setManifestKeys keys, ->
-                if (!Object.isString(name) || name.isBlank())
+                if not Object.isString(name) or name.isBlank()
                     callback true
                     return
 
@@ -109,7 +109,7 @@
 
     removeManifestKey = (key, callback) ->
         getManifestKeys (keys) ->
-            if (keys.none key)
+            if keys.none key
                 callback false
                 return
 
@@ -119,33 +119,33 @@
                 callback true
 
     renameManifest = (key, oldName, newName, callback) ->
-        if ((!Object.isString(oldName) || oldName.isBlank()) && (!Object.isString(newName) || newName.isBlank()))
+        if (not Object.isString(oldName) or oldName.isBlank()) and (not Object.isString(newName) or newName.isBlank())
             callback true
             return
 
-        if (('' + oldName).compact() == ('' + newName).compact())
+        if ('' + oldName).compact() is ('' + newName).compact()
             callback true
             return
 
         getStoredData 'manifest_names', {}, (names) ->
-            if (Object.isString(oldName) && !oldName.isBlank())
-                if (!Object.has(names, key) || names[key] != oldName)
+            if Object.isString(oldName) and not oldName.isBlank()
+                if not Object.has(names, key) or names[key] isnt oldName
                     callback false
                     return
             else
-                if (Object.has(names, key) && !names[key].isBlank())
+                if Object.has(names, key) and not names[key].isBlank()
                     callback false
                     return
 
-            if (Object.isString(newName) && !newName.isBlank())
+            if Object.isString(newName) and not newName.isBlank()
                 names[key] = newName.compact()
             else
                 delete names[key]
 
             setStoredData 'manifest_names', names, ->
-                if (Object.has storageCache, 'manifest_names')
+                if Object.has storageCache, 'manifest_names'
                     delete storageCache.manifest_names
-                if (Object.has storageCache, 'manifests')
+                if Object.has storageCache, 'manifests'
                     delete storageCache.manifests
 
                 callback true
@@ -154,20 +154,20 @@
         getManifestKeys (currentOrder) ->
             length = currentOrder.length
 
-            if (oldOrder.length != length || newOrder.length != length)
+            if oldOrder.length isnt length or newOrder.length isnt length
                 callback 'failed'
                 return
 
             # check if old order is still correct
             for i in [0..length-1]
-                if (oldOrder[i] != currentOrder[i])
+                if oldOrder[i] isnt currentOrder[i]
                     callback 'failed'
                     return
 
             # check if the keys in the old one are still in the new one
             # and if the keys of the new one are also in the old one
             for i in [0..length-1]
-                if (oldOrder.none(newOrder[i]) || newOrder.none(oldOrder[i]))
+                if oldOrder.none(newOrder[i]) or newOrder.none(oldOrder[i])
                     callback 'failed'
                     return
 
@@ -180,11 +180,11 @@
     reloadData = (callback) ->
         getManifestKeys (storedData) ->
             module.data.loadManifests storedData, (err, newData) ->
-                if (newData != null)
+                if newData?
                     data = newData
                     data.setLoadingErrors err
 
-                    if (Object.has storageCache, 'manifests')
+                    if Object.has storageCache, 'manifests'
                         delete storageCache.manifests
 
                     updateTabs()
@@ -206,12 +206,12 @@
 
     messageListeners =
         getManifests: (request, sender, sendResponse) ->
-            if (!isOptionsPage sender.url)
+            if not isOptionsPage sender.url
                 module.log.error 'A \'getManifests\' message can only originate from the options page'
                 # silently die by not sending a response
                 return false
 
-            if (Object.has storageCache, 'manifests')
+            if Object.has storageCache, 'manifests'
                 module.log.log 'Requesting manifests, loaded from cache'
                 sendResponse storageCache.manifests
 
@@ -224,7 +224,7 @@
 
                     module.log.log 'Loaded manifests: ', keys
 
-                    if (data == null)
+                    if not data?
                         module.log.log 'Data not loaded, yet, returning empty reply'
                         sendResponse {}
 
@@ -234,9 +234,9 @@
                         manifest = data.getSource key
                         manifestData = []
 
-                        if (manifest == null)
+                        if not manifest?
                             module.log.error 'Strangely manifest %s cannot be found', key
-                        else if (manifest.isCombined())
+                        else if manifest.isCombined()
                             manifest.getSources().each (source) ->
                                 tmp =
                                     key:     source.getKey()
@@ -266,12 +266,12 @@
             true
 
         getManifestErrors: (request, sender, sendResponse) ->
-            if (!isOptionsPage sender.url)
+            if not isOptionsPage sender.url
                 module.log.error 'A \'getManifestErrors\' message can only originate from the options page'
                 # silently die by not sending a response
                 return false
 
-            if (data == null)
+            if not data?
                 sendResponse {}
             else
                 sendResponse data.getErrors()
@@ -279,14 +279,14 @@
             false
 
         addManifest: (request, sender, sendResponse) ->
-            if (!isOptionsPage sender.url)
+            if not isOptionsPage sender.url
                 module.log.error 'An \'addManifest\' message can only originate from the options page'
                 # silently die by not sending a response
                 return false
 
             disableUpdateListener = true
             addManifestKey request.key, request.name, (added) ->
-                if (!added)
+                if not added
                     disableUpdateListener = false
                     sendResponse { status: 'duplicate' }
                     return
@@ -298,14 +298,14 @@
             true
 
         removeManifest: (request, sender, sendResponse) ->
-            if (!isOptionsPage sender.url)
+            if not isOptionsPage sender.url
                 module.log.error 'A \'removeManifest\' message can only originate from the options page'
                 # silently die by not sending a response
                 return false
 
             disableUpdateListener = true
             removeManifestKey request.key, (removed) ->
-                if (!removed)
+                if not removed
                     disableUpdateListener = false
                     sendResponse { status: 'nonexistent' }
                     return
@@ -317,7 +317,7 @@
             true
 
         renameManifest: (request, sender, sendResponse) ->
-            if (!isOptionsPage sender.url)
+            if not isOptionsPage sender.url
                 module.log.error 'A \'renameManifest\' message can only originate from the options page'
                 # silently die by not sending a response
                 return false
@@ -329,7 +329,7 @@
             true
 
         changeManifestOrder: (request, sender, sendResponse) ->
-            if (!isOptionsPage sender.url)
+            if not isOptionsPage sender.url
                 module.log.error 'A \'changeManifestOrder\' message can only originate from the options page'
                 # silently die by not sending a response
                 return false
@@ -341,7 +341,7 @@
             true
 
         reloadData: (request, sender, sendResponse) ->
-            if (!isOptionsPage sender.url)
+            if not isOptionsPage sender.url
                 module.log.error 'A \'reloadData\' message can only originate from the options page'
                 # silently die by not sending a response
                 return false
@@ -352,7 +352,7 @@
             true
 
         setOption: (request, sender, sendResponse) ->
-            if (!isOptionsPage sender.url)
+            if not isOptionsPage sender.url
                 module.log.error 'A \'setOption\' message can only originate from the options page'
                 # silently die by not sending a response
                 return false
@@ -371,7 +371,7 @@
             true
 
         hasPlayer: (request, sender, sendResponse) ->
-            if (data == null)
+            if not data?
                 sendResponse { result: false }
             else
                 sendResponse { result: data.hasPlayer request.oid }
@@ -379,11 +379,11 @@
             false
 
         getSourcesForExtra: (request, sender, sendResponse) ->
-            if (data == null)
+            if not data?
                 sendResponse { result: [] }
             else
                 getStoredData 'option-match-extra-' + request.tag, true, (match) ->
-                    if (!match)
+                    if not match
                         sendResponse { result: [] }
                     else
                         sendResponse { result: data.getSourcesForExtra request.tag, request.oid }
@@ -391,20 +391,20 @@
             true
 
         getPlayer: (request, sender, sendResponse) ->
-            if (data == null)
+            if not data?
                 sendResponse { status: 'not-found' }
                 return false
             doGetPlayer = ->
                 player = data.getPlayer request.oid
 
-                if (player == null)
+                if not player?
                     sendResponse { status: 'not-found' }
 
                     return false
 
-                if (Object.has player.extra, 'anomaly')
+                if Object.has player.extra, 'anomaly'
                     getStoredData 'option-show-anomalies', true, (showAnomalies) ->
-                        if (!showAnomalies)
+                        if not showAnomalies
                             delete player.extra.anomaly
 
                         sendResponse { status: 'success', player: player }
@@ -415,11 +415,11 @@
 
                 return false
 
-            if (!Object.has(request, 'extra') || !Object.has(request.extra, 'match'))
+            if not Object.has(request, 'extra') or not Object.has(request.extra, 'match')
                 return doGetPlayer()
 
             getStoredData 'option-match-' + request.extra.match, true, (doMatch) ->
-                if (!doMatch)
+                if not doMatch
                     sendResponse { status: 'not-found' }
                     return
 
@@ -428,7 +428,7 @@
             true
 
     chrome.runtime.onMessage.addListener (request, sender, sendResponse) ->
-        if (sender.tab)
+        if sender.tab
             module.log.log 'Got request from tab %s, url: %s', sender.tab.id, sender.url
         else
             module.log.error 'Got request from this backgroundpage?'
@@ -437,16 +437,16 @@
 
         reply = null
 
-        if (request.lastUpdate)
+        if request.lastUpdate
             reply = {}
 
             realRequest = request.request
         else
             realRequest = request
 
-        if (Object.has messageListeners, realRequest.type)
+        if Object.has messageListeners, realRequest.type
             messageListeners[realRequest.type] realRequest, sender, (response) ->
-                if (reply != null)
+                if reply?
                     reply.reply = response
                     reply.shouldUpdate = if data == null then false else data.shouldUpdateRemote request.lastUpdate
                 else
@@ -464,24 +464,24 @@
         google.load 'visualization', '1', {
             callback: ->
                 reloadData (err, success) ->
-                    if (success)
+                    if success
                         module.log.log 'Successfully loaded existing configuration'
-                        if (err)
+                        if err
                             err.each module.log.warn
                     else
                         module.log.error 'Something went wrong while loading existing configuration'
                         err.each module.log.error
 
                 window.setInterval ->
-                    if (data == null)
+                    if not data?
                         return
 
                     module.log.log 'Performing hourly update...'
                     data.update (updated) ->
-                        if (updated)
+                        if updated
                             data.invalidateCache()
 
-                            if (Object.has storageCache, 'manifests')
+                            if Object.has storageCache, 'manifests'
                                 delete storageCache.manifests
 
                             updateTabs()

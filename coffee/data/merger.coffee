@@ -14,15 +14,15 @@
     # general helpers
 
     doEach = (obj, key, func) ->
-        if (!Object.has obj, key)
+        if not Object.has obj, key
             return;
 
-        if (Array.isArray obj[key])
+        if Array.isArray obj[key]
             obj[key].each (e) ->
-                if (false == func e)
+                if false is func e
                     obj[key].remove e
         else
-            if (false == func obj[key])
+            if false is func obj[key]
                 delete obj[key]
 
     # validation & merging helpers
@@ -30,13 +30,13 @@
     getExtraDataValueName = (str) ->
         i = str.indexOf ':'
 
-        if (i == -1)
+        if i is -1
             str.compact().toLowerCase()
         else
             str.to(i).compact().toLowerCase()
 
     addToArray = (src, dst) ->
-        if (!Array.isArray src)
+        if not Array.isArray src
             src = [ src ];
 
         existing = []
@@ -47,53 +47,53 @@
         src.each (elem) ->
             name = getExtraDataValueName elem
 
-            if (existing.indexOf(name) == -1)
+            if existing.indexOf(name) is -1
                 dst.push elem
                 existing.push name
 
     helpers =
         validate:
             checkExists: (obj, key, err) ->
-                if (!Object.has obj, key)
+                if not Object.has obj, key
                     err.push 'Expected key "' + key + '" to exist.'
             checkValidPage: (obj, key, err) ->
                 doEach obj, key, (value) ->
-                    if (!Object.isString(value) || value.indexOf(':') == -1)
+                    if not Object.isString(value) or value.indexOf(':') is -1
                         err.push 'Invalid ' + key + ': "' + value + '"'
                         false
             checkValidAnomaly: (obj, key, err) ->
                 doEach obj, key, (value) ->
-                    if (!Object.isString(value) || anomalies.indexOf(
-                                value.compact().toLowerCase()
-                            ) == -1)
+                    if not Object.isString(value) or anomalies.indexOf(value.compact().toLowerCase()) is -1
                         err.push 'Invalid anomaly: "' + value + '"'
                         false
             checkFactions: (arr, err) ->
-                if (arr.length == 0)
+                if arr.length is 0
                     return;
 
                 factions = {}
 
-                arr.exclude({ faction: 'unknown' }, { faction: 'error' }).each (object) ->
-                    if (Object.has object, 'faction')
-                        factions[('' + object.faction).compact().toLowerCase()] = true;
+                arr
+                    .exclude { faction: 'unknown' }, { faction: 'error' }
+                    .each (object) ->
+                        if Object.has object, 'faction'
+                            factions[('' + object.faction).compact().toLowerCase()] = true;
 
-                if (1 < Object.size factions)
+                if 1 < Object.size factions
                     err.push 'Player has multiple factions: ' + Object.keys(factions).join(', ')
                     arr.each (object) ->
                         object.faction = 'error'
             checkValidLevel: (object, err) ->
-                if (!Object.has object, 'level')
+                if not Object.has object, 'level'
                     return;
 
-                if (!(Object.isString(object.level) || Object.isNumber(object.level)) && !('' + object.level).compact().match(/^([0-9]|1[0-6]|\?|)$/))
-                    err.push('Invalid level: "' + object.level + '"')
+                if not (Object.isString(object.level) || Object.isNumber(object.level)) and not ('' + object.level).compact().match(/^([0-9]|1[0-6]|\?|)$/)
+                    err.push 'Invalid level: "' + object.level + '"'
                     delete object.level
             checkValidFaction: (object, err) ->
-                if (!Object.has object, 'faction')
+                if not Object.has object, 'faction'
                     return
 
-                if (-1 == validFactions.indexOf object.faction)
+                if -1 is validFactions.indexOf object.faction
                     err.push 'Invalid faction: "' + object.faction + '"'
                     delete object.faction
 
@@ -116,21 +116,21 @@
                 else
                     target.err.push src.err
             faction: (target, src) ->
-                if (!Object.has(target, 'faction') || (src.faction != 'unknown' && target.faction != 'error'))
+                if not Object.has(target, 'faction') or (src.faction isnt 'unknown' && target.faction isnt 'error')
                     target.faction = src.faction
             extra: (target, src) ->
                 # target has extra, see merge function
                 Object.each src.extra, (key, srcValue) ->
-                    if (Object.has target.extra, key)
-                        if (Array.isArray target.extra[key])
+                    if Object.has target.extra, key
+                        if Array.isArray target.extra[key]
                             addToArray srcValue, target.extra[key]
-                        else if (Object.isBoolean target.extra[key])
+                        else if Object.isBoolean target.extra[key]
                             target.extra[key] = target.extra[key] || (!!srcValue)
                         else
                             tmp = [ target.extra[key] ]
                             addToArray srcValue, tmp
 
-                            if (tmp.length > 1)
+                            if tmp.length > 1
                                 target.extra[key] = tmp
                     else
                         target.extra[key] = srcValue
@@ -138,19 +138,19 @@
                 # target has level, see merge function
                 level = +src.level;
 
-                if (isNaN(level))
+                if isNaN level
                     return;
 
                 level = Number.range(0, 16).clamp level
 
-                if (level > target.level)
+                if level > target.level
                     target.level = level;
 
     # pre-merge validation
 
     pre_validate = (arr, err) ->
         arr.each (object) ->
-            if (Object.has object, 'extra')
+            if Object.has object, 'extra'
                 helpers.validate.checkValidPage object.extra, 'event', err
                 helpers.validate.checkValidPage object.extra, 'community', err
 
@@ -170,21 +170,21 @@
         helpers.validate.checkExists object, 'oid', err
 
     merge = ->
-        if (arguments.length == 0)
+        if arguments.length is 0
             return false
-        else if (arguments.length == 1)
+        else if arguments.length is 1
             return arguments[0]
 
         target = arguments[0]
         src = arguments[1]
 
-        if (!Object.isObject target.extra)
+        if not Object.isObject target.extra
             target.extra = {}
-        if (!Object.has target, 'level')
+        if not Object.has target, 'level'
             target.level = 0
 
         Object.keys(src).each (key) ->
-            if (Object.has helpers.merge, key)
+            if Object.has helpers.merge, key
                 helpers.merge[key] target, src
             else
                 helpers.merge['.default'] target, src, key

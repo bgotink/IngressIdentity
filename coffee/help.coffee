@@ -1,2 +1,3 @@
 $ ->
-    $('body').scrollspy { target: '.help-nav' }
+    $ 'body'
+        .scrollspy { target: '.help-nav' }

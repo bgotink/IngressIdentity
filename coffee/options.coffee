@@ -46,28 +46,28 @@
     lastOrderRecorded = []
     onOrderChanged = ->
         newOrder = $.makeArray $('#source_list > ul > li').map ->
-                $ this
+                $ @
                     .attr 'data-key'
         length = lastOrderRecorded.length
         updated = false
 
-        if (newOrder.length != length)
+        if newOrder.length isnt length
             # abort, strange things are happening
             return
 
         for i in [0..length-1]
-            if (newOrder[i] != lastOrderRecorded[i])
+            if newOrder[i] isnt lastOrderRecorded[i]
                 updated = true
                 break
 
-        if (updated)
+        if updated
             comm.changeManifestOrder lastOrderRecorded, newOrder, (status) ->
                 showAlert 'reorder-' + status
 
             lastOrderRecorded = newOrder
 
     reloadManifestErrors = ->
-        if ($('#source_list > ul').data 'errors-loaded')
+        if $('#source_list > ul').data 'errors-loaded'
             return
         $ '#source_list > ul'
             .data 'errors-loaded', true
@@ -78,13 +78,13 @@
 
             reloadManifestErrors.helper result, $ '#source_list > ul'
     reloadManifestErrors.helper = (errors, $elem) ->
-        if (Array.isArray errors)
+        if Array.isArray errors
             $elem
                 .find '> p.error'
                 .remove()
 
             errors.each (err) ->
-                if (err.match(/Sign in/i) && err.substr(0, 2) == '<a' && err.substr(-4) == '</a>')
+                if err.match(/Sign in/i) and err.substr(0, 2) is '<a' and err.substr(-4) is '</a>'
                     $elem.append $('<p class="error">').append $ err
                 else
                     $elem.append $('<p class="error">').text err
@@ -99,7 +99,7 @@
 
             module.log.log 'Got manifest info: ', result
 
-            if (Object.isEmpty result)
+            if Object.isEmpty result
                 $ '#source_list'
                     .html ''
                     .append(
@@ -210,10 +210,11 @@
             $ '#reload_sources'
                 .button 'reset'
 
-            lastOrderRecorded = $.makeArray($ '#source_list > ul > li'
-                .map ->
-                    $ this
-                        .attr 'data-key'
+            lastOrderRecorded = $.makeArray(
+                $ '#source_list > ul > li'
+                    .map ->
+                        $ @
+                            .attr 'data-key'
             )
             $ '#source_list > ul'
                 .sortable {
@@ -231,7 +232,7 @@
 
     updateButtons = ->
         comm.getOption 'show-anomalies', true, (state) ->
-            if (state)
+            if state
                 $ '#enable_anomalies'
                     .addClass 'active'
             else
@@ -240,10 +241,10 @@
 
         $ 'button[data-match]'
             .each ->
-                $this = $(this);
+                $this = $ @
 
                 comm.getOption 'match-' + $this.attr('data-match'), true, (state) ->
-                    if (state)
+                    if state
                         $this.addClass 'active'
                     else
                         $this.removeClass 'active'
@@ -259,7 +260,7 @@
             .button 'loading'
 
         comm.addManifest $('#manifest_input').val(), $('#name_input').val(), (result) ->
-            if (result != 'failed')
+            if result isnt 'failed'
                 $ '#manifest_input'
                     .val ''
                 $ '#name_input'
@@ -277,13 +278,13 @@
     $ ->
         $ '.alert .close'
             .on 'click.ii.close', ->
-                $ this
+                $ @
                     .parent()
                     .addClass 'hide'
 
         $ '#reload_sources'
             .on 'click.ii.reload', ->
-                $this = $ this
+                $this = $ @
 
                 $this.button 'loading'
 
@@ -302,8 +303,8 @@
         # make enter submit a form
         $ 'input[type="text"]'
             .on 'keypress', (e) ->
-                if (e.which == 13)
-                    $ this
+                if e.which is 13
+                    $ @
                         .closest 'form'
                         .submit()
 
@@ -311,43 +312,43 @@
 
         $ '#source_list'
             .on 'click.ii.remove', '.manifest .remove', ->
-                comm.removeManifest $(this).closest('.manifest').data('key'), (result) ->
+                comm.removeManifest $(@).closest('.manifest').data('key'), (result) ->
                         showAlert 'remove-' + result
 
         $ '#source_list'
             .on 'click.ii.rename', '.manifest .rename', ->
-                $this = $ this
+                $this = $ @
                 $manifest = $this.closest '.manifest'
                 $key = $manifest.find '.manifest-key'
 
-                if  $key.hasClass 'form-control'
+                if $key.hasClass 'form-control'
                     # already done...
                     return
 
                 module.log.log 'Creating input to rename manifest %s', $key.text()
 
                 $key.replaceWith($ '<input type="text" class="form-control manifest-key"></input>'
-                    .val if $key.text() == $manifest.data 'key' then '' else $key.text()
+                    .val if $key.text() is $manifest.data 'key' then '' else $key.text()
                     .data 'old-name', $key.text()
                     .data 'url', if 'A' == $key.prop 'tagName' then $key.attr 'href' else null
                 )
 
         $ '#source_list'
             .on 'keypress', 'input.manifest-key', (e) ->
-                if e.which != 13
+                if e.which isnt 13
                     return
 
-                $this = $ this
+                $this = $ @
                 $manifest = $this.closest '.manifest'
                 key = $manifest.data 'key'
                 oldName = $this.data 'old-name'
                 newName = $this.val()
 
-                if oldName.compact() != newName.compact()
+                if oldName.compact() isnt newName.compact()
                     if newName.isBlank()
                         newName = null
 
-                    if oldName.compact() == key.compact()
+                    if oldName.compact() is key.compact()
                         oldName = null
 
                     module.log.log 'Renaming manifest %s from %s to %s', key, oldName, if newName != null then newName else ''
@@ -372,7 +373,7 @@
 
         $ '#enable_anomalies'
             .on 'click.set-option', ->
-                $this = $ this
+                $this = $ @
                 $this.button 'loading'
 
                 comm.setOption 'show-anomalies', !$this.hasClass('active'), (state) ->
@@ -384,7 +385,7 @@
 
         $ 'button[data-match]'
             .on 'click.set-option', ->
-                $this = $ this
+                $this = $ @
                 $this.button 'loading'
 
                 comm.setOption 'match-' + $this.attr('data-match'), !$this.hasClass('active'), (state) ->

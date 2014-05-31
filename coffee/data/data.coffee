@@ -11,17 +11,17 @@
     resolveKey = (key, parent, err) ->
         data = exports.spreadsheets.parseKey key
 
-        if (!Object.isString(data.key) || data.key.isBlank())
+        if not Object.isString(data.key) or data.key.isBlank()
             parentData = exports.spreadsheets.parseKey parent
 
-            if (!Object.isString(parentData.key) || parentData.key.isBlank())
-                if (err)
+            if not Object.isString(parentData.key) or parentData.key.isBlank()
+                if err
                     err.push 'Cannot resolve key ' + key
                 return false
 
             data.key = exports.spreadsheets.parseKey(parent).key
 
-        if (!Object.has data, 'gid')
+        if not Object.has data, 'gid'
             return data.key
 
         '{key}?gid={gid}'.assign data
@@ -42,14 +42,14 @@
             @players = {}
             newPlayers = @players
             players.each (player) ->
-                if (!(Object.isNumber(player.oid) || Object.isString(player.oid)) || ('' + player.oid).match(/^9*$/))
+                if not (Object.isNumber(player.oid) or Object.isString(player.oid)) or ('' + player.oid).match(/^9*$/)
                     return
 
                 newPlayers[player.oid] = player
 
         hasPlayer: (oid) -> Object.has @players, oid
         getPlayer: (oid) ->
-            if (!@hasPlayer oid)
+            if not @hasPlayer oid
                 return null
 
             exports.interpreter.interpretSourceEntry @data, @players[oid]
@@ -69,7 +69,7 @@
         shouldUpdate: -> (+new Date()) > (@getTimestamp() + @getUpdateInterval())
         setUpdated: -> @timestamp = +new Date()
         update: (callback) ->
-            self = this
+            self = @
 
             module.log.log 'Updating source %s', @getKey()
             @spreadsheet.load (err, players) ->
@@ -78,7 +78,7 @@
                     self.setPlayers players
                     self.setUpdated()
 
-                    if (err)
+                    if err
                         err.each module.log.warn
 
                     callback true
@@ -92,10 +92,10 @@
 
         hasLoadingErrors: -> !!@loadingErrors
         setLoadingErrors: (err) ->
-            if (!err || !Array.isArray err)
+            if not err or not Array.isArray err
                 @loadingErrors = null
             else
-                @loadingErrors = if err.length == 0 then null else err
+                @loadingErrors = if err.length is 0 then null else err
 
         getUrl: -> @spreadsheet.getUrl()
 
@@ -105,12 +105,12 @@
         constructor: (key, err, data) ->
             @key = key
             @err = err
-            @data = data || null
+            @data = data or null
 
         getKey: @key
-        getTag: -> @data && @data.getTag()
-        getVersion: -> @data && @data.getVersion()
-        getFaction: -> @data && @data.getFaction()
+        getTag: -> @data and @data.getTag()
+        getVersion: -> @data and @data.getVersion()
+        getFaction: -> @data and @data.getFaction()
 
         getNbPlayers: -> 0
 
@@ -122,7 +122,7 @@
         hasLoadingErrors: -> true
         setLoadingErrors: (err) ->
             if (err)
-                this.loadingErrors = err
+                @loadingErrors = err
 
         hasExtra: -> false
 
@@ -139,8 +139,8 @@
         constructor: (sources, key, spreadsheet) ->
             @sources = sources
 
-            @key = key || 0
-            @spreadsheet = spreadsheet || null
+            @key = key or 0
+            @spreadsheet = spreadsheet or null
 
             @cache = {}
             @timestamp = +new Date
@@ -151,13 +151,13 @@
 
         setTopLevel: ->
             @topLevel = true
-            this
+            @
 
         getKey: -> @key
 
         hasPlayer: (oid) ->
-            if (typeof @cache[oid] != 'undefined')
-                return @cache[oid] != null
+            if typeof @cache[oid] isnt 'undefined'
+                return @cache[oid] isnt null
 
             @sources.some (source) ->
                 source.hasPlayer oid
@@ -171,7 +171,7 @@
             @getSources().each (source) ->
                 result = source.getPlayer oid
 
-                if result != null
+                if result isnt null
                     data.push result
 
             if data.length < 2
@@ -198,7 +198,7 @@
             key = resolveKey key, @getKey(), []
 
             for i in [0..length-1]
-                if (@sources[i].getKey() == key)
+                if @sources[i].getKey() is key
                     return @sources[i]
 
             null
@@ -207,7 +207,7 @@
 
         invalidateCache: ->
             @getSources().each (source) ->
-                if (source.isCombined())
+                if source.isCombined()
                     source.invalidateCache()
 
             @cache = {}
@@ -216,43 +216,42 @@
         shouldUpdate: -> true
         update: (callback) ->
             origCallback = callback
-            self = this
+            self = @
             callback = (updated) ->
-                if (updated)
+                if updated
                     @timestamp = +new Date()
 
                 origCallback updated
 
-            if (@spreadsheet)
-
+            if @spreadsheet?
                 module.log.log 'Updating manifest %s', @key
                 @spreadsheet.load (err, data) ->
                     length = data.length
 
                     step = (i, updated) ->
-                        if (i >= length)
+                        if i >= length
                             callback updated
                             return
 
                         source = self.getSource data[i].key
-                        if (source == null)
+                        if not source?
                             loadSource data[i], self.key, (err, source) ->
-                                if (source)
+                                if source
                                     module.log.log 'Adding new source sheet %s', data[i].key
                                     self.sources.push source
-                                    if (err)
+                                    if err?
                                         err.each module.log.warn
 
                                     step i + 1, true
                                 else
-                                    if (err != null && err.length != 0)
+                                    if err? and err.length isnt 0
                                         module.log.error 'Error occured while adding source'
                                         err.each module.log.error
 
                                     step i + 1, updated
                         else
-                            if (source.shouldUpdate())
-                                if (source.getVersion() != data[i].lastupdated)
+                            if source.shouldUpdate()
+                                if source.getVersion() isnt data[i].lastupdated
                                     module.log.log 'Updating source sheet %s from version %s to %s', data[i].key, source.getVersion(), data[i].lastupdated
                                     source.data = data[i]
                                     source.update (u) ->
@@ -269,11 +268,11 @@
 
                 module.log.log 'Updating collection of manifests'
                 step = (i, updated) ->
-                    if (i >= length)
+                    if i >= length
                         callback updated
                         return
 
-                    if (self.sources[i].shouldUpdate())
+                    if self.sources[i].shouldUpdate()
                         self.sources[i].update (u) ->
                             step i + 1, updated || u
                     else
@@ -281,7 +280,7 @@
 
                 step 0, false
 
-            this
+            @
 
         hasErrors: ->
             @getSources().some (source) ->
@@ -290,7 +289,7 @@
             errors = {}
 
             @getSources().each (source) ->
-                if (source.hasErrors())
+                if source.hasErrors()
                     errors[source.getKey()] = source.getErrors()
 
             $.extend true, {}, errors, @loadingErrors
@@ -299,39 +298,39 @@
             !!@loadingErrors || @getSources().some (source) ->
                 source.hasLoadingErrors()
         setLoadingErrors: (err) ->
-            if (!err || !Array.isArray(err))
+            if not err? or not Array.isArray err
                 @loadingErrors = null
             else
-                @loadingErrors = if err.length == 0 then null else err
+                @loadingErrors = if err.length is 0 then null else err
                 return
 
             @getSources().each (source) ->
-                if (Object.isObject(err) && Object.has(err, source.getKey()))
+                if Object.isObject(err) and Object.has(err, source.getKey())
                     source.setLoadingErrors err[source.getKey()]
                 else
                     source.setLoadingErrors null
 
-        getUrl: -> if @spreadsheet then @spreadsheet.getUrl() else null
+        getUrl: -> if @spreadsheet? then @spreadsheet.getUrl() else null
 
         getSourcesForExtra: (tag, oid) ->
             result = []
 
             @getSources().each (source) ->
-                if (source.isCombined())
+                if source.isCombined()
                     result.push source.getSourcesForExtra tag, oid
-                else if (source.hasExtra tag, oid)
+                else if source.hasExtra tag, oid
                     result.push [{
                         url: source.getUrl(),
                         key: source.getTag()
                     }]
 
             result.reduce (res, elem) ->
-                res.concat(elem)
+                res.concat elem
             , []
 
     loadSource = (data, parentKey, callback) ->
         err = []
-        key = resolveKey data.key, parentKey || '', err
+        key = resolveKey data.key, parentKey or '', err
         source = new exports.spreadsheets.Source key
 
         # ignore dummy rows!
@@ -340,10 +339,10 @@
             return
 
         source.load (err2, players) ->
-            if (err2 != null)
+            if err2?
                 err = err.concat err2
 
-            if (players == null)
+            if not players?
                 callback err, new ErroredPlayerSource(key, err, exports.interpreter.interpretManifestEntry data)
             else
                 callback err, new PlayerSource key, source, exports.interpreter.interpretManifestEntry(data), players
@@ -356,26 +355,26 @@
             module.log.log 'Loaded manifest ', key, ', got ', sourcesData, 'err: ', merr
 
             err = {}
-            if (merr != null)
+            if merr?
                 err.__errors = merr
 
-            if (sourcesData == null)
+            if not sourcesData?
                 callback err, new ErroredPlayerSource key, err
                 return
 
             nbSources = sourcesData.length
             step = (i) ->
-                if (i >= nbSources)
-                    callback((if Object.size(err) > 0 then err else null), new CombinedPlayerSource(sources, key, manifest))
+                if i >= nbSources
+                    callback (if Object.size(err) > 0 then err else null), new CombinedPlayerSource(sources, key, manifest)
                     return
 
                 skey = sourcesData[i].key
 
                 loadSource sourcesData[i], key, (err2, source) ->
-                    if (err2)
-                        err[if (source == null) then skey else source.getKey()] = err2
+                    if err2?
+                        err[if not source? then skey else source.getKey()] = err2
 
-                    if (source != null)
+                    if source?
                         sources.push source
 
                     step i + 1
@@ -387,17 +386,17 @@
         sources = []
         err = {}
         step = (i) ->
-            if (i >= nbKeys)
-                callback((if Object.size(err) > 0 then err else null), (if (sources.length > 0) then (new CombinedPlayerSource(sources)).setTopLevel() else null))
+            if i >= nbKeys
+                callback (if Object.size(err) > 0 then err else null), (if sources.length > 0 then (new CombinedPlayerSource(sources)).setTopLevel() else null)
                 return
 
             key = resolveKey keys[i], '', err
 
             loadManifest key, (err2, manifest) ->
-                if (err2)
+                if err2?
                     err[keys[i]] = err2
 
-                if (manifest != null)
+                if manifest?
                     sources.push manifest
 
                 step i + 1

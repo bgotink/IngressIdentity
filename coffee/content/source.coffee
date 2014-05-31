@@ -7,12 +7,12 @@
     checkEvent = ->
         $elem = $ '[token]'
 
-        if $elem.length == 0
+        if $elem.length is 0
             str = window.document.location.pathname
         else
             str = $elem.first().attr 'token'
 
-        if not (match = str.match /(^|\/)events\/([a-zA-Z0-9]+)$/)
+        if not match = str.match /(^|\/)events\/([a-zA-Z0-9]+)$/
             return
 
         oid = match[2]
@@ -25,7 +25,7 @@
                 $parent.find '.iidentity-event'
                     .remove()
 
-                if sources == null or not Array.isArray(sources) or sources.length == 0
+                if not sources? or not Array.isArray(sources) or sources.length is 0
                     return
 
                 $parent.find 'div.pD'
@@ -49,7 +49,7 @@
                     )
 
     checkCommunity = ->
-        if not (match = window.document.location.pathname.match /(^|\/)communities\/([a-zA-Z0-9]+)$/)
+        if not match = window.document.location.pathname.match /(^|\/)communities\/([a-zA-Z0-9]+)$/
             return
 
         oid = match[2]
@@ -62,7 +62,7 @@
                 $parent.find '.iidentity-community'
                     .remove()
 
-                if sources == null or not Array.isArray(sources) or sources.length == 0
+                if not sources? or not Array.isArray(sources) or sources.length is 0
                     return
 
                 $parent.find 'div.LEd'
