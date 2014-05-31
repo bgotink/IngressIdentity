@@ -22,7 +22,7 @@
     "content_security_policy": "default-src 'none'; script-src 'self' https://www.google.com https://spreadsheets.google.com https://docs.google.com; object-src 'self'; img-src 'self'; style-src 'self' 'unsafe-inline'",
     "content_scripts": [
         {
-            "matches": [ "https://plus.google.com/*" ],
+            "matches": [ "https://plus.google.com/*", "https://apis.google.com/*" ],
             "run_at": "document_end",
             "all_frames": true,
             "css": [ "css/content.css" ],

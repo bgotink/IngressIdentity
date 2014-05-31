@@ -241,11 +241,12 @@
         },
         {
             matches: [
-                # 'a.ob.tv.Ub.Hf[oid]',  # post author
-                # 'a.ob.tv.Ub.TD[oid]',  # comment author
-                # 'a.ob.tv.Ub.ita[oid]', # event creator
-                'a.ob.tv.Ub[oid]',    # event rsvp; also matches all previous entries
-                'div.o0b[oid]',       # friend lists on profile page
+                # 'a.ob.tv.Ub.Hf[oid]',             # post author, also on Google API
+                # 'a.ob.tv.Ub.TD[oid]',             # comment author
+                # 'a.ob.tv.Ub.ita[oid]',            # event creator
+                'a.ob.tv.Ub[oid]',                  # event rsvp; also matches all previous entries
+                'div.o0b[oid]',                     # friend lists on profile page
+                'div.f5.wy > header > h3 > a[oid]', # comments in Google API
             ]
             handler: (elem, match) ->
                 $elem = $ elem
