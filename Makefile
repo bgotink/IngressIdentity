@@ -23,18 +23,18 @@ lessc -x $< $@
 endef
 
 define coffee
-bin/coffee $@ $^
+@bin/coffee $@ $^
 endef
 
 define coffee_release
-bin/coffee --minify $@ $^
+@bin/coffee --minify $@ src/coffee/release-header.coffee $^
 endef
 
 define mkdir
 mkdir -p $@
 endef
 
-.PHONY: all all-release init dist default clean common common-release chrome chrome-release
+.PHONY: all all-release init dist default clean common common-release chrome chrome-release chrome-all
 
 # Main entrypoints
 #
@@ -43,6 +43,7 @@ default: all
 
 all: chrome
 
+release: all-release
 all-release: chrome-release
 
 dist: all-release
@@ -119,22 +120,22 @@ build/chrome/manifest.json: src/manifest.json
 build/chrome-release/manifest.json: src/manifest.json.dist
 	$(copy)
 
-build/chrome/js/content.js: $(JS_CONTENT_DEPS)
+build/chrome/js/content.js: src/coffee/beal/chrome/content.coffee $(JS_CONTENT_DEPS)
 	$(coffee)
 
-build/chrome-release/js/content.js: $(JS_CONTENT_DEPS)
+build/chrome-release/js/content.js: src/coffee/beal/chrome/content.coffee $(JS_CONTENT_DEPS)
 	$(coffee_release)
 
-build/chrome/js/background.js: $(JS_BACKGROUND_DEPS)
+build/chrome/js/background.js: src/coffee/beal/chrome/background.coffee $(JS_BACKGROUND_DEPS)
 	$(coffee)
 
-build/chrome-release/js/background.js: $(JS_BACKGROUND_DEPS)
+build/chrome-release/js/background.js: src/coffee/beal/chrome/background.coffee $(JS_BACKGROUND_DEPS)
 	$(coffee_release)
 
-build/chrome/js/options.js: $(JS_OPTIONS_DEPS)
+build/chrome/js/options.js: src/coffee/beal/chrome/content.coffee $(JS_OPTIONS_DEPS)
 	$(coffee)
 
-build/chrome-release/js/options.js: $(JS_OPTIONS_DEPS)
+build/chrome-release/js/options.js: src/coffee/beal/chrome/content.coffee $(JS_OPTIONS_DEPS)
 	$(coffee_release)
 
 build/chrome/js/help.js: $(JS_HELP_DEPS)
@@ -157,3 +158,5 @@ build/chrome-release: build/chrome-release/js build/chrome-release/css
 chrome: common build/chrome $(addprefix build/chrome/, $(FILES)) build/chrome/manifest.json;
 
 chrome-release: common-release build/chrome-release $(addprefix build/chrome-release/, $(FILES)) build/chrome-release/manifest.json;
+
+chrome-all: chrome chrome-release

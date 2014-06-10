@@ -57,7 +57,7 @@
 
             doForEach player, true, 'anomaly', (anomaly) ->
                     $ '<img>'
-                        .attr 'src', chrome.extension.getURL 'img/anomalies/' + anomaly + '.png'
+                        .attr 'src', module.extension.getURL 'img/anomalies/' + anomaly + '.png'
                         .attr 'alt', anomaly
                         .attr 'title', anomaly.capitalize true
                         .addClass 'iidentity-anomaly'
@@ -184,7 +184,7 @@
 
             doForEach player, true, 'anomaly', (anomaly) ->
                     $ '<img>'
-                        .attr 'src', chrome.extension.getURL 'img/anomalies/' + anomaly + '.png'
+                        .attr 'src', module.extension.getURL 'img/anomalies/' + anomaly + '.png'
                         .attr 'alt', anomaly
                         .attr 'title', anomaly.capitalize true
                         .addClass 'iidentity-anomaly'

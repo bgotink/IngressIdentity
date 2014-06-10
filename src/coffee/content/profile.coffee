@@ -47,7 +47,7 @@
                                             .append(
                                                 $ '<img>'
                                                     .addClass 'xfa'
-                                                    .attr 'src', chrome.extension.getURL 'img/anomalies/' + anomaly + '.png'
+                                                    .attr 'src', module.extension.getURL 'img/anomalies/' + anomaly + '.png'
                                                     .attr 'title', nice
                                                     .attr 'alt', ''
                                             )
