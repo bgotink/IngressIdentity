@@ -126,10 +126,7 @@ common-release: build/common-release $(addprefix build/common-release/,$(CSSs))
 
 # helpers
 
-build/chrome/manifest.json: src/manifest.json
-	$(copy)
-
-build/chrome-release/manifest.json: src/manifest.json.dist
+build/%/manifest.json: template/%/manifest.json
 	$(copy)
 
 build/chrome/js/content.js: src/coffee/beal/chrome/content.coffee $(JS_CONTENT_DEPS)
@@ -178,7 +175,7 @@ chrome-all: chrome chrome-release
 
 # helpers
 
-build/%.safariextension/Info.plist: src/Info.plist
+build/%.safariextension/Info.plist: template/%.safariextension/Info.plist
 	$(copy)
 
 build/IngressIdentity.safariextension/js/content.js: src/coffee/beal/safari/content.coffee $(JS_CONTENT_DEPS)
