@@ -201,6 +201,7 @@
         getManifests: (request, sender, sendResponse) ->
             if not isOptionsPage sender.url
                 module.log.error 'A \'getManifests\' message can only originate from the options page'
+                module.log.error 'Not from %s', sender.url
                 # silently die by not sending a response
                 return false
 
@@ -261,6 +262,7 @@
         getManifestErrors: (request, sender, sendResponse) ->
             if not isOptionsPage sender.url
                 module.log.error 'A \'getManifestErrors\' message can only originate from the options page'
+                module.log.error 'Not from %s', sender.url
                 # silently die by not sending a response
                 return false
 
@@ -274,6 +276,7 @@
         addManifest: (request, sender, sendResponse) ->
             if not isOptionsPage sender.url
                 module.log.error 'An \'addManifest\' message can only originate from the options page'
+                module.log.error 'Not from %s', sender.url
                 # silently die by not sending a response
                 return false
 
@@ -293,6 +296,7 @@
         removeManifest: (request, sender, sendResponse) ->
             if not isOptionsPage sender.url
                 module.log.error 'A \'removeManifest\' message can only originate from the options page'
+                module.log.error 'Not from %s', sender.url
                 # silently die by not sending a response
                 return false
 
@@ -312,6 +316,7 @@
         renameManifest: (request, sender, sendResponse) ->
             if not isOptionsPage sender.url
                 module.log.error 'A \'renameManifest\' message can only originate from the options page'
+                module.log.error 'Not from %s', sender.url
                 # silently die by not sending a response
                 return false
 
@@ -324,6 +329,7 @@
         changeManifestOrder: (request, sender, sendResponse) ->
             if not isOptionsPage sender.url
                 module.log.error 'A \'changeManifestOrder\' message can only originate from the options page'
+                module.log.error 'Not from %s', sender.url
                 # silently die by not sending a response
                 return false
 
@@ -336,6 +342,7 @@
         reloadData: (request, sender, sendResponse) ->
             if not isOptionsPage sender.url
                 module.log.error 'A \'reloadData\' message can only originate from the options page'
+                module.log.error 'Not from %s', sender.url
                 # silently die by not sending a response
                 return false
 
@@ -347,6 +354,7 @@
         setOption: (request, sender, sendResponse) ->
             if not isOptionsPage sender.url
                 module.log.error 'A \'setOption\' message can only originate from the options page'
+                module.log.error 'Not from %s', sender.url
                 # silently die by not sending a response
                 return false
 

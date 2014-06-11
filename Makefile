@@ -1,5 +1,5 @@
 MDs = README.md LICENSE.md NOTICE.md
-JSs = js/content.js js/options.js js/background.js js/help.js
+JSs = js/content.js js/options.js js/help.js js/background.js
 CSSs = css/content.css css/options.css css/help.css
 HTMLs = options.html background.html help.html
 
@@ -11,7 +11,8 @@ JS_HELP_DEPS = src/coffee/help.coffee
 FILES= $(MDs) $(JSs) $(CSSs) $(HTMLs) img vendor
 
 define copy
-cp -aR $< $@
+@echo "Copying $<"
+@cp -aR $< $@
 endef
 
 define less
@@ -34,23 +35,34 @@ define mkdir
 mkdir -p $@
 endef
 
-.PHONY: all all-release init dist default clean common common-release chrome chrome-release chrome-all
+.PHONY: all all-release init dist default clean common common-release chrome chrome-release chrome-all safari safari-release safari-all
 
 # Main entrypoints
 #
 
 default: all
 
-all: chrome
+all: chrome safari
 
 release: all-release
-all-release: chrome-release
+all-release: chrome-release safari-release
 
 dist: all-release
 	@bin/dist
 
 clean:
 	rm -rf build
+
+# Tools
+#
+
+tools: ; $(mkdir)
+
+tools/gray2transparent: tools
+	@git clone https://gist.github.com/635bca8e2a3d47bf6a5f.git $@
+
+tools/gray2transparent/gray2transparent: tools/gray2transparent
+	@$(MAKE) -C $<
 
 # Common targets
 #
@@ -160,3 +172,57 @@ chrome: common build/chrome $(addprefix build/chrome/, $(FILES)) build/chrome/ma
 chrome-release: common-release build/chrome-release $(addprefix build/chrome-release/, $(FILES)) build/chrome-release/manifest.json;
 
 chrome-all: chrome chrome-release
+
+# Safari targets
+#
+
+# helpers
+
+build/%.safariextension/Info.plist: src/Info.plist
+	$(copy)
+
+build/IngressIdentity.safariextension/js/content.js: src/coffee/beal/safari/content.coffee $(JS_CONTENT_DEPS)
+	$(coffee)
+
+build/IngressIdentity-release.safariextension/js/content.js: src/coffee/beal/safari/content.coffee $(JS_CONTENT_DEPS)
+	$(coffee_release)
+
+build/IngressIdentity.safariextension/js/background.js: src/coffee/beal/safari/background.coffee $(JS_BACKGROUND_DEPS)
+	$(coffee)
+
+build/IngressIdentity-release.safariextension/js/background.js: src/coffee/beal/safari/background.coffee $(JS_BACKGROUND_DEPS)
+	$(coffee_release)
+
+build/IngressIdentity.safariextension/js/options.js: src/coffee/beal/safari/content.coffee $(JS_OPTIONS_DEPS)
+	$(coffee)
+
+build/IngressIdentity-release.safariextension/js/options.js: src/coffee/beal/safari/content.coffee $(JS_OPTIONS_DEPS)
+	$(coffee_release)
+
+build/IngressIdentity.safariextension/js/help.js: $(JS_HELP_DEPS)
+	$(coffee)
+
+build/IngressIdentity-release.safariextension/js/help.js: $(JS_HELP_DEPS)
+	$(coffee_release)
+
+build/IngressIdentity.safariextension/css/%: build/common/css/%
+	$(copy)
+
+build/IngressIdentity-release.safariextension/css/%: build/common-release/css/%
+	$(copy)
+
+build/%.safariextension: build/%.safariextension/js build/%.safariextension/css
+
+build/%.safariextension/img/toolbar-logo.png: src/img/logo/48.png tools/gray2transparent/gray2transparent
+	convert $< tmp.exr
+	tools/gray2transparent/gray2transparent tmp.exr tmp2.exr
+	convert tmp2.exr $@
+	rm tmp.exr tmp2.exr
+
+# main
+
+safari: common build/IngressIdentity.safariextension $(addprefix build/IngressIdentity.safariextension/, $(FILES)) build/IngressIdentity.safariextension/Info.plist build/IngressIdentity.safariextension/img/toolbar-logo.png;
+
+safari-release: common-release build/IngressIdentity-release.safariextension $(addprefix build/IngressIdentity-release.safariextension/, $(FILES)) build/IngressIdentity-release.safariextension/Info.plist build/IngressIdentity-release.safariextension/img/toolbar-logo.png;
+
+safari-all: safari safari-release
