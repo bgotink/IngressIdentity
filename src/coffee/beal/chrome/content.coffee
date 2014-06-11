@@ -11,7 +11,8 @@
 
     exports.addMessageListener = (func) ->
         chrome.runtime.onMessage.addListener (request) ->
-            func request
+            # ignore null
+            func request if request?
             false
 
     exports.getLastError = -> chrome.runtime.lastError

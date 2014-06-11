@@ -13,8 +13,9 @@ or options pages cannot wrongly modify any settings.
 
 - storage
     required, a storage object that behaves like the Chrome storage api:
-    - get(obj keysAndDefaults, void callback(mixed value))
+    - get(obj keysAndDefaults, void callback(obj value))
     - set(obj data, void callback())
+    The values in data are always JSONifieable
 - bool isOptionsPage(string url)
     required, checks whether a given url is this extension's option page
 - void sendToTabs(obj message)
@@ -29,6 +30,8 @@ or options pages cannot wrongly modify any settings.
     - sendResponse: a function that takes a single parameter, the object to send back
     The listener function can return true or false (or null/undefined). If true is
     returned, the sendResponse function _may_ be called _after_ the listener returned.
+    _The sendResponse function must be called exactly once,_ a `null` message is seen
+    as "no reply to give".
 - void addDataChangedListener(void listener(arr changes))
     required, though the implementation is allowed to be an empty function
     the listener accepts a single parameter, an array containing the changed data keys
@@ -44,7 +47,10 @@ This file is included in all javascript files apart from `background.js`.
     the reply
 - void addMessageListener(void listener(obj request))
     required, registers the given listener, which is passed each message as it arrives
+    if it isn't null.
 - string getURL(string relative)
     required, gives the URL of an asset given its relative path
 - mixed getLastError()
     optional, should be _absent when not implemented_, don't use an empty function!
+- void init()
+    optional, will be called when DOM is ready if the value isn't null/undefined

@@ -36,9 +36,10 @@
 
         module.checkElement window.document
 
-    module.comm.setOnUpdate forceUpdate
-
     $ ->
+        module.extension.init()
+        module.comm.setOnUpdate forceUpdate
+
         forceUpdate()
         observer.observe window.document, { childList: true, subtree: true }
 
