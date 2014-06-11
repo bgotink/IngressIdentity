@@ -276,6 +276,8 @@
             showAlert 'add-' + result
 
     $ ->
+        module.extension.init()
+
         $ '.alert .close'
             .on 'click.ii.close', ->
                 $ @

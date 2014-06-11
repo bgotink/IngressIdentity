@@ -5,12 +5,11 @@
 # @license MIT
 
 ((module, $, window) ->
-    storage = chrome.storage.sync
+    storage = module.extension.storage
     data = null
     storageCache = {}
 
-    isOptionsPage = (url) ->
-        !!url.match new RegExp('chrome-extension:\\/\\/' + chrome.runtime.id + '/options.html.*')
+    isOptionsPage = module.extension.isOptionsPage
 
     # storage functions
 
@@ -25,7 +24,7 @@
             return
 
         module.log.log 'Settings updated:'
-        Object.each changes, (key) ->
+        changes.each (key) ->
             if Object.has storageCache, key
                 delete storageCache[key]
 
@@ -195,19 +194,14 @@
     #communication functions
 
     updateTabs = ->
-        chrome.tabs.query {}, (tabs) ->
-            message =
-                type: 'update'
-            module.log.log 'Sending update message to %d tabs', tabs.length
-
-            tabs.each (tab) ->
-                module.log.log '-- tab ', tab
-                chrome.tabs.sendMessage tab.id, message
+        module.extension.sendToTabs
+            type: 'update'
 
     messageListeners =
         getManifests: (request, sender, sendResponse) ->
             if not isOptionsPage sender.url
                 module.log.error 'A \'getManifests\' message can only originate from the options page'
+                module.log.error 'Not from %s', sender.url
                 # silently die by not sending a response
                 return false
 
@@ -268,6 +262,7 @@
         getManifestErrors: (request, sender, sendResponse) ->
             if not isOptionsPage sender.url
                 module.log.error 'A \'getManifestErrors\' message can only originate from the options page'
+                module.log.error 'Not from %s', sender.url
                 # silently die by not sending a response
                 return false
 
@@ -281,6 +276,7 @@
         addManifest: (request, sender, sendResponse) ->
             if not isOptionsPage sender.url
                 module.log.error 'An \'addManifest\' message can only originate from the options page'
+                module.log.error 'Not from %s', sender.url
                 # silently die by not sending a response
                 return false
 
@@ -300,6 +296,7 @@
         removeManifest: (request, sender, sendResponse) ->
             if not isOptionsPage sender.url
                 module.log.error 'A \'removeManifest\' message can only originate from the options page'
+                module.log.error 'Not from %s', sender.url
                 # silently die by not sending a response
                 return false
 
@@ -319,6 +316,7 @@
         renameManifest: (request, sender, sendResponse) ->
             if not isOptionsPage sender.url
                 module.log.error 'A \'renameManifest\' message can only originate from the options page'
+                module.log.error 'Not from %s', sender.url
                 # silently die by not sending a response
                 return false
 
@@ -331,6 +329,7 @@
         changeManifestOrder: (request, sender, sendResponse) ->
             if not isOptionsPage sender.url
                 module.log.error 'A \'changeManifestOrder\' message can only originate from the options page'
+                module.log.error 'Not from %s', sender.url
                 # silently die by not sending a response
                 return false
 
@@ -343,6 +342,7 @@
         reloadData: (request, sender, sendResponse) ->
             if not isOptionsPage sender.url
                 module.log.error 'A \'reloadData\' message can only originate from the options page'
+                module.log.error 'Not from %s', sender.url
                 # silently die by not sending a response
                 return false
 
@@ -354,6 +354,7 @@
         setOption: (request, sender, sendResponse) ->
             if not isOptionsPage sender.url
                 module.log.error 'A \'setOption\' message can only originate from the options page'
+                module.log.error 'Not from %s', sender.url
                 # silently die by not sending a response
                 return false
 
@@ -427,7 +428,7 @@
 
             true
 
-    chrome.runtime.onMessage.addListener (request, sender, sendResponse) ->
+    module.extension.addMessageListener (request, sender, sendResponse) ->
         if sender.tab
             module.log.log 'Got request from tab %s, url: %s', sender.tab.id, sender.url
         else
@@ -461,7 +462,9 @@
             false
 
     $ ->
-        google.load 'visualization', '1', {
+        module.extension.init() if module.extension.init?
+
+        google.load 'visualization', '1',
             callback: ->
                 reloadData (err, success) ->
                     if success
@@ -486,8 +489,7 @@
 
                             updateTabs()
                 , 60 * 60 * 1000
-        }
 
-        chrome.storage.onChanged.addListener onDataUpdated
+        module.extension.addDataChangedListener onDataUpdated
 
 )(iidentity or (iidentity = window.iidentity = {}), window.jQuery, window)

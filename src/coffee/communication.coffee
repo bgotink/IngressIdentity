@@ -15,9 +15,10 @@
         lastUpdate = +new Date
 
         try
-            chrome.runtime.sendMessage request, (reply) ->
+            module.extension.sendMessage request, (reply) ->
                     if typeof reply is 'undefined'
-                        module.log.error chrome.runtime.lastError
+                        module.log.error module.extension.getLastError() if module.extension.getLastError
+                        return
 
                     callback reply.reply
 
@@ -31,15 +32,12 @@
             # -> reload this page
             window.document.location.reload()
 
-    chrome.runtime.onMessage.addListener (request) ->
+    module.extension.addMessageListener (request) ->
         if request.type is 'update'
             lastUpdate = +new Date
 
             if onUpdate
                 onUpdate()
-
-            # will not send reply
-            return false
 
         # ignore: the options page gets all the messages meant for the background
         # page as well... logging/throwing here would fill the console with junk

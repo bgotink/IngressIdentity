@@ -1,0 +1,45 @@
+#!/bin/bash
+
+log() {
+    echo "$@" >&2
+}
+
+set -e
+
+cd $(dirname "$0")/..
+
+minify=0
+if [ "x$1" = "x--minify" ]; then
+    minify=1
+    shift
+fi
+
+destfile="$1"
+sources=""
+shift
+
+if [ $minify -eq 1 ]; then
+    log -n 'Minifying '
+else
+    log -n 'Concatenating '
+fi
+
+for i in "$@"; do
+    log -n "$i "
+    sources="$sources $i"
+done
+
+log "into $destfile"
+
+# coffee -> js
+# => disable logging by default
+# => uglify
+cat $sources \
+    | coffee --no-header -cs \
+    | ( if [ $minify -eq 0 ]; then cat > "$destfile"; else sed -e 's/enableLogging = true/enableLogging = false/' | uglifyjs - -o "$destfile" --screw-ie8 --mangle toplevel --compress --preamble "/**
+ * This file is part of IngressIdentity
+ *
+ * @author Bram Gotink (@bgotink)
+ * @license MIT
+ * @url https://github.com/bgotink/IngressIdentity
+ */"; fi )
