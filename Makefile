@@ -12,8 +12,8 @@ FILES= $(MDs) $(JSs) $(CSSs) $(HTMLs) vendor
 
 define copy
 @echo "Copying $<"
-@rm -r $@
-@cp -aR $< $@
+@rm -fr $@
+@cp -R $< $@
 endef
 
 define less
@@ -36,19 +36,19 @@ define mkdir
 mkdir -p $@
 endef
 
-.PHONY: all all-release release init dist default clean common common-release chrome chrome-release chrome-all chrome-dist safari safari-release safari-all safari-dist
+.PHONY: all all-release release init dist default clean common common-release chrome chrome-release chrome-all chrome-dist safari safari-release safari-all safari-dist firefox firefox-release firefox-all firefox-dist
 
 # Main entrypoints
 #
 
 default: all
 
-all: chrome safari
+all: chrome safari firefox
 
 release: all-release
-all-release: chrome-release safari-release
+all-release: chrome-release safari-release firefox-release
 
-dist: chrome-dist safari-dist
+dist: chrome-dist safari-dist firefox-dist
 
 clean:
 	rm -rf build
@@ -247,3 +247,129 @@ safari-all: safari safari-release
 
 safari-dist: safari-release
 	@bin/dist/safari
+
+# Firefox targets
+#
+
+# helpers
+
+build/firefox:
+	$(mkdir)
+
+build/firefox-release:
+	$(mkdir)
+
+build/%/data:
+	$(mkdir)
+
+build/%/data/js:
+	$(mkdir)
+
+build/%/data/css:
+	$(mkdir)
+
+build/%/data/img:
+	$(mkdir)
+
+build/%/data/img/logo:
+	$(mkdir)
+
+build/%/lib:
+	$(mkdir)
+
+build/%/data/img/anomalies: src/img/anomalies build/%/data/img
+	$(copy)
+
+build/%/data/img/logo/16.png: src/img/logo.svg build/%/data/img/logo
+	convert -background none $< -resize 16 $@
+
+build/%/data/img/logo/32.png: src/img/logo.svg build/%/data/img/logo
+	convert -background none $< -resize 32 $@
+
+build/%/data/img/logo/64.png: src/img/logo.svg build/%/data/img/logo
+	convert -background none $< -resize 64 $@
+
+build/%/data/img/logo/ingress.png: src/img/logo.svg build/%/img/logo
+	convert -background none $< $@
+
+build/firefox/data/css/%: build/common/css/% build/firefox/data/css
+	$(copy)
+
+build/firefox-release/data/css/%: build/common-release/css/% build/firefox-release/data/css
+	$(copy)
+
+build/firefox/data/options.html: src/options.html build/firefox/data
+	grep -vE '<script type="text/javascript" src=' $< > $@
+
+build/firefox/data/%.html: src/%.html build/firefox/data
+	$(copy)
+
+build/firefox-release/data/%.html: src/%.html build/firefox-release/data
+	$(copy)
+
+build/firefox/%.md: %.md build/firefox
+	$(copy)
+
+build/firefox-release/data/%.md: %.md build/firefox-release
+	$(copy)
+
+build/%/package.json: template/%/package.json build/%
+	$(copy)
+
+build/firefox/lib/bootstrap.js: template/firefox/lib/bootstrap.coffee
+	$(coffee)
+
+build/firefox-release/lib/bootstrap.js: template/firefox-release/lib/bootstrap.coffee
+	$(coffee_release)
+
+build/firefox/data/js/content.js: src/coffee/beal/firefox/content.coffee $(JS_CONTENT_DEPS)
+	$(coffee)
+
+build/firefox-release/data/js/content.js: src/coffee/beal/firefox/content.coffee $(JS_CONTENT_DEPS)
+	$(coffee_release)
+
+build/firefox/data/js/background.js: src/coffee/beal/firefox/background.coffee $(JS_BACKGROUND_DEPS)
+	$(coffee)
+
+build/firefox-release/data/js/background.js: src/coffee/beal/firefox/background.coffee $(JS_BACKGROUND_DEPS)
+	$(coffee_release)
+
+build/firefox/data/js/options.js: src/coffee/beal/firefox/content.coffee $(JS_OPTIONS_DEPS)
+	$(coffee)
+
+build/firefox-release/data/js/options.js: src/coffee/beal/firefox/content.coffee $(JS_OPTIONS_DEPS)
+	$(coffee_release)
+
+build/firefox/data/js/help.js: $(JS_HELP_DEPS)
+	$(coffee)
+
+build/firefox-release/data/js/help.js: $(JS_HELP_DEPS)
+	$(coffee_release)
+
+build/%/data/vendor: src/vendor build/%/data
+	$(copy)
+
+build/%/icon.png: src/img/logo.svg build/%
+	convert -background none $< -resize 48 $@
+
+build/%/icon64.png: src/img/logo.svg build/%
+	convert -background none $< -resize 64 $@
+
+# main
+
+firefox: common build/firefox $(addprefix build/firefox/, icon.png icon64.png lib lib/bootstrap.js package.json $(MDs) data $(addprefix data/, js css $(JSs) $(HTMLs) $(CSSs) vendor img $(addprefix img/, anomalies logo $(addprefix logo/, ingress.png 16.png 32.png 64.png))))
+
+firefox-release: common build/firefox-release $(addprefix build/firefox-release/, icon.png icon64.png lib lib/bootstrap.js package.json $(MDs) data $(addprefix data/, js css $(JSs) $(HTMLs) $(CSSs) vendor img $(addprefix img/, anomalies logo $(addprefix logo/, ingress.png 16.png 32.png 64.png))))
+
+firefox-all: firefox firefox-release
+
+firefox-dist: firefox-release
+	@bin/dist/firefox
+
+# testing and building XPI
+
+tools/firefox-sdk: tools
+	@git clone git://github.com/mozilla/addon-sdk.git tools/firefox-sdk
+
+tools/firefox-test-profile: tools
+	@$(mkdir)

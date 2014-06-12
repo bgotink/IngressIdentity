@@ -80,9 +80,9 @@ if ! git diff --quiet --cached; then
 fi
 
 # update version
-#  chrome
-sed -i '' -e "s/\"version\"\:.*\$/\"version\": \"$version\",/" template/chrome*/manifest.json
-git add template/chrome*/manifest.json
+#  chrome & firefox
+sed -i '' -e "s/\"version\"\:.*\$/\"version\": \"$version\",/" template/chrome*/manifest.json template/firefox*/package.json
+git add template/chrome*/manifest.json template/firefox*/package.json
 # safari
 sed -i '' -e "s#<string>$oldversion</string>#<string>$version</string>#" template/*.safariextension/Info.plist
 git add template/*/Info.plist
