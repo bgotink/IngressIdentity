@@ -65,7 +65,7 @@ case "$branch" in
 esac
 
 log "Building..."
-make all
+make all-release
 
 log "Updating from version $oldversion to $version..." >&2
 
