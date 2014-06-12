@@ -36,7 +36,7 @@ define mkdir
 mkdir -p $@
 endef
 
-.PHONY: all all-release init dist default clean common common-release chrome chrome-release chrome-all safari safari-release safari-all
+.PHONY: all all-release release init dist default clean common common-release chrome chrome-release chrome-all chrome-dist safari safari-release safari-all safari-dist
 
 # Main entrypoints
 #
@@ -48,8 +48,7 @@ all: chrome safari
 release: all-release
 all-release: chrome-release safari-release
 
-dist: all-release
-	@bin/dist
+dist: chrome-dist safari-dist
 
 clean:
 	rm -rf build
@@ -59,11 +58,12 @@ clean:
 
 tools: ; $(mkdir)
 
-tools/gray2transparent: tools
-	@git clone https://gist.github.com/635bca8e2a3d47bf6a5f.git $@
+tools/gray2transparent:
+	@if [ ! -d tools ]; then make tools fi
+	@if [ -d $@ ]; then cd $@ && git pull; else git clone https://gist.github.com/635bca8e2a3d47bf6a5f.git $@; fi
 
-tools/gray2transparent/gray2transparent: tools/gray2transparent
-	@$(MAKE) -C $<
+tools/gray2transparent/gray2transparent: tools/gray2transparent $(addprefix tools/gray2transparent/, gray2transparent.cpp exr_io.h exr_io.cpp)
+	@$(MAKE) -C $< gray2transparent
 
 # Common targets
 #
@@ -188,6 +188,9 @@ chrome-release: common-release build/chrome-release $(addprefix build/chrome-rel
 
 chrome-all: chrome chrome-release
 
+chrome-dist: chrome-release
+	@bin/dist/chrome
+
 # Safari targets
 #
 
@@ -241,3 +244,6 @@ safari: common build/IngressIdentity.safariextension $(addprefix build/IngressId
 safari-release: common-release build/IngressIdentity-release.safariextension $(addprefix build/IngressIdentity-release.safariextension/, $(FILES) Info.plist img/anomalies img/logo/toolbar.png img/logo/ingress.png)
 
 safari-all: safari safari-release
+
+safari-dist: safari-release
+	@bin/dist/safari
