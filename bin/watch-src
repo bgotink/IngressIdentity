@@ -1,0 +1,154 @@
+#!/usr/bin/env node
+
+"use strict";
+
+var fs = require('fs'),
+    exec = require('child_process').exec,
+    dirname = require('path').dirname,
+
+    __slice = [].slice,
+
+    files = [
+        {
+            files: {
+                'css/content.css': genLessDependencies('less/content.less'),
+                'css/options.css': genLessDependencies('less/general_background.less', 'less/options.less'),
+                'css/help.css':    genLessDependencies('less/general_background.less', 'less/help.less'),
+            },
+            compile: function (target, sources) {
+                do_exec('lessc "' + sources[sources.length - 1] + '" "' + target + '"');
+            }
+        },
+        {
+            files: {
+                'js/content.js':     [
+                    'coffee/log.coffee',
+                    'coffee/communication.coffee',
+                    'coffee/content/doOnce.coffee',
+                    'coffee/content/mentions.coffee',
+                    'coffee/content/profile.coffee',
+                    'coffee/content/source.coffee',
+                    'coffee/content/main.coffee'
+                ],
+                'js/background.js' : [
+                    'coffee/log.coffee',
+                    'coffee/data/spreadsheets.coffee',
+                    'coffee/data/interpreter.coffee',
+                    'coffee/data/merger.coffee',
+                    'coffee/data/data.coffee',
+                    'coffee/background.coffee',
+                ],
+                'js/options.js':     [ 'coffee/log.coffee', 'coffee/communication.coffee', 'coffee/options.coffee' ],
+                'js/help.js':        [ 'coffee/help.coffee' ],
+            },
+            compile: function (target, sources) {
+                do_exec('cat "' + sources.join('" "') + '" | coffee --no-header -cms > "' + target + '"');
+            }
+        }
+    ];
+
+function genLessDependencies() {
+    return [ 'less/variables.less', 'less/general.less' ].concat(
+        __slice.call(arguments)
+    );
+}
+
+function isDirectory(filename, callback) {
+    fs.exists(filename, function (exists) {
+        if (!exists) {
+            fs.mkdir(filename, function (err) {
+                if (err) {
+                    callback(err || ('Please ensure that ' + __dirname + '/' + filename + ' is a directory'), null);
+                } else {
+                    callback(null , true);
+                }
+            });
+        } else {
+            fs.stat(filename, function (err, stat) {
+                if (stat == null) {
+                    callback(err, null);
+                } else {
+                    callback(null, stat.isDirectory());
+                }
+            });
+        }
+    });
+}
+
+function areDirectories(filenames, callback) {
+    if (filenames.length === 0) {
+        callback(null, true);
+    }
+
+    var err = [],
+        length = filenames.length,
+        step = function (i, result) {
+            if (i === length) {
+                callback(err.length === 0 ? null : err, result);
+                return;
+            }
+
+            isDirectory(filenames[i], function (err2, isDirectory) {
+                if (err2) {
+                    err.push(err2);
+                }
+
+                step(i + 1, result && isDirectory);
+            });
+        };
+
+    step(0, true);
+}
+
+function log() {
+    var args = __slice.call(arguments);
+
+    if (args.length === 0) {
+        return;
+    }
+    args[0] = '[' + new Date().toISOString() + '] ' + args[0];
+
+    console.log.apply(console, args);
+}
+
+function do_exec(program) {
+    exec(program, function (error, out, err) {
+        if (error !== null) {
+            log('An error occurred when executing %s:', program, error.stack);
+        } else {
+            log('Executed %s', program);
+        }
+    });
+}
+
+// chdir
+process.chdir(dirname(__dirname));
+
+areDirectories([ 'css', 'js' ], function (err, isDirectory) {
+    if (!isDirectory) {
+        if (err) {
+            err.forEach(function () { console.error.apply(console.error, arguments); });
+        }
+
+        process.exit(1);
+    }
+
+    // watch
+    files.forEach(function (fileData) {
+        Object.keys(fileData.files).forEach(function (target) {
+            var sources = fileData.files[target],
+                rebuild = fileData.compile.bind(null, target, sources);
+
+            sources.forEach(function (source) {
+                fs.watch(source, function (event, filename) {
+                    log('Event: %s, source: %s', event, source);
+
+                    rebuild();
+                });
+            });
+
+            // also, rebuild once now
+            rebuild();
+        });
+    });
+});

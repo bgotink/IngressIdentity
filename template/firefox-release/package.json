@@ -1,0 +1,13 @@
+{
+    "id": "ingressidentity@bram.gotink.me",
+    "name": "ingress-identity",
+    "title": "IngressIdentity",
+    "main": "./lib/bootstrap",
+    "description": "Adds Ingress players' information on Google+",
+    "author": "Bram Gotink",
+    "license": "MIT",
+    "version": "0.6.0",
+    "engines": {
+        "firefox": ">=30.0 <=33.0"
+    }
+}

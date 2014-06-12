@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Author</key>
+	<string>Bram Gotink</string>
+	<key>Builder Version</key>
+	<string>10538.35.8</string>
+	<key>CFBundleDisplayName</key>
+	<string>IngressIdentity</string>
+	<key>CFBundleIdentifier</key>
+	<string>me.gotink.bram.ingressidentity</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.6.0</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>Chrome</key>
+	<dict>
+		<key>Database Quota</key>
+		<real>1048576</real>
+		<key>Global Page</key>
+		<string>background.html</string>
+		<key>Toolbar Items</key>
+		<array>
+			<dict>
+				<key>Command</key>
+				<string>show-options-page</string>
+				<key>Identifier</key>
+				<string>toolbar-btn</string>
+				<key>Image</key>
+				<string>img/logo/toolbar.png</string>
+				<key>Label</key>
+				<string>IngressIdentity Options</string>
+				<key>Palette Label</key>
+				<string></string>
+			</dict>
+		</array>
+	</dict>
+	<key>Content</key>
+	<dict>
+		<key>Scripts</key>
+		<dict>
+			<key>End</key>
+			<array>
+				<string>vendor/js/jquery.min.js</string>
+				<string>vendor/js/sugar.min.js</string>
+				<string>js/content.js</string>
+			</array>
+		</dict>
+		<key>Stylesheets</key>
+		<array>
+			<string>css/content.css</string>
+		</array>
+	</dict>
+	<key>Description</key>
+	<string>Adds Ingress user identities to Google+</string>
+	<key>DeveloperIdentifier</key>
+	<string>MTD9B5KP5G</string>
+	<key>ExtensionInfoDictionaryVersion</key>
+	<string>1.0</string>
+	<key>Permissions</key>
+	<dict>
+		<key>Website Access</key>
+		<dict>
+			<key>Allowed Domains</key>
+			<array>
+				<string>plus.google.com</string>
+				<string>apis.google.com</string>
+			</array>
+			<key>Include Secure Pages</key>
+			<true/>
+			<key>Level</key>
+			<string>Some</string>
+		</dict>
+	</dict>
+	<key>Website</key>
+	<string>https://github.com/bgotink/IngressIdentity</string>
+</dict>
+</plist>

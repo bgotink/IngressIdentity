@@ -1,0 +1,22 @@
+#!/bin/bash
+
+set -e;
+
+cd $(dirname "$0")/../..;
+
+log() {
+    echo "$@" >&2
+}
+
+cd build/chrome-release
+
+buildversion=$(grep -F '"version"' manifest.json | cut -d':' -f2 | tr -d ' ",')
+
+if [ -f "../../versions/chrome/v$buildversion.zip" ]; then
+    log "Zipped version already exists (versions/v$buildversion.zip), aborting"
+    exit 1
+fi
+
+log "Creating zip..."
+zip -r "../versions/chrome/v$buildversion.zip" .
+log "Zip created at versions/chrome/v$buildversion.zip"

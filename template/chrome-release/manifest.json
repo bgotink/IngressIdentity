@@ -1,0 +1,36 @@
+{
+    "manifest_version": 2,
+
+    "name": "Ingress Identity",
+    "version": "0.6.0",
+    "description": "Adds Ingress identity to G+ profiles",
+    "icons": {
+        "16":  "img/logo/16.png",
+        "48":  "img/logo/48.png",
+        "128": "img/logo/128.png"
+    },
+
+    "permissions": [ "storage" ],
+    "optional_permissions": [ "https://*.google.com/*" ],
+
+    "background": {
+       "page": "background.html"
+    },
+
+    "options_page": "options.html",
+
+    "content_security_policy": "default-src 'none'; script-src 'self' https://www.google.com https://spreadsheets.google.com https://docs.google.com; object-src 'self'; img-src 'self'; style-src 'self' 'unsafe-inline'",
+    "content_scripts": [
+        {
+            "matches": [ "https://plus.google.com/*", "https://apis.google.com/*" ],
+            "run_at": "document_end",
+            "all_frames": true,
+            "css": [ "css/content.css" ],
+            "js": [ "vendor/js/jquery.min.js", "vendor/js/sugar.min.js", "js/content.js" ]
+        }
+    ],
+
+    "web_accessible_resources": [
+        "img/anomalies/*"
+    ]
+}
