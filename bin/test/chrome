@@ -1,0 +1,4 @@
+#!/bin/bash
+
+echo 'To test for chrome: add /path/to/project/root/build/chrome as an unpacked extension' >&2
+echo 'Run `make chrome` if this directory does not yet exist.' >&2
