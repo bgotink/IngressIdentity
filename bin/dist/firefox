@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd $(dirname "$0")../..
+cd $(dirname "$0")/../..
 
 # ensure firefox sdk is installed
 make tools/firefox-sdk
@@ -22,5 +22,5 @@ buildversion=$(grep -F '"version"' package.json | cut -d':' -f2 | tr -d ' ",')
 # cfx xpi --update-url='http://bram.gotink.me/IngressIdentity/firefox/update.rdf' --update-link=https://raw.githubusercontent.com/bgotink/IngressIdentity/gh-master/firefox/releases/v$buildversion.xpi
 cfx xpi
 
-mv ingress-identity.xpi        ../../versions/firefox/v$buildversion.xpi
+mv ingress-identity.xpi ../../versions/firefox/v$buildversion.xpi
 # mv ingress-identity.update.rdf ../../versions/firefox/update.rdf
