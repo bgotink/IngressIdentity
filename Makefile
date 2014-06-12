@@ -8,10 +8,11 @@ JS_OPTIONS_DEPS = src/coffee/communication.coffee src/coffee/log.coffee src/coff
 JS_BACKGROUND_DEPS = src/coffee/log.coffee src/coffee/data/spreadsheets.coffee src/coffee/data/interpreter.coffee src/coffee/data/merger.coffee src/coffee/data/data.coffee src/coffee/background.coffee
 JS_HELP_DEPS = src/coffee/help.coffee
 
-FILES= $(MDs) $(JSs) $(CSSs) $(HTMLs) img vendor
+FILES= $(MDs) $(JSs) $(CSSs) $(HTMLs) vendor
 
 define copy
 @echo "Copying $<"
+@rm -r $@
 @cp -aR $< $@
 endef
 
@@ -78,11 +79,6 @@ build/%/vendor: src/vendor
 	$(copy)
 	rm -rf $@/{css/bootstrap{-theme*,.css*},js/bootstrap.js,js/class.js}
 
-build/%/img: src/img
-	rm -rf $@
-	$(copy)
-	rm $@/*/README.md $@/logo/ingress.svg
-
 build/%/README.md: README.md
 	$(copy)
 
@@ -115,6 +111,28 @@ build/common/css/%.css: src/less/%.less src/less/variables.less src/less/general
 
 build/%/js: ; $(mkdir)
 build/%/css: ; $(mkdir)
+
+build/%/img:
+	$(mkdir)
+
+build/%/img/logo:
+	$(mkdir)
+
+build/%/img/logo/ingress.png: src/img/logo.svg build/%/img/logo
+	convert -background none $< $@
+
+build/%/img/logo/16.png: src/img/logo.svg build/%/img/logo
+	convert -background none $< -resize 16 $@
+
+build/%/img/logo/48.png: src/img/logo.svg build/%/img/logo
+	convert -background none $< -resize 48 $@
+
+build/%/img/logo/128.png: src/img/logo.svg build/%/img/logo
+	convert -background none $< -resize 128 $@
+
+build/%/img/anomalies: src/img/anomalies build/%/img
+	$(copy)
+	@rm $@/README.md
 
 # main
 
@@ -164,9 +182,9 @@ build/chrome-release: build/chrome-release/js build/chrome-release/css
 
 # main
 
-chrome: common build/chrome $(addprefix build/chrome/, $(FILES)) build/chrome/manifest.json;
+chrome: common build/chrome $(addprefix build/chrome/, $(FILES) manifest.json img/anomalies $(addprefix img/logo/, ingress.png 16.png 48.png 128.png))
 
-chrome-release: common-release build/chrome-release $(addprefix build/chrome-release/, $(FILES)) build/chrome-release/manifest.json;
+chrome-release: common-release build/chrome-release $(addprefix build/chrome-release/, $(FILES) manifest.json img/anomalies $(addprefix img/logo/, ingress.png 16.png 48.png 128.png))
 
 chrome-all: chrome chrome-release
 
@@ -210,16 +228,16 @@ build/IngressIdentity-release.safariextension/css/%: build/common-release/css/%
 
 build/%.safariextension: build/%.safariextension/js build/%.safariextension/css
 
-build/%.safariextension/img/toolbar-logo.png: src/img/logo/48.png tools/gray2transparent/gray2transparent
-	convert $< tmp.exr
+build/%.safariextension/img/logo/toolbar.png: src/img/logo.svg build/%.safariextension/img/logo tools/gray2transparent/gray2transparent
+	convert -background none $< -resize 48 tmp.exr
 	tools/gray2transparent/gray2transparent tmp.exr tmp2.exr
 	convert tmp2.exr $@
 	rm tmp.exr tmp2.exr
 
 # main
 
-safari: common build/IngressIdentity.safariextension $(addprefix build/IngressIdentity.safariextension/, $(FILES)) build/IngressIdentity.safariextension/Info.plist build/IngressIdentity.safariextension/img/toolbar-logo.png;
+safari: common build/IngressIdentity.safariextension $(addprefix build/IngressIdentity.safariextension/, $(FILES) Info.plist img/anomalies img/logo/toolbar.png img/logo/ingress.png)
 
-safari-release: common-release build/IngressIdentity-release.safariextension $(addprefix build/IngressIdentity-release.safariextension/, $(FILES)) build/IngressIdentity-release.safariextension/Info.plist build/IngressIdentity-release.safariextension/img/toolbar-logo.png;
+safari-release: common-release build/IngressIdentity-release.safariextension $(addprefix build/IngressIdentity-release.safariextension/, $(FILES) Info.plist img/anomalies img/logo/toolbar.png img/logo/ingress.png)
 
 safari-all: safari safari-release
