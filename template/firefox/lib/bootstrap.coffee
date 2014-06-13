@@ -69,7 +69,7 @@ startup = ->
 
         callback reply.reply
     backgroundPage.port.on 'iidentity-request-from-background', (message) ->
-        tabs.each (tab) ->
+        for tab in tabs
             if tab.id in workers
                 workers[tab.id].port.emit 'iidentity-request-from-background', message
 
