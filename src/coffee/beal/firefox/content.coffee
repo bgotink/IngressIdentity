@@ -36,8 +36,6 @@
         self.options.baseURI + rel
 
     exports.init = ->
-        module.log.log 'Initializing IngressIdentity on %s', document.location.href
-
         self.port.on 'iidentity-answer-from-background', (message) ->
                 callbackId = message.id
 
