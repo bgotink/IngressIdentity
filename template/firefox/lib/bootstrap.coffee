@@ -85,10 +85,11 @@ startup = ->
         contentStyleFile: [ url 'css/content.css' ]
         attachTo: [ 'existing', 'top', 'frame' ]
         onAttach: (worker) ->
-            workers[worker.tab.id] = worker
+            tabId = worker.tab.id
+            workers[tabId] = worker
 
             worker.on 'detach', ->
-                delete workers[worker.tab.id]
+                delete workers[tabId]
 
             worker.port.on 'iidentity-request-to-background', createContentScriptMessageListener worker, worker.tab
 
