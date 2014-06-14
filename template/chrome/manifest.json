@@ -31,8 +31,6 @@
     ],
 
     "web_accessible_resources": [
-        "img/anomalies/*.png",
-        "js/*.map",
-        "coffee/*"
+        "img/anomalies/*.png"
     ]
 }
