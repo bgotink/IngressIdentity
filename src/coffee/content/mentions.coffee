@@ -307,8 +307,5 @@
                 $root
                     .find match
                     .each ->
-                        if 'matched' is $(@).attr 'data-iidentity'
-                            return
-
                         module.doOnce @, handler.handler, match
 )(iidentity or (iidentity = window.iidentity = {}), window.jQuery, window)
