@@ -19,7 +19,7 @@ cd build/firefox-release
 buildversion=$(grep -F '"version"' package.json | cut -d':' -f2 | tr -d ' ",')
 
 # build and move
-cfx xpi --update-url='http://bram.gotink.me/IngressIdentity/assets/firefox/update.rdf' --update-link='https://raw.githubusercontent.com/bgotink/IngressIdentity/gh-pages/assets/firefoxIngressIdentity.xpi'
+cfx xpi --update-url='http://bram.gotink.me/IngressIdentity/assets/firefox/update.rdf' --update-link='https://raw.githubusercontent.com/bgotink/IngressIdentity/gh-pages/assets/firefox/IngressIdentity.xpi'
 # cfx xpi
 
 mv ingress-identity.xpi ../../versions/firefox/v$buildversion.xpi
