@@ -283,6 +283,15 @@ build/%/data/img/anomalies: src/img/anomalies build/%/data/img
 build/%/data/img/logo/ingress.png: src/img/logo.svg
 	convert -background none $< $@
 
+build/%/data/img/logo/16.png: src/img/logo.svg
+	convert -background none $< -resize 16 $@
+
+build/%/data/img/logo/32.png: src/img/logo.svg
+	convert -background none $< -resize 32 $@
+
+build/%/data/img/logo/64.png: src/img/logo.svg
+	convert -background none $< -resize 64 $@
+
 build/firefox/data/css/%: build/common/css/% build/firefox/data/css
 	$(copy)
 
@@ -348,9 +357,9 @@ build/%/icon64.png: src/img/logo.svg
 
 # main
 
-firefox: common build/firefox $(addprefix build/firefox/, icon.png icon64.png lib lib/bootstrap.js package.json $(MDs) data $(addprefix data/, js css $(JSs) $(HTMLs) $(CSSs) vendor img $(addprefix img/, anomalies logo $(addprefix logo/, ingress.png))))
+firefox: common build/firefox $(addprefix build/firefox/, icon.png icon64.png lib lib/bootstrap.js package.json $(MDs) data $(addprefix data/, js css $(JSs) $(HTMLs) $(CSSs) vendor img $(addprefix img/, anomalies logo $(addprefix logo/, ingress.png 16.png 32.png 64.png))))
 
-firefox-release: common build/firefox-release $(addprefix build/firefox-release/, icon.png icon64.png lib lib/bootstrap.js package.json $(MDs) data $(addprefix data/, js css $(JSs) $(HTMLs) $(CSSs) vendor img $(addprefix img/, anomalies logo $(addprefix logo/, ingress.png))))
+firefox-release: common build/firefox-release $(addprefix build/firefox-release/, icon.png icon64.png lib lib/bootstrap.js package.json $(MDs) data $(addprefix data/, js css $(JSs) $(HTMLs) $(CSSs) vendor img $(addprefix img/, anomalies logo $(addprefix logo/, ingress.png 16.png 32.png 64.png))))
 
 firefox-all: firefox firefox-release
 
