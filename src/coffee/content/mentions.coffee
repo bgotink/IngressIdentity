@@ -119,8 +119,7 @@
             Object.extended player.extra
                 .reject 'anomaly', 'community', 'event'
                 .each (name, value) ->
-                    if not Array.isArray value
-                        value = [ value ]
+                    value = [ value ] unless Array.isArray value
 
                     # allow two kinds of custom extra tags:
                     # boolean & string
@@ -222,7 +221,7 @@
 
                 createBlockElement oid, match, (err, $infoElem) ->
                     if err?
-                        if err == 'not-found'
+                        if err is 'not-found'
                             $elem
                                 .parent()
                                 .find '.iidentity-wrapper[data-oid=' + oid + ']'
@@ -254,7 +253,7 @@
 
                 createInlineElement oid, match, (err, $infoElem) ->
                     if err?
-                        if err == 'not-found'
+                        if err is 'not-found'
                             $elem
                                 .parent()
                                 .find '.iidentity-iwrapper[data-oid=' + oid + ']'
@@ -281,7 +280,7 @@
 
                 createConciseInlineElement oid, match, (err, $infoElem) ->
                     if err?
-                        if err == 'not-found'
+                        if err is 'not-found'
                             $elem
                                 .parent()
                                 .find '.iidentity-ciwrapper[data-oid=' + oid + ']'

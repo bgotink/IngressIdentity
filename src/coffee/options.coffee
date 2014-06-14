@@ -67,8 +67,8 @@
             lastOrderRecorded = newOrder
 
     reloadManifestErrors = ->
-        if $('#source_list > ul').data 'errors-loaded'
-            return
+        return if $('#source_list > ul').data 'errors-loaded'
+
         $ '#source_list > ul'
             .data 'errors-loaded', true
 
@@ -332,7 +332,7 @@
                 $key.replaceWith($ '<input type="text" class="form-control manifest-key"></input>'
                     .val if $key.text() is $manifest.data 'key' then '' else $key.text()
                     .data 'old-name', $key.text()
-                    .data 'url', if 'A' == $key.prop 'tagName' then $key.attr 'href' else null
+                    .data 'url', if 'A' is $key.prop 'tagName' then $key.attr 'href' else null
                 )
 
         $ '#source_list'

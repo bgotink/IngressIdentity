@@ -36,8 +36,7 @@
         if request.type is 'update'
             lastUpdate = +new Date
 
-            if onUpdate
-                onUpdate()
+            onUpdate() if onUpdate?
 
         # ignore: the options page gets all the messages meant for the background
         # page as well... logging/throwing here would fill the console with junk
@@ -52,7 +51,7 @@
             type: 'getPlayer'
             oid: oid
 
-        if typeof extra isnt 'undefined' and extra?
+        if extra?
             request.extra = extra
 
         @send request, (result) ->

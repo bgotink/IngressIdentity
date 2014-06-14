@@ -1,3 +1,4 @@
 $ ->
     $ 'body'
-        .scrollspy { target: '.help-nav' }
+        .scrollspy
+            target: '.help-nav'
