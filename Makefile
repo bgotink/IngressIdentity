@@ -280,17 +280,17 @@ build/%/lib:
 build/%/data/img/anomalies: src/img/anomalies build/%/data/img
 	$(copy)
 
-build/%/data/img/logo/16.png: src/img/logo.svg build/%/data/img/logo
+build/%/data/img/logo/ingress.png: src/img/logo.svg
+	convert -background none $< $@
+
+build/%/data/img/logo/16.png: src/img/logo.svg
 	convert -background none $< -resize 16 $@
 
-build/%/data/img/logo/32.png: src/img/logo.svg build/%/data/img/logo
+build/%/data/img/logo/32.png: src/img/logo.svg
 	convert -background none $< -resize 32 $@
 
-build/%/data/img/logo/64.png: src/img/logo.svg build/%/data/img/logo
+build/%/data/img/logo/64.png: src/img/logo.svg
 	convert -background none $< -resize 64 $@
-
-build/%/data/img/logo/ingress.png: src/img/logo.svg build/%/img/logo
-	convert -background none $< $@
 
 build/firefox/data/css/%: build/common/css/% build/firefox/data/css
 	$(copy)
@@ -313,7 +313,7 @@ build/firefox/%.md: %.md build/firefox
 build/firefox-release/data/%.md: %.md build/firefox-release
 	$(copy)
 
-build/%/package.json: template/%/package.json build/%
+build/%/package.json: template/%/package.json
 	$(copy)
 
 build/firefox/lib/bootstrap.js: template/firefox/lib/bootstrap.coffee
@@ -349,10 +349,10 @@ build/firefox-release/data/js/help.js: $(JS_HELP_DEPS)
 build/%/data/vendor: src/vendor build/%/data
 	$(copy)
 
-build/%/icon.png: src/img/logo.svg build/%
+build/%/icon.png: src/img/logo.svg
 	convert -background none $< -resize 48 $@
 
-build/%/icon64.png: src/img/logo.svg build/%
+build/%/icon64.png: src/img/logo.svg
 	convert -background none $< -resize 64 $@
 
 # main
@@ -369,7 +369,7 @@ firefox-dist: firefox-release
 # testing and building XPI
 
 tools/firefox-sdk: tools
-	@git clone git://github.com/mozilla/addon-sdk.git tools/firefox-sdk
+	@if [ -d $@ ]; then cd $@ && git pull; else git clone -b release git://github.com/mozilla/addon-sdk.git $@; fi
 
 tools/firefox-test-profile: tools
 	@$(mkdir)

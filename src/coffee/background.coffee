@@ -71,7 +71,11 @@
         request[key] = value
 
         module.log.log 'Setting storage key %s to %s', key, '' + value
-        storage.set request, callback
+        storage.set request, ->
+            if Object.has storageCache, key
+                delete storageCache[key]
+
+            callback()
 
     getManifestKeys = (callback) ->
         module.log.log 'Fetching manifest keys...'
@@ -87,7 +91,7 @@
         getManifestKeys (keys) ->
             key = key.compact()
 
-            if not keys.none key
+            unless keys.none key
                 module.log.log 'manifest key %s already loaded', key
                 callback false
                 return
@@ -142,8 +146,6 @@
                 delete names[key]
 
             setStoredData 'manifest_names', names, ->
-                if Object.has storageCache, 'manifest_names'
-                    delete storageCache.manifest_names
                 if Object.has storageCache, 'manifests'
                     delete storageCache.manifests
 
@@ -199,7 +201,7 @@
 
     messageListeners =
         getManifests: (request, sender, sendResponse) ->
-            if not isOptionsPage sender.url
+            unless isOptionsPage sender.url
                 module.log.error 'A \'getManifests\' message can only originate from the options page'
                 module.log.error 'Not from %s', sender.url
                 # silently die by not sending a response
@@ -218,7 +220,7 @@
 
                     module.log.log 'Loaded manifests: ', keys
 
-                    if not data?
+                    unless data?
                         module.log.log 'Data not loaded, yet, returning empty reply'
                         sendResponse {}
 
@@ -228,7 +230,7 @@
                         manifest = data.getSource key
                         manifestData = []
 
-                        if not manifest?
+                        unless manifest?
                             module.log.error 'Strangely manifest %s cannot be found', key
                         else if manifest.isCombined()
                             manifest.getSources().each (source) ->
@@ -260,21 +262,21 @@
             true
 
         getManifestErrors: (request, sender, sendResponse) ->
-            if not isOptionsPage sender.url
+            unless isOptionsPage sender.url
                 module.log.error 'A \'getManifestErrors\' message can only originate from the options page'
                 module.log.error 'Not from %s', sender.url
                 # silently die by not sending a response
                 return false
 
-            if not data?
-                sendResponse {}
-            else
+            if data?
                 sendResponse data.getErrors()
+            else
+                sendResponse {}
 
             false
 
         addManifest: (request, sender, sendResponse) ->
-            if not isOptionsPage sender.url
+            unless isOptionsPage sender.url
                 module.log.error 'An \'addManifest\' message can only originate from the options page'
                 module.log.error 'Not from %s', sender.url
                 # silently die by not sending a response
@@ -282,7 +284,7 @@
 
             disableUpdateListener = true
             addManifestKey request.key, request.name, (added) ->
-                if not added
+                unless added
                     disableUpdateListener = false
                     sendResponse { status: 'duplicate' }
                     return
@@ -294,7 +296,7 @@
             true
 
         removeManifest: (request, sender, sendResponse) ->
-            if not isOptionsPage sender.url
+            unless isOptionsPage sender.url
                 module.log.error 'A \'removeManifest\' message can only originate from the options page'
                 module.log.error 'Not from %s', sender.url
                 # silently die by not sending a response
@@ -302,7 +304,7 @@
 
             disableUpdateListener = true
             removeManifestKey request.key, (removed) ->
-                if not removed
+                unless removed
                     disableUpdateListener = false
                     sendResponse { status: 'nonexistent' }
                     return
@@ -314,7 +316,7 @@
             true
 
         renameManifest: (request, sender, sendResponse) ->
-            if not isOptionsPage sender.url
+            unless isOptionsPage sender.url
                 module.log.error 'A \'renameManifest\' message can only originate from the options page'
                 module.log.error 'Not from %s', sender.url
                 # silently die by not sending a response
@@ -322,12 +324,12 @@
 
             module.log.log 'Renaming manifest ', request.key, ' from ', request.oldName, ' to ', request.newName
             renameManifest request.key, request.oldName, request.newName, (status) ->
-                sendResponse { status: status ? 'success' : 'failed' }
+                sendResponse { status: if status then 'success' else 'failed' }
 
             true
 
         changeManifestOrder: (request, sender, sendResponse) ->
-            if not isOptionsPage sender.url
+            unless isOptionsPage sender.url
                 module.log.error 'A \'changeManifestOrder\' message can only originate from the options page'
                 module.log.error 'Not from %s', sender.url
                 # silently die by not sending a response
@@ -340,7 +342,7 @@
             true
 
         reloadData: (request, sender, sendResponse) ->
-            if not isOptionsPage sender.url
+            unless isOptionsPage sender.url
                 module.log.error 'A \'reloadData\' message can only originate from the options page'
                 module.log.error 'Not from %s', sender.url
                 # silently die by not sending a response
@@ -352,7 +354,7 @@
             true
 
         setOption: (request, sender, sendResponse) ->
-            if not isOptionsPage sender.url
+            unless isOptionsPage sender.url
                 module.log.error 'A \'setOption\' message can only originate from the options page'
                 module.log.error 'Not from %s', sender.url
                 # silently die by not sending a response
@@ -372,40 +374,46 @@
             true
 
         hasPlayer: (request, sender, sendResponse) ->
-            if not data?
-                sendResponse { result: false }
+            if data?
+                sendResponse
+                    result: data.hasPlayer request.oid
             else
-                sendResponse { result: data.hasPlayer request.oid }
+                sendResponse
+                    result: false
 
             false
 
         getSourcesForExtra: (request, sender, sendResponse) ->
-            if not data?
-                sendResponse { result: [] }
-            else
+            if data?
                 getStoredData 'option-match-extra-' + request.tag, true, (match) ->
-                    if not match
-                        sendResponse { result: [] }
+                    if match
+                        sendResponse
+                            result: data.getSourcesForExtra request.tag, request.oid
                     else
-                        sendResponse { result: data.getSourcesForExtra request.tag, request.oid }
+                        sendResponse
+                            result: []
+            else
+                sendResponse
+                    result: []
 
             true
 
         getPlayer: (request, sender, sendResponse) ->
-            if not data?
+            unless data?
                 sendResponse { status: 'not-found' }
                 return false
+
             doGetPlayer = ->
                 player = data.getPlayer request.oid
 
-                if not player?
+                unless player?
                     sendResponse { status: 'not-found' }
 
                     return false
 
                 if Object.has player.extra, 'anomaly'
                     getStoredData 'option-show-anomalies', true, (showAnomalies) ->
-                        if not showAnomalies
+                        unless showAnomalies
                             delete player.extra.anomaly
 
                         sendResponse { status: 'success', player: player }
@@ -420,7 +428,7 @@
                 return doGetPlayer()
 
             getStoredData 'option-match-' + request.extra.match, true, (doMatch) ->
-                if not doMatch
+                unless doMatch
                     sendResponse { status: 'not-found' }
                     return
 
@@ -476,8 +484,7 @@
                         err.each module.log.error
 
                 window.setInterval ->
-                    if not data?
-                        return
+                    return unless data?
 
                     module.log.log 'Performing hourly update...'
                     data.update (updated) ->

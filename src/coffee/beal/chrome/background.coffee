@@ -9,9 +9,9 @@
 
     exports.storage =
         get: (data, callback) ->
-            storage.get(data, callback)
+            storage.get data, callback
         set: (data, callback) ->
-            storage.set(data, callback)
+            storage.set data, callback
 
     exports.isOptionsPage = (url) ->
         !!url.match new RegExp 'chrome-extension:\\/\\/' + chrome.runtime.id + '/options.html.*'
