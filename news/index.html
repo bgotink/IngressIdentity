@@ -1,0 +1,73 @@
+---
+layout: default
+title: News &bull; IngressIdentity
+scrollspy: true
+---
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
+            <h1 id="top">
+                <a name="top"></a>
+                {% if paginator.page == 1 %}
+                    IngressIdentity News
+                {% else %}
+                    IngressIdentity News - page {{ paginator.page }}
+                {% endif %}
+            </h1>
+
+            {% for post in paginator.posts %}
+            {% assign postid = post.id | replace: '/', '-' %}
+                <h2 id="{{ postid }}">
+                    <a name="{{ postid }}" href="{{ site.baseurl }}{{ post.url }}">
+                        {{ post.title }}
+                    </a>
+                </h2>
+                <span class="post-date">{{ post.date }}</span>
+                {{ post.content }}
+            {% endfor %}
+
+            <!-- Pagination -->
+            <ul class="pager">
+                {% if paginator.previous_page %}
+                    <li class="previous">
+                        <a href="{{ site.baseurl }}/news/{{ paginator.previous_page }}">
+                {% else %}
+                    <li class="previous disabled">
+                        <a href="#">
+                {% endif %}
+                            &larr; Newer
+                        </a>
+                    </li>
+
+                {% if paginator.next_page %}
+                    <li class="next">
+                        <a href="{{ site.baseurl }}/news/{{ paginator.next_page }}" class="next">
+                {% else %}
+                    <li class="next disabled">
+                        <a class="next ">
+                {% endif %}
+                            Older &rarr;
+                        </a>
+                    </li>
+            </ul>
+        </div>
+
+        <!-- side bar navigation -->
+        <div class="col-md-2 hidden-xs hidden-sm hidden-print">
+            <div class="help-nav">
+                <ul class="nav">
+                    <li>
+                        <a href="#top">News</a>
+                        <ul class="nav">
+                            {% for post in paginator.posts %}
+                            <li><a href="#{{ post.id | replace: '/', '-' }}">{{ post.title }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                </ul>
+                <a href="#top">Back to top</a>
+            </div>
+        </div>
+    </div>
+</div>

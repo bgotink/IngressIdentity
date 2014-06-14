@@ -1,0 +1,21 @@
+baseurl: "/IngressIdentity"
+
+paginate: 10
+paginate_path: "news/:num"
+
+collections:
+    releases:
+        output: false
+
+defaults:
+    -
+        scope:
+            path: ""
+        values:
+            layout: "default"
+            scrollspy: false
+    -
+        scope:
+            path: "assets"
+        values:
+            layout: "none"
