@@ -322,7 +322,7 @@
 
             module.log.log 'Renaming manifest ', request.key, ' from ', request.oldName, ' to ', request.newName
             renameManifest request.key, request.oldName, request.newName, (status) ->
-                sendResponse { status: status ? 'success' : 'failed' }
+                sendResponse { status: if status then 'success' else 'failed' }
 
             true
 
