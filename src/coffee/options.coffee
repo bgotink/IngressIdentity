@@ -12,7 +12,7 @@
             module.comm.send { type: 'getManifestErrors' }, (result) ->
                 callback result
         addManifest: (key, name, callback) ->
-            module.comm.send { type: 'addManifest', key: key, name: (Object.isString(name) ? name : '') }, (result) ->
+            module.comm.send { type: 'addManifest', key: key, name: (if Object.isString(name) then name else '') }, (result) ->
                 callback result.status
         renameManifest: (key, oldName, newName, callback) ->
             module.comm.send {type: 'renameManifest', key: key, oldName: oldName, newName: newName}, (result) ->
