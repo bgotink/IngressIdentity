@@ -276,7 +276,7 @@
             showAlert 'add-' + result
 
     $ ->
-        module.extension.init()
+        module.extension.init() if module.extension.init?
 
         $ '.alert .close'
             .on 'click.ii.close', ->

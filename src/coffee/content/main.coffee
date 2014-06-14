@@ -37,7 +37,7 @@
         module.checkElement window.document
 
     $ ->
-        module.extension.init()
+        module.extension.init() if module.extension.init?
         module.comm.setOnUpdate forceUpdate
 
         forceUpdate()
