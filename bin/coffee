@@ -34,12 +34,19 @@ log "into $destfile"
 # coffee -> js
 # => disable logging by default
 # => uglify
-cat $sources \
-    | coffee --no-header -cs \
-    | ( if [ $minify -eq 0 ]; then cat > "$destfile"; else sed -e 's/enableLogging = true/enableLogging = false/' | uglifyjs - -o "$destfile" --screw-ie8 --mangle toplevel --compress --preamble "/**
- * This file is part of IngressIdentity
- *
- * @author Bram Gotink (@bgotink)
- * @license MIT
- * @url https://github.com/bgotink/IngressIdentity
- */"; fi )
+if [ $minify -eq 0 ]; then
+    cat $sources \
+        | coffee --no-header -cs --map \
+        | cat > "$destfile"
+else
+    cat $sources \
+        | coffee --no-header -cs \
+        | sed -e 's/enableLogging = true/enableLogging = false/' \
+        | uglifyjs - -o "$destfile" --screw-ie8 --mangle toplevel --compress --preamble "/**
+     * This file is part of IngressIdentity
+     *
+     * @author Bram Gotink (@bgotink)
+     * @license MIT
+     * @url https://github.com/bgotink/IngressIdentity
+     */"
+fi
