@@ -52,10 +52,10 @@ createContentScriptMessageListener = (sender, tab) ->
         backgroundPage.port.emit 'iidentity-request-to-background', message
 
 startup = ->
-    console.error 'Bootstrapping IngressIdentity'
+    console.log 'Bootstrapping IngressIdentity'
 
     # start the background page
-    console.error 'Creating background page'
+    console.log 'Creating background page'
     backgroundPage.destroy() if backgroundPage?
     backgroundPage = pageWorker
         contentURL: url 'background.html'
@@ -74,7 +74,7 @@ startup = ->
                 workers[tab.id].port.emit 'iidentity-request-from-background', message
 
     # start the content scripts
-    console.error 'Creating content script'
+    console.log 'Creating content script'
     contentScript.destroy() if contentScript?
     contentScript = pageMod
         include: [ "https://plus.google.com/*", "https://apis.google.com/*" ]
@@ -94,7 +94,7 @@ startup = ->
             worker.port.on 'iidentity-request-to-background', createContentScriptMessageListener worker, worker.tab
 
     # create action button
-    console.error 'Creating button'
+    console.log 'Creating button'
     actionButton.destroy() if actionButton?
     actionButton = createActionButton
         id: 'iidenitty-show-options'
@@ -107,7 +107,7 @@ startup = ->
             tabs.open
                 url: url 'options.html'
                 onReady: (tab) ->
-                    console.error 'Attaching options scripts to options.html'
+                    console.log 'Attaching options scripts to options.html'
                     worker = tab.attach
                         contentScriptFile: [
                             'vendor/js/jquery.min.js'
