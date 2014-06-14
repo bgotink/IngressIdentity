@@ -71,7 +71,11 @@
         request[key] = value
 
         module.log.log 'Setting storage key %s to %s', key, '' + value
-        storage.set request, callback
+        storage.set request, ->
+            if Object.has storageCache, key
+                delete storageCache[key]
+
+            callback()
 
     getManifestKeys = (callback) ->
         module.log.log 'Fetching manifest keys...'
@@ -142,8 +146,6 @@
                 delete names[key]
 
             setStoredData 'manifest_names', names, ->
-                if Object.has storageCache, 'manifest_names'
-                    delete storageCache.manifest_names
                 if Object.has storageCache, 'manifests'
                     delete storageCache.manifests
 
