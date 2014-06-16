@@ -1,0 +1,22 @@
+---
+layout: default
+---
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
+            <h1>Release {{ page.version }}{% unless page.stable %} beta{% endunless %}</h1>
+            <ul class="list-inline">
+                <li>{{ page.date | date_to_string }}</li>
+                <li><a href="https://github.com/bgotink/IngressIdentity/commit/{{ page.commit }}">{{ page.commit }}</a></li>
+                <li class="browsers">
+                    {% for browser in page.browsers %}
+                    <img class="browser" src="{{ site.baseurl }}/assets/img/browser/{{ browser }}.png">
+                    {% endfor %}
+                </li>
+            </ul>
+
+            {{ content }}
+        </div>
+    </div>
+</div>

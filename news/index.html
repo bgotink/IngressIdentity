@@ -17,14 +17,36 @@ scrollspy: true
             </h1>
 
             {% for post in paginator.posts %}
-            {% assign postid = post.id | replace: '/', '-' %}
+            {%     assign postid = post.id | replace: '/', '-' %}
+            {%     if post.layout == 'release' %}
+                <h2 id="{{ postid }}">
+                    <a name="{{ postid }}" href="{{ site.baseurl }}{{ post.url }}">
+                        Release {{ post.title }}{% unless post.stable %} beta{% endunless %}
+                    </a>
+                </h2>
+                <ul class="list-inline">
+                    <li>{{ post.date | date_to_string }}</li>
+                    <li><a href="https://github.com/bgotink/IngressIdentity/commit/{{ post.commit }}">{{ post.commit }}</a></li>
+                    <li class="browsers">
+                        {% for browser in post.browsers %}
+                        <img class="browser" src="{{ site.baseurl }}/assets/img/browser/{{ browser }}.png">
+                        {% endfor %}
+                    </li>
+                </ul>
+
+                {{ post.content }}
+
+            {%     else %}
                 <h2 id="{{ postid }}">
                     <a name="{{ postid }}" href="{{ site.baseurl }}{{ post.url }}">
                         {{ post.title }}
                     </a>
                 </h2>
-                <span class="post-date">{{ post.date }}</span>
+                <ul class="list-inline">
+                    <li>{{ post.date | date_to_string }}</li>
+                </ul>
                 {{ post.content }}
+            {%     endif %}
             {% endfor %}
 
             <!-- Pagination -->
@@ -57,14 +79,13 @@ scrollspy: true
         <div class="col-md-2 hidden-xs hidden-sm hidden-print">
             <div class="help-nav">
                 <ul class="nav">
+                    {% for post in paginator.posts %}
                     <li>
-                        <a href="#top">News</a>
-                        <ul class="nav">
-                            {% for post in paginator.posts %}
-                            <li><a href="#{{ post.id | replace: '/', '-' }}">{{ post.title }}</a></li>
-                            {% endfor %}
-                        </ul>
+                        <a href="#{{ post.id | replace: '/', '-' }}">
+                            {{ post.title }}
+                        </a>
                     </li>
+                    {% endfor %}
                 </ul>
                 <a href="#top">Back to top</a>
             </div>

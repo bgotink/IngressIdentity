@@ -1,0 +1,47 @@
+nav.navbar {
+    margin-bottom: 0px;
+}
+
+.jumbotron.transparent {
+    background: none;
+}
+
+.jumbotron:last-child {
+    margin-bottom: 0px;
+}
+
+.jumbotron + .carousel {
+    margin-top: -30px;
+}
+
+.carousel-indicators li {
+    border: 1px solid black;
+}
+.carousel-indicators .active {
+    background-color: black;
+}
+
+.carousel.screenshots {
+    background-color: #e5e5e5;
+}
+
+body > .background {
+    margin-top: 2em;
+    
+    filter: blur(5px);
+    // Browser Specific
+    -webkit-filter: blur(5px);
+    -moz-filter: blur(5px);
+    -o-filter: blur(5px);
+    -ms-filter: blur(5px);
+}
+
+.jumbotron img.browser {
+    margin: 10%;
+    width: 80%;
+    height: auto;
+}
+
+span.red {
+    color: red;
+}

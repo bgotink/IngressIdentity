@@ -5,20 +5,28 @@
     <title>{{ page.title }}</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
 
-    <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/pjhgnhcijlkffbncjecmcdpndjckcbik">
+    <link rel="icon" type="image/png" href="{{ site.baseurl}}/assets/img/icon.png">
 
     {% if page.inline_install %}
-    <link rel="icon" type="image/png" href="{{ site.baseurl}}/assets/img/icon.png">
+    <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/pjhgnhcijlkffbncjecmcdpndjckcbik">
     {% endif %}
 
     <link rel="stylesheet" type="text/css" href="{{ site.baseurl }}/assets/vendor/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="{{ site.baseurl }}/assets/css/site.css">
+
+    {% if page.jumbotron %}
+    <link rel="stylesheet" type="text/css" href="{{ site.baseurl }}/assets/css/jumbotron.css">
+    {% endif %}
 
     <script type="text/javascript" src="{{ site.baseurl }}/assets/vendor/js/jquery.min.js"></script>
     <script type="text/javascript" src="{{ site.baseurl }}/assets/vendor/js/bootstrap.min.js"></script>
 
     {% if page.scrollspy %}
     <script type="text/javascript" src="{{ site.baseurl }}/assets/js/scrollspy.js"></script>
+    {% endif %}
+
+    {% if page.jumbotron %}
+    <script type="text/javascript" src="{{ site.baseurl }}/assets/js/jumbotron.js"></script>
     {% endif %}
 </head>
 

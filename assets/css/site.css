@@ -189,8 +189,8 @@ button {
   color: #999;
 }
 
-body {
-    padding-top: 50px;
+body > .background {
+    margin-top: 50px;
 }
 a.navbar-brand {
     padding: 5px;
@@ -198,4 +198,9 @@ a.navbar-brand {
 .navbar-brand img {
     width: auto;
     height: 40px;
+}
+
+.browsers > img.browser {
+    height: 12pt;
+    width: auto;
 }

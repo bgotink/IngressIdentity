@@ -1,59 +1,256 @@
 ---
-layout: default
+layout: base
 title: IngressIdentity &bull; Ingress info in Google+
 scrollspy: true
+jumbotron: true
 ---
 
-<div class="container">
-    <div class="row">
-        <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
-            <!--
-                A _short_ introduction
-            -->
-            <h1 id="top"><a name="top"></a>IngressIdentity</h1>
-            <p>
-                IngressIdentity is a browser plugin that adds Ingress player info
-                to a player's Google+ profile, to posts, comments, YouTube comments&hellip;
-            </p>
-            <p>
-                No longer will you wonder what the nickname is of this gentleman, or
-                whether that gal is already level 10.
-            </p>
-            <p>
-                A small overview of the features of this plugin:
-            </p>
-            <ul>
-                <li>Supports <b>Chromium / Google Chrome</b>, <b>Safari</b> and <b>Mozilla Firefox</b>.</li>
-                <li><b>Show player information</b> on the Google+ website:
-                    <ul>
-                        <li>Adds a full overview of the player data to the 'About' tab on
-                            a player's Google+ profile.</li>
-                        <li>Shows a player's name, level and a list of the anomalies they
-                            went to next to post authors, comment authors, event RSVPs&hellip;</li>
-                        <li>Shows a player's name next to mentions in text.</li>
-                        <li>Shows a small overview of the info in the pop-up that appears
-                            when you hover over an agent's name.</li>
-                    </ul>
-                </li>
-                <li>All <b>data is stored securely</b> on Google Drive.</li>
-            </ul>
+<div class="background"></div>
 
+{% include nav.html %}
 
+<div class="jumbotron">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
+                <h1>IngressIdentity</h1>
+                <p>View player information on Google+.</p>
+            </div>
         </div>
+    </div>
+</div>
 
-        <!-- side bar navigation -->
-        <div class="col-md-2 hidden-xs hidden-sm hidden-print">
-            <div class="help-nav">
-                <ul class="nav">
-                    <li><a href="#top">Introduction</a></li>
+<div id="carousel" class="carousel slide screenshots" data-ride="carousel" data-pause="" data-interval="10000">
+  <!-- Indicators -->
+    <ol class="carousel-indicators">
+        <li data-target="#carousel" data-slide-to="0" class="active"></li>
+        <li data-target="#carousel" data-slide-to="1"></li>
+        <li data-target="#carousel" data-slide-to="2"></li>
+        <li data-target="#carousel" data-slide-to="3"></li>
+    </ol>
+
+    <!-- Wrapper for slides -->
+    <div class="carousel-inner">
+        <div class="item active">
+            <img src="{{ site.baseurl }}/assets/img/screenshots/klue_profile_large.png">
+        </div>
+        <div class="item">
+            <img src="{{ site.baseurl }}/assets/img/screenshots/hank_johnson.png">
+        </div>
+        <div class="item">
+            <img src="{{ site.baseurl }}/assets/img/screenshots/klue_posts.png">
+        </div>
+        <div class="item">
+            <img src="{{ site.baseurl }}/assets/img/screenshots/notification.png">
+        </div>
+    </div>
+
+  <!-- Controls -->
+  <a class="left carousel-control" href="#carousel" data-slide="prev">
+    <span class="glyphicon glyphicon-chevron-left"></span>
+  </a>
+  <a class="right carousel-control" href="#carousel" data-slide="next">
+    <span class="glyphicon glyphicon-chevron-right"></span>
+  </a>
+</div>
+
+<div class="jumbotron transparent">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
+                <h2>Features</h2>
+                <p>
+                    Show player information on the Google+ website:
+                </p>
+                <ul>
                     <li>
-                        <a href="#news">News</a>
-                        <ul class="nav">
-                            
-                        </ul>
+                        <p>
+                            Adds a full overview of the player data to the 'About' tab on
+                            a player's Google+ profile.
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            Shows a player's name, level and a list of the anomalies they
+                            went to next to post authors, comment authors, event RSVPs&hellip;
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            Shows a player's name next to mentions in text.
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            Shows a small overview of the info in the pop-up that appears
+                            when you hover over an agent's name.
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            Also works in notifications and everywhere Google+
+                            comments are used (e.g. YouTube).
+                        </p>
+                    </li>
+                    <li>
+                        <p>
+                            It's free!
+                        </p>
                     </li>
                 </ul>
-                <a href="#top">Back to top</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="jumbotron">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
+                <h2>Browser support</h2>
+                <div class="row">
+                    <div class="col-xs-4">
+                        <img class="browser" src="{{ site.baseurl }}/assets/img/browser/chrome.png">
+                        <p class="text-center">
+                            Google Chrome
+                        </p>
+                        <p class="text-center">
+                            <a target="_blank" href="https://chrome.google.com/webstore/detail/ingress-identity/pjhgnhcijlkffbncjecmcdpndjckcbik">Chrome Webstore</a>
+                        </p>
+                    </div>
+                    <div class="col-xs-4">
+                        <img class="browser" src="{{ site.baseurl }}/assets/img/browser/safari.png">
+                        <p class="text-center">
+                            Safari
+                        </p>
+                        <p class="text-center">
+                            <a href="https://raw.githubusercontent.com/bgotink/IngressIdentity/gh-pages/assets/safari/IngressIdentity.safariextz">Install</a><span class="red">*</span>
+                        </p>
+                    </div>
+                    <div class="col-xs-4">
+                        <img class="browser" src="{{ site.baseurl }}/assets/img/browser/firefox.png">
+                        <p class="text-center">
+                            Mozilla Firefox
+                        </p>
+                        <p class="text-center">
+                            <a href="https://raw.githubusercontent.com/bgotink/IngressIdentity/gh-pages/assets/firefox/IngressIdentity.xpi">Install</a><span class="red">*</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
+                <div class="alert alert-info">
+                    <p>
+                        <span class="red">*</span> The extension will be downloaded
+                        using a secure connection to ensure <span class="tt">&lt;insert other faction here&gt;</span>
+                        spies cannot access your information.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="jumbotron transparent">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
+                <h2>Bug report &amp; Feature requests</h2>
+                <p>
+                    If you've found a bug or have an idea for a killer feature, feel
+                    free to let us know <a target="_blank" href="https://github.com/bgotink/IngressIdentity/issues">here</a>
+                    if you have a GitHub account or using the feedback feature in the
+                    Chrome Web Store found <a target="_blank" href="https://chrome.google.com/webstore/support/pjhgnhcijlkffbncjecmcdpndjckcbik">here</a>.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="jumbotron">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
+                <h2>License</h2>
+                <p>
+                    IngressIdentity is not only free as in no costs, it's free
+                    as in open source.
+                </p>
+                <p>
+                    This extension is written and maintained by <a target="_blank" href="https://github.com/bgotink">Bram Gotink</a>.
+                    The code is &copy; 2014 Bram Gotink, licensed under the terms of the <a target="_blank" href="http://en.wikipedia.org/wiki/MIT_License">MIT License</a>.
+                    The source of this project can be found on <a target="_blank" href="https://github.com/bgotink/IngressIdentity">GitHub</a>.
+                </p>
+                <pre>
+Copyright &copy; 2014 Bram Gotink &lt;https://github.com/bgotink&gt;
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+                </pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="jumbotron transparent">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
+                <h2>Acknowledgements</h2>
+                <p>
+                    This project uses code by <a target="_blank" href="https://jquery.org/">jQuery</a>,
+                    <a target="_blank" href="http://sugarjs.com/">Sugar.js</a>,
+                    <a target="_blank" href="http://ejohn.org/blog/simple-javascript-inheritance/">John Resig</a>
+                    and <a target="_blank" href="https://github.com/twbs/bootstrap">Twitter's Bootstrap</a>.
+                    The logo is derived from the ingress logos created by <a target="_blank" href="https://github.com/cr0ybot/ingress-logos">cr0ybot</a>.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="jumbotron">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
+                <h2>Disclaimer</h2>
+                <p>
+                    The extension and its author(s) are in no way affiliated with
+                    Ingress, Google or NianticLabs@Google. This extension merely
+                    serves as third-party tool to support Ingress players and their
+                    communities living on Google+.
+                </p>
+                <p>
+                    Ingress&trade; and the black Ingress logo are trademarks of
+                    Google Inc.
+                </p>
+                <p>
+                    Google+&trade;, Google Chrome&trade; and their logos are
+                    registered trademarks of Google Inc.
+                </p>
+                <p>
+                    Safari&reg; and its logo are registered trademarks of Apple Inc.
+                </p>
+                <p>
+                    Firefox&reg; and the Firefox logo&reg; are registered trademarks of the Mozilla Foundation.
+                </p>
             </div>
         </div>
     </div>
