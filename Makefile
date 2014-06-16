@@ -369,7 +369,7 @@ firefox-dist: firefox-release
 # testing and building XPI
 
 tools/firefox-sdk: tools
-	@if [ -d $@ ]; then cd $@ && git pull; else git clone -b release git://github.com/mozilla/addon-sdk.git $@; fi
+	@if [ -d $@ ]; then cd $@ && git pull || true; else git clone -b release git://github.com/mozilla/addon-sdk.git $@; fi
 
 tools/firefox-test-profile: tools
 	@$(mkdir)
