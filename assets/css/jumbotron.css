@@ -25,9 +25,14 @@ nav.navbar {
     background-color: #e5e5e5;
 }
 
+.carousel img {
+    margin-left: auto;
+    margin-right: auto;
+}
+
 body > .background {
     margin-top: 2em;
-    
+
     filter: blur(5px);
     // Browser Specific
     -webkit-filter: blur(5px);
