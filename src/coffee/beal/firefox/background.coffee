@@ -22,9 +22,9 @@
                 localStorage[key] = JSON.stringify value
             callback()
 
-    baseURI = ''
+    optionsPageRegExp = new RegExp '.*' + RegExp.escape('options.html') + '.*'
     exports.isOptionsPage = (url) ->
-        !!url.match new RegExp RegExp.escape(baseURI + 'options.html') + '.*'
+        !!url.match new RegExp optionsPageRegExp
 
     exports.sendToTabs = (message) ->
         addon.port.emit 'iidentity-request-from-background', message
@@ -59,7 +59,7 @@
     exports.init = ->
         addon.port.once 'iidentity-base-uri', (message) ->
             module.log.log 'baseURI = %s', message.uri
-            baseURI = message.uri
+            optionsPageRegExp = new RegExp RegExp.escape(message.uri + 'options.html') + '.*'
 
         addon.port.emit 'iidentity-background-ready'
 

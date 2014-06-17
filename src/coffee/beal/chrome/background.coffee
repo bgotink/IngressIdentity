@@ -13,8 +13,9 @@
         set: (data, callback) ->
             storage.set data, callback
 
+    optionsPageRegExp = new RegExp RegExp.escape('chrome-extension://' + chrome.runtime.id + '/options.html') + '.*'
     exports.isOptionsPage = (url) ->
-        !!url.match new RegExp 'chrome-extension:\\/\\/' + chrome.runtime.id + '/options.html.*'
+        !!url.match optionsPageRegExp
 
     exports.sendToTabs = (message) ->
         chrome.tabs.query {}, (tabs) ->
