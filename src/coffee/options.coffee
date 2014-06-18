@@ -90,7 +90,7 @@
                     $elem.append $('<p class="error">').text err
         else
             Object.each errors, (key, value) ->
-                reloadManifestErrorsHelper value, $elem.find '[data-key="' + key + '"]'
+                reloadManifestErrors.helper value, $elem.find '[data-key="' + key + '"]'
 
     reloadManifests = ->
         module.log.log 'Reloading manifests...'
