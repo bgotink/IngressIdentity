@@ -1,4 +1,4 @@
-MDs = README.md LICENSE.md NOTICE.md
+MDs = README.md LICENSE.md NOTICE.md SOURCE.md
 JSs = js/content.js js/options.js js/help.js js/background.js
 CSSs = css/content.css css/options.css css/help.css
 HTMLs = options.html background.html help.html
@@ -89,6 +89,9 @@ build/%/LICENSE.md: LICENSE.md
 	$(copy)
 
 build/%/NOTICE.md: NOTICE.md
+	$(copy)
+
+build/%/SOURCE.md: SOURCE.md
 	$(copy)
 
 build/%/background.html: src/background.html
