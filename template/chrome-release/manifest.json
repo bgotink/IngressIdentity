@@ -39,6 +39,6 @@
     },
 
     "web_accessible_resources": [
-        "img/anomalies/*"
+        "img/anomalies/*.png"
     ]
 }
