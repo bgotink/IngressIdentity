@@ -36,7 +36,7 @@ define mkdir
 mkdir -p $@
 endef
 
-.PHONY: all all-release release init dist default clean common common-release chrome chrome-release chrome-all chrome-dist safari safari-release safari-all safari-dist firefox firefox-release firefox-all firefox-dist
+.PHONY: all all-release release init dist default clean touch common common-release chrome chrome-release chrome-all chrome-dist safari safari-release safari-all safari-dist firefox firefox-release firefox-all firefox-dist
 
 # Main entrypoints
 #
@@ -52,6 +52,9 @@ dist: chrome-dist safari-dist firefox-dist
 
 clean:
 	rm -rf build
+
+touch:
+	find src template -type f -print0 | xargs -0 touch
 
 # Tools
 #
