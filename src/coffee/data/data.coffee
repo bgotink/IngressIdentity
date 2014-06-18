@@ -106,7 +106,7 @@
             @err = err
             @data = data or null
 
-        getKey: @key
+        getKey: -> @key
         getTag: -> @data and @data.getTag()
         getVersion: -> @data and @data.getVersion()
         getFaction: -> @data and @data.getFaction()

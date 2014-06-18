@@ -7,14 +7,17 @@
     exports = module.extension = {}
     storage = chrome.storage.sync
 
+    optionsPage = 'chrome-extension://' + chrome.runtime.id + '/options.html'
+
     exports.storage =
         get: (data, callback) ->
             storage.get data, callback
         set: (data, callback) ->
             storage.set data, callback
 
+    optionsPageRegExp = new RegExp RegExp.escape(optionsPage) + '.*'
     exports.isOptionsPage = (url) ->
-        !!url.match new RegExp 'chrome-extension:\\/\\/' + chrome.runtime.id + '/options.html.*'
+        !!url.match optionsPageRegExp
 
     exports.sendToTabs = (message) ->
         chrome.tabs.query {}, (tabs) ->
@@ -35,5 +38,12 @@
     exports.addDataChangedListener = (listener) ->
         chrome.storage.onChanged.addListener (changes) ->
             listener Object.keys changes
+
+    exports.init = ->
+        chrome.browserAction.onClicked.addListener (tab) ->
+            chrome.tabs.create
+                url: optionsPage
+                active: true
+                openerTabId: tab.id
 
 )(iidentity or (iidentity = window.iidentity = {}), window.chrome)

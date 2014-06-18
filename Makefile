@@ -1,4 +1,4 @@
-MDs = README.md LICENSE.md NOTICE.md
+MDs = README.md LICENSE.md NOTICE.md SOURCE.md
 JSs = js/content.js js/options.js js/help.js js/background.js
 CSSs = css/content.css css/options.css css/help.css
 HTMLs = options.html background.html help.html
@@ -36,7 +36,7 @@ define mkdir
 mkdir -p $@
 endef
 
-.PHONY: all all-release release init dist default clean common common-release chrome chrome-release chrome-all chrome-dist safari safari-release safari-all safari-dist firefox firefox-release firefox-all firefox-dist
+.PHONY: all all-release release init dist default clean touch common common-release chrome chrome-release chrome-all chrome-dist safari safari-release safari-all safari-dist firefox firefox-release firefox-all firefox-dist
 
 # Main entrypoints
 #
@@ -52,6 +52,9 @@ dist: chrome-dist safari-dist firefox-dist
 
 clean:
 	rm -rf build
+
+touch:
+	find src template -type f -print0 | xargs -0 touch
 
 # Tools
 #
@@ -88,6 +91,9 @@ build/%/LICENSE.md: LICENSE.md
 build/%/NOTICE.md: NOTICE.md
 	$(copy)
 
+build/%/SOURCE.md: SOURCE.md
+	$(copy)
+
 build/%/background.html: src/background.html
 	$(copy)
 
@@ -118,19 +124,19 @@ build/%/img:
 build/%/img/logo:
 	$(mkdir)
 
-build/%/img/logo/ingress.png: src/img/logo.svg build/%/img/logo
+build/%/img/logo/ingress.png: src/img/logo.svg
 	convert -background none $< $@
 
-build/%/img/logo/16.png: src/img/logo.svg build/%/img/logo
+build/%/img/logo/16.png: src/img/logo.svg
 	convert -background none $< -resize 16 $@
 
-build/%/img/logo/48.png: src/img/logo.svg build/%/img/logo
+build/%/img/logo/48.png: src/img/logo.svg
 	convert -background none $< -resize 48 $@
 
-build/%/img/logo/128.png: src/img/logo.svg build/%/img/logo
+build/%/img/logo/128.png: src/img/logo.svg
 	convert -background none $< -resize 128 $@
 
-build/%/img/anomalies: src/img/anomalies build/%/img
+build/%/img/anomalies: src/img/anomalies
 	$(copy)
 	@rm $@/README.md
 
@@ -146,6 +152,12 @@ common-release: build/common-release $(addprefix build/common-release/,$(CSSs))
 
 build/%/manifest.json: template/%/manifest.json
 	$(copy)
+
+build/%/img/logo/19.png: src/img/logo.svg build/%/img/logo
+	convert -background none $< -resize 19 $@
+
+build/%/img/logo/38.png: src/img/logo.svg build/%/img/logo
+	convert -background none $< -resize 38 $@
 
 build/chrome/js/content.js: src/coffee/beal/chrome/content.coffee $(JS_CONTENT_DEPS)
 	$(coffee)
@@ -182,7 +194,7 @@ build/chrome-release: build/chrome-release/js build/chrome-release/css
 
 # main
 
-chrome: common build/chrome $(addprefix build/chrome/, $(FILES) manifest.json img/anomalies $(addprefix img/logo/, ingress.png 16.png 48.png 128.png))
+chrome: common build/chrome $(addprefix build/chrome/, $(FILES) manifest.json img img/anomalies img/logo $(addprefix img/logo/, ingress.png 16.png 19.png 38.png 48.png 128.png))
 
 chrome-release: common-release build/chrome-release $(addprefix build/chrome-release/, $(FILES) manifest.json img/anomalies $(addprefix img/logo/, ingress.png 16.png 48.png 128.png))
 
@@ -239,9 +251,9 @@ build/%.safariextension/img/logo/toolbar.png: src/img/logo.svg build/%.safariext
 
 # main
 
-safari: common build/IngressIdentity.safariextension $(addprefix build/IngressIdentity.safariextension/, $(FILES) Info.plist img/anomalies img/logo/toolbar.png img/logo/ingress.png)
+safari: common build/IngressIdentity.safariextension $(addprefix build/IngressIdentity.safariextension/, $(FILES) Info.plist img img/anomalies img/logo img/logo/toolbar.png img/logo/ingress.png)
 
-safari-release: common-release build/IngressIdentity-release.safariextension $(addprefix build/IngressIdentity-release.safariextension/, $(FILES) Info.plist img/anomalies img/logo/toolbar.png img/logo/ingress.png)
+safari-release: common-release build/IngressIdentity-release.safariextension $(addprefix build/IngressIdentity-release.safariextension/, $(FILES) Info.plist img img/anomalies img/logo img/logo/toolbar.png img/logo/ingress.png)
 
 safari-all: safari safari-release
 
@@ -369,7 +381,7 @@ firefox-dist: firefox-release
 # testing and building XPI
 
 tools/firefox-sdk: tools
-	@if [ -d $@ ]; then cd $@ && git pull; else git clone -b release git://github.com/mozilla/addon-sdk.git $@; fi
+	@if [ -d $@ ]; then cd $@ && git pull || true; else git clone -b release git://github.com/mozilla/addon-sdk.git $@; fi
 
 tools/firefox-test-profile: tools
 	@$(mkdir)

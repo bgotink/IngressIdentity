@@ -22,8 +22,9 @@
                 localStorage[key] = JSON.stringify value
             callback()
 
+    optionsPageRegExp = new RegExp RegExp.escape(safari.extension.baseURI + 'options.html') + '.*'
     exports.isOptionsPage = (url) ->
-        !!url.match new RegExp RegExp.escape(safari.extension.baseURI) + 'options.html.*'
+        !!url.match optionsPageRegExp
 
     exports.sendToTabs = (message) ->
         total = 0
