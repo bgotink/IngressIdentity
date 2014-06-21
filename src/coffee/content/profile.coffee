@@ -204,6 +204,11 @@
         # and $elem if he does
 
         $root = $ '#' + oid + '-about-page'
+
+        # own profile page uses slightly different IDs
+        if $root.length is 0
+            $root = $ '#' + oid + '-co-about-page'
+
         $elem = $root.find 'div.iidentity-profile-wrapper'
 
         if dot is $root.attr 'data-iidentity'
