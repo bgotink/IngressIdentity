@@ -7,6 +7,13 @@
 
     <link rel="icon" type="image/png" href="{{ site.baseurl}}/assets/img/icon.png">
 
+    <meta name="og:title" content="{{ page.title }}">
+    <meta name="og:image" content="{{ site.baseurl }}/assets/img/icon.png">
+    <meta name="og:url" content="{{ site.baseurl }}{{ page.url }}">
+    <meta property="og:site_name" content="IngressIdentity">
+    <meta property="og:determiner" content="">
+    {% if page.description %}<meta name="og:description" content="{{ page.description }}">{% endif %}
+
     {% if page.inline_install %}
     <link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/pjhgnhcijlkffbncjecmcdpndjckcbik">
     {% endif %}
