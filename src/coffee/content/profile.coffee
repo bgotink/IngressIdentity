@@ -4,6 +4,23 @@
 # @license MIT
 
 ((module, $) ->
+
+    # find the smallest of a list of elements
+    # smallest = lowest height
+    $.fn.smallest = ->
+        return  @ if @length = 0
+
+        smallest = null
+        smallestHeight = Infinity
+
+        @each ->
+            $this = $ @
+            if $this.height() < smallestHeight
+                smallestHeight = $this.height()
+                smallest = $this
+
+        smallest
+
     helper =
         createWrapper: ->
             $ '''
@@ -245,7 +262,7 @@
                 module.log.log 'Creating profile wrapper'
                 $elem = helper.createWrapper()
                 $root.find 'div.Ypa.jw.am'
-                    .last()
+                    .smallest()
                     .prepend $elem
             else
                 module.log.log 'Re-using existing profile wrapper'
