@@ -296,6 +296,33 @@
                         .remove()
 
                     $elem.after $('<span>').text(' '), $infoElem
+        },
+        {
+            matches: [
+                'div.xTc.X8c[oid]', # members page of groups
+            ],
+            handler: (elem, match) ->
+                $elem = $ elem
+                oid = $elem.attr 'oid'
+
+                createConciseInlineElement oid, match, (err, $infoElem) ->
+                    if err?
+                        if err is 'not-found'
+                            $elem
+                                .find '.iidentity-ciwrapper[data-oid=' + oid + ']'
+                                .remove()
+                            return
+
+                        module.log.error err
+                        return
+
+                    $elem
+                        .find '.iidentity-ciwrapper[data-oid=' + oid + ']'
+                        .remove()
+
+                    $elem
+                        .find '.l0d > .n0d'
+                        .append $infoElem
         }
     ]
 
