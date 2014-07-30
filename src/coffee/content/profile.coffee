@@ -4,6 +4,23 @@
 # @license MIT
 
 ((module, $) ->
+
+    # find the smallest of a list of elements
+    # smallest = lowest height
+    $.fn.smallest = ->
+        return  @ if @length is 0
+
+        smallest = null
+        smallestHeight = Infinity
+
+        @each ->
+            $this = $ @
+            if $this.height() < smallestHeight
+                smallestHeight = $this.height()
+                smallest = $this
+
+        smallest
+
     helper =
         createWrapper: ->
             $ '''
@@ -204,6 +221,11 @@
         # and $elem if he does
 
         $root = $ '#' + oid + '-about-page'
+
+        # own profile page uses slightly different IDs
+        if $root.length is 0
+            $root = $ '#' + oid + '-co-about-page'
+
         $elem = $root.find 'div.iidentity-profile-wrapper'
 
         if dot is $root.attr 'data-iidentity'
@@ -240,7 +262,7 @@
                 module.log.log 'Creating profile wrapper'
                 $elem = helper.createWrapper()
                 $root.find 'div.Ypa.jw.am'
-                    .last()
+                    .smallest()
                     .prepend $elem
             else
                 module.log.log 'Re-using existing profile wrapper'

@@ -235,9 +235,11 @@
             if state
                 $ '#enable_anomalies'
                     .addClass 'active'
+                    .text 'Enabled'
             else
                 $ '#enable_anomalies'
                     .removeClass 'active'
+                    .text 'Disabled'
 
         $ 'button[data-match]'
             .each ->
@@ -245,9 +247,13 @@
 
                 comm.getOption 'match-' + $this.attr('data-match'), true, (state) ->
                     if state
-                        $this.addClass 'active'
+                        $this
+                            .addClass 'active'
+                            .text 'Enabled'
                     else
-                        $this.removeClass 'active'
+                        $this
+                            .removeClass 'active'
+                            .text 'Disabled'
 
     addManifest = ->
         module.log.log 'Adding manifest %s', $('#manifest_input').val()
@@ -376,26 +382,65 @@
         $ '#enable_anomalies'
             .on 'click.set-option', ->
                 $this = $ @
-                $this.button 'loading'
+                $this
+                    .button 'loading'
+                    .addClass 'disable-hover'
 
                 comm.setOption 'show-anomalies', !$this.hasClass('active'), (state) ->
                     if state
-                        $this.addClass 'active'
+                        $this
+                            .addClass 'active'
+                            .text 'Enabled'
                     else
-                        $this.removeClass 'active'
-                    $this.button 'reset'
+                        $this
+                            .removeClass 'active'
+                            .text 'Disabled'
+
+                    $this
+                        .button 'reset'
+                        .removeClass 'disable-hover'
 
         $ 'button[data-match]'
             .on 'click.set-option', ->
                 $this = $ @
-                $this.button 'loading'
+                $this
+                    .button 'loading'
+                    .addClass 'disable-hover'
 
                 comm.setOption 'match-' + $this.attr('data-match'), !$this.hasClass('active'), (state) ->
                     if state
-                        $this.addClass 'active'
+                        $this
+                            .addClass 'active'
+                            .text 'Enabled'
                     else
-                        $this.removeClass 'active'
-                    $this.button 'reset'
+                        $this
+                            .removeClass 'active'
+                            .text 'Disabled'
+
+                    $this
+                        .button 'reset'
+                        .removeClass 'disable-hover'
+
+        [ $('#enable_anomalies'), $('button[data-match]') ].each ($buttons) ->
+            $buttons
+                .on 'mouseenter', () ->
+                    $this = $ @
+
+                    return if $this.hasClass 'disable-hover'
+
+                    if $this.hasClass 'active'
+                        $this.text 'Disable'
+                    else
+                        $this.text 'Enable'
+                .on 'mouseleave', () ->
+                    $this = $ @
+
+                    return if $this.hasClass 'disable-hover'
+
+                    if $this.hasClass 'active'
+                        $this.text 'Enabled'
+                    else
+                        $this.text 'Disabled'
 
         updateButtons()
 
