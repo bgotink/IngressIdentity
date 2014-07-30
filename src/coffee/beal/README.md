@@ -18,6 +18,8 @@ or options pages cannot wrongly modify any settings.
     The values in data are always JSONifieable
 - bool isOptionsPage(string url)
     required, checks whether a given url is this extension's option page
+- string getURL(string relative)
+    required, gives the URL of an asset given its relative path
 - void sendToTabs(obj message)
     required, sends the given message to all tabs with a running content script
     of the extension

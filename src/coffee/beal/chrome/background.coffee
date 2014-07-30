@@ -19,6 +19,9 @@
     exports.isOptionsPage = (url) ->
         !!url.match optionsPageRegExp
 
+    exports.getURL = (rel) ->
+        chrome.extension.getURL rel
+
     exports.sendToTabs = (message) ->
         chrome.tabs.query {}, (tabs) ->
             module.log.log 'Sending update message to %d tabs', tabs.length
