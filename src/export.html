@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>IngressIdentity Options</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="vendor/css/bootstrap.min.css" />
+
+    <!-- Our CSS -->
+    <link rel="stylesheet" href="css/export.css" />
+
+    <!-- jQuery, Sugar and Bootstrap JS -->
+    <script type="text/javascript" src="vendor/js/jquery.min.js"></script>
+    <script type="text/javascript" src="vendor/js/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="vendor/js/sugar.min.js"></script>
+    <script type="text/javascript" src="vendor/js/bootstrap.min.js"></script>
+
+    <!-- Our JS -->
+    <script type="text/javascript" src="js/export.js"></script>
+</head>
+<body>
+    <div class="background"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
+                <h1>
+                    IngressIdentity Data Exporter
+                </h1>
+                <p>
+                    This page tries to fetch Ingress agent data from a Google+
+                    community. You can modify it before exporting it to a Google
+                    Drive Spreadsheet.
+                </p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 settings">
+                <h2>Options</h2>
+                <p>
+                    The following buttons allow you to enable some features for
+                    the exporter:
+                </p>
+                <div>
+                    <div>
+                        <p>
+                            <button type="button" class="btn btn-default btn-sm active requires-reparse" id="btn_extract_name">
+                                Enabled
+                            </button>
+                            Try to extract agent name from the Google+ name if unknown.
+                        </p>
+                        <p>
+                            <button type="button" class="btn btn-default btn-sm active requires-reparse" id="btn_remove_existing">
+                                Enabled
+                            </button>
+                            Filter out existing entries for this community.
+                        </p>
+                        <p>
+                            <button type="button" class="btn btn-default btn-sm" id="btn_show_header">
+                                Disabled
+                            </button>
+                            Add a header and dummy row to the table.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 settings">
+                <h2>Result</h2>
+                <p>
+                    Simply select the text, and copy paste it into a Google Drive Spreadsheet
+                </p>
+                <textarea id="export_result" rows="20">The result comes here...</textarea>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

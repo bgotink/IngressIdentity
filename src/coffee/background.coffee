@@ -7,6 +7,7 @@
 ((module, $, window) ->
     storage = module.extension.storage
     data = null
+    exportData = null
     storageCache = {}
 
     isOptionsPage = module.extension.isOptionsPage
@@ -435,6 +436,17 @@
                 doGetPlayer()
 
             true
+
+        exportCommunity: (request, sender, sendResponse) ->
+            exportData = request.data
+            module.extension.openPopup module.extension.getURL 'export.html'
+
+            # never sends a response
+            false
+
+        getExportData: (request, sender, sendResponse) ->
+            sendResponse
+                data: exportData
 
     module.extension.addMessageListener (request, sender, sendResponse) ->
         if sender.tab

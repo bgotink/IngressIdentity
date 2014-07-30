@@ -49,7 +49,7 @@
                     )
 
     checkCommunity = ->
-        if not match = window.document.location.pathname.match /(^|\/)communities\/([a-zA-Z0-9]+)$/
+        if not match = window.document.location.pathname.match /(^|\/)communities\/([a-zA-Z0-9]+)($|\/)/
             return
 
         oid = match[2]
@@ -67,7 +67,7 @@
 
                 $parent.find 'div.LEd'
                     .before(
-                        $ '<div class="g0d iidentity-community"></pd>'
+                        $ '<div class="g0d iidentity-community">'
                             .append(
                                 $ '<b>'
                                     .text 'IngressIdentity Source Files'
@@ -83,7 +83,38 @@
                                                     .text source.key
                                             )[0]
                             )
+                            .append(
+                                if window.document.location.pathname.match /(^|\/)communities\/([a-zA-Z0-9]+)\/members($|\/)/
+                                    $ '<div>'
+                                        .append(
+                                            $ '<a>'
+                                                .addClass 'Ub iidentity-export'
+                                                .attr 'href', '#'
+                                                .text 'Export this Community'
+                                        )
+                                else
+                                    null
+                            )
                     )
+
+                $ 'a.iidentity-export'
+                    .on 'click', () ->
+                        data =
+                            oid: oid
+                            entries: []
+
+                        $ 'div.X8c.xTc'
+                            .each ->
+                                $this = $ @
+                                data.entries.push
+                                    oid: $this.attr 'oid'
+                                    name: $this.find('.l0d > .n0d .VCc').text()
+
+                        module.comm.send
+                            type: 'exportCommunity'
+                            data: data
+
+                        false
 
     module.listSources = ->
         checkEvent()

@@ -1,12 +1,13 @@
 MDs = README.md LICENSE.md NOTICE.md SOURCE.md
-JSs = js/content.js js/options.js js/help.js js/background.js
-CSSs = css/content.css css/options.css css/help.css
-HTMLs = options.html background.html help.html
+JSs = js/content.js js/options.js js/help.js js/background.js js/export.js
+CSSs = css/content.css css/options.css css/help.css css/export.css
+HTMLs = options.html background.html help.html export.html
 
 JS_CONTENT_DEPS = src/coffee/communication.coffee src/coffee/log.coffee src/coffee/content/doOnce.coffee src/coffee/content/main.coffee src/coffee/content/mentions.coffee src/coffee/content/profile.coffee src/coffee/content/source.coffee
 JS_OPTIONS_DEPS = src/coffee/communication.coffee src/coffee/log.coffee src/coffee/options.coffee
 JS_BACKGROUND_DEPS = src/coffee/log.coffee src/coffee/data/spreadsheets.coffee src/coffee/data/interpreter.coffee src/coffee/data/merger.coffee src/coffee/data/data.coffee src/coffee/background.coffee
 JS_HELP_DEPS = src/coffee/help.coffee
+JS_EXPORT_DEPS = src/coffee/communication.coffee src/coffee/log.coffee src/coffee/export.coffee
 
 FILES= $(MDs) $(JSs) $(CSSs) $(HTMLs) vendor
 
@@ -103,6 +104,9 @@ build/%/help.html: src/help.html
 build/%/options.html: src/options.html
 	$(copy)
 
+build/%/export.html: src/export.html
+	$(copy)
+
 build/common-release/css/content.css: src/less/content.less src/less/variables.less src/less/general.less
 	$(less_release)
 
@@ -177,6 +181,12 @@ build/chrome/js/options.js: src/coffee/beal/chrome/content.coffee $(JS_OPTIONS_D
 build/chrome-release/js/options.js: src/coffee/beal/chrome/content.coffee $(JS_OPTIONS_DEPS)
 	$(coffee_release)
 
+build/chrome/js/export.js: src/coffee/beal/chrome/content.coffee $(JS_EXPORT_DEPS)
+	$(coffee)
+
+build/chrome-release/js/export.js: src/coffee/beal/chrome/content.coffee $(JS_EXPORT_DEPS)
+	$(coffee_release)
+
 build/chrome/js/help.js: $(JS_HELP_DEPS)
 	$(coffee)
 
@@ -227,6 +237,12 @@ build/IngressIdentity.safariextension/js/options.js: src/coffee/beal/safari/cont
 	$(coffee)
 
 build/IngressIdentity-release.safariextension/js/options.js: src/coffee/beal/safari/content.coffee $(JS_OPTIONS_DEPS)
+	$(coffee_release)
+
+build/IngressIdentity.safariextension/js/export.js: src/coffee/beal/safari/content.coffee $(JS_EXPORT_DEPS)
+	$(coffee)
+
+build/IngressIdentity-release.safariextension/js/export.js: src/coffee/beal/safari/content.coffee $(JS_EXPORT_DEPS)
 	$(coffee_release)
 
 build/IngressIdentity.safariextension/js/help.js: $(JS_HELP_DEPS)
@@ -350,6 +366,12 @@ build/firefox/data/js/options.js: src/coffee/beal/firefox/content.coffee $(JS_OP
 	$(coffee)
 
 build/firefox-release/data/js/options.js: src/coffee/beal/firefox/content.coffee $(JS_OPTIONS_DEPS)
+	$(coffee_release)
+
+build/firefox/data/js/export.js: src/coffee/beal/firefox/content.coffee $(JS_EXPORT_DEPS)
+	$(coffee)
+
+build/firefox-release/data/js/export.js: src/coffee/beal/firefox/content.coffee $(JS_EXPORT_DEPS)
 	$(coffee_release)
 
 build/firefox/data/js/help.js: $(JS_HELP_DEPS)

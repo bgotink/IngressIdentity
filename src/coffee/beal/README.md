@@ -37,6 +37,8 @@ or options pages cannot wrongly modify any settings.
 - void addDataChangedListener(void listener(arr changes))
     required, though the implementation is allowed to be an empty function
     the listener accepts a single parameter, an array containing the changed data keys
+- void openPopup(string url)
+    required, opens the given url as a pop-up
 - void init()
     optional, will be called when DOM is ready if the value isn't null/undefined
 
