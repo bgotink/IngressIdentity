@@ -4,7 +4,7 @@
 # @license MIT
 
 ((module, $) ->
-    exports = (if Object.has(module, 'data') then module.data else (module.data = {})).interpreter = {}
+    exports = (if Object.has module, 'data' then module.data else (module.data = {})).interpreter = {}
 
     standardManifestKeys = [ 'key', 'lastupdated', 'tag', 'faction', 'refresh' ]
     standardSourceKeys = [ 'oid', 'nickname', 'name', 'level' ]
@@ -15,7 +15,7 @@
         Object.each obj, (key, value) ->
             if Object.isObject value
                 filterEmpty obj[key]
-            else if value is undefined or value is null or ('' + value).isBlank()
+            else if not value? or ('' + value).isBlank()
                 delete obj[key]
 
     # An instance of ManifestEntry represents one row in a manifest.
@@ -51,7 +51,7 @@
                 Object.reject @nonManifestData, 'extratags'
             else
                 # extra columns override extratags
-                $.extend true, extratags, Object.reject(@nonManifestData, 'extratags')
+                $.extend true, extratags, Object.reject @nonManifestData, 'extratags'
 
         getManifestData: -> @manifestData;
         getData: ->

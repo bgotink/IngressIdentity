@@ -18,6 +18,6 @@
     exports.getLastError = -> chrome.runtime.lastError
 
     exports.getURL = (rel) ->
-        chrome.extension.getURL(rel)
+        chrome.extension.getURL rel
 
 )(iidentity or (iidentity = window.iidentity = {}), window.chrome)

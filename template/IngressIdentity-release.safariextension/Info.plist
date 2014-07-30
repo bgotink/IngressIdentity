@@ -13,9 +13,9 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.5.3</string>
+	<string>0.6.4</string><!-- version -->
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>5</string><!-- bundle version -->
 	<key>Chrome</key>
 	<dict>
 		<key>Database Quota</key>
@@ -75,7 +75,9 @@
 			<string>Some</string>
 		</dict>
 	</dict>
+	<key>Update Manifest URL</key>
+	<string>http://bram.gotink.me/IngressIdentity/assets/safari/update.plist</string>
 	<key>Website</key>
-	<string>https://github.com/bgotink/IngressIdentity</string>
+	<string>http://bram.gotink.me/IngressIdentity</string>
 </dict>
 </plist>

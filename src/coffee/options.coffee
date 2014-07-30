@@ -12,7 +12,7 @@
             module.comm.send { type: 'getManifestErrors' }, (result) ->
                 callback result
         addManifest: (key, name, callback) ->
-            module.comm.send { type: 'addManifest', key: key, name: (Object.isString(name) ? name : '') }, (result) ->
+            module.comm.send { type: 'addManifest', key: key, name: (if Object.isString(name) then name else '') }, (result) ->
                 callback result.status
         renameManifest: (key, oldName, newName, callback) ->
             module.comm.send {type: 'renameManifest', key: key, oldName: oldName, newName: newName}, (result) ->
@@ -67,8 +67,8 @@
             lastOrderRecorded = newOrder
 
     reloadManifestErrors = ->
-        if $('#source_list > ul').data 'errors-loaded'
-            return
+        return if $('#source_list > ul').data 'errors-loaded'
+
         $ '#source_list > ul'
             .data 'errors-loaded', true
 
@@ -90,7 +90,7 @@
                     $elem.append $('<p class="error">').text err
         else
             Object.each errors, (key, value) ->
-                reloadManifestErrorsHelper value, $elem.find '[data-key="' + key + '"]'
+                reloadManifestErrors.helper value, $elem.find '[data-key="' + key + '"]'
 
     reloadManifests = ->
         module.log.log 'Reloading manifests...'
@@ -235,9 +235,11 @@
             if state
                 $ '#enable_anomalies'
                     .addClass 'active'
+                    .text 'Enabled'
             else
                 $ '#enable_anomalies'
                     .removeClass 'active'
+                    .text 'Disabled'
 
         $ 'button[data-match]'
             .each ->
@@ -245,9 +247,13 @@
 
                 comm.getOption 'match-' + $this.attr('data-match'), true, (state) ->
                     if state
-                        $this.addClass 'active'
+                        $this
+                            .addClass 'active'
+                            .text 'Enabled'
                     else
-                        $this.removeClass 'active'
+                        $this
+                            .removeClass 'active'
+                            .text 'Disabled'
 
     addManifest = ->
         module.log.log 'Adding manifest %s', $('#manifest_input').val()
@@ -276,7 +282,7 @@
             showAlert 'add-' + result
 
     $ ->
-        module.extension.init()
+        module.extension.init() if module.extension.init?
 
         $ '.alert .close'
             .on 'click.ii.close', ->
@@ -332,7 +338,7 @@
                 $key.replaceWith($ '<input type="text" class="form-control manifest-key"></input>'
                     .val if $key.text() is $manifest.data 'key' then '' else $key.text()
                     .data 'old-name', $key.text()
-                    .data 'url', if 'A' == $key.prop 'tagName' then $key.attr 'href' else null
+                    .data 'url', if 'A' is $key.prop 'tagName' then $key.attr 'href' else null
                 )
 
         $ '#source_list'
@@ -376,26 +382,65 @@
         $ '#enable_anomalies'
             .on 'click.set-option', ->
                 $this = $ @
-                $this.button 'loading'
+                $this
+                    .button 'loading'
+                    .addClass 'disable-hover'
 
                 comm.setOption 'show-anomalies', !$this.hasClass('active'), (state) ->
                     if state
-                        $this.addClass 'active'
+                        $this
+                            .addClass 'active'
+                            .text 'Enabled'
                     else
-                        $this.removeClass 'active'
-                    $this.button 'reset'
+                        $this
+                            .removeClass 'active'
+                            .text 'Disabled'
+
+                    $this
+                        .button 'reset'
+                        .removeClass 'disable-hover'
 
         $ 'button[data-match]'
             .on 'click.set-option', ->
                 $this = $ @
-                $this.button 'loading'
+                $this
+                    .button 'loading'
+                    .addClass 'disable-hover'
 
                 comm.setOption 'match-' + $this.attr('data-match'), !$this.hasClass('active'), (state) ->
                     if state
-                        $this.addClass 'active'
+                        $this
+                            .addClass 'active'
+                            .text 'Enabled'
                     else
-                        $this.removeClass 'active'
-                    $this.button 'reset'
+                        $this
+                            .removeClass 'active'
+                            .text 'Disabled'
+
+                    $this
+                        .button 'reset'
+                        .removeClass 'disable-hover'
+
+        [ $('#enable_anomalies'), $('button[data-match]') ].each ($buttons) ->
+            $buttons
+                .on 'mouseenter', () ->
+                    $this = $ @
+
+                    return if $this.hasClass 'disable-hover'
+
+                    if $this.hasClass 'active'
+                        $this.text 'Disable'
+                    else
+                        $this.text 'Enable'
+                .on 'mouseleave', () ->
+                    $this = $ @
+
+                    return if $this.hasClass 'disable-hover'
+
+                    if $this.hasClass 'active'
+                        $this.text 'Enabled'
+                    else
+                        $this.text 'Disabled'
 
         updateButtons()
 

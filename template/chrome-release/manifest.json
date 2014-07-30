@@ -2,7 +2,7 @@
     "manifest_version": 2,
 
     "name": "Ingress Identity",
-    "version": "0.5.3",
+    "version": "0.6.4",
     "description": "Adds Ingress identity to G+ profiles",
     "icons": {
         "16":  "img/logo/16.png",
@@ -30,7 +30,15 @@
         }
     ],
 
+    "browser_action": {
+        "default_icon": {
+            "19": "img/logo/19.png",
+            "38": "img/logo/38.png"
+        },
+        "default_title": "IngressIdentity Options"
+    },
+
     "web_accessible_resources": [
-        "img/anomalies/*"
+        "img/anomalies/*.png"
     ]
 }

@@ -43,10 +43,10 @@
         else
             url = baseUrl.newSheet.assign key
 
-        if not Object.has key, 'gid'
-            url
-        else
+        if Object.has key, 'gid'
             url + '#gid=' + key.gid
+        else
+            url
 
     # This class loads google drive documents.
     #

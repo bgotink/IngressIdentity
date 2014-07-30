@@ -52,10 +52,10 @@ createContentScriptMessageListener = (sender, tab) ->
         backgroundPage.port.emit 'iidentity-request-to-background', message
 
 startup = ->
-    console.error 'Bootstrapping IngressIdentity'
+    console.log 'Bootstrapping IngressIdentity'
 
     # start the background page
-    console.error 'Creating background page'
+    console.log 'Creating background page'
     backgroundPage.destroy() if backgroundPage?
     backgroundPage = pageWorker
         contentURL: url 'background.html'
@@ -69,12 +69,12 @@ startup = ->
 
         callback reply.reply
     backgroundPage.port.on 'iidentity-request-from-background', (message) ->
-        tabs.each (tab) ->
+        for tab in tabs
             if tab.id in workers
                 workers[tab.id].port.emit 'iidentity-request-from-background', message
 
     # start the content scripts
-    console.error 'Creating content script'
+    console.log 'Creating content script'
     contentScript.destroy() if contentScript?
     contentScript = pageMod
         include: [ "https://plus.google.com/*", "https://apis.google.com/*" ]
@@ -85,15 +85,16 @@ startup = ->
         contentStyleFile: [ url 'css/content.css' ]
         attachTo: [ 'existing', 'top', 'frame' ]
         onAttach: (worker) ->
-            workers[worker.tab.id] = worker
+            tabId = worker.tab.id
+            workers[tabId] = worker
 
             worker.on 'detach', ->
-                delete workers[worker.tab.id]
+                delete workers[tabId]
 
             worker.port.on 'iidentity-request-to-background', createContentScriptMessageListener worker, worker.tab
 
     # create action button
-    console.error 'Creating button'
+    console.log 'Creating button'
     actionButton.destroy() if actionButton?
     actionButton = createActionButton
         id: 'iidenitty-show-options'
@@ -106,7 +107,7 @@ startup = ->
             tabs.open
                 url: url 'options.html'
                 onReady: (tab) ->
-                    console.error 'Attaching options scripts to options.html'
+                    console.log 'Attaching options scripts to options.html'
                     worker = tab.attach
                         contentScriptFile: [
                             'vendor/js/jquery.min.js'

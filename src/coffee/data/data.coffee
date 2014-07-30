@@ -15,16 +15,16 @@
             parentData = exports.spreadsheets.parseKey parent
 
             if not Object.isString(parentData.key) or parentData.key.isBlank()
-                if err
+                if err?
                     err.push 'Cannot resolve key ' + key
                 return false
 
             data.key = exports.spreadsheets.parseKey(parent).key
 
-        if not Object.has data, 'gid'
-            return data.key
-
-        '{key}?gid={gid}'.assign data
+        if Object.has data, 'gid'
+            '{key}?gid={gid}'.assign data
+        else
+            data.key
 
     class PlayerSource
         constructor: (key, spreadsheet, data, players) ->
@@ -49,8 +49,7 @@
 
         hasPlayer: (oid) -> Object.has @players, oid
         getPlayer: (oid) ->
-            if not @hasPlayer oid
-                return null
+            return null unless @hasPlayer oid
 
             exports.interpreter.interpretSourceEntry @data, @players[oid]
 
@@ -78,7 +77,7 @@
                     self.setPlayers players
                     self.setUpdated()
 
-                    if err
+                    if err?
                         err.each module.log.warn
 
                     callback true
@@ -87,12 +86,12 @@
 
                     callback false
 
-        hasErrors: -> @err isnt null and @err.length > 0
+        hasErrors: -> @err? and @err.length > 0
         getErrors: -> $.extend {}, @err, @loadingErrors
 
         hasLoadingErrors: -> !!@loadingErrors
         setLoadingErrors: (err) ->
-            if not err or not Array.isArray err
+            if not err? or not Array.isArray err
                 @loadingErrors = null
             else
                 @loadingErrors = if err.length is 0 then null else err
@@ -107,7 +106,7 @@
             @err = err
             @data = data or null
 
-        getKey: @key
+        getKey: -> @key
         getTag: -> @data and @data.getTag()
         getVersion: -> @data and @data.getVersion()
         getFaction: -> @data and @data.getFaction()
@@ -121,7 +120,7 @@
 
         hasLoadingErrors: -> true
         setLoadingErrors: (err) ->
-            if (err)
+            if err?
                 @loadingErrors = err
 
         hasExtra: -> false
@@ -334,7 +333,7 @@
         source = new exports.spreadsheets.Source key
 
         # ignore dummy rows!
-        if (key.compact().match /^9+$/)
+        if key.compact().match /^9+$/
             callback null, null
             return
 

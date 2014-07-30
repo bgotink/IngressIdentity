@@ -7,13 +7,13 @@
 	<key>Builder Version</key>
 	<string>10538.35.8</string>
 	<key>CFBundleDisplayName</key>
-	<string>IngressIdentity</string>
+	<string>IngressIdentity - dev</string>
 	<key>CFBundleIdentifier</key>
-	<string>me.gotink.bram.ingressidentity</string>
+	<string>me.gotink.bram.ingressidentity.dev</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.5.3</string>
+	<string>0.6.4</string><!-- version -->
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>Chrome</key>
@@ -76,6 +76,6 @@
 		</dict>
 	</dict>
 	<key>Website</key>
-	<string>https://github.com/bgotink/IngressIdentity</string>
+	<string>http://bram.gotink.me/IngressIdentity</string>
 </dict>
 </plist>

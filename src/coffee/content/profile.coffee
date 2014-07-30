@@ -4,20 +4,37 @@
 # @license MIT
 
 ((module, $) ->
+
+    # find the smallest of a list of elements
+    # smallest = lowest height
+    $.fn.smallest = ->
+        return  @ if @length is 0
+
+        smallest = null
+        smallestHeight = Infinity
+
+        @each ->
+            $this = $ @
+            if $this.height() < smallestHeight
+                smallestHeight = $this.height()
+                smallest = $this
+
+        smallest
+
     helper =
         createWrapper: ->
-            return $ '''
-                    <div class="Ee h5a vna iidentity-profile-wrapper" role="article">
-                        <div class="ZYa ukoEtf">
-                            <div class="Lqc">
-                                <div class="F9a">Ingress Agent Profile</div>
-                                <div class="miIoOb Cdmn9d"></div>
-                            </div>
-                        </div>
-                        <div class="Uia"><div class="iec Iqc iidentity-profile"></div></div>
-                        <div class="Iqc"></div>
-                    </div>
-                    '''
+            $ '''
+              <div class="Ee h5a vna iidentity-profile-wrapper" role="article">
+                  <div class="ZYa ukoEtf">
+                      <div class="Lqc">
+                          <div class="F9a">Ingress Agent Profile</div>
+                          <div class="miIoOb Cdmn9d"></div>
+                      </div>
+                  </div>
+                  <div class="Uia"><div class="iec Iqc iidentity-profile"></div></div>
+                  <div class="Iqc"></div>
+              </div>
+              '''
 
         createTable: (rows) ->
             $ '<div class="Qqc wna"></div>'
@@ -81,8 +98,7 @@
         createLinkedSubtitle: (subtitle, links, baseUrl) ->
             helper.createSubtitle subtitle, $ links.map (link) ->
                 i = link.indexOf ':'
-                if i is -1
-                    return null
+                return null if i is -1
 
                 url = baseUrl + link.to(i).compact()
                 title = link.from(i + 1).compact()
@@ -131,15 +147,14 @@
                 helper.createTable(
                     [
                         helper.createRow 'Agent name', player.nickname
-                        helper.createRow 'Level', 'L' + (if level == '0' then '?' else level)
+                        helper.createRow 'Level', 'L' + (if level is '0' then '?' else level)
                         helper.createRow 'Faction', player.faction.capitalize()
                     ].concat(customExtra.keys()
                         .filter (e) ->
                             v = customExtra[e];
 
                             if Array.isArray v
-                                if v.length isnt 1
-                                    false
+                                return false unless v.length is 1
 
                                 v = v[0]
 
@@ -147,31 +162,31 @@
                         .map (e) ->
                             v = customExtra[e]
 
-                            helper.createRow e.humanize(), (if Array.isArray(v) then v[0] else v).compact().capitalize()
+                            helper.createRow e.humanize(), (if Array.isArray v then v[0] else v).compact().capitalize()
                     )
                 )
             )
 
         if Object.has player.extra, 'anomaly'
-            if not Array.isArray player.extra.anomaly
+            unless Array.isArray player.extra.anomaly
                 player.extra.anomaly = [ player.extra.anomaly ]
 
             $profile.append helper.createAnomalySubtitle player.extra.anomaly
 
         if Object.has player.extra, 'community'
-            if not Array.isArray player.extra.community
+            unless Array.isArray player.extra.community
                 player.extra.community = [ player.extra.community ]
 
             $profile.append helper.createLinkedSubtitle 'Communities', player.extra.community, 'https://plus.google.com/communities/'
 
         if Object.has player.extra, 'event'
-            if not Array.isArray player.extra.event
+            unless Array.isArray player.extra.event
                 player.extra.event = [ player.extra.event ]
 
             $profile.append helper.createLinkedSubtitle 'Events', player.extra.event, 'https://plus.google.com/event/'
 
         if Object.has(player, 'err') and not (Array.isArray(player.err) and player.err.length is 0)
-            if not Array.isArray player.err
+            unless Array.isArray player.err
                 player.err = [ player.err ]
 
             $profile.append helper.createSubtitle 'Errors', $ player.err.map (e) ->
@@ -206,6 +221,11 @@
         # and $elem if he does
 
         $root = $ '#' + oid + '-about-page'
+
+        # own profile page uses slightly different IDs
+        if $root.length is 0
+            $root = $ '#' + oid + '-co-about-page'
+
         $elem = $root.find 'div.iidentity-profile-wrapper'
 
         if dot is $root.attr 'data-iidentity'
@@ -242,7 +262,7 @@
                 module.log.log 'Creating profile wrapper'
                 $elem = helper.createWrapper()
                 $root.find 'div.Ypa.jw.am'
-                    .last()
+                    .smallest()
                     .prepend $elem
             else
                 module.log.log 'Re-using existing profile wrapper'

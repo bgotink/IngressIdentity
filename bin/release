@@ -65,7 +65,7 @@ case "$branch" in
 esac
 
 log "Building..."
-make all
+make all-release
 
 log "Updating from version $oldversion to $version..." >&2
 
@@ -84,7 +84,9 @@ fi
 sed -i '' -e "s/\"version\"\:.*\$/\"version\": \"$version\",/" template/chrome*/manifest.json template/firefox*/package.json
 git add template/chrome*/manifest.json template/firefox*/package.json
 # safari
-sed -i '' -e "s#<string>$oldversion</string>#<string>$version</string>#" template/*.safariextension/Info.plist
+    sed -i'.bak' -e "s#<string>.*</string><\!-- version -->#<string>$version</string><!-- version -->#" \
+                  -e "s#<string>.*</string><\!-- bundle version -->#<string>$(grep -F '<!-- bundle version -->' template/IngressIdentity-release.safariextension/Info.plist | cut -d'>' -f2 | cut -d'<' -f1 | xargs echo 1 + | bc )</string><!-- bundle version -->#" template/*.safariextension/Info.plist
+rm template/*.safariextension/Info.plist.bak
 git add template/*/Info.plist
 
 log "Creating release commit"
