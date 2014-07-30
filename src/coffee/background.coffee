@@ -436,6 +436,17 @@
 
             true
 
+        getTranslation: (request, sender, sendResponse) ->
+            module.i18n.getMessage request.locale,
+                request.name,
+                request.placeholders or {},
+                (found, message) ->
+                    sendResponse
+                        success: found
+                        message: message
+
+            true
+
     module.extension.addMessageListener (request, sender, sendResponse) ->
         if sender.tab
             module.log.log 'Got request from tab %s, url: %s', sender.tab.id, sender.url

@@ -66,4 +66,15 @@
     exports.getSourcesForExtra = (tag, oid, callback) ->
         @send { type: 'getSourcesForExtra', tag: tag, oid: oid }, (result) ->
             callback result.result
+
+    exports.getTranslation = (locale, name, placeholders, callback) ->
+        request =
+            type:   'getTranslation'
+            name:   name
+            locale: locale
+
+        if placeholders? and not Object.isEmpty placeholders
+            request.placeholders = placeholders
+
+        @send request, callback
 )(iidentity or (iidentity = window.iidentity = {}))
