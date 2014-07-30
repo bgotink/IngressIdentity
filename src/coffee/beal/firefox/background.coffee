@@ -24,7 +24,11 @@
 
     optionsPageRegExp = new RegExp '.*' + RegExp.escape('options.html') + '.*'
     exports.isOptionsPage = (url) ->
-        !!url.match new RegExp optionsPageRegExp
+        !!url.match optionsPageRegExp
+
+    baseURI = ''
+    exports.getURL = (rel) ->
+        baseURI + rel
 
     exports.sendToTabs = (message) ->
         addon.port.emit 'iidentity-request-from-background', message
@@ -59,6 +63,8 @@
     exports.init = ->
         addon.port.once 'iidentity-base-uri', (message) ->
             module.log.log 'baseURI = %s', message.uri
+
+            baseURI = message.uri
             optionsPageRegExp = new RegExp RegExp.escape(message.uri + 'options.html') + '.*'
 
         addon.port.emit 'iidentity-background-ready'
