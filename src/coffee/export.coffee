@@ -51,6 +51,18 @@
     modals = null
     progress = null
 
+    createExportTableRow = (oid, name, nickname = '', level = '', header = false) ->
+        cell = if header then 'th' else 'td'
+
+        $ """
+            <tr>
+                <#{ cell }>#{ oid }</#{ cell }>
+                <#{ cell }>#{ name }</#{ cell }>
+                <#{ cell }>#{ nickname }</#{ cell }>
+                <#{ cell }>#{ level }</#{ cell }>
+            </tr>
+          """
+
     parseName = (entry, callback) ->
         module.comm.getPlayer entry.oid, (err, player) ->
             if player?.nickname?
@@ -124,10 +136,21 @@
     doExport = (doParse) ->
         doExportHelper = ->
             lines = []
+            $shownResult = $ '.table.result'
+
+            # remove previous result
+            $shownResult.empty()
+
+            # add header
+            $shownResult
+                .append createExportTableRow 'oid', 'name', 'nickname', 'level', true
 
             if options.shouldShowHeader()
                 lines.push "oid\tname\tnickname\tlevel"
                 lines.push "999999999999999999999\tdummy\tdummy\t0"
+
+                $shownResult
+                    .append createExportTableRow '999999999999999999999', 'dummy', 'dummy', '0', true
 
             l = data.length
 
@@ -140,8 +163,9 @@
                     line += "\t" + entry.nickname
 
                 lines.push line
+                $shownResult.append createExportTableRow entry.oid, entry.name, entry.nickname or null
 
-            $ '#export_result'
+            $ '.export.result'
                 .text lines.join "\n"
 
             modals.parse_export.hide()
@@ -170,7 +194,7 @@
             parse: new Progress '.progress-bar.parse'
             export: new Progress '.progress-bar.export'
 
-        $ 'button'
+        $ 'button.setting'
             .on 'click', ->
                 $this = $ @
 
@@ -184,6 +208,14 @@
                         .text 'Enabled'
 
                 doExport $this.hasClass 'requires-reparse'
+
+        $ '#copy'
+            .on 'click', ->
+                $ '.export.result'
+                    .focus()
+                    .select()
+
+                document.execCommand 'copy', false, null
 
         module.comm.send { type: 'getExportData' }, (result) ->
             rawData = result.data
