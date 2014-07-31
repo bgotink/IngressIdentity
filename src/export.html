@@ -74,5 +74,50 @@
             </div>
         </div>
     </div>
+    <div class="modal" id="modal_parse_export"
+            tabindex="-1" role="dialog"
+            data-backdrop="static" data-keyboard="false" data-show="false"
+            aria-hidden="true" aria-labelled-by="mdl_label_parse_export">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="mdl_label_parse_export">Parsing and exporting data...</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Parsing:</p>
+                    <div class="progress">
+                        <div class="progress-bar parse" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                            <span class="sr-only"><span class="percent"></span>% complete</span>
+                        </div>
+                    </div>
+                    <p>Exporting:</p>
+                    <div class="progress">
+                        <div class="progress-bar export" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                            <span class="sr-only"><span class="percent"></span>% complete</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="modal_export"
+            tabindex="-1" role="dialog"
+            data-backdrop="static" data-keyboard="false" data-show="false"
+            aria-hidden="true" aria-labelled-by="mdl_label_export">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="mdl_label_export">Exporting data...</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="progress">
+                        <div class="progress-bar export" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                            <span class="sr-only"><span class="percent"></span>% complete</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

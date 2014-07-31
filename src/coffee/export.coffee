@@ -26,6 +26,31 @@
         /\s+a\.?k\.?a\.?\s+(.*)$/    # FirstName LastName a.k.a. Nickname
     ]
 
+    class Modal
+        constructor: (name) ->
+            @$this = $ name
+        show: ->
+            @$this.modal 'show'
+        hide: ->
+            # delay hide to give progress bar time to fill
+            window.setTimeout (=> @$this.modal('hide')), 500
+
+    class Progress
+        constructor: (name) ->
+            @$this = $ name
+        set: (value, total) ->
+            percent = Math.round value / total * 100
+
+            @$this
+                .attr 'aria-valuenow', percent
+                .css 'width', percent + '%'
+                .find 'span.sr-only percent'
+                    .text percent
+        reset: -> @set 0, 1
+
+    modals = null
+    progress = null
+
     parseName = (entry, callback) ->
         module.comm.getPlayer entry.oid, (err, player) ->
             if player?.nickname?
@@ -42,12 +67,13 @@
 
             callback()
 
-
-    parseHelper = (i, extractName, removeExisting, callback) ->
+    parseHelper = (i, l, extractName, removeExisting, callback) ->
         # call callback when done
-        if i >= rawData.entries.length
+        if i >= l
             callback()
             return
+
+        progress.parse.set i + 1, l
 
         # do stuff
         rawEntry = rawData.entries[i]
@@ -57,7 +83,7 @@
 
         doParseHelper = (addPlayer) ->
             goToNextStep = ->
-                parseHelper i + 1, extractName, removeExisting, callback
+                parseHelper i + 1, l, extractName, removeExisting, callback
 
             if not addPlayer
                 goToNextStep()
@@ -93,7 +119,7 @@
     parse = (callback) ->
         data = []
 
-        parseHelper 0, options.shouldExtractName(), options.shouldRemoveExisting(), callback
+        parseHelper 0, rawData.entries.length, options.shouldExtractName(), options.shouldRemoveExisting(), callback
 
     doExport = (doParse) ->
         doExportHelper = ->
@@ -103,7 +129,11 @@
                 lines.push "oid\tname\tnickname\tlevel"
                 lines.push "999999999999999999999\tdummy\tdummy\t0"
 
-            data.each (entry) ->
+            l = data.length
+
+            data.each (entry, i) ->
+                progress.export.set i, l
+
                 line = "{oid}\t{name}".assign entry
 
                 if Object.has entry, 'nickname'
@@ -114,12 +144,32 @@
             $ '#export_result'
                 .text lines.join "\n"
 
+            modals.parse_export.hide()
+            modals.export.hide()
+
         if doParse
+            progress.parse.reset()
+            progress.export.reset()
+
+            modals.parse_export.show()
+
             parse doExportHelper
         else
+            progress.export.reset()
+
+            modals.export.show()
+
             doExportHelper()
 
     $ ->
+        modals =
+            export: new Modal '#modal_export'
+            parse_export: new Modal '#modal_parse_export'
+
+        progress =
+            parse: new Progress '.progress-bar.parse'
+            export: new Progress '.progress-bar.export'
+
         $ 'button'
             .on 'click', ->
                 $this = $ @
