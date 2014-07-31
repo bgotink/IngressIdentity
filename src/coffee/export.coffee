@@ -23,6 +23,7 @@
         /"([^"]+)"/                  # FirstName "Nickname" LastName
         /\u201C([^\u201D]+)\u201D/   # FirstName “Nickname” LastName
         /\u2018([^\u2019]+)\u2019/   # FirstName ‘Nickname’ LastName
+        /\s+a\.?k\.?a\.?\s+(.*)$/    # FirstName LastName a.k.a. Nickname
     ]
 
     parseName = (entry, callback) ->
