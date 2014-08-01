@@ -11,7 +11,8 @@
     # after reloading the page
     messages = null
 
-    locale = $ 'html'
+    locale = $ window.top.document
+        .find 'html'
         .attr 'lang'
 
     exports.init = (callback) ->
