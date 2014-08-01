@@ -67,14 +67,8 @@
         @send { type: 'getSourcesForExtra', tag: tag, oid: oid }, (result) ->
             callback result.result
 
-    exports.getTranslation = (locale, name, placeholders, callback) ->
-        request =
-            type:   'getTranslation'
-            name:   name
-            locale: locale
+    exports.getTranslationsWithPrefix = (locale, prefix, callback) ->
+        @send { type: 'getTranslationsWithPrefix', prefix: prefix, locale: locale }, (result) ->
+            callback result.messages
 
-        if placeholders? and not Object.isEmpty placeholders
-            request.placeholders = placeholders
-
-        @send request, callback
 )(iidentity or (iidentity = window.iidentity = {}))

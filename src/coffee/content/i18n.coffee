@@ -5,31 +5,32 @@
 
 ((module) ->
 
+    exports = module.i18n = {}
+
     # we can cache this, as a change in the language is only effective
     # after reloading the page
-    translationCache = {}
+    messages = null
 
     locale = $ 'html'
-        .attr('lang')
+        .attr 'lang'
 
-    module.translate = (name, placeholders, callback) ->
-        if not callback?
-            callback = placeholders
-            placeholders = null
+    exports.init = (callback) ->
+        module.comm.getTranslationsWithPrefix locale, 'content', (msg) ->
+            messages = msg
+            callback()
 
-        cacheKey = name
-        if placeholders? and not Object.isEmpty placeholders
-            cacheKey += JSON.stringify placeholders
+    exports.getMessage = (name, placeholders) ->
+        if not Object.has messages, name
+            if placeholders?
+                return name.assign placeholders
+            else
+                return name
 
-        if Object.has translationCache, cacheKey
-            callback translationCache[cacheKey]
-            return
+        message = messages[name]
 
-        module.comm.getTranslation locale, name, placeholders, (found, message) ->
-            if not found
-                module.log.log 'Unknown translation message: ', name
-
-            translationCache[cacheKey] = message
-            callback message
+        if placeholders?
+            message.assign placeholders
+        else
+            message
 
 )(iidentity or (iidentity = window.iidentity = {}))

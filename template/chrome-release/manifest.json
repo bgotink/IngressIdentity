@@ -1,14 +1,16 @@
 {
     "manifest_version": 2,
 
-    "name": "Ingress Identity",
+    "name": "__MSG_extName__",
     "version": "0.6.4",
-    "description": "Adds Ingress identity to G+ profiles",
+    "description": "__MSG_extDescription__",
     "icons": {
         "16":  "img/logo/16.png",
         "48":  "img/logo/48.png",
         "128": "img/logo/128.png"
     },
+
+    "default_locale": "en",
 
     "permissions": [ "storage" ],
     "optional_permissions": [ "https://*.google.com/*" ],
@@ -35,7 +37,7 @@
             "19": "img/logo/19.png",
             "38": "img/logo/38.png"
         },
-        "default_title": "IngressIdentity Options"
+        "default_title": "__MSG_extBrowserAction__"
     },
 
     "web_accessible_resources": [

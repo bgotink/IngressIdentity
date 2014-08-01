@@ -3,10 +3,12 @@ JSs = js/content.js js/options.js js/help.js js/background.js
 CSSs = css/content.css css/options.css css/help.css
 HTMLs = options.html background.html help.html
 
-JS_CONTENT_DEPS = src/coffee/communication.coffee src/coffee/log.coffee src/coffee/content/doOnce.coffee src/coffee/content/main.coffee src/coffee/content/mentions.coffee src/coffee/content/profile.coffee src/coffee/content/source.coffee
+JS_CONTENT_DEPS = src/coffee/communication.coffee src/coffee/log.coffee src/coffee/content/doOnce.coffee src/coffee/content/main.coffee src/coffee/content/mentions.coffee src/coffee/content/profile.coffee src/coffee/content/source.coffee src/coffee/content/i18n.coffee
 JS_OPTIONS_DEPS = src/coffee/communication.coffee src/coffee/log.coffee src/coffee/options.coffee
 JS_BACKGROUND_DEPS = src/coffee/log.coffee src/coffee/data/spreadsheets.coffee src/coffee/data/interpreter.coffee src/coffee/data/merger.coffee src/coffee/data/data.coffee src/coffee/background/i18n.coffee src/coffee/background.coffee
 JS_HELP_DEPS = src/coffee/help.coffee
+
+LANGUAGES=en nl
 
 FILES= $(MDs) $(JSs) $(CSSs) $(HTMLs) vendor
 
@@ -34,6 +36,10 @@ endef
 
 define mkdir
 mkdir -p $@
+endef
+
+define cson
+cson2json $< > $@
 endef
 
 .PHONY: all all-release release init dist default clean touch common common-release chrome chrome-release chrome-all chrome-dist safari safari-release safari-all safari-dist firefox firefox-release firefox-all firefox-dist
@@ -140,10 +146,18 @@ build/%/img/anomalies: src/img/anomalies
 	$(copy)
 	@rm $@/README.md
 
+build/common/i18n/%/messages.json: src/i18n/%/messages.cson
+	@mkdir -p $(dir $@)
+	$(cson)
+
+build/common-release/i18n/%/messages.json: src/i18n/%/messages.cson
+	@mkdir -p $(dir $@)
+	$(cson)
+
 # main
 
-common: build/common $(addprefix build/common/,$(CSSs))
-common-release: build/common-release $(addprefix build/common-release/,$(CSSs))
+common: build/common $(addprefix build/common/,$(CSSs) $(addprefix i18n/,$(addsuffix /messages.json,$(LANGUAGES))))
+common-release: build/common-release $(addprefix build/common-release/,$(CSSs) $(addprefix i18n/,$(addsuffix /messages.json,$(LANGUAGES))))
 
 # Chrome targets
 #
@@ -189,14 +203,20 @@ build/chrome/css/%: build/common/css/%
 build/chrome-release/css/%: build/common-release/css/%
 	$(copy)
 
+build/chrome/_locales: build/common/i18n
+	$(copy)
+
+build/chrome-release/_locales: build/common-release/i18n
+	$(copy)
+
 build/chrome: build/chrome/js build/chrome/css
 build/chrome-release: build/chrome-release/js build/chrome-release/css
 
 # main
 
-chrome: common build/chrome $(addprefix build/chrome/, $(FILES) manifest.json img img/anomalies img/logo $(addprefix img/logo/, ingress.png 16.png 19.png 38.png 48.png 128.png))
+chrome: common build/chrome $(addprefix build/chrome/, $(FILES) manifest.json _locales img img/anomalies img/logo $(addprefix img/logo/, ingress.png 16.png 19.png 38.png 48.png 128.png))
 
-chrome-release: common-release build/chrome-release $(addprefix build/chrome-release/, $(FILES) manifest.json img/anomalies $(addprefix img/logo/, ingress.png 16.png 19.png 38.png 48.png 128.png))
+chrome-release: common-release build/chrome-release $(addprefix build/chrome-release/, $(FILES) manifest.json _locales img/anomalies $(addprefix img/logo/, ingress.png 16.png 19.png 38.png 48.png 128.png))
 
 chrome-all: chrome chrome-release
 

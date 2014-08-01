@@ -44,7 +44,7 @@
             $.ajax
                 type: 'GET'
                 dataType: 'json'
-                url: module.extension.getUrl '_locales/' + locale + '/messages.json'
+                url: module.extension.getURL '_locales/' + locale + '/messages.json'
                 success: (data) -> setData data
                 error: (xhr) ->
                     if xhr.status isnt 404
@@ -58,11 +58,23 @@
         # simply get the message, calling callback(true, message) or callback(false)
         # depending on whether the message was found
         getMessage: (locale, name, callback) ->
-            @load locale, () ->
+            @load locale, ->
                 if loadedLocales[locale].data[name]?
                     callback true, loadedLocales[locale].data[name]
                 else
                     callback false
+
+        # get all messages with a given prefix in a given loale
+        getPrefixedMessages: (locale, prefix, callback) ->
+            @load locale, ->
+                data = Object.select loadedLocales[locale].data, new RegExp '^' + prefix + '_'
+                offset = prefix.length + 1
+
+                result = {}
+                Object.each data, (k, v) ->
+                    result[k.from offset] = v.message
+
+                callback result
 
         # get the message, fallback to other locale if not found
         getMessageWithFallbacks: (locales, name, callback) ->
@@ -70,12 +82,22 @@
                 callback false
                 return
 
-            getMessage locales.first(), name, (found, message) ->
+            @getMessage locales.first(), name, (found, message) =>
                 if found
                     callback true, message
                     return
 
-                getMessageWithFallbacks locales.slice(1), name, callback
+                @getMessageWithFallbacks locales.slice(1), name, callback
+
+        # get all prefixed messages, with fallbacks to other locales
+        getPrefixedMessagesWithFallbacks: (locales, prefix, callback, state = {}) ->
+            if locales.isEmpty()
+                callback state
+                return
+
+            @getPrefixedMessages locales.first(), prefix, (messages) =>
+                newState = Object.merge state, messages, false, false
+                @getPrefixedMessagesWithFallbacks locales.slice(1), prefix, callback, newState
 
     exports.getMessage = (locale, name, placeholders, callback) ->
         locales = [ locale ]
@@ -85,12 +107,22 @@
 
         locales.push defaultLocale
 
-        getMessageWithFallbacks locales, name, (found, message) ->
+        localeHelper.getMessageWithFallbacks locales, name, (found, message) ->
             if not found
                 callback false, name
                 return
 
             # TODO do the placeholder stuff
             callback true, message
+
+    exports.getPrefixedMessages = (locale, prefix, callback) ->
+        locales = [ locale ]
+
+        if locale.has '_'
+            locales.push locale.to locale.indexOf '_'
+
+        locales.push defaultLocale
+
+        localeHelper.getPrefixedMessagesWithFallbacks locales, prefix, callback
 
 )(iidentity or (iidentity = window.iidentity = {}), window.jQuery)

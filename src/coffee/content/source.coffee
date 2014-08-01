@@ -33,7 +33,7 @@
                         $ '<div class="pD iidentity-event"></pd>'
                             .append(
                                 $ '<b>'
-                                    .text 'IngressIdentity Source Files'
+                                    .text module.i18n.getMessage 'sourceFiles'
                             )
                             .append(
                                 $ sources.map (source) ->
@@ -70,7 +70,7 @@
                         $ '<div class="g0d iidentity-community"></pd>'
                             .append(
                                 $ '<b>'
-                                    .text 'IngressIdentity Source Files'
+                                    .text module.i18n.getMessage 'sourceFiles'
                             )
                             .append(
                                 $ sources.map (source) ->

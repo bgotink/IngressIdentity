@@ -436,14 +436,12 @@
 
             true
 
-        getTranslation: (request, sender, sendResponse) ->
-            module.i18n.getMessage request.locale,
-                request.name,
-                request.placeholders or {},
-                (found, message) ->
+        getTranslationsWithPrefix: (request, sender, sendResponse) ->
+            module.i18n.getPrefixedMessages request.locale,
+                request.prefix,
+                (messages) ->
                     sendResponse
-                        success: found
-                        message: message
+                        messages: messages
 
             true
 

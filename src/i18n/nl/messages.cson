@@ -1,0 +1,53 @@
+{
+    # manifest information:
+    extName:
+        message: 'IngressIdentiteit'
+        description: 'The extension name'
+    extDevName:
+        message: 'IngressIdentiteit - dev'
+        description: 'The extension name in development builds'
+    extDescription:
+        message: 'Voegt Ingress identiteit toe op G+ profiles'
+        description: 'The extension description'
+    extBrowserAction:
+        message: 'IngressIdentiteit Opties'
+        description: 'The tooltip for the broser action button that opens the options page'
+
+    # Content script stuff
+    content_profileTitle:
+        message: 'Ingress Agent Profiel'
+        description: 'The title for the panel on user profiles\' about pages'
+    content_anomalies:
+        message: 'Anomalieën'
+        description: 'The plural of anomaly'
+    content_agentName:
+        message: 'Agent Naam'
+        description: 'Title to denote the agent name'
+    content_level:
+        message: 'Level'
+        description: 'the word "level"'
+    content_levelValue:
+        message: 'L{value}'
+        description: 'How the level is shown (L1, L2, ... L16 in English)'
+    content_faction:
+        message: 'Factie'
+        description: 'the word "faction"'
+    content_enlightened:
+        message: 'Enlightened'
+        description: 'The name of the enlightened faction'
+    content_resistance:
+        message: 'Resistance'
+        description: 'The name of the resistance faction'
+    content_communities:
+        message: 'Communities'
+        description: 'The plural of community'
+    content_events:
+        message: 'Evenementen'
+        description: 'The plural of the singular of events'
+    content_errors:
+        message: 'Fouten'
+        description: 'The plural of error'
+    content_sourceFiles:
+        message: 'IngressIdentiteit Bronbestanden'
+        description: 'The header of the source file section in events and communities'
+}
