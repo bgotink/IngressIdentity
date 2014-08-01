@@ -1,5 +1,5 @@
 MDs = README.md LICENSE.md NOTICE.md SOURCE.md
-JSs = js/content.js js/options.js js/help.js js/background.js
+JSs = js/content.js js/options.js js/help.js js/background.js js/auto-translate.js
 CSSs = css/content.css css/options.css css/help.css
 HTMLs = options.html background.html help.html
 
@@ -7,6 +7,7 @@ JS_CONTENT_DEPS = src/coffee/communication.coffee src/coffee/log.coffee src/coff
 JS_OPTIONS_DEPS = src/coffee/communication.coffee src/coffee/log.coffee src/coffee/options.coffee
 JS_BACKGROUND_DEPS = src/coffee/log.coffee src/coffee/data/spreadsheets.coffee src/coffee/data/interpreter.coffee src/coffee/data/merger.coffee src/coffee/data/data.coffee src/coffee/background/i18n.coffee src/coffee/background.coffee
 JS_HELP_DEPS = src/coffee/help.coffee
+JS_AT_DEPS = src/coffee/auto-translate.coffee
 
 LANGUAGES=en nl
 
@@ -195,6 +196,12 @@ build/chrome/js/help.js: $(JS_HELP_DEPS)
 	$(coffee)
 
 build/chrome-release/js/help.js: $(JS_HELP_DEPS)
+	$(coffee_release)
+
+build/chrome/js/auto-translate.js: src/coffee/beal/chrome/content.coffee $(JS_AT_DEPS)
+	$(coffee)
+
+build/chrome-release/js/auto-translate.js: src/coffee/beal/chrome/content.coffee $(JS_AT_DEPS)
 	$(coffee_release)
 
 build/chrome/css/%: build/common/css/%

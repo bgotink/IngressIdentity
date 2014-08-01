@@ -50,4 +50,15 @@
     content_sourceFiles:
         message: 'IngressIdentity Source Files'
         description: 'The header of the source file section in events and communities'
+
+    # Options page
+    options_title:
+        message: 'IngressIdentity Options'
+        description: 'The title of the options page'
+    options_help:
+        message: 'Help'
+        description: 'The word help'
+    options_intro:
+        message: 'This options page allows you to configure the manifests to use when identifying people on G+. It also provides some tools to help acquiring data to put in manifest files or source files.'
+        description: 'The options page general introduction'
 }
