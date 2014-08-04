@@ -7,7 +7,7 @@
 ((module, $, window) ->
     storage = module.extension.storage
     data = null
-    exportData = null
+    exportData = $.Deferred()
     storageCache = {}
 
     isOptionsPage = module.extension.isOptionsPage
@@ -437,25 +437,37 @@
 
             true
 
-        exportCommunity: (request, sender, sendResponse) ->
-            exportData = request.data
-            module.extension.openPopup module.extension.getURL 'export.html'
+        setExportData: (request, sender, sendResponse) ->
+            module.log.log 'Set export data to ', request.data
+            exportData.resolve request.data
 
-            # never sends a response
+            # send a response to allow the client to execute after this call
+            # has been completed
+            sendResponse
+                status: 'success'
+
+            # we've already sent our response
             false
 
         getExportData: (request, sender, sendResponse) ->
-            sendResponse
-                data: exportData
+            exportData.done (data) ->
+                module.log.log 'Returning export data ', data
+                sendResponse
+                    data: data
+
+                # reset the deferred object
+                exportData = $.Deferred()
+
+            true
+
+    if module.extension.openPopup?
+        messageListeners.openPopup = (request, sender, sendResponse) ->
+            module.extension.openPopup request.url
+
+            # never send a response
+            false
 
     module.extension.addMessageListener (request, sender, sendResponse) ->
-        if sender.tab
-            module.log.log 'Got request from tab %s, url: %s', sender.tab.id, sender.url
-        else
-            module.log.error 'Got request from this backgroundpage?'
-            # silently ignore
-            return
-
         reply = null
 
         if request.lastUpdate
@@ -464,6 +476,13 @@
             realRequest = request.request
         else
             realRequest = request
+
+        if sender.tab
+            module.log.log 'Got "%s" request from tab %s, url: %s', realRequest.type, sender.tab.id, sender.url
+        else
+            module.log.error 'Got request from this backgroundpage?'
+            # silently ignore
+            return
 
         if Object.has messageListeners, realRequest.type
             messageListeners[realRequest.type] realRequest, sender, (response) ->
@@ -475,8 +494,8 @@
 
                 sendResponse reply
         else
-            module.log.error 'Unknown message type: %s', request.type
-            module.log.error 'Request: ', request
+            module.log.error 'Unknown message type: %s', realRequest.type
+            module.log.error 'Request: ', realRequest
             module.log.error 'Sender: ', sender
 
             false

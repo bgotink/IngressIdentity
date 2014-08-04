@@ -215,9 +215,23 @@
                     .focus()
                     .select()
 
-                document.execCommand 'copy', false, null
+                return false if document.execCommand 'copy', false, null
+
+                # automatic copy failed
+                # fallback to hiding the table and showing a textarea
+                $ '.table.result'
+                    .empty()
+                    .append(
+                        $ '<textarea rows="30" columns="30">'
+                            .text $('.export.result').text()
+                    )
+
+                false
+
+        module.extension.init() if module.extension.init?
 
         module.comm.send { type: 'getExportData' }, (result) ->
+            module.log.log 'Got export data', result.data
             rawData = result.data
 
             doExport true

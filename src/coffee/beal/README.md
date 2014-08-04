@@ -39,6 +39,7 @@ or options pages cannot wrongly modify any settings.
     the listener accepts a single parameter, an array containing the changed data keys
 - void openPopup(string url)
     required, opens the given url as a pop-up
+    see note 1
 - void init()
     optional, will be called when DOM is ready if the value isn't null/undefined
 
@@ -58,3 +59,25 @@ This file is included in all javascript files apart from `background.js`.
     optional, should be _absent when not implemented_, don't use an empty function!
 - void init()
     optional, will be called when DOM is ready if the value isn't null/undefined
+- void openPopup(string url)
+    required, opens the given url as a pop-up
+    see note 1
+
+# Notes
+
+## Note 1: void openPopup(string url)
+
+Some browsers require this to be implemented in the background page (Chrome), while
+others require the content page to open the URL (Safari).
+
+### Implement in background
+
+Implement the function in the background page. The content version of the function
+must also be implemented, but can simply call `module.comm.openPopup(url)`.  
+Note that this call __will fail__ if the background version is not implemented.
+
+### Implement in content
+
+Don't implement the function in the background BEAL script. Simply implement the
+required functionality in the content script. Note that `module.comm.openPopup`
+shouldn't be called, as it will result in an error.

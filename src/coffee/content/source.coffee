@@ -98,7 +98,7 @@
                     )
 
                 $ 'a.iidentity-export'
-                    .on 'click', () ->
+                    .on 'click', ->
                         data =
                             oid: oid
                             entries: []
@@ -111,8 +111,10 @@
                                     name: $this.find('.l0d > .n0d .VCc').text()
 
                         module.comm.send
-                            type: 'exportCommunity'
+                            type: 'setExportData'
                             data: data
+
+                        module.extension.openPopup module.extension.getURL 'export.html'
 
                         false
 
