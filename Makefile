@@ -37,6 +37,7 @@ endef
 
 define mkdir
 mkdir -p $@
+@touch $@
 endef
 
 define cson
@@ -147,18 +148,22 @@ build/%/img/anomalies: src/img/anomalies
 	$(copy)
 	@rm $@/README.md
 
-build/common/i18n/%/messages.json: src/i18n/%/messages.cson
-	@mkdir -p $(dir $@)
+build/common/i18n:
+	$(mkdir)
+
+build/common-release/i18n:
+	$(mkdir)
+
+build/common/i18n/%.json: src/i18n/%.cson build/common/i18n
 	$(cson)
 
-build/common-release/i18n/%/messages.json: src/i18n/%/messages.cson
-	@mkdir -p $(dir $@)
+build/common-release/i18n/%.json: src/i18n/%.cson build/common-release/i18n
 	$(cson)
 
 # main
 
-common: build/common $(addprefix build/common/,$(CSSs) $(addprefix i18n/,$(addsuffix /messages.json,$(LANGUAGES))))
-common-release: build/common-release $(addprefix build/common-release/,$(CSSs) $(addprefix i18n/,$(addsuffix /messages.json,$(LANGUAGES))))
+common: build/common $(addprefix build/common/,$(CSSs) $(addprefix i18n/,$(addsuffix .json,$(LANGUAGES))))
+common-release: build/common-release $(addprefix build/common-release/,$(CSSs) $(addprefix i18n/,$(addsuffix .json,$(LANGUAGES))))
 
 # Chrome targets
 #
@@ -210,10 +215,12 @@ build/chrome/css/%: build/common/css/%
 build/chrome-release/css/%: build/common-release/css/%
 	$(copy)
 
-build/chrome/_locales: build/common/i18n
+build/chrome/_locales/%/messages.json: build/common/i18n/%.json
+	@mkdir -p $(dir $@)
 	$(copy)
 
-build/chrome-release/_locales: build/common-release/i18n
+build/chrome-release/_locales/%/messages.json: build/common-release/i18n/%.json
+	@mkdir -p $(dir $@)
 	$(copy)
 
 build/chrome: build/chrome/js build/chrome/css
@@ -221,9 +228,9 @@ build/chrome-release: build/chrome-release/js build/chrome-release/css
 
 # main
 
-chrome: common build/chrome $(addprefix build/chrome/, $(FILES) manifest.json _locales img img/anomalies img/logo $(addprefix img/logo/, ingress.png 16.png 19.png 38.png 48.png 128.png))
+chrome: common build/chrome $(addprefix build/chrome/, $(FILES) manifest.json $(addprefix _locales/,$(addsuffix /messages.json,$(LANGUAGES))) img img/anomalies img/logo $(addprefix img/logo/, ingress.png 16.png 19.png 38.png 48.png 128.png))
 
-chrome-release: common-release build/chrome-release $(addprefix build/chrome-release/, $(FILES) manifest.json _locales img/anomalies $(addprefix img/logo/, ingress.png 16.png 19.png 38.png 48.png 128.png))
+chrome-release: common-release build/chrome-release $(addprefix build/chrome-release/, $(FILES) manifest.json $(addprefix _locales/,$(addsuffix /messages.json,$(LANGUAGES))) img/anomalies $(addprefix img/logo/, ingress.png 16.png 19.png 38.png 48.png 128.png))
 
 chrome-all: chrome chrome-release
 
@@ -256,6 +263,12 @@ build/IngressIdentity.safariextension/js/options.js: src/coffee/beal/safari/cont
 build/IngressIdentity-release.safariextension/js/options.js: src/coffee/beal/safari/content.coffee $(JS_OPTIONS_DEPS)
 	$(coffee_release)
 
+build/IngressIdentity.safariextension/js/auto-translate.js: src/coffee/beal/safari/content.coffee $(JS_AT_DEPS)
+	$(coffee)
+
+build/IngressIdentity-release.safariextension/js/auto-translate.js: src/coffee/beal/safari/content.coffee $(JS_AT_DEPS)
+	$(coffee_release)
+
 build/IngressIdentity.safariextension/js/help.js: $(JS_HELP_DEPS)
 	$(coffee)
 
@@ -268,6 +281,14 @@ build/IngressIdentity.safariextension/css/%: build/common/css/%
 build/IngressIdentity-release.safariextension/css/%: build/common-release/css/%
 	$(copy)
 
+build/IngressIdentity.safariextension/_locales/%/messages.json: build/common/i18n/%.json
+	@mkdir -p $(dir $@)
+	$(copy)
+
+build/IngressIdentity-release.safariextension/_locales/%/messages.json: build/common-release/i18n/%.json
+	@mkdir -p $(dir $@)
+	$(copy)
+
 build/%.safariextension: build/%.safariextension/js build/%.safariextension/css
 
 build/%.safariextension/img/logo/toolbar.png: src/img/logo.svg build/%.safariextension/img/logo tools/gray2transparent/gray2transparent
@@ -278,9 +299,9 @@ build/%.safariextension/img/logo/toolbar.png: src/img/logo.svg build/%.safariext
 
 # main
 
-safari: common build/IngressIdentity.safariextension $(addprefix build/IngressIdentity.safariextension/, $(FILES) Info.plist img img/anomalies img/logo img/logo/toolbar.png img/logo/ingress.png)
+safari: common build/IngressIdentity.safariextension $(addprefix build/IngressIdentity.safariextension/, $(FILES) Info.plist img img/anomalies img/logo img/logo/toolbar.png img/logo/ingress.png $(addprefix _locales/,$(addsuffix /messages.json,$(LANGUAGES))))
 
-safari-release: common-release build/IngressIdentity-release.safariextension $(addprefix build/IngressIdentity-release.safariextension/, $(FILES) Info.plist img img/anomalies img/logo img/logo/toolbar.png img/logo/ingress.png)
+safari-release: common-release build/IngressIdentity-release.safariextension $(addprefix build/IngressIdentity-release.safariextension/, $(FILES) Info.plist img img/anomalies img/logo img/logo/toolbar.png img/logo/ingress.png $(addprefix _locales/,$(addsuffix /messages.json,$(LANGUAGES))))
 
 safari-all: safari safari-release
 
