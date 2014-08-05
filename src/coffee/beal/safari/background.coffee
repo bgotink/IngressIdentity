@@ -6,20 +6,15 @@
 ((module, safari, localStorage) ->
     exports = module.extension = {}
 
+    settings = safari.extension.settings
     exports.storage =
         get: (data, callback) ->
             callback Object.map data, (key, defaultValue) ->
-                value = localStorage[key]
-                try
-                    if value? then JSON.parse(value) else defaultValue
-                catch e
-                    module.log.error 'Error when parsing localStorage.%s as JSON: ', key, e
-                    delete localStorage[key]
-                    defaultValue
+                settings[key] or defaultValue
 
         set: (data, callback) ->
             Object.each data, (key, value) ->
-                localStorage[key] = JSON.stringify value
+                settings[key] = value
             callback()
 
     optionsPageRegExp = new RegExp RegExp.escape(safari.extension.baseURI + 'options.html') + '.*'
