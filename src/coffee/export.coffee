@@ -211,6 +211,11 @@
 
         $ '#copy'
             .on 'click', ->
+                if module.extension.copyToClipboard?
+                    module.extension.copyToClipboard $('.export.result').text()
+
+                    return false
+
                 $ '.export.result'
                     .focus()
                     .select()

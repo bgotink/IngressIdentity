@@ -60,6 +60,9 @@
     exports.addDataChangedListener = ->
         # not implemented: not available in the firefox API
 
+    exports.openPopup = (url) ->
+        addon.port.emit 'iidentity-open-popup', { url: url }
+
     exports.init = ->
         addon.port.once 'iidentity-base-uri', (message) ->
             module.log.log 'baseURI = %s', message.uri
