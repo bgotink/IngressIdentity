@@ -4,6 +4,9 @@
 # @license MIT
 
 ((module) ->
+    # abort if auto-translate isn't supported
+    return unless module.extension.getI18nMessage?
+
     # jQuery function to get all attributes of an element
     $.fn.attrs = ->
         return {} if @length is 0
