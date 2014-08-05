@@ -61,4 +61,55 @@
     options_intro:
         message: 'This options page allows you to configure the manifests to use when identifying people on G+. It also provides some tools to help acquiring data to put in manifest files or source files.'
         description: 'The options page general introduction'
+    options_success:
+        message: 'Success!'
+        description: 'Message to show when something went right'
+    options_warning:
+        message: 'Warning!'
+        description: 'Message to show when something went wrong, but not too wrong to function'
+    options_error:
+        message: 'Error!'
+        description: 'Message to show when something went horribly wrong'
+    options_reload_success:
+        message: 'The data was successfully reloaded.'
+        description: ''
+    options_reload_failed:
+        message: 'Something went wrong when reloading the data.'
+        description: ''
+    options_add_success:
+        message: 'The manifest file was successfully added.'
+        description: ''
+    options_add_duplicate:
+        message: 'The given manifest is already loaded.'
+        description: ''
+    options_add_failed:
+        message: 'Something went wrong when adding the manifest.'
+        description: ''
+    options_remove_success:
+        message: 'The manifest file was successfully removed.'
+        description: ''
+    options_remove_nonexisting:
+        message: 'The given manifest was not loaded.'
+        description: ''
+    options_remove_failed:
+        message: 'Something went wrong when removing the manifest.'
+        description: ''
+    options_reorder_success:
+        message: 'The order was successfully changed.'
+        description: ''
+    options_reorder_failed:
+        message: 'Something went wrong when changing the order.'
+        description: ''
+    options_rename_success:
+        message: 'The manifest was successfully renamed.'
+        description: ''
+    options_rename_failed:
+        message: 'Something went wrong when renaming the manifest.'
+        description: ''
+    options_data_sources:
+        message: 'Data Sources'
+        description: 'Data Sources title'
+    options_force_reload:
+        message: 'Force reload'
+        description: 'Text for the button to reload the manifests'
 }

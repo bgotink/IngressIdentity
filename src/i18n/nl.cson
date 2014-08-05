@@ -1,27 +1,27 @@
 {
     # manifest information:
     extName:
-        message: 'IngressIdentiteit'
+        message: 'IngressIdentity'
         description: 'The extension name'
     extDevName:
-        message: 'IngressIdentiteit - dev'
+        message: 'IngressIdentity - dev'
         description: 'The extension name in development builds'
     extDescription:
-        message: 'Voegt Ingress identiteit toe op G+ profiles'
+        message: 'Adds Ingress identity to G+ profiles'
         description: 'The extension description'
     extBrowserAction:
-        message: 'IngressIdentiteit Opties'
+        message: 'IngressIdentity Options'
         description: 'The tooltip for the broser action button that opens the options page'
 
     # Content script stuff
     content_profileTitle:
-        message: 'Ingress Agent Profiel'
+        message: 'Ingress Agent Profile'
         description: 'The title for the panel on user profiles\' about pages'
     content_anomalies:
-        message: 'Anomalieën'
+        message: 'Anomalies'
         description: 'The plural of anomaly'
     content_agentName:
-        message: 'Agent Naam'
+        message: 'Agent Name'
         description: 'Title to denote the agent name'
     content_level:
         message: 'Level'
@@ -30,7 +30,7 @@
         message: 'L{value}'
         description: 'How the level is shown (L1, L2, ... L16 in English)'
     content_faction:
-        message: 'Factie'
+        message: 'Faction'
         description: 'the word "faction"'
     content_enlightened:
         message: 'Enlightened'
@@ -42,12 +42,74 @@
         message: 'Communities'
         description: 'The plural of community'
     content_events:
-        message: 'Evenementen'
+        message: 'Events'
         description: 'The plural of the singular of events'
     content_errors:
-        message: 'Fouten'
+        message: 'Errors'
         description: 'The plural of error'
     content_sourceFiles:
-        message: 'IngressIdentiteit Bronbestanden'
+        message: 'IngressIdentity Source Files'
         description: 'The header of the source file section in events and communities'
+
+    # Options page
+    options_title:
+        message: 'IngressIdentity Options'
+        description: 'The title of the options page'
+    options_help:
+        message: 'Help'
+        description: 'The word help'
+    options_intro:
+        message: 'This options page allows you to configure the manifests to use when identifying people on G+. It also provides some tools to help acquiring data to put in manifest files or source files.'
+        description: 'The options page general introduction'
+    options_success:
+        message: 'Success!'
+        description: 'Message to show when something went right'
+    options_warning:
+        message: 'Warning!'
+        description: 'Message to show when something went wrong, but not too wrong to function'
+    options_error:
+        message: 'Error!'
+        description: 'Message to show when something went horribly wrong'
+    options_reload_success:
+        message: 'The data was successfully reloaded.'
+        description: ''
+    options_reload_failed:
+        message: 'Something went wrong when reloading the data.'
+        description: ''
+    options_add_success:
+        message: 'The manifest file was successfully added.'
+        description: ''
+    options_add_duplicate:
+        message: 'The given manifest is already loaded.'
+        description: ''
+    options_add_failed:
+        message: 'Something went wrong when adding the manifest.'
+        description: ''
+    options_remove_success:
+        message: 'The manifest file was successfully removed.'
+        description: ''
+    options_remove_nonexisting:
+        message: 'The given manifest was not loaded.'
+        description: ''
+    options_remove_failed:
+        message: 'Something went wrong when removing the manifest.'
+        description: ''
+    options_reorder_success:
+        message: 'The order was successfully changed.'
+        description: ''
+    options_reorder_failed:
+        message: 'Something went wrong when changing the order.'
+        description: ''
+    options_rename_success:
+        message: 'The manifest was successfully renamed.'
+        description: ''
+    options_rename_failed:
+        message: 'Something went wrong when renaming the manifest.'
+        description: ''
+    options_data_sources:
+        message: 'Data Sources'
+        description: 'Data Sources title'
+    options_force_reload:
+        message: 'Force reload'
+        description: 'Text for the button to reload the manifests'
 }
