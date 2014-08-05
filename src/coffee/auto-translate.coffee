@@ -45,5 +45,5 @@
 
                     text = text.assign placeholders
 
-                $this.text text
+                $this.html text
 )(iidentity or (iidentity = window.iidentity = {}))
