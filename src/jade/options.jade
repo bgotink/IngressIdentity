@@ -1,0 +1,174 @@
+extends ./layout.jade
+
+block head
+    title IngressIdentity Options
+
+    // Bootstrap CSS
+    link(rel='stylesheet', href='vendor/css/bootstrap.min.css')
+
+    // Our CSS
+    link(rel='stylesheet', href='css/options.css')
+
+    // jQuery, Sugar and Bootstrap JS
+    script(type='text/javascript', src='vendor/js/jquery.min.js')
+    script(type='text/javascript', src='vendor/js/jquery-ui.min.js')
+    script(type='text/javascript', src='vendor/js/sugar.min.js')
+    script(type='text/javascript', src='vendor/js/bootstrap.min.js')
+
+    // Our JS
+    script(type='text/javascript', src='js/options.js')
+
+mixin alert-success(klass, text)
+    .hide.alert.alert-dismissable.alert-success(classes=[klass])
+        button.close(type='button', aria-hidden) &times;
+        strong Success!
+        |= text
+mixin alert-warning(klass, text)
+    .hide.alert.alert-dismissable.alert-warning(classes=[klass])
+        button.close(type='button', aria-hidden) &times;
+        strong Warning!
+        |= text
+mixin alert-danger(klass, text)
+    .hide.alert.alert-dismissable.alert-danger(classes=[klass])
+        button.close(type='button', aria-hidden) &times;
+        strong Error!
+        |= text
+
+block content
+    .row
+        .col-sm-10.col-sm-offset-1.col-md-8.col-md-offset-2
+            h1
+                | IngressIdentity Options
+                a(target='_blank', href='help.html', class='btn btn-default help pull-right') Help
+            p.
+                This options page allows you to configure the manifests to use
+                when identifying people on G+. It also provides some tools to
+                help acquiring data to put in manifest files or source files.
+    .row
+        .col-sm-10.col-sm-offset-1.col-md-8.col-md-offset-2
+            +alert-success('alert-reload-success', 'The data was successfully reloaded.')
+            +alert-warning('alert-reload-warning', 'Something went wrong when reloading the data.')
+            +alert-danger('alert-reload-failed', 'Something went wrong when reloading the data.')
+
+            +alert-success('alert-add-success', 'The manifest file was successfully added.')
+            +alert-warning('alert-add-duplicate', 'The given manifest is already loaded.')
+            +alert-warning('alert-add-warning', 'Something went wrong when adding the manifest.')
+            +alert-danger('alert-add-failed', 'Something went wrong when adding the manifest.')
+
+            +alert-success('alert-remove-success', 'The manifest file was successfully removed.')
+            +alert-warning('alert-remove-nonexistent', 'The given manifest was not loaded.')
+            +alert-warning('alert-remove-warning', 'Something went wrong when removing the manifest.')
+            +alert-danger('alert-remove-failed', 'Something went wrong when removing the manifest.')
+
+            +alert-success('alert-reorder-success', 'The order was successfully changed.')
+            +alert-danger('alert-reorder-nonexistent', 'Something went wrong when changing the order.')
+
+            +alert-success('alert-rename-success', 'The manifest was successfully renamed.')
+            +alert-danger('alert-rename-failed', 'Something went wrong when renaming the manifest.')
+    .row
+        .col-sm-10.col-sm-offset-1.col-md-8.col-md-offset-2
+            h2
+                | Data Sources
+                button#reload_sources(type='button', class='btn btn-default btn-sm', data-loading-text='Reloading...')
+                    span.glyphicon.glyphicon-refresh
+                    | Force reload
+            .row
+                .col-sm-12.listing
+                    .source_list
+                        p Loading the data...
+            .row
+                .col-sm-12.input
+                    h3 Add a new manifest
+                    form.manifest_add(role='form', action='#')
+                        .form-group
+                            label(for='manifest_input') Manifest Key
+                            input#manifest_input.form-control(type='text', placeholer='0AtpJ3MMfk4gjdFJxdW41VHdxVC1nTnU2RVh1RUk4THc')
+                            .help-block
+                                p.
+                                    For more information about where to find the manifest key,
+                                    please take a look at <a target="_blank" href="help.html#key">the help page</a>.
+                        .form-group
+                            label(for='name_input') Manifest Name
+                            input#name_input.form-control(type='text')
+                            .help-block
+                                p.
+                                    <em>Optional</em>. A human-readable name for your manifest.
+                        .form-group
+                            button.btn.btn-primary.manifest_add(type='button', data-loading-text='Adding...')
+                                span.glyphicon.glyphicon-plus
+                                | Add manifest
+                        div
+                            p.
+                                If you want to see an example of a manifest file, add manifest key
+                            blockquote
+                                a(target='_blank', href='https://docs.google.com/spreadsheet/ccc?key=0AlQqEFrEHdKSdG9GTG83T21XZURhZEozd01Lb3BxTmc').
+                                    0AlQqEFrEHdKSdG9GTG83T21XZURhZEozd01Lb3BxTmc
+                            p.
+                                Then take a look at <a target="_blank" href="https://plus.google.com/+NianticProject/posts/eTDoXUG8TkB">
+                                this post by the Niantic Project</a> or
+                                <a target="_blank" href="https://plus.google.com/110350977702120778591/posts/GH32VJw1fhA">
+                                this post by Klue/ADA</a>.
+    .row
+        .col-sm-10.col-sm-offset-1.col-md-8.col-md-offset-2
+            h2 Settings
+            p This section contains some settings for the extension.
+            div
+                h3 Layout options
+                p This subsection contains a couple of layout tweaks.
+                div
+                    p
+                        button#enable_anomalies.btn.btn-default.btn-sm(type='button', data-loading-text='Storing...').
+                            Initializing...
+                        | Show anomaly badges
+                    p
+                        button.btn.btn-default.btn-sm(type='button', data-loading-text='Storing...', data-match='a.Ug[oid]').
+                            Initializing...
+                        | Match profile pop-ups.
+                    p
+                        button.btn.btn-default.btn-sm(type='button', data-loading-text='Storing...', data-match='a.ob.tv.Ub[oid]').
+                            Initializing...
+                        | Match authors of posts and comments, event RSVP, event creator etc.
+                    p
+                        button.btn.btn-default.btn-sm(type='button', data-loading-text='Storing...', data-match='a.proflink.aaTEdf[oid]').
+                            Initializing...
+                        | Match mentions in posts.
+                    p
+                        button.btn.btn-default.btn-sm(type='button', data-loading-text='Storing...', data-match='div.o0b[oid]').
+                            Initializing...
+                        | Match people in the 'In common with you', 'In his/her circles' or 'Have him/her in circles' sections.
+                    p
+                        button.btn.btn-default.btn-sm(type='button', data-loading-text='Storing...', data-match='extra-event').
+                            Initializing...
+                        | Show links to the source spreadsheets linked to an event on the page of that event.
+                    p
+                        button.btn.btn-default.btn-sm(type='button', data-loading-text='Storing...', data-match='extra-community').
+                            Initializing...
+                        | Show links to the source spreadsheets linked to a community on the page of that community.
+    .row
+        .col-sm-10.col-sm-offset-1.col-md-8.col-md-offset-2.about
+            h2 About
+            p.
+                This extension is written and maintained by <a target="_blank" href="https://github.com/bgotink">Bram Gotink</a>.
+                The code is &copy; 2014 Bram Gotink, licensed under the terms of the <a target="_blank" href="http://en.wikipedia.org/wiki/MIT_License">MIT License</a>.
+                The source of this project can be found on <a target="_blank" href="https://github.com/bgotink/IngressIdentity">GitHub</a>.
+            h3 Acknowledgements
+            p.
+                This project uses code by <a target="_blank" href="https://jquery.org/">jQuery</a>,
+                <a target="_blank" href="http://sugarjs.com/">Sugar.js</a>,
+                <a target="_blank" href="http://ejohn.org/blog/simple-javascript-inheritance/">John Resig</a>
+                and <a target="_blank" href="https://github.com/twbs/bootstrap">Twitter's Bootstrap</a>.
+                The logo is derived from the ingress logos created by <a target="_blank" href="https://github.com/cr0ybot/ingress-logos">cr0ybot</a>.
+            p.
+                The logo is derived from the ingress logos created by <a target="_blank" href="https://github.com/cr0ybot/ingress-logos">cr0ybot</a>.
+            h3 Bug Report / Feature Request
+            p.
+                If you've found a bug or have an idea for a killer feature, feel
+                free to let us know <a target="_blank" href="https://github.com/bgotink/IngressIdentity/issues">here</a>
+                if you have a GitHub account or using the feedback feature in the
+                Chrome Web Store found <a target="_blank" href="https://chrome.google.com/webstore/support/pjhgnhcijlkffbncjecmcdpndjckcbik">here</a>.
+            h3 Disclaimer
+            p.
+                The extension and its author(s) are in no way affiliated with
+                Ingress, Google or NianticLabs@Google. This extension merely
+                serves as third-party tool to support Ingress players and their
+                communities living on Google+.
