@@ -17,13 +17,18 @@ pageWorker = require 'sdk/page-worker'
 tabs = require 'sdk/tabs'
 createActionButton = require 'sdk/ui/button/action'
     .ActionButton
+web_resources = require './resources'
 
 backgroundPage = null
 contentScript = null
+exportScript = null
 actionButton = null
 
 url = (page) ->
     self.data.url page
+
+web_url = (page) ->
+    web_resources.url page
 
 callbacks =
     nextId: 0
@@ -81,7 +86,7 @@ startup = ->
         contentScriptFile: [ 'vendor/js/jquery.min.js', 'vendor/js/sugar.min.js', 'js/content.js' ].map url
         contentScriptWhen: 'end'
         contentScriptOptions:
-            baseURI: require('./resources').url ''
+            baseURI: web_url ''
         contentStyleFile: [ url 'css/content.css' ]
         attachTo: [ 'existing', 'top', 'frame' ]
         onAttach: (worker) ->
@@ -91,6 +96,18 @@ startup = ->
             worker.on 'detach', ->
                 delete workers[tabId]
 
+            worker.port.on 'iidentity-request-to-background', createContentScriptMessageListener worker, worker.tab
+
+    # create script for export page
+    exportScript.destroy() if exportScript?
+    exportScript = pageMod
+        include: [ web_url 'export.html' ]
+        contentScriptFile: [ 'vendor/js/jquery.min.js', 'vendor/js/jquery-ui.min.js', 'vendor/js/sugar.min.js', 'vendor/js/bootstrap.min.js', 'js/export.js' ].map url
+        contentScriptWhen: 'end'
+        contentScriptOptions:
+            baseURI: web_url ''
+        attachTo: [ 'existing', 'frame' ]
+        onAttach: (worker) ->
             worker.port.on 'iidentity-request-to-background', createContentScriptMessageListener worker, worker.tab
 
     # create action button

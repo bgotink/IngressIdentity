@@ -332,6 +332,12 @@ build/firefox/data/options.html: src/options.html build/firefox/data
 build/firefox-release/data/options.html: src/options.html build/firefox-release/data
 	grep -vE '<script type="text/javascript" src=' $< > $@
 
+build/firefox/data/export.html: src/export.html build/firefox/data
+	grep -vE '<script type="text/javascript" src=' $< > $@
+
+build/firefox-release/data/export.html: src/export.html build/firefox-release/data
+	grep -vE '<script type="text/javascript" src=' $< > $@
+
 build/firefox-release/data/%.html: src/%.html build/firefox-release/data
 	$(copy)
 
