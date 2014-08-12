@@ -83,40 +83,7 @@
                                                     .text source.key
                                             )[0]
                             )
-                            .append(
-                                if window.document.location.pathname.match /(^|\/)communities\/([a-zA-Z0-9]+)\/members($|\/)/
-                                    $ '<div>'
-                                        .append(
-                                            $ '<a>'
-                                                .addClass 'Ub iidentity-export'
-                                                .attr 'href', '#'
-                                                .text 'Export this Community'
-                                        )
-                                else
-                                    null
-                            )
                     )
-
-                $ 'a.iidentity-export'
-                    .on 'click', ->
-                        data =
-                            oid: oid
-                            entries: []
-
-                        $ 'div.X8c.xTc'
-                            .each ->
-                                $this = $ @
-                                data.entries.push
-                                    oid: $this.attr 'oid'
-                                    name: $this.find('.l0d > .n0d .VCc').text()
-
-                        module.comm.send
-                            type: 'setExportData'
-                            data: data
-
-                        module.showPopup 'Export Community', 'gray', module.extension.getURL 'export.html'
-
-                        false
 
     module.listSources = ->
         checkEvent()
