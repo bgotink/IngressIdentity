@@ -114,7 +114,7 @@
                             type: 'setExportData'
                             data: data
 
-                        module.extension.openPopup module.extension.getURL 'export.html'
+                        module.showPopup 'Export Community', 'gray', module.extension.getURL 'export.html'
 
                         false
 
