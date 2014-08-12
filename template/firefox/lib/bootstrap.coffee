@@ -81,7 +81,7 @@ startup = ->
         contentScriptFile: [ 'vendor/js/jquery.min.js', 'vendor/js/sugar.min.js', 'js/content.js' ].map url
         contentScriptWhen: 'end'
         contentScriptOptions:
-            baseURI: url ''
+            baseURI: require('./resources').url ''
         contentStyleFile: [ url 'css/content.css' ]
         attachTo: [ 'existing', 'top', 'frame' ]
         onAttach: (worker) ->

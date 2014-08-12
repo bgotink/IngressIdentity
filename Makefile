@@ -329,16 +329,7 @@ build/firefox-release/data/css/%: build/common-release/css/% build/firefox-relea
 build/firefox/data/options.html: src/options.html build/firefox/data
 	grep -vE '<script type="text/javascript" src=' $< > $@
 
-build/firefox/data/export.html: src/export.html build/firefox/data
-	grep -vE '<script type="text/javascript" src=' $< > $@
-
-build/firefox/data/%.html: src/%.html build/firefox/data
-	$(copy)
-
 build/firefox-release/data/options.html: src/options.html build/firefox-release/data
-	grep -vE '<script type="text/javascript" src=' $< > $@
-
-build/firefox-release/data/export.html: src/export.html build/firefox-release/data
 	grep -vE '<script type="text/javascript" src=' $< > $@
 
 build/firefox-release/data/%.html: src/%.html build/firefox-release/data
@@ -358,6 +349,12 @@ build/firefox/lib/bootstrap.js: template/firefox/lib/bootstrap.coffee
 
 build/firefox-release/lib/bootstrap.js: template/firefox-release/lib/bootstrap.coffee
 	$(coffee_release)
+
+build/firefox/lib/resources.js: template/firefox/lib/resources.js
+	$(copy)
+
+build/firefox-release/lib/resources.js: template/firefox-release/lib/resources.js
+	$(copy)
 
 build/firefox/data/js/content.js: src/coffee/beal/firefox/content.coffee $(JS_CONTENT_DEPS)
 	$(coffee)
@@ -400,9 +397,9 @@ build/%/icon64.png: src/img/logo.svg
 
 # main
 
-firefox: common build/firefox $(addprefix build/firefox/, icon.png icon64.png lib lib/bootstrap.js package.json $(MDs) data $(addprefix data/, js css $(JSs) $(HTMLs) $(CSSs) vendor img $(addprefix img/, anomalies logo $(addprefix logo/, ingress.png 16.png 32.png 64.png))))
+firefox: common build/firefox $(addprefix build/firefox/, icon.png icon64.png lib lib/bootstrap.js lib/resources.js package.json $(MDs) data $(addprefix data/, js css $(JSs) $(HTMLs) $(CSSs) vendor img $(addprefix img/, anomalies logo $(addprefix logo/, ingress.png 16.png 32.png 64.png))))
 
-firefox-release: common build/firefox-release $(addprefix build/firefox-release/, icon.png icon64.png lib lib/bootstrap.js package.json $(MDs) data $(addprefix data/, js css $(JSs) $(HTMLs) $(CSSs) vendor img $(addprefix img/, anomalies logo $(addprefix logo/, ingress.png 16.png 32.png 64.png))))
+firefox-release: common build/firefox-release $(addprefix build/firefox-release/, icon.png icon64.png lib lib/bootstrap.js lib/resources.js package.json $(MDs) data $(addprefix data/, js css $(JSs) $(HTMLs) $(CSSs) vendor img $(addprefix img/, anomalies logo $(addprefix logo/, ingress.png 16.png 32.png 64.png))))
 
 firefox-all: firefox firefox-release
 
