@@ -61,9 +61,6 @@
 
             callback null, result.player
 
-    exports.openPopup = (url) ->
-        @send { type: 'openPopup', url: url }
-
     exports.setOnUpdate = (callback) -> onUpdate = callback
 
     exports.getSourcesForExtra = (tag, oid, callback) ->

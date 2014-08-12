@@ -42,11 +42,6 @@
         chrome.storage.onChanged.addListener (changes) ->
             listener Object.keys changes
 
-    exports.openPopup = (url) ->
-        chrome.windows.create
-            type: 'popup'
-            url: url
-
     exports.init = ->
         chrome.browserAction.onClicked.addListener (tab) ->
             chrome.tabs.create

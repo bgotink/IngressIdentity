@@ -460,13 +460,6 @@
 
             true
 
-    if module.extension.openPopup?
-        messageListeners.openPopup = (request, sender, sendResponse) ->
-            module.extension.openPopup request.url
-
-            # never send a response
-            false
-
     module.extension.addMessageListener (request, sender, sendResponse) ->
         reply = null
 

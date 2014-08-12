@@ -20,7 +20,4 @@
     exports.getURL = (rel) ->
         chrome.extension.getURL rel
 
-    exports.openPopup = (url) ->
-        module.comm.openPopup url
-
 )(iidentity or (iidentity = window.iidentity = {}), window.chrome)

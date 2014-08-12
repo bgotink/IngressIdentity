@@ -30,10 +30,6 @@
     exports.getURL = (rel) ->
         safari.extension.baseURI + rel
 
-    exports.openPopup = (url) ->
-        module.log.log 'Opening url %s', url
-        window.open url
-
     exports.init = ->
         safari.self.addEventListener 'message',
                 (event) ->

@@ -38,11 +38,6 @@
         # this doesn't work with addon :-/
         self.options.baseURI + rel
 
-    exports.openPopup = (url) ->
-        module.comm.send
-            type: 'openPopup'
-            url: url
-
     exports.copyToClipboard = (str) ->
         Components
             .classes['@mozilla.org/widget/clipboardhelper;1']

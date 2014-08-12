@@ -17,8 +17,6 @@ pageWorker = require 'sdk/page-worker'
 tabs = require 'sdk/tabs'
 createActionButton = require 'sdk/ui/button/action'
     .ActionButton
-createPanel = require 'sdk/panel'
-    .Panel
 
 backgroundPage = null
 contentScript = null
@@ -74,20 +72,6 @@ startup = ->
         for tab in tabs
             if tab.id in workers
                 workers[tab.id].port.emit 'iidentity-request-from-background', message
-
-    backgroundPage.port.on 'iidentity-open-popup', (message) ->
-        tabs.open
-            url: message.url
-            onReady: (tab) ->
-                worker = tab.attach
-                    contentScriptFile: [
-                        'vendor/js/jquery.min.js'
-                        'vendor/js/sugar.min.js'
-                        'vendor/js/bootstrap.min.js'
-                        'js/export.js'
-                    ].map url
-
-                worker.port.on 'iidentity-request-to-background', createContentScriptMessageListener worker, tab
 
     # start the content scripts
     console.log 'Creating content script'
