@@ -38,11 +38,7 @@
         # this doesn't work with addon :-/
         self.options.baseURI + rel
 
-    exports.copyToClipboard = (str) ->
-        Components
-            .classes['@mozilla.org/widget/clipboardhelper;1']
-            .getService Components.interfaces.nsIClipboardHelper
-            .copyString str
+    exports.browser = 'firefox'
 
     exports.init = ->
         addon.port.on 'iidentity-answer-from-background', (message) ->

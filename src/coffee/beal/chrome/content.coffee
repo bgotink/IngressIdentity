@@ -20,4 +20,6 @@
     exports.getURL = (rel) ->
         chrome.extension.getURL rel
 
+    exports.browser = 'chrome'
+
 )(iidentity or (iidentity = window.iidentity = {}), window.chrome)

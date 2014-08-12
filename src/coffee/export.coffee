@@ -211,16 +211,11 @@
 
         $ '#copy'
             .on 'click', ->
-                if module.extension.copyToClipboard?
-                    module.extension.copyToClipboard $('.export.result').text()
-
-                    return false
-
                 $ '.export.result'
                     .focus()
                     .select()
 
-                return false if document.execCommand 'copy', false, null
+                return false if module.extension.browser isnt 'firefox' and document.execCommand 'copy', false, null
 
                 # automatic copy failed
                 # fallback to hiding the table and showing a textarea

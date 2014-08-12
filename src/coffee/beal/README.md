@@ -54,5 +54,7 @@ This file is included in all javascript files apart from `background.js`.
     required, gives the URL of an asset given its relative path
 - mixed getLastError()
     optional, should be _absent when not implemented_, don't use an empty function!
+- string browser
+    note: not a function ;)
 - void init()
     optional, will be called when DOM is ready if the value isn't null/undefined
