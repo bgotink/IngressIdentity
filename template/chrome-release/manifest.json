@@ -39,6 +39,7 @@
     },
 
     "web_accessible_resources": [
-        "img/anomalies/*.png"
+        "img/anomalies/*.png",
+        "export.html"
     ]
 }

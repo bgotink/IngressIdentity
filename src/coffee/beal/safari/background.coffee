@@ -21,6 +21,9 @@
     exports.isOptionsPage = (url) ->
         !!url.match optionsPageRegExp
 
+    exports.getURL = (rel) ->
+        safari.extension.baseURI + rel
+
     exports.sendToTabs = (message) ->
         total = 0
         sent = 0
