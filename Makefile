@@ -1,15 +1,14 @@
 MDs = README.md LICENSE.md NOTICE.md SOURCE.md
 
-JSs = js/content.js js/options.js js/help.js js/background.js js/export.js js/auto-translate.js
+JSs = js/content.js js/options.js js/help.js js/background.js js/export.js
 CSSs = css/content.css css/options.css css/help.css css/export.css
 HTMLs = options.html background.html help.html export.html
 
 JS_CONTENT_DEPS = $(addprefix src/coffee/,communication.coffee log.coffee $(addprefix content/,doOnce.coffee main.coffee mentions.coffee profile.coffee source.coffee popup.coffee export.coffee i18n.coffee))
-JS_OPTIONS_DEPS = $(addprefix src/coffee/,communication.coffee log.coffee options.coffee)
+JS_OPTIONS_DEPS = $(addprefix src/coffee/,communication.coffee log.coffee options.coffee auto-translate.coffee)
 JS_BACKGROUND_DEPS = $(addprefix src/coffee/,log.coffee data/spreadsheets.coffee data/interpreter.coffee data/merger.coffee data/data.coffee background/i18n.coffee background.coffee)
-JS_HELP_DEPS = src/coffee/help.coffee
-JS_EXPORT_DEPS = $(addprefix src/coffee/,communication.coffee log.coffee export.coffee)
-JS_AT_DEPS = src/coffee/auto-translate.coffee
+JS_HELP_DEPS = src/coffee/help.coffee src/coffee/auto-translate.coffee
+JS_EXPORT_DEPS = $(addprefix src/coffee/,communication.coffee log.coffee export.coffee auto-translate.coffee)
 
 LANGUAGES=en nl
 
@@ -214,12 +213,6 @@ build/chrome/js/help.js: $(JS_HELP_DEPS)
 build/chrome-release/js/help.js: $(JS_HELP_DEPS)
 	$(coffee_release)
 
-build/chrome/js/auto-translate.js: src/coffee/beal/chrome/content.coffee $(JS_AT_DEPS)
-	$(coffee)
-
-build/chrome-release/js/auto-translate.js: src/coffee/beal/chrome/content.coffee $(JS_AT_DEPS)
-	$(coffee_release)
-
 build/chrome/css/%: build/common/css/%
 	$(copy)
 
@@ -272,12 +265,6 @@ build/IngressIdentity.safariextension/js/options.js: src/coffee/beal/safari/cont
 	$(coffee)
 
 build/IngressIdentity-release.safariextension/js/options.js: src/coffee/beal/safari/content.coffee $(JS_OPTIONS_DEPS)
-	$(coffee_release)
-
-build/IngressIdentity.safariextension/js/auto-translate.js: src/coffee/beal/safari/content.coffee $(JS_AT_DEPS)
-	$(coffee)
-
-build/IngressIdentity-release.safariextension/js/auto-translate.js: src/coffee/beal/safari/content.coffee $(JS_AT_DEPS)
 	$(coffee_release)
 
 build/IngressIdentity.safariextension/js/export.js: src/coffee/beal/safari/content.coffee $(JS_EXPORT_DEPS)
