@@ -201,11 +201,11 @@
                 if $this.hasClass 'active'
                     $this
                         .removeClass 'active'
-                        .text 'Disabled'
+                        .text module.extension.getI18nMessage 'export_disabled'
                 else
                     $this
                         .addClass 'active'
-                        .text 'Enabled'
+                        .text module.extension.getI18nMessage 'export_enabled'
 
                 doExport $this.hasClass 'requires-reparse'
 

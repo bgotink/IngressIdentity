@@ -112,4 +112,57 @@
     options_force_reload:
         message: 'Force reload'
         description: 'Text for the button to reload the manifests'
+
+    # Export page
+    export_title:
+        message: 'IngressIdentity Data Exporter'
+        description: 'Title of the export page'
+    export_intro:
+        message: 'This page tries to fetch Ingress agent data from a Google+ community. You can modify it before exporting it to a Google Drive Spreadsheet.'
+        description: 'The intro for the export page.'
+    export_options_title:
+        message: 'Options'
+        description: 'The word "Options".'
+    export_options_intro:
+        message: 'The following buttons allow you to enable some features for the exporter:'
+        description: 'Intro text for the options section of the export page.'
+    export_enabled:
+        message: 'Enabled'
+        description: 'The text on the button for an option that has been enabled by the user.'
+    export_disabled:
+        message: 'Disabled'
+        description: 'The text on the button for an option that has been disabled by the user.'
+    export_option_extract_name:
+        message: 'Try to extract agent name from the Google+ name if unknown.'
+        description: 'One of the options.'
+    export_option_remove_existing:
+        message: 'Filter out existing entries for this community.'
+        description: 'One of the options.'
+    export_option_add_header:
+        message: 'Add a header and dummy row to the exported data. Note that the table below always shows a header.'
+        description: 'One of the options.'
+    export_result_title:
+        message: 'Result'
+        description: 'The title for the result section.'
+    export_copy_button:
+        message: 'Copy'
+        description: 'The text for the copy button.'
+    export_copy_text:
+        message: 'Press this button to copy the data to the clipboard, then paste it in a Google Drive Spreadsheet.'
+        description: 'An explanatory text next to the copy button.'
+    export_modal_pe_title:
+        message: 'Parsing and exporting data&hellip;'
+        description: 'Title for the modal used when parsing and exporting.'
+    export_modal_e_title:
+        message: 'Exporting data&hellip;'
+        description: 'Title for the modal used when only exporting.'
+    export_modal_p_subtitle:
+        message: 'Parsing:'
+        description: 'Subtitle for parsing'
+    export_modal_e_subtitle:
+        message: 'Exporting:'
+        description: 'Subtitle for exporting'
+    export_progress:
+        message: '<span class="percent"></span>% complete'
+        description: 'The "<span class="percent"></span>" part will contain a number.'
 }
