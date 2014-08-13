@@ -25,6 +25,7 @@
     observer = new window.MutationObserver (mutations) ->
         module.checkProfile()
         module.listSources()
+        module.addExport()
 
         mutations.each (mutation) ->
             Array.prototype.each.call mutation.addedNodes, (node) ->
@@ -54,6 +55,7 @@
 
         module.checkProfile()
         module.listSources()
+        module.addExport()
 
         module.checkElement window.document
 

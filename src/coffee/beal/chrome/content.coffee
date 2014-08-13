@@ -26,4 +26,5 @@
         else
             chrome.i18n.getMessage name
 
+    exports.browser = 'chrome'
 )(iidentity or (iidentity = window.iidentity = {}), window.chrome)

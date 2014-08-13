@@ -1,12 +1,14 @@
 MDs = README.md LICENSE.md NOTICE.md SOURCE.md
-JSs = js/content.js js/options.js js/help.js js/background.js js/auto-translate.js
-CSSs = css/content.css css/options.css css/help.css
-HTMLs = options.html background.html help.html
 
-JS_CONTENT_DEPS = src/coffee/communication.coffee src/coffee/log.coffee src/coffee/content/doOnce.coffee src/coffee/content/main.coffee src/coffee/content/mentions.coffee src/coffee/content/profile.coffee src/coffee/content/source.coffee src/coffee/content/i18n.coffee
-JS_OPTIONS_DEPS = src/coffee/communication.coffee src/coffee/log.coffee src/coffee/options.coffee
-JS_BACKGROUND_DEPS = src/coffee/log.coffee src/coffee/data/spreadsheets.coffee src/coffee/data/interpreter.coffee src/coffee/data/merger.coffee src/coffee/data/data.coffee src/coffee/background/i18n.coffee src/coffee/background.coffee
+JSs = js/content.js js/options.js js/help.js js/background.js js/export.js js/auto-translate.js
+CSSs = css/content.css css/options.css css/help.css css/export.css
+HTMLs = options.html background.html help.html export.html
+
+JS_CONTENT_DEPS = $(addprefix src/coffee/,communication.coffee log.coffee $(addprefix content/,doOnce.coffee main.coffee mentions.coffee profile.coffee source.coffee popup.coffee export.coffee i18n.coffee))
+JS_OPTIONS_DEPS = $(addprefix src/coffee/,communication.coffee log.coffee options.coffee)
+JS_BACKGROUND_DEPS = $(addprefix src/coffee/,log.coffee data/spreadsheets.coffee data/interpreter.coffee data/merger.coffee data/data.coffee background/i18n.coffee background.coffee)
 JS_HELP_DEPS = src/coffee/help.coffee
+JS_EXPORT_DEPS = $(addprefix src/coffee/,communication.coffee log.coffee export.coffee)
 JS_AT_DEPS = src/coffee/auto-translate.coffee
 
 LANGUAGES=en nl
@@ -111,6 +113,9 @@ build/%/help.html: src/help.html
 build/%/options.html: src/options.html
 	$(copy)
 
+build/%/export.html: src/export.html
+	$(copy)
+
 build/common-release/css/content.css: src/less/content.less src/less/variables.less src/less/general.less
 	$(less_release)
 
@@ -197,6 +202,12 @@ build/chrome/js/options.js: src/coffee/beal/chrome/content.coffee $(JS_OPTIONS_D
 build/chrome-release/js/options.js: src/coffee/beal/chrome/content.coffee $(JS_OPTIONS_DEPS)
 	$(coffee_release)
 
+build/chrome/js/export.js: src/coffee/beal/chrome/content.coffee $(JS_EXPORT_DEPS)
+	$(coffee)
+
+build/chrome-release/js/export.js: src/coffee/beal/chrome/content.coffee $(JS_EXPORT_DEPS)
+	$(coffee_release)
+
 build/chrome/js/help.js: $(JS_HELP_DEPS)
 	$(coffee)
 
@@ -267,6 +278,12 @@ build/IngressIdentity.safariextension/js/auto-translate.js: src/coffee/beal/safa
 	$(coffee)
 
 build/IngressIdentity-release.safariextension/js/auto-translate.js: src/coffee/beal/safari/content.coffee $(JS_AT_DEPS)
+	$(coffee_release)
+
+build/IngressIdentity.safariextension/js/export.js: src/coffee/beal/safari/content.coffee $(JS_EXPORT_DEPS)
+	$(coffee)
+
+build/IngressIdentity-release.safariextension/js/export.js: src/coffee/beal/safari/content.coffee $(JS_EXPORT_DEPS)
 	$(coffee_release)
 
 build/IngressIdentity.safariextension/js/help.js: $(JS_HELP_DEPS)
@@ -361,8 +378,14 @@ build/firefox-release/data/css/%: build/common-release/css/% build/firefox-relea
 build/firefox/data/options.html: src/options.html build/firefox/data
 	grep -vE '<script type="text/javascript" src=' $< > $@
 
-build/firefox/data/%.html: src/%.html build/firefox/data
-	$(copy)
+build/firefox-release/data/options.html: src/options.html build/firefox-release/data
+	grep -vE '<script type="text/javascript" src=' $< > $@
+
+build/firefox/data/export.html: src/export.html build/firefox/data
+	grep -vE '<script type="text/javascript" src=' $< > $@
+
+build/firefox-release/data/export.html: src/export.html build/firefox-release/data
+	grep -vE '<script type="text/javascript" src=' $< > $@
 
 build/firefox-release/data/%.html: src/%.html build/firefox-release/data
 	$(copy)
@@ -382,6 +405,12 @@ build/firefox/lib/bootstrap.js: template/firefox/lib/bootstrap.coffee
 build/firefox-release/lib/bootstrap.js: template/firefox-release/lib/bootstrap.coffee
 	$(coffee_release)
 
+build/firefox/lib/resources.js: template/firefox/lib/resources.js
+	$(copy)
+
+build/firefox-release/lib/resources.js: template/firefox-release/lib/resources.js
+	$(copy)
+
 build/firefox/data/js/content.js: src/coffee/beal/firefox/content.coffee $(JS_CONTENT_DEPS)
 	$(coffee)
 
@@ -398,6 +427,12 @@ build/firefox/data/js/options.js: src/coffee/beal/firefox/content.coffee $(JS_OP
 	$(coffee)
 
 build/firefox-release/data/js/options.js: src/coffee/beal/firefox/content.coffee $(JS_OPTIONS_DEPS)
+	$(coffee_release)
+
+build/firefox/data/js/export.js: src/coffee/beal/firefox/content.coffee $(JS_EXPORT_DEPS)
+	$(coffee)
+
+build/firefox-release/data/js/export.js: src/coffee/beal/firefox/content.coffee $(JS_EXPORT_DEPS)
 	$(coffee_release)
 
 build/firefox/data/js/help.js: $(JS_HELP_DEPS)
@@ -417,9 +452,9 @@ build/%/icon64.png: src/img/logo.svg
 
 # main
 
-firefox: common build/firefox $(addprefix build/firefox/, icon.png icon64.png lib lib/bootstrap.js package.json $(MDs) data $(addprefix data/, js css $(JSs) $(HTMLs) $(CSSs) vendor img $(addprefix img/, anomalies logo $(addprefix logo/, ingress.png 16.png 32.png 64.png))))
+firefox: common build/firefox $(addprefix build/firefox/, icon.png icon64.png lib lib/bootstrap.js lib/resources.js package.json $(MDs) data $(addprefix data/, js css $(JSs) $(HTMLs) $(CSSs) vendor img $(addprefix img/, anomalies logo $(addprefix logo/, ingress.png 16.png 32.png 64.png))))
 
-firefox-release: common build/firefox-release $(addprefix build/firefox-release/, icon.png icon64.png lib lib/bootstrap.js package.json $(MDs) data $(addprefix data/, js css $(JSs) $(HTMLs) $(CSSs) vendor img $(addprefix img/, anomalies logo $(addprefix logo/, ingress.png 16.png 32.png 64.png))))
+firefox-release: common build/firefox-release $(addprefix build/firefox-release/, icon.png icon64.png lib lib/bootstrap.js lib/resources.js package.json $(MDs) data $(addprefix data/, js css $(JSs) $(HTMLs) $(CSSs) vendor img $(addprefix img/, anomalies logo $(addprefix logo/, ingress.png 16.png 32.png 64.png))))
 
 firefox-all: firefox firefox-release
 

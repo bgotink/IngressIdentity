@@ -3,7 +3,7 @@
 # @author Bram Gotink (@bgotink)
 # @license MIT
 
-((module, $, window) ->
+((module, $) ->
     comm =
         getManifests: (callback) ->
             module.comm.send { type: 'getManifests' }, (result) ->

@@ -8,7 +8,7 @@
     # find the smallest of a list of elements
     # smallest = lowest height
     $.fn.smallest = ->
-        return  @ if @length is 0
+        return @ if @length is 0
 
         smallest = null
         smallestHeight = Infinity

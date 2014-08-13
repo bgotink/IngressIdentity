@@ -16,11 +16,11 @@
 
         try
             module.extension.sendMessage request, (reply) ->
-                    if typeof reply is 'undefined'
+                    if not reply?
                         module.log.error module.extension.getLastError() if module.extension.getLastError
                         return
 
-                    callback reply.reply
+                    callback reply.reply if callback?
 
                     lastUpdate = +new Date
                     if reply.shouldUpdate
