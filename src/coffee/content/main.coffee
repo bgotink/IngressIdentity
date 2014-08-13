@@ -65,8 +65,9 @@
         selfDestructObserver.observe window.document.body,
             attributes: true
 
+        module.extension.init() if module.extension.init?
+
         module.i18n.init ->
-            module.extension.init() if module.extension.init?
             module.comm.setOnUpdate forceUpdate
 
             forceUpdate()
