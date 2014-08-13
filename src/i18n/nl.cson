@@ -1,27 +1,27 @@
 {
     # manifest information:
     extName:
-        message: 'IngressIdentity'
+        message: 'IngressIdentiteit'
         description: 'The extension name'
     extDevName:
-        message: 'IngressIdentity - dev'
+        message: 'IngressIdentiteit - dev'
         description: 'The extension name in development builds'
     extDescription:
-        message: 'Adds Ingress identity to G+ profiles'
+        message: 'Voegt Ingress identiteit toe op G+ profielen'
         description: 'The extension description'
     extBrowserAction:
-        message: 'IngressIdentity Options'
+        message: 'IngressIdentiteit Opties'
         description: 'The tooltip for the broser action button that opens the options page'
 
     # Content script stuff
     content_profileTitle:
-        message: 'Ingress Agent Profile'
+        message: 'Ingress Agent Profiel'
         description: 'The title for the panel on user profiles\' about pages'
     content_anomalies:
-        message: 'Anomalies'
+        message: 'Anomalieën'
         description: 'The plural of anomaly'
     content_agentName:
-        message: 'Agent Name'
+        message: 'Agent Naam'
         description: 'Title to denote the agent name'
     content_level:
         message: 'Level'
@@ -30,7 +30,7 @@
         message: 'L{value}'
         description: 'How the level is shown (L1, L2, ... L16 in English)'
     content_faction:
-        message: 'Faction'
+        message: 'Factie'
         description: 'the word "faction"'
     content_enlightened:
         message: 'Enlightened'
@@ -45,232 +45,232 @@
         message: 'Events'
         description: 'The plural of the singular of events'
     content_errors:
-        message: 'Errors'
+        message: 'Fouten'
         description: 'The plural of error'
     content_sourceFiles:
-        message: 'IngressIdentity Source Files'
+        message: 'IngressIdentiteit Bronbestanden'
         description: 'The header of the source file section in events and communities'
 
     # Options page
     options_title:
-        message: 'IngressIdentity Options'
+        message: 'IngressIdentiteit Opties'
         description: 'The title of the options page'
     options_help:
         message: 'Help'
         description: 'The word help'
     options_intro:
-        message: 'This options page allows you to configure the manifests to use when identifying people on G+. It also provides some tools to help acquiring data to put in manifest files or source files.'
+        message: 'Deze optiespagina laat je toe in te stellen welke manifesten worden ingeladen om spelers te herkennen op G+.'
         description: 'The options page general introduction'
     options_success:
-        message: 'Success!'
+        message: 'Gelukt!'
         description: 'Message to show when something went right'
     options_warning:
-        message: 'Warning!'
+        message: 'Waarschuwing!'
         description: 'Message to show when something went wrong, but not too wrong to function'
     options_error:
-        message: 'Error!'
+        message: 'Fout!'
         description: 'Message to show when something went horribly wrong'
     options_reload_success:
-        message: 'The data was successfully reloaded.'
+        message: 'De data werd succesvol herladen.'
         description: ''
     options_reload_failed:
-        message: 'Something went wrong when reloading the data.'
+        message: 'Er liep iets mis bij het herladen van de data.'
         description: ''
     options_add_success:
-        message: 'The manifest file was successfully added.'
+        message: 'Het manifest werd succesvol toegevoegd.'
         description: ''
     options_add_duplicate:
-        message: 'The given manifest is already loaded.'
+        message: 'Het manifest was reeds toegevoegd.'
         description: ''
     options_add_failed:
-        message: 'Something went wrong when adding the manifest.'
+        message: 'Er liep iets mis bij het toevoegen van het manifest.'
         description: ''
     options_remove_success:
-        message: 'The manifest file was successfully removed.'
+        message: 'Het manifest werd succesvol verwijderd.'
         description: ''
     options_remove_nonexisting:
-        message: 'The given manifest was not loaded.'
+        message: 'Het manifest was niet ingeladen.'
         description: ''
     options_remove_failed:
-        message: 'Something went wrong when removing the manifest.'
+        message: 'Er liep iets mis bij het herladen van het manifest.'
         description: ''
     options_reorder_success:
-        message: 'The order was successfully changed.'
+        message: 'De volgorde werd succesvol veranderd.'
         description: ''
     options_reorder_failed:
-        message: 'Something went wrong when changing the order.'
+        message: 'Er liep iets mis bij het veranderen van de volgorde.'
         description: ''
     options_rename_success:
-        message: 'The manifest was successfully renamed.'
+        message: 'Het manifest werd succesvol hernoemd.'
         description: ''
     options_rename_failed:
-        message: 'Something went wrong when renaming the manifest.'
+        message: 'Er liep iets mis bij het hernoemen van het manifest.'
         description: ''
     options_data_sources:
-        message: 'Data Sources'
+        message: 'Data Bronnen'
         description: 'Data Sources title'
     options_force_reload:
-        message: 'Force reload'
+        message: 'Herlaad'
         description: 'Text for the button to reload the manifests'
     options_loading_data:
-        message: 'Loading the data&hellip;'
+        message: 'De data wordt ingeladen&hellip;'
         description: 'Text shown if the data hasn\'t been loaded yet.'
     options_manifest_add_title:
-        message: 'Add a new manifest'
+        message: 'Nieuw manifest toevoegen'
         description: 'Section title'
     options_manifest_key_label:
-        message: 'Manifest Key'
+        message: 'Manifest Sleutel'
         description: 'Label for the input for manifest keys.'
     options_manifest_key_help:
-        message: 'For more information about where to find the manifest key, please take a look at <a target="_blank" href="help.html#key">the help page</a>.'
+        message: 'Voor meer informatie over waar je de manifest sleutel kan terugvinden, neem je best een kijkje op <a target="_blank" href="help.html#key">de help pagina</a>.'
         description: 'Help text for the input for manifest keys.'
     options_manifest_name_label:
-        message: 'Manifest Name'
+        message: 'Manifest Naam'
         description: 'Label for the input for manifest names.'
     options_manifest_name_help:
-        message: '<em>Optional</em>. A human-readable name for your manifest.'
+        message: '<em>Optioneel</em>. Een naam voor je manifest.'
         description: 'Help text for the input for manifest names.'
     options_manifest_add_button:
-        message: '<span class="glyphicon glyphicon-plus"></span> Add manifest'
+        message: '<span class="glyphicon glyphicon-plus"></span> Voeg het manifest toe'
         description: 'The content of the button that performs the action.'
     options_manifest_example_intro:
-        message: 'If you want to see an example of a manifest file, add manifest key'
+        message: 'Als je een voorbeeld manifest wil zien, voeg dan het manifest met sleutel'
         description: 'Text above the link to the example manifest.'
     options_manifest_example_outro:
-        message: 'Then take a look at <a target="_blank" href="https://plus.google.com/+NianticProject/posts/eTDoXUG8TkB"> this post by the Niantic Project</a> or <a target="_blank" href="https://plus.google.com/110350977702120778591/posts/GH32VJw1fhA"> this post by Klue/ADA</a>.'
+        message: 'toe. Neem dan eens een kijkje naar <a target="_blank" href="https://plus.google.com/+NianticProject/posts/eTDoXUG8TkB"> deze post van het Niantic Project</a> of <a target="_blank" href="https://plus.google.com/110350977702120778591/posts/GH32VJw1fhA"> deze post van Klue/ADA</a>.'
         description: 'Text below the link to the example manifest.'
     options_settings_title:
-        message: 'Settings'
+        message: 'Instellingen'
         description: 'Title of the settings section.'
     options_settings_intro:
-        message: 'This section contains some settings for the extension.'
+        message: 'Deze sectie bevat een aantal instellingen van de extensie.'
         description: 'Intro text to the settings section.'
     options_layout_options_title:
-        message: 'Layout Options'
+        message: 'Layout Opties'
         description: 'Title of the layout settings subsection.'
     options_layout_options_intro:
-        message: 'This subsection contains a couple of layout tweaks.'
+        message: 'Deze subsectie bevat een aantal layout tweaks.'
         description: 'Intro to the layout settings subsection.'
     options_settings_enable_anomalies:
-        message: 'Show anomaly badges'
+        message: 'Toon anomalieën.'
         description: 'One of the settings.'
     options_settings_match_popups:
-        message: 'Match profile pop-ups.'
+        message: 'Controleer profiel pop-ups.'
         description: 'One of the settings.'
     options_settings_match_authors:
-        message: 'Match authors of posts and comments, event RSVP, event creator etc.'
+        message: 'Controleer auteurs van berichten en commentaren, event RSVP\'s, de event aanmaker etc.'
         description: 'One of the settings.'
     options_settings_match_mentions:
-        message: 'Match mentions in posts.'
+        message: 'Controleer mentions in posts.'
         description: 'One of the settings.'
     options_settings_match_people:
-        message: 'Match people in the \'In common with you\', \'In his/her circles\' or \'Have him/her in circles\' sections.'
+        message: 'Controleer mensen in de \'Gemeenschappelijk met jou\' secties.'
         description: 'One of the settings.'
     options_settings_extra_event:
-        message: 'Show links to the source spreadsheets linked to an event on the page of that event.'
+        message: 'Toon een link naar het bronbestand dat bij een event hoort op de pagina van dat event.'
         description: 'One of the settings.'
     options_settings_extra_community:
-        message: 'Show links to the source spreadsheets linked to a community on the page of that community.'
+        message: 'Toon een link naar het bronbestand dat bij een community hoort op de pagina van die community.'
         description: 'One of the settings.'
     options_about_title:
-        message: 'About'
+        message: 'Over'
         description: 'Title of the section containing info about the extension.'
     options_about_text:
-        message: 'This extension is written and maintained by <a target="_blank" href="https://github.com/bgotink">Bram Gotink</a>. The code is &copy; 2014 Bram Gotink, licensed under the terms of the <a target="_blank" href="http://en.wikipedia.org/wiki/MIT_License">MIT License</a>. The source of this project can be found on <a target="_blank" href="https://github.com/bgotink/IngressIdentity">GitHub</a>.'
+        message: 'Deze extensie werd geschreven en onderhouden door <a target="_blank" href="https://github.com/bgotink">Bram Gotink</a>. De code is &copy; 2014 Bram Gotink, gelicensieerd onder de termen van de <a target="_blank" href="http://en.wikipedia.org/wiki/MIT_License">MIT License</a>. De broncode van dit project kan je terugvinden op <a target="_blank" href="https://github.com/bgotink/IngressIdentity">GitHub</a>.'
         description: 'Text of the section containing info about the extension.'
     options_ack_title:
         message: 'Acknowledgements'
         description: 'Title of the acknowledgements section.'
     options_ack_text:
-        message: 'This project uses code by <a target="_blank" href="https://jquery.org/">jQuery</a>, <a target="_blank" href="http://sugarjs.com/">Sugar.js</a>, <a target="_blank" href="http://ejohn.org/blog/simple-javascript-inheritance/">John Resig</a> and <a target="_blank" href="https://github.com/twbs/bootstrap">Twitter\'s Bootstrap</a>. The logo is derived from the ingress logos created by <a target="_blank" href="https://github.com/cr0ybot/ingress-logos">cr0ybot</a>.'
+        message: 'Dit project gebruikt code van <a target="_blank" href="https://jquery.org/">jQuery</a>, <a target="_blank" href="http://sugarjs.com/">Sugar.js</a>, <a target="_blank" href="http://ejohn.org/blog/simple-javascript-inheritance/">John Resig</a> en <a target="_blank" href="https://github.com/twbs/bootstrap">Twitters Bootstrap</a>. Het logo is afgeleid van het ingress logo gecreëerd door <a target="_blank" href="https://github.com/cr0ybot/ingress-logos">cr0ybot</a>.'
         description: 'Text of the acknowledgements section.'
     options_bug_title:
         message: 'Bug Report / Feature Request'
         description: 'Title of the bug section.'
     options_bug_text:
-        message: 'If you\'ve found a bug or have an idea for a killer feature, feel free to let us know <a target="_blank" href="https://github.com/bgotink/IngressIdentity/issues">here</a> if you have a GitHub account or using the feedback feature in the Chrome Web Store found <a target="_blank" href="https://chrome.google.com/webstore/support/pjhgnhcijlkffbncjecmcdpndjckcbik">here</a>.'
+        message: 'Als je een fout gevonden hebt, of een idee hebt voor een killer feature, kan je dat gerust <a target="_blank" href="https://github.com/bgotink/IngressIdentity/issues">hier</a> melden als je een GitHub account hebt, anders via de feedback knop in de Chrome Web Store <a target="_blank" href="https://chrome.google.com/webstore/support/pjhgnhcijlkffbncjecmcdpndjckcbik">hier</a>.'
         description: 'Text of the bug section.'
     options_disclaimer_title:
         message: 'Disclaimer'
         description: 'Title of the disclaimer section.'
     options_disclaimer_text:
-        message: 'The extension and its author(s) are in no way affiliated with Ingress, Google or NianticLabs@Google. This extension merely serves as third-party tool to support Ingress players and their communities living on Google+.'
+        message: 'Deze extensie en zijn auteur(s) zijn in geen enkele wijze geaffilieerd met Ingress, Google of NianticLabs@Google. Deze extensie dient er enkel toe Ingress spelers en hun communities op Google+ te ondersteunen.'
         description: 'Text of the disclaimer section.'
     options_empty_1:
-        message: 'No manifests loaded right now, try adding some!'
+        message: 'Er zijn geen manifesten ingeladen. Voeg er gerust een toe!'
         description: 'Part 1 of the text shown when no manifests haven\'t been added yet.'
     options_empty_2:
-        message: 'If you have just reloaded the extension, the manifests will automatically be shown here when the data is ready.'
+        message: 'Als de extensie net ingeladen is, kan het eventjes duren eer alle manifesten zijn ingeladen. De data wordt automatisch hier getoond wanneer alles gedaan is.'
         description: 'Part 2 of the text shown when no manifests haven\'t been added yet.'
     options_empty_3:
-        message: 'If you believe this is in error, try reloading this page or pressing "Force reload".'
+        message: 'Als je denkt dat je dit bericht niet zou mogen zien, kan je de pagina herladen of op "Herlaad" duwen.'
         description: 'Part 3 of the text shown when no manifests haven\'t been added yet.'
     options_manifest_info:
-        message: 'Faction: {faction}, {count} players, version {version}'
+        message: 'Factie: {faction}, {count} spelers, versie {version}'
         description: 'Information shown about the manifests.'
     options_rename:
-        message: 'Rename'
+        message: 'Hernoem'
         description: 'Tooltip for the rename button.'
     options_remove:
-        message: 'Remove'
+        message: 'Verwijder'
         description: 'Tooltip for the remove button.'
     options_enabled:
-        message: 'Enabled'
+        message: 'Aangeschakeld'
         description: 'The text on the button for an option that has been enabled by the user.'
     options_disabled:
-        message: 'Disabled'
+        message: 'Uitgeschakeld'
         description: 'The text on the button for an option that has been disabled by the user.'
 
     # Export page
     export_title:
-        message: 'IngressIdentity Data Exporter'
+        message: 'IngressIdentiteit Data Exporteur'
         description: 'Title of the export page'
     export_intro:
-        message: 'This page tries to fetch Ingress agent data from a Google+ community. You can modify it before exporting it to a Google Drive Spreadsheet.'
+        message: 'Deze pagina probeert Ingress agent informatie op te halen vanuit een Google+ community. Je kan de data nog wijzigen vooraleer ze naar een Google Drive spreadsheet te exporteren.'
         description: 'The intro for the export page.'
     export_options_title:
-        message: 'Options'
+        message: 'Opties'
         description: 'The word "Options".'
     export_options_intro:
-        message: 'The following buttons allow you to enable some features for the exporter:'
+        message: 'De volgende knoppen laten je toe een aantal features van de exporteur aan/uit te schakelen:'
         description: 'Intro text for the options section of the export page.'
     export_enabled:
-        message: 'Enabled'
+        message: 'Aangeschakeld'
         description: 'The text on the button for an option that has been enabled by the user.'
     export_disabled:
-        message: 'Disabled'
+        message: 'Uitgeschakeld'
         description: 'The text on the button for an option that has been disabled by the user.'
     export_option_extract_name:
-        message: 'Try to extract agent name from the Google+ name if unknown.'
+        message: 'Probeer agent namen uit de Google+ naam af te leiden indien de agent naam nog niet gekend is.'
         description: 'One of the options.'
     export_option_remove_existing:
-        message: 'Filter out existing entries for this community.'
+        message: 'Toon enkel nieuwe agenten in deze community.'
         description: 'One of the options.'
     export_option_add_header:
-        message: 'Add a header and dummy row to the exported data. Note that the table below always shows a header.'
+        message: 'Voeg een hoofding en dummy rij toe aan de geëxporteerde data. Merk op dat de tabel hieronder altijd een hoofding toont.'
         description: 'One of the options.'
     export_result_title:
-        message: 'Result'
+        message: 'Resultaat'
         description: 'The title for the result section.'
     export_copy_button:
-        message: 'Copy'
+        message: 'Kopieer'
         description: 'The text for the copy button.'
     export_copy_text:
-        message: 'Press this button to copy the data to the clipboard, then paste it in a Google Drive Spreadsheet.'
+        message: 'Duw op de knop om de data te kopiëren naar je plakbord. Plak ze dan in een Google Drive Spreadsheet.'
         description: 'An explanatory text next to the copy button.'
     export_modal_pe_title:
-        message: 'Parsing and exporting data&hellip;'
+        message: 'Ontleden en exporteren van de data&hellip;'
         description: 'Title for the modal used when parsing and exporting.'
     export_modal_e_title:
-        message: 'Exporting data&hellip;'
+        message: 'Exporteren van de data&hellip;'
         description: 'Title for the modal used when only exporting.'
     export_modal_p_subtitle:
-        message: 'Parsing:'
+        message: 'Ontleden:'
         description: 'Subtitle for parsing'
     export_modal_e_subtitle:
-        message: 'Exporting:'
+        message: 'Exporteren:'
         description: 'Subtitle for exporting'
     export_progress:
-        message: '<span class="percent"></span>% complete'
+        message: '<span class="percent"></span>% klaar'
         description: 'The "<span class="percent"></span>" part will contain a number.'
 }
