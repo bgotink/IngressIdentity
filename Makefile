@@ -437,11 +437,19 @@ build/%/icon.png: src/img/logo.svg
 build/%/icon64.png: src/img/logo.svg
 	convert -background none $< -resize 64 $@
 
+build/firefox/data/_locales/%/messages.json: build/common/i18n/%.json
+	@mkdir -p $(dir $@)
+	$(copy)
+
+build/firefox-release/data/_locales/%/messages.json: build/common-release/i18n/%.json
+	@mkdir -p $(dir $@)
+	$(copy)
+
 # main
 
-firefox: common build/firefox $(addprefix build/firefox/, icon.png icon64.png lib lib/bootstrap.js lib/resources.js package.json $(MDs) data $(addprefix data/, js css $(JSs) $(HTMLs) $(CSSs) vendor img $(addprefix img/, anomalies logo $(addprefix logo/, ingress.png 16.png 32.png 64.png))))
+firefox: common build/firefox $(addprefix build/firefox/, icon.png icon64.png lib lib/bootstrap.js lib/resources.js package.json $(MDs) data $(addprefix data/, js css $(JSs) $(HTMLs) $(CSSs) vendor $(addprefix _locales/,$(addsuffix /messages.json,$(LANGUAGES))) img $(addprefix img/, anomalies logo $(addprefix logo/, ingress.png 16.png 32.png 64.png))))
 
-firefox-release: common build/firefox-release $(addprefix build/firefox-release/, icon.png icon64.png lib lib/bootstrap.js lib/resources.js package.json $(MDs) data $(addprefix data/, js css $(JSs) $(HTMLs) $(CSSs) vendor img $(addprefix img/, anomalies logo $(addprefix logo/, ingress.png 16.png 32.png 64.png))))
+firefox-release: common-release build/firefox-release $(addprefix build/firefox-release/, icon.png icon64.png lib lib/bootstrap.js lib/resources.js package.json $(MDs) data $(addprefix data/, js css $(JSs) $(HTMLs) $(CSSs) vendor $(addprefix _locales/,$(addsuffix /messages.json,$(LANGUAGES))) img $(addprefix img/, anomalies logo $(addprefix logo/, ingress.png 16.png 32.png 64.png))))
 
 firefox-all: firefox firefox-release
 
