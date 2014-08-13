@@ -182,7 +182,7 @@
         message: 'Acknowledgements'
         description: 'Title of the acknowledgements section.'
     options_ack_text:
-        message: 'Dit project gebruikt code van <a target="_blank" href="https://jquery.org/">jQuery</a>, <a target="_blank" href="http://sugarjs.com/">Sugar.js</a>, <a target="_blank" href="http://ejohn.org/blog/simple-javascript-inheritance/">John Resig</a> en <a target="_blank" href="https://github.com/twbs/bootstrap">Twitters Bootstrap</a>. Het logo is afgeleid van het ingress logo gecreëerd door <a target="_blank" href="https://github.com/cr0ybot/ingress-logos">cr0ybot</a>.'
+        message: 'Dit project gebruikt code van <a target="_blank" href="https://jquery.org/">jQuery</a>, <a target="_blank" href="http://sugarjs.com/">Sugar.js</a> en <a target="_blank" href="https://github.com/twbs/bootstrap">Twitters Bootstrap</a>. Het logo is afgeleid van het ingress logo gecreëerd door <a target="_blank" href="https://github.com/cr0ybot/ingress-logos">cr0ybot</a>.'
         description: 'Text of the acknowledgements section.'
     options_bug_title:
         message: 'Bug Report / Feature Request'
