@@ -20,11 +20,8 @@
     exports.getURL = (rel) ->
         chrome.extension.getURL rel
 
-    exports.getI18nMessage = (name, placeholders = null) ->
-        if placeholders?
-            chrome.i18n.getMessage name, placeholders
-        else
-            chrome.i18n.getMessage name
+    exports.getI18nMessage = (name) ->
+        chrome.i18n.getMessage name
 
     exports.browser = 'chrome'
 )(iidentity or (iidentity = window.iidentity = {}), window.chrome)

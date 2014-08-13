@@ -3,7 +3,7 @@
 # @author Bram Gotink (@bgotink)
 # @license MIT
 
-((module) ->
+((module, $) ->
     # abort if auto-translate isn't supported
     return unless module.extension.getI18nMessage?
 
@@ -24,8 +24,9 @@
         result
 
     $ -> #run after DOM loads
-        if $('html').attr 'data-translate-prefix'
-            prefix = $('html').attr('data-translate-prefix') + '_'
+        $html = $ 'html'
+        if $html.attr 'data-translate-prefix'
+            prefix = $html.attr('data-translate-prefix') + '_'
         else
             prefix = ''
 
@@ -35,7 +36,7 @@
 
                 text = module.extension.getI18nMessage prefix + $this.attr 'data-translate-name'
 
-                if $this.attr 'data-translate-placeholders' is 'true'
+                if $this.attr('data-translate-placeholders') is 'true'
                     attrs = Object.select $this.attrs(), /^data-translate-placeholder-/
                     placeholders = {}
 
@@ -46,4 +47,4 @@
                     text = text.assign placeholders
 
                 $this.html text
-)(iidentity or (iidentity = window.iidentity = {}))
+)(iidentity or (iidentity = window.iidentity = {}), window.jQuery)

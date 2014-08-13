@@ -58,6 +58,5 @@ This file is included in all javascript files apart from `background.js`.
     note: not a function ;)
 - void init()
     optional, will be called when DOM is ready if the value isn't null/undefined
-- string getI18nMessage(string name, obj placeholders = null)
-    required, gets the i18n message with the given name, injecting the given placeholders
-    placeholders is an optional argument, null if absent
+- string getI18nMessage(string name)
+    required, gets the i18n message with the given name
