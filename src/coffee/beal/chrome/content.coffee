@@ -20,6 +20,8 @@
     exports.getURL = (rel) ->
         chrome.extension.getURL rel
 
-    exports.browser = 'chrome'
+    exports.getI18nMessage = (name) ->
+        chrome.i18n.getMessage name
 
+    exports.browser = 'chrome'
 )(iidentity or (iidentity = window.iidentity = {}), window.chrome)

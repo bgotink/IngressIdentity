@@ -4,6 +4,12 @@
 # @license MIT
 
 ((module, $) ->
+    if module.extension.getI18nMessage?
+        _ = (name) ->
+            module.extension.getI18nMessage 'export_' + name
+    else
+        _ = (__, def) -> def
+
     rawData = null
     data = null
 
@@ -201,11 +207,11 @@
                 if $this.hasClass 'active'
                     $this
                         .removeClass 'active'
-                        .text 'Disabled'
+                        .text _ 'disabled', 'Disabled'
                 else
                     $this
                         .addClass 'active'
-                        .text 'Enabled'
+                        .text _ 'enabled', 'Enabled'
 
                 doExport $this.hasClass 'requires-reparse'
 

@@ -1,13 +1,16 @@
 MDs = README.md LICENSE.md NOTICE.md SOURCE.md
+
 JSs = js/content.js js/options.js js/help.js js/background.js js/export.js
 CSSs = css/content.css css/options.css css/help.css css/export.css
 HTMLs = options.html background.html help.html export.html
 
-JS_CONTENT_DEPS = $(addprefix src/coffee/,communication.coffee log.coffee $(addprefix content/,doOnce.coffee main.coffee mentions.coffee profile.coffee source.coffee popup.coffee export.coffee))
-JS_OPTIONS_DEPS = $(addprefix src/coffee/,communication.coffee log.coffee options.coffee)
-JS_BACKGROUND_DEPS = $(addprefix src/coffee/,log.coffee data/spreadsheets.coffee data/interpreter.coffee data/merger.coffee data/data.coffee background.coffee)
-JS_HELP_DEPS = src/coffee/help.coffee
-JS_EXPORT_DEPS = $(addprefix src/coffee/,communication.coffee log.coffee export.coffee)
+JS_CONTENT_DEPS = $(addprefix src/coffee/,communication.coffee log.coffee $(addprefix content/,doOnce.coffee main.coffee mentions.coffee profile.coffee source.coffee popup.coffee export.coffee i18n.coffee))
+JS_OPTIONS_DEPS = $(addprefix src/coffee/,communication.coffee log.coffee options.coffee auto-translate.coffee)
+JS_BACKGROUND_DEPS = $(addprefix src/coffee/,log.coffee data/spreadsheets.coffee data/interpreter.coffee data/merger.coffee data/data.coffee background/i18n.coffee background.coffee)
+JS_HELP_DEPS = src/coffee/help.coffee src/coffee/auto-translate.coffee
+JS_EXPORT_DEPS = $(addprefix src/coffee/,communication.coffee log.coffee export.coffee auto-translate.coffee)
+
+LANGUAGES=en nl
 
 FILES= $(MDs) $(JSs) $(CSSs) $(HTMLs) vendor
 
@@ -35,6 +38,11 @@ endef
 
 define mkdir
 mkdir -p $@
+@touch $@
+endef
+
+define cson
+cson2json $< > $@
 endef
 
 .PHONY: all all-release release init dist default clean touch common common-release chrome chrome-release chrome-all chrome-dist safari safari-release safari-all safari-dist firefox firefox-release firefox-all firefox-dist
@@ -144,10 +152,22 @@ build/%/img/anomalies: src/img/anomalies
 	$(copy)
 	@rm $@/README.md
 
+build/common/i18n:
+	$(mkdir)
+
+build/common-release/i18n:
+	$(mkdir)
+
+build/common/i18n/%.json: src/i18n/%.cson build/common/i18n
+	$(cson)
+
+build/common-release/i18n/%.json: src/i18n/%.cson build/common-release/i18n
+	$(cson)
+
 # main
 
-common: build/common $(addprefix build/common/,$(CSSs))
-common-release: build/common-release $(addprefix build/common-release/,$(CSSs))
+common: build/common $(addprefix build/common/,$(CSSs) $(addprefix i18n/,$(addsuffix .json,$(LANGUAGES))))
+common-release: build/common-release $(addprefix build/common-release/,$(CSSs) $(addprefix i18n/,$(addsuffix .json,$(LANGUAGES))))
 
 # Chrome targets
 #
@@ -199,14 +219,22 @@ build/chrome/css/%: build/common/css/%
 build/chrome-release/css/%: build/common-release/css/%
 	$(copy)
 
+build/chrome/_locales/%/messages.json: build/common/i18n/%.json
+	@mkdir -p $(dir $@)
+	$(copy)
+
+build/chrome-release/_locales/%/messages.json: build/common-release/i18n/%.json
+	@mkdir -p $(dir $@)
+	$(copy)
+
 build/chrome: build/chrome/js build/chrome/css
 build/chrome-release: build/chrome-release/js build/chrome-release/css
 
 # main
 
-chrome: common build/chrome $(addprefix build/chrome/, $(FILES) manifest.json img img/anomalies img/logo $(addprefix img/logo/, ingress.png 16.png 19.png 38.png 48.png 128.png))
+chrome: common build/chrome $(addprefix build/chrome/, $(FILES) manifest.json $(addprefix _locales/,$(addsuffix /messages.json,$(LANGUAGES))) img img/anomalies img/logo $(addprefix img/logo/, ingress.png 16.png 19.png 38.png 48.png 128.png))
 
-chrome-release: common-release build/chrome-release $(addprefix build/chrome-release/, $(FILES) manifest.json img/anomalies $(addprefix img/logo/, ingress.png 16.png 19.png 38.png 48.png 128.png))
+chrome-release: common-release build/chrome-release $(addprefix build/chrome-release/, $(FILES) manifest.json $(addprefix _locales/,$(addsuffix /messages.json,$(LANGUAGES))) img/anomalies $(addprefix img/logo/, ingress.png 16.png 19.png 38.png 48.png 128.png))
 
 chrome-all: chrome chrome-release
 
@@ -257,6 +285,14 @@ build/IngressIdentity.safariextension/css/%: build/common/css/%
 build/IngressIdentity-release.safariextension/css/%: build/common-release/css/%
 	$(copy)
 
+build/IngressIdentity.safariextension/_locales/%/messages.json: build/common/i18n/%.json
+	@mkdir -p $(dir $@)
+	$(copy)
+
+build/IngressIdentity-release.safariextension/_locales/%/messages.json: build/common-release/i18n/%.json
+	@mkdir -p $(dir $@)
+	$(copy)
+
 build/%.safariextension: build/%.safariextension/js build/%.safariextension/css
 
 build/%.safariextension/img/logo/toolbar.png: src/img/logo.svg build/%.safariextension/img/logo tools/gray2transparent/gray2transparent
@@ -267,9 +303,9 @@ build/%.safariextension/img/logo/toolbar.png: src/img/logo.svg build/%.safariext
 
 # main
 
-safari: common build/IngressIdentity.safariextension $(addprefix build/IngressIdentity.safariextension/, $(FILES) Info.plist img img/anomalies img/logo img/logo/toolbar.png img/logo/ingress.png)
+safari: common build/IngressIdentity.safariextension $(addprefix build/IngressIdentity.safariextension/, $(FILES) Info.plist img img/anomalies img/logo img/logo/toolbar.png img/logo/ingress.png $(addprefix _locales/,$(addsuffix /messages.json,$(LANGUAGES))))
 
-safari-release: common-release build/IngressIdentity-release.safariextension $(addprefix build/IngressIdentity-release.safariextension/, $(FILES) Info.plist img img/anomalies img/logo img/logo/toolbar.png img/logo/ingress.png)
+safari-release: common-release build/IngressIdentity-release.safariextension $(addprefix build/IngressIdentity-release.safariextension/, $(FILES) Info.plist img img/anomalies img/logo img/logo/toolbar.png img/logo/ingress.png $(addprefix _locales/,$(addsuffix /messages.json,$(LANGUAGES))))
 
 safari-all: safari safari-release
 
@@ -401,11 +437,19 @@ build/%/icon.png: src/img/logo.svg
 build/%/icon64.png: src/img/logo.svg
 	convert -background none $< -resize 64 $@
 
+build/firefox/data/_locales/%/messages.json: build/common/i18n/%.json
+	@mkdir -p $(dir $@)
+	$(copy)
+
+build/firefox-release/data/_locales/%/messages.json: build/common-release/i18n/%.json
+	@mkdir -p $(dir $@)
+	$(copy)
+
 # main
 
-firefox: common build/firefox $(addprefix build/firefox/, icon.png icon64.png lib lib/bootstrap.js lib/resources.js package.json $(MDs) data $(addprefix data/, js css $(JSs) $(HTMLs) $(CSSs) vendor img $(addprefix img/, anomalies logo $(addprefix logo/, ingress.png 16.png 32.png 64.png))))
+firefox: common build/firefox $(addprefix build/firefox/, icon.png icon64.png lib lib/bootstrap.js lib/resources.js package.json $(MDs) data $(addprefix data/, js css $(JSs) $(HTMLs) $(CSSs) vendor $(addprefix _locales/,$(addsuffix /messages.json,$(LANGUAGES))) img $(addprefix img/, anomalies logo $(addprefix logo/, ingress.png 16.png 32.png 64.png))))
 
-firefox-release: common build/firefox-release $(addprefix build/firefox-release/, icon.png icon64.png lib lib/bootstrap.js lib/resources.js package.json $(MDs) data $(addprefix data/, js css $(JSs) $(HTMLs) $(CSSs) vendor img $(addprefix img/, anomalies logo $(addprefix logo/, ingress.png 16.png 32.png 64.png))))
+firefox-release: common-release build/firefox-release $(addprefix build/firefox-release/, icon.png icon64.png lib lib/bootstrap.js lib/resources.js package.json $(MDs) data $(addprefix data/, js css $(JSs) $(HTMLs) $(CSSs) vendor $(addprefix _locales/,$(addsuffix /messages.json,$(LANGUAGES))) img $(addprefix img/, anomalies logo $(addprefix logo/, ingress.png 16.png 32.png 64.png))))
 
 firefox-all: firefox firefox-release
 

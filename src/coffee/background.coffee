@@ -437,6 +437,15 @@
 
             true
 
+        getTranslationsWithPrefix: (request, sender, sendResponse) ->
+            module.i18n.getPrefixedMessages request.locale,
+                request.prefix,
+                (messages) ->
+                    sendResponse
+                        messages: messages
+
+            true
+
         setExportData: (request, sender, sendResponse) ->
             module.log.log 'Set export data to ', request.data
             exportData.resolve request.data

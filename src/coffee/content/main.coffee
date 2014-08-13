@@ -65,10 +65,11 @@
         selfDestructObserver.observe window.document.body,
             attributes: true
 
-        module.extension.init() if module.extension.init?
-        module.comm.setOnUpdate forceUpdate
+        module.i18n.init ->
+            module.extension.init() if module.extension.init?
+            module.comm.setOnUpdate forceUpdate
 
-        forceUpdate()
-        observer.observe window.document, { childList: true, subtree: true }
+            forceUpdate()
+            observer.observe window.document, { childList: true, subtree: true }
 
 )(iidentity or (iidentity = window.iidentity = {}), window.jQuery, window)

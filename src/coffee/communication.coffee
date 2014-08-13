@@ -66,4 +66,9 @@
     exports.getSourcesForExtra = (tag, oid, callback) ->
         @send { type: 'getSourcesForExtra', tag: tag, oid: oid }, (result) ->
             callback result.result
+
+    exports.getTranslationsWithPrefix = (locale, prefix, callback) ->
+        @send { type: 'getTranslationsWithPrefix', prefix: prefix, locale: locale }, (result) ->
+            callback result.messages
+
 )(iidentity or (iidentity = window.iidentity = {}))

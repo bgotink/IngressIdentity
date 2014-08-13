@@ -1,4 +1,4 @@
-# BEAL file for Safari
+# BEAL file for Firefox
 #
 # @author Bram Gotink (@bgotink)
 # @license MIT
