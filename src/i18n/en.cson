@@ -112,6 +112,114 @@
     options_force_reload:
         message: 'Force reload'
         description: 'Text for the button to reload the manifests'
+    options_loading_data:
+        message: 'Loading the data&hellip;'
+        description: 'Text shown if the data hasn\'t been loaded yet.'
+    options_manifest_add_title:
+        message: 'Add a new manifest'
+        description: 'Section title'
+    options_manifest_key_label:
+        message: 'Manifest Key'
+        description: 'Label for the input for manifest keys.'
+    options_manifest_key_help:
+        message: 'For more information about where to find the manifest key, please take a look at <a target="_blank" href="help.html#key">the help page</a>.'
+        description: 'Help text for the input for manifest keys.'
+    options_manifest_name_label:
+        message: 'Manifest Name'
+        description: 'Label for the input for manifest names.'
+    options_manifest_name_help:
+        message: '<em>Optional</em>. A human-readable name for your manifest.'
+        description: 'Help text for the input for manifest names.'
+    options_manifest_add_button:
+        message: '<span class="glyphicon glyphicon-plus"></span> Add manifest'
+        description: 'The content of the button that performs the action.'
+    options_manifest_example_intro:
+        message: 'If you want to see an example of a manifest file, add manifest key'
+        description: 'Text above the link to the example manifest.'
+    options_manifest_example_outro:
+        message: 'Then take a look at <a target="_blank" href="https://plus.google.com/+NianticProject/posts/eTDoXUG8TkB"> this post by the Niantic Project</a> or <a target="_blank" href="https://plus.google.com/110350977702120778591/posts/GH32VJw1fhA"> this post by Klue/ADA</a>.'
+        description: 'Text below the link to the example manifest.'
+    options_settings_title:
+        message: 'Settings'
+        description: 'Title of the settings section.'
+    options_settings_intro:
+        message: 'This section contains some settings for the extension.'
+        description: 'Intro text to the settings section.'
+    options_layout_options_title:
+        message: 'Layout Options'
+        description: 'Title of the layout settings subsection.'
+    options_layout_options_intro:
+        message: 'This subsection contains a couple of layout tweaks.'
+        description: 'Intro to the layout settings subsection.'
+    options_settings_enable_anomalies:
+        message: 'Show anomaly badges'
+        description: 'One of the settings.'
+    options_settings_match_popups:
+        message: 'Match profile pop-ups.'
+        description: 'One of the settings.'
+    options_settings_match_authors:
+        message: 'Match authors of posts and comments, event RSVP, event creator etc.'
+        description: 'One of the settings.'
+    options_settings_match_mentions:
+        message: 'Match mentions in posts.'
+        description: 'One of the settings.'
+    options_settings_match_people:
+        message: 'Match people in the \'In common with you\', \'In his/her circles\' or \'Have him/her in circles\' sections.'
+        description: 'One of the settings.'
+    options_settings_extra_event:
+        message: 'Show links to the source spreadsheets linked to an event on the page of that event.'
+        description: 'One of the settings.'
+    options_settings_extra_community:
+        message: 'Show links to the source spreadsheets linked to a community on the page of that community.'
+        description: 'One of the settings.'
+    options_about_title:
+        message: 'About'
+        description: 'Title of the section containing info about the extension.'
+    options_about_text:
+        message: 'This extension is written and maintained by <a target="_blank" href="https://github.com/bgotink">Bram Gotink</a>. The code is &copy; 2014 Bram Gotink, licensed under the terms of the <a target="_blank" href="http://en.wikipedia.org/wiki/MIT_License">MIT License</a>. The source of this project can be found on <a target="_blank" href="https://github.com/bgotink/IngressIdentity">GitHub</a>.'
+        description: 'Text of the section containing info about the extension.'
+    options_ack_title:
+        message: 'Acknowledgements'
+        description: 'Title of the acknowledgements section.'
+    options_ack_text:
+        message: 'This project uses code by <a target="_blank" href="https://jquery.org/">jQuery</a>, <a target="_blank" href="http://sugarjs.com/">Sugar.js</a>, <a target="_blank" href="http://ejohn.org/blog/simple-javascript-inheritance/">John Resig</a> and <a target="_blank" href="https://github.com/twbs/bootstrap">Twitter\'s Bootstrap</a>. The logo is derived from the ingress logos created by <a target="_blank" href="https://github.com/cr0ybot/ingress-logos">cr0ybot</a>.'
+        description: 'Text of the acknowledgements section.'
+    options_bug_title:
+        message: 'Bug Report / Feature Request'
+        description: 'Title of the bug section.'
+    options_bug_text:
+        message: 'If you\'ve found a bug or have an idea for a killer feature, feel free to let us know <a target="_blank" href="https://github.com/bgotink/IngressIdentity/issues">here</a> if you have a GitHub account or using the feedback feature in the Chrome Web Store found <a target="_blank" href="https://chrome.google.com/webstore/support/pjhgnhcijlkffbncjecmcdpndjckcbik">here</a>.'
+        description: 'Text of the bug section.'
+    options_disclaimer_title:
+        message: 'Disclaimer'
+        description: 'Title of the disclaimer section.'
+    options_disclaimer_text:
+        message: 'The extension and its author(s) are in no way affiliated with Ingress, Google or NianticLabs@Google. This extension merely serves as third-party tool to support Ingress players and their communities living on Google+.'
+        description: 'Text of the disclaimer section.'
+    options_empty_1:
+        message: 'No manifests loaded right now, try adding some!'
+        description: 'Part 1 of the text shown when no manifests haven\'t been added yet.'
+    options_empty_2:
+        message: 'If you have just reloaded the extension, the manifests will automatically be shown here when the data is ready.'
+        description: 'Part 2 of the text shown when no manifests haven\'t been added yet.'
+    options_empty_3:
+        message: 'If you believe this is in error, try reloading this page or pressing "Force reload".'
+        description: 'Part 3 of the text shown when no manifests haven\'t been added yet.'
+    options_manifest_info:
+        message: 'Faction: {faction}, {count} players, version {version}'
+        description: 'Information shown about the manifests.'
+    options_rename:
+        message: 'Rename'
+        description: 'Tooltip for the rename button.'
+    options_remove:
+        message: 'Remove'
+        description: 'Tooltip for the remove button.'
+    options_enabled:
+        message: 'Enabled'
+        description: 'The text on the button for an option that has been enabled by the user.'
+    options_disabled:
+        message: 'Disabled'
+        description: 'The text on the button for an option that has been disabled by the user.'
 
     # Export page
     export_title:
