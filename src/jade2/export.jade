@@ -1,0 +1,80 @@
+doctype html
+html(data-translate-prefix="export")
+    head
+        title(data-translate-name="title") IngressIdentity Data Exporter
+
+        // Bootstrap CSS
+        +vendor_css('bootstrap')
+
+        // Our CSS
+        +css('export')
+
+        // jQuery, Sugar and Bootstrap JS
+        +vendor_js('jquery')
+        +vendor_js('sugar')
+        +vendor_js('bootstrap')
+
+        // Our JS
+        +js('export')
+
+    body
+        +ingress_background
+            +row
+                h1(data-translate-name="title") IngressIdentity Data Exporter
+                p(data-translate-name="intro").
+                    This page tries to fetch Ingress agent data from a Google+
+                    community. You can modify it before exporting it to a Google
+                    Drive Spreadsheet.
+            +row.settings
+                h2(data-translate-name="options_title") Options
+                p(data-translate-name="options_intro").
+                    The following buttons allow you to enable some features for
+                    the exporter:
+                div
+                    div
+                        p
+                            button#btn_extract_name.active.requires-reparse(type="button", class="setting btn btn-default btn-sm", data-translate-name="enabled").
+                                Enabled
+                            span(data-translate-name="option_extract_name") Try to extract agent name from the Google+ name if unknown.
+                        p
+                            button#btn_remove_existing.active.requires-reparse(type="button", class="setting btn btn-default btn-sm", data-translate-name="enabled").
+                                Enabled
+                            span(data-translate-name="option_remove_existing") Filter out existing entries for this community.
+                        p
+                            button#btn_show_header(type="button", class="setting btn btn-default btn-sm", data-translate-name="disabled").
+                                Disabled
+                            span(data-translate-name="option_add_header") Add a header and dummy row to the exported data. Note that the table below always shows a header.
+            +row
+                h2(data-translate-name="result_title") Result
+                p
+                    button#copy(type="button", class="btn btn-default btn-sm", data-translate-name="copy_button").
+                        Copy
+                    span(data-translate-name="copy_text")
+                        | Press this button to copy the data to the clipboard, then paste it in a Google Drive Spreadsheet.
+                .result-container
+                    textarea.result(contenteditable, class="export", rows="20")
+                .table-responsive
+                    table.result(class="table table-striped table-condensed table-bordered")
+        .modal#modal_parse_export(tabindex="-1", role="dialog", data-backdrop="static", data-keyboard="false", data-show="false", aria-hidden="true", aria-labelled-by="mdl_label_parse_export")
+            .modal-dialog
+                .modal-content
+                    .modal-header
+                        h4.modal-title#mdl_label_parse_export(data-translate-name="modal_pe_title") Parsing and exporting data&hellip;
+                    .modal-body
+                        p(data-translate-name="modal_p_subtitle")Parsing:
+                        .progress
+                            .progress-bar.parse(role="progressbar", aria-valuemin="0", aria-valuemax="100")
+                                span.sr-only(data-translate-name="modal_progress") <span class="percent"></span>% complete
+                        p(data-translate-name="modal_e_subtitle")Exporting:
+                        .progress
+                            .progress-bar.export(role="progressbar", aria-valuemin="0", aria-valuemax="100")
+                                span.sr-only(data-translate-name="modal_progress") <span class="percent"></span>% complete
+        .modal#modal_export(tabindex="-1", role="dialog", data-backdrop="static", data-keyboard="false", data-show="false", aria-hidden="true", aria-labelled-by="mdl_label_export")
+            .modal-dialog
+                .modal-content
+                    .modal-header
+                        h4.modal-title#mdl_label_export(data-translate-name="modal_e_title") Exporting data&hellip;
+                    .modal-body
+                        .progress
+                            .progress-bar.export(role="progressbar", aria-valuemin="0", aria-valuemax="100")
+                                span.sr-only(data-translate-name="modal_progress") <span class="percent"></span>% complete

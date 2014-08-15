@@ -1,0 +1,21 @@
+include ../mixins.jade
+
+doctype html
+html
+    head
+        block title
+            title #{ title } - IngressIdentity Documentation
+
+        +css_lib('bootstrap')
+
+        +css('help')
+
+        +js_lib('jquery')
+        +js_lib('sugar')
+        +js_lib('bootstrap')
+
+        +js('help')
+
+    body
+        +ingress_background
+            block content
