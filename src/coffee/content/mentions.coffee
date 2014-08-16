@@ -323,6 +323,38 @@
                     $elem
                         .find '.l0d > .n0d'
                         .append $infoElem
+        },
+        {
+            matches: [
+                'a > div.n291pb > img', # images in Google Talk
+            ],
+            handler: (elem, match) ->
+                $elem = $ elem
+                    .parent()
+                    .parent()
+
+                return unless matches = $elem.attr('href').match /https:\/\/plus\.google\.com\/(u\/0\/)?([0-9]+)\/about/
+                oid = matches[2]
+
+                $root = $elem.closest 'div.KL'
+                    .find 'div.UR.UG'
+
+                createConciseInlineElement oid, match, (err, $infoElement) ->
+                    if err?
+                        if err is 'not-found'
+                            $root
+                                .find '.iidentity-ciwrapper[data-oid=' + oid + ']'
+                                .remove()
+                            return
+
+                        module.log.error err
+                        return
+
+                    $root
+                        .find '.iidentity-ciwrapper[data-oid=' + oid + ']'
+                        .remove()
+
+                    $root.append $infoElement
         }
     ]
 

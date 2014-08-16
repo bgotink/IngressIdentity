@@ -1,10 +1,11 @@
 MDs = README.md LICENSE.md NOTICE.md SOURCE.md
 
-JSs = js/content.js js/options.js js/help.js js/background.js js/export.js
+JSs = js/content.js js/content-talk.js js/options.js js/help.js js/background.js js/export.js
 CSSs = css/content.css css/options.css css/help.css css/export.css
 HTMLs = options.html background.html help.html export.html
 
 JS_CONTENT_DEPS = $(addprefix src/coffee/,communication.coffee log.coffee $(addprefix content/,doOnce.coffee main.coffee mentions.coffee profile.coffee source.coffee popup.coffee export.coffee i18n.coffee))
+JS_CONTENT_TALK_DEPS = $(addprefix src/coffee/,communication.coffee log.coffee $(addprefix content/,doOnce.coffee mentions.coffee main-talk.coffee))
 JS_OPTIONS_DEPS = $(addprefix src/coffee/,communication.coffee log.coffee options.coffee auto-translate.coffee)
 JS_BACKGROUND_DEPS = $(addprefix src/coffee/,log.coffee data/spreadsheets.coffee data/interpreter.coffee data/merger.coffee data/data.coffee background/i18n.coffee background.coffee)
 JS_HELP_DEPS = src/coffee/help.coffee src/coffee/auto-translate.coffee
@@ -187,6 +188,12 @@ build/chrome/js/content.js: src/coffee/beal/chrome/content.coffee $(JS_CONTENT_D
 	$(coffee)
 
 build/chrome-release/js/content.js: src/coffee/beal/chrome/content.coffee $(JS_CONTENT_DEPS)
+	$(coffee_release)
+
+build/chrome/js/content-talk.js: src/coffee/beal/chrome/content.coffee $(JS_CONTENT_TALK_DEPS)
+	$(coffee)
+
+build/chrome-release/js/content-talk.js: src/coffee/beal/chrome/content.coffee $(JS_CONTENT_TALK_DEPS)
 	$(coffee_release)
 
 build/chrome/js/background.js: src/coffee/beal/chrome/background.coffee $(JS_BACKGROUND_DEPS)
