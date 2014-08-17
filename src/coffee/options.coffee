@@ -36,12 +36,6 @@
             module.comm.send { type: 'getOption', option: option, defaultValue: defaultValue }, (result) ->
                 callback result.value
 
-    if module.extension.getI18nMessage?
-        _ = (name) ->
-            module.extension.getI18nMessage 'options_' + name
-    else
-        _ = (__, def) -> def
-
     showAlert = (id) ->
         module.log.log 'showing alert %s', id
         $ '.alert'
@@ -110,15 +104,15 @@
                     .html ''
                     .append(
                         $ '<p>'
-                            .text _ 'empty_1', 'No manifests loaded right now, try adding some!'
+                            .text module._ 'empty_1', 'No manifests loaded right now, try adding some!'
                     )
                     .append(
                         $ '<p>'
-                            .text _ 'empty_2', 'If you have just reloaded the extension, the manifests will automatically be shown here when the data is ready.'
+                            .text module._ 'empty_2', 'If you have just reloaded the extension, the manifests will automatically be shown here when the data is ready.'
                     )
                     .append(
                         $ '<p>'
-                            .text _ 'empty_3', 'If you believe this is in error, try reloading this page or pressing "Force reload".'
+                            .text module._ 'empty_3', 'If you believe this is in error, try reloading this page or pressing "Force reload".'
                     )
 
                 return
@@ -144,7 +138,7 @@
                                 $ '<span>'
                                     .text source.tag
                         .append($ '<p>'
-                            .text _('manifest_info', 'Faction: {faction}, {count} players, version {version}').assign source
+                            .text module._('manifest_info', 'Faction: {faction}, {count} players, version {version}').assign source
                         )
                     )
 
@@ -176,7 +170,7 @@
                                                 $ '<button>'
                                                     .attr 'type', 'button'
                                                     .attr 'aria-hidden', 'true'
-                                                    .attr 'title', _('rename', 'Rename')
+                                                    .attr 'title', module._('rename', 'Rename')
                                                     .addClass 'rename'
                                                     .append $ '<span class="glyphicon glyphicon-pencil"></span>'
                                             )
@@ -184,7 +178,7 @@
                                                 $ '<button>'
                                                     .attr 'type', 'button'
                                                     .attr 'aria-hidden', 'true'
-                                                    .attr 'title', _('remove', 'Remove')
+                                                    .attr 'title', module._('remove', 'Remove')
                                                     .addClass 'remove'
                                                     .append $ '<span class="glyphicon glyphicon-remove"></span>'
                                             )
@@ -241,11 +235,11 @@
             if state
                 $ '#enable_anomalies'
                     .addClass 'active'
-                    .text _('enabled', 'Enabled')
+                    .text module._('enabled', 'Enabled')
             else
                 $ '#enable_anomalies'
                     .removeClass 'active'
-                    .text _('disabled', 'Disabled')
+                    .text module._('disabled', 'Disabled')
 
         $ 'button[data-match]'
             .each ->
@@ -255,11 +249,11 @@
                     if state
                         $this
                             .addClass 'active'
-                            .text _('enabled', 'Enabled')
+                            .text module._('enabled', 'Enabled')
                     else
                         $this
                             .removeClass 'active'
-                            .text _('disabled', 'Disabled')
+                            .text module._('disabled', 'Disabled')
 
     addManifest = ->
         module.log.log 'Adding manifest %s', $('#manifest_input').val()
@@ -279,9 +273,9 @@
                     .val ''
 
             $ '#manifest_input'
-                .attr 'disabled', null
+                .attr 'disabled', false
             $ '#name_input'
-                .attr 'disabled', null
+                .attr 'disabled', false
             $ 'button.manifest_add'
                 .button 'reset'
 
@@ -396,11 +390,11 @@
                     if state
                         $this
                             .addClass 'active'
-                            .text _('enabled', 'Enabled')
+                            .text module._('enabled', 'Enabled')
                     else
                         $this
                             .removeClass 'active'
-                            .text _('disabled', 'Disabled')
+                            .text module._('disabled', 'Disabled')
 
                     $this
                         .button 'reset'
@@ -417,11 +411,11 @@
                     if state
                         $this
                             .addClass 'active'
-                            .text _('enabled', 'Enabled')
+                            .text module._('enabled', 'Enabled')
                     else
                         $this
                             .removeClass 'active'
-                            .text _('disabled', 'Disabled')
+                            .text module._('disabled', 'Disabled')
 
                     $this
                         .button 'reset'
@@ -435,18 +429,18 @@
                     return if $this.hasClass 'disable-hover'
 
                     if $this.hasClass 'active'
-                        $this.text _('disabled', 'Disabled')
+                        $this.text module._('disabled', 'Disabled')
                     else
-                        $this.text _('enabled', 'Enabled')
+                        $this.text module._('enabled', 'Enabled')
                 .on 'mouseleave', () ->
                     $this = $ @
 
                     return if $this.hasClass 'disable-hover'
 
                     if $this.hasClass 'active'
-                        $this.text _('enabled', 'Enabled')
+                        $this.text module._('enabled', 'Enabled')
                     else
-                        $this.text _('disabled', 'Disabled')
+                        $this.text module._('disabled', 'Disabled')
 
         updateButtons()
 

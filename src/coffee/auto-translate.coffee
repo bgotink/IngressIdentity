@@ -4,8 +4,12 @@
 # @license MIT
 
 ((module, $) ->
-    # abort if auto-translate isn't supported
-    return unless module.extension.getI18nMessage?
+    if not module.extension.getI18nMessage?
+        # translation is not supported
+        module._ = (_, defaultValue) -> defaultValue
+        return
+    else
+        module._ = (name) -> module.extension.getI18nMessage prefix + name
 
     # jQuery function to get all attributes of an element
     $.fn.attrs = ->
@@ -23,12 +27,12 @@
 
         result
 
+    prefix = ''
+
     $ -> #run after DOM loads
         $html = $ 'html'
         if $html.attr 'data-translate-prefix'
             prefix = $html.attr('data-translate-prefix') + '_'
-        else
-            prefix = ''
 
         $ '[data-translate-name]'
             .each ->
