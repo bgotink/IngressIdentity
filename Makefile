@@ -81,6 +81,17 @@ tools/gray2transparent/gray2transparent: tools/gray2transparent $(addprefix tool
 # Common targets
 #
 
+# vendor libraries
+
+tools/bower:
+	$(mkdir)
+
+tools/bower/bower.json: bin/vendor
+	@bin/vendor init
+
+vendor-update: tools/bower/bower.json
+	@bin/vendor update
+
 # helpers
 
 build/common: build/common/css

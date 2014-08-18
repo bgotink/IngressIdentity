@@ -1,0 +1,86 @@
+#!/bin/bash
+
+# abort on error
+set -e
+
+# cd to project root
+cd $(dirname "$0")/..;
+
+log() {
+    echo "$@" >&2;
+}
+
+install_file() {
+    dest='../../src/vendor/'"$1"
+    src='bower_components/'"$2"
+
+    if ! diff -q "$dest" "$src"; then
+        cat "$src" > "$dest"
+    fi
+}
+
+install() {
+    # this is run from PROJECT_ROOT/tools/bower
+
+    log 'Installing files'
+
+    install_file 'css/bootstrap.min.css'                    'bootstrap/dist/css/bootstrap.min.css'
+
+    install_file 'fonts/glyphicons-halflings-regular.eot'   'bootstrap/dist/fonts/glyphicons-halflings-regular.eot'
+    install_file 'fonts/glyphicons-halflings-regular.svg'   'bootstrap/dist/fonts/glyphicons-halflings-regular.svg'
+    install_file 'fonts/glyphicons-halflings-regular.ttf'   'bootstrap/dist/fonts/glyphicons-halflings-regular.ttf'
+    install_file 'fonts/glyphicons-halflings-regular.woff'  'bootstrap/dist/fonts/glyphicons-halflings-regular.woff'
+
+    install_file 'js/jquery.min.js'                         'jquery/dist/jquery.min.js'
+    install_file 'js/bootstrap.min.js'                      'bootstrap/dist/js/bootstrap.min.js'
+}
+
+init() {
+    make tools/bower;
+    cd tools/bower
+
+    log 'Creating bower.json'
+    cat <<EOF > bower.json
+{
+    "name": "ingress-identity",
+    "version": "0.0",
+    "homepage": "https://github.com/bgotink/IngressIdentity",
+    "authors": [
+        "Bram Gotink <bram@gotink.me>"
+    ],
+    "license": "MIT",
+    "private": true,
+
+    "dependencies": {
+        "bootstrap": "latest"
+    }
+}
+EOF
+
+    log 'Installing bower libraries'
+    bower install
+
+    install
+}
+
+update() {
+    cd tools/bower
+
+    log 'Updating bower libraries'
+    bower update
+
+    install
+}
+
+case "$1" in
+    init)
+        init
+        ;;
+    update)
+        update
+        ;;
+    *)
+        log 'Unknown command: '"$1"
+        exit 1
+        ;;
+esac
