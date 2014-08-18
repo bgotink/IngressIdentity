@@ -28,12 +28,16 @@
     forceUpdate = ->
         module.doOnce.update()
 
-        module.checkElement window.document
+        module.checkElement $root[0]
 
     observer = new window.MutationObserver (mutations) ->
         mutations.each (mutation) ->
             Array.prototype.each.call mutation.addedNodes, (node) ->
                 module.checkElement node
+
+    # use $root instead of document.body, because we don't want to fire our
+    # listeners every time the user types a character.
+    $root = null
 
     $ ->
         $ window.document.body
@@ -43,9 +47,16 @@
 
         module.extension.init() if module.extension.init?
 
+        $root = $ '.Xg .Xg'
+
+        if $root.length is 0
+            # this is not a chat pane, but the main talk frame on the right
+            $root = $ window.document.body
+
         module.comm.setOnUpdate forceUpdate
 
         forceUpdate()
-        observer.observe window.document, { childList: true, subtree: true }
+
+        observer.observe $root[0], { childList: true, subtree: true }
 
 )(iidentity or (iidentity = window.iidentity = {}), window.jQuery, window)
