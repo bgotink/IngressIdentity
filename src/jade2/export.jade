@@ -1,3 +1,5 @@
+include ./_mixins
+
 doctype html
 html(data-translate-prefix="export")
     head
@@ -61,11 +63,11 @@ html(data-translate-prefix="export")
                     .modal-header
                         h4.modal-title#mdl_label_parse_export(data-translate-name="modal_pe_title") Parsing and exporting data&hellip;
                     .modal-body
-                        p(data-translate-name="modal_p_subtitle")Parsing:
+                        p(data-translate-name="modal_p_subtitle") Parsing:
                         .progress
                             .progress-bar.parse(role="progressbar", aria-valuemin="0", aria-valuemax="100")
                                 span.sr-only(data-translate-name="modal_progress") <span class="percent"></span>% complete
-                        p(data-translate-name="modal_e_subtitle")Exporting:
+                        p(data-translate-name="modal_e_subtitle") Exporting:
                         .progress
                             .progress-bar.export(role="progressbar", aria-valuemin="0", aria-valuemax="100")
                                 span.sr-only(data-translate-name="modal_progress") <span class="percent"></span>% complete
