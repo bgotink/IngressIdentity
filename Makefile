@@ -1,6 +1,6 @@
 MDs = README.md LICENSE.md NOTICE.md SOURCE.md
 
-JSs = js/content.js js/content-talk.js js/options.js js/help.js js/background.js js/export.js
+JSs = js/content.js js/options.js js/help.js js/background.js js/export.js
 CSSs = css/content.css css/options.css css/help.css css/export.css
 HTMLs = options.html background.html help.html export.html
 
@@ -46,7 +46,7 @@ define cson
 cson2json $< > $@
 endef
 
-.PHONY: all all-release release init dist default clean touch common common-release chrome chrome-release chrome-all chrome-dist safari safari-release safari-all safari-dist firefox firefox-release firefox-all firefox-dist
+.PHONY: all all-release release vendor-update init dist default clean touch common common-release chrome chrome-release chrome-all chrome-dist safari safari-release safari-all safari-dist firefox firefox-release firefox-all firefox-dist
 
 # Main entrypoints
 #
@@ -78,9 +78,6 @@ tools/gray2transparent:
 tools/gray2transparent/gray2transparent: tools/gray2transparent $(addprefix tools/gray2transparent/, gray2transparent.cpp exr_io.h exr_io.cpp)
 	@$(MAKE) -C $< gray2transparent
 
-# Common targets
-#
-
 # vendor libraries
 
 tools/bower:
@@ -91,6 +88,9 @@ tools/bower/bower.json: bin/vendor
 
 vendor-update: tools/bower/bower.json
 	@bin/vendor update
+
+# Common targets
+#
 
 # helpers
 
@@ -250,9 +250,9 @@ build/chrome-release: build/chrome-release/js build/chrome-release/css
 
 # main
 
-chrome: common build/chrome $(addprefix build/chrome/, $(FILES) manifest.json $(addprefix _locales/,$(addsuffix /messages.json,$(LANGUAGES))) img img/anomalies img/logo $(addprefix img/logo/, ingress.png 16.png 19.png 38.png 48.png 128.png))
+chrome: common build/chrome $(addprefix build/chrome/, $(FILES) js/content-talk.js manifest.json $(addprefix _locales/,$(addsuffix /messages.json,$(LANGUAGES))) img img/anomalies img/logo $(addprefix img/logo/, ingress.png 16.png 19.png 38.png 48.png 128.png))
 
-chrome-release: common-release build/chrome-release $(addprefix build/chrome-release/, $(FILES) manifest.json $(addprefix _locales/,$(addsuffix /messages.json,$(LANGUAGES))) img/anomalies $(addprefix img/logo/, ingress.png 16.png 19.png 38.png 48.png 128.png))
+chrome-release: common-release build/chrome-release $(addprefix build/chrome-release/, $(FILES) js/content-talk.js manifest.json $(addprefix _locales/,$(addsuffix /messages.json,$(LANGUAGES))) img/anomalies $(addprefix img/logo/, ingress.png 16.png 19.png 38.png 48.png 128.png))
 
 chrome-all: chrome chrome-release
 
