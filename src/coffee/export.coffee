@@ -234,6 +234,10 @@
             module.log.log 'Got export data', result.data
             rawData = result.data
 
+            if rawData.showWarning
+                $ '.warning'
+                    .removeClass 'hide'
+
             doExport true
 
 )(iidentity or (iidentity = window.iidentity = {}), window.jQuery)

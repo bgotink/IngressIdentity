@@ -25,8 +25,11 @@
 
         $ '.iidentity-export'
             .on 'click', ->
+                $loadMore = $ 'span.L5'
+
                 data =
                     oid: oid
+                    showWarning: $loadMore.length isnt 0 and 'none' isnt $loadMore.css 'display'
                     entries: []
 
                 $ 'div.X8c.xTc'

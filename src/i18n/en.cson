@@ -273,4 +273,10 @@
     export_progress:
         message: '<span class="percent"></span>% complete'
         description: 'The "<span class="percent"></span>" part will contain a number.'
+    export_warning:
+        message: 'Warning!'
+        description: 'The word "warning"'
+    export_warning_all_members:
+        message: 'You haven\'t loaded all players in the community. This exporter can only export the members that are shown on the page. You\'ll have to scroll down completely before opening the exporter.'
+        description: 'Warning shown when not all members have been loaded.'
 }
