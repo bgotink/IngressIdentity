@@ -37,6 +37,14 @@ define coffee_release
 @bin/coffee --minify $@ src/coffee/release-header.coffee $^
 endef
 
+define jade
+jade -P -o $(dir $@) $<
+endef
+
+define jade_release
+jade -o $(dir $@) $<
+endef
+
 define mkdir
 mkdir -p $@
 @touch $@
@@ -115,17 +123,26 @@ build/%/NOTICE.md: NOTICE.md
 build/%/SOURCE.md: SOURCE.md
 	$(copy)
 
-build/%/background.html: src/background.html
-	$(copy)
+build/common/background.html: src/jade/background.jade src/jade/_mixins.jade
+	$(jade)
+
+build/common-release/background.html: src/jade/background.jade src/jade/_mixins.jade
+	$(jade_release)
 
 build/%/help.html: src/help.html
 	$(copy)
 
-build/%/options.html: src/options.html
-	$(copy)
+build/common/options.html: src/jade/options.jade src/jade/_mixins.jade
+	$(jade)
 
-build/%/export.html: src/export.html
-	$(copy)
+build/common-release/options.html: src/jade/options.jade src/jade/_mixins.jade
+	$(jade_release)
+
+build/common/export.html: src/jade/export.jade src/jade/_mixins.jade
+	$(jade)
+
+build/common-release/export.html: src/jade/export.jade src/jade/_mixins.jade
+	$(jade_release)
 
 build/common-release/css/content.css: src/less/content.less src/less/variables.less src/less/general.less
 	$(less_release)
@@ -194,6 +211,12 @@ build/%/img/logo/19.png: src/img/logo.svg build/%/img/logo
 
 build/%/img/logo/38.png: src/img/logo.svg build/%/img/logo
 	convert -background none $< -resize 38 $@
+
+build/chrome/%.html: build/common/%.html
+	$(copy)
+
+build/chrome-release/%.html: build/common-release/%.html
+	$(copy)
 
 build/chrome/js/content.js: src/coffee/beal/chrome/content.coffee $(JS_CONTENT_DEPS)
 	$(coffee)
