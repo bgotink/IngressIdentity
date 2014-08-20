@@ -30,6 +30,8 @@
     exports.getURL = (rel) ->
         safari.extension.baseURI + rel
 
+    exports.browser = 'safari'
+
     exports.init = ->
         safari.self.addEventListener 'message',
                 (event) ->

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html data-translate-prefix="options">
 <head>
-    <title>IngressIdentity Options</title>
+    <title data-translate-name="title">IngressIdentity Options</title>
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="vendor/css/bootstrap.min.css" />
@@ -24,10 +24,10 @@
         <div class="row">
             <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
                 <h1>
-                    IngressIdentity Options
-                    <a target="_blank" href="help.html" class="btn btn-default help pull-right">Help</a>
+                    <span data-translate-name="title">IngressIdentity Options</span>
+                    <a target="_blank" href="help.html" class="btn btn-default help pull-right" data-translate-name="help">Help</a>
                 </h1>
-                <p>
+                <p data-translate-name="intro">
                     This options page allows you to configure the manifests to use
                     when identifying people on G+. It also provides some tools to
                     help acquiring data to put in manifest files or source files.
@@ -38,120 +38,137 @@
             <div class="col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
                 <div class="hide alert alert-success alert-dismissable alert-reload-success">
                     <button type="button" class="close" aria-hidden="true">&times;</button>
-                    <strong>Success!</strong> The data was successfully reloaded.
+                    <strong data-translate-name="success">Success!</strong>
+                    <span data-translate-name="reload_success">The data was successfully reloaded.</span>
                 </div>
                 <div class="hide alert alert-warning alert-dismissable alert-reload-warning">
                     <button type="button" class="close" aria-hidden="true">&times;</button>
-                    <strong>Warning!</strong> Something went wrong when reloading the data.
+                    <strong data-translate-name="warning">Warning!</strong>
+                    <span data-translate-name="reload_failed">Something went wrong when reloading the data.</span>
                 </div>
                 <div class="hide alert alert-danger alert-dismissable alert-reload-failed">
                     <button type="button" class="close" aria-hidden="true">&times;</button>
-                    <strong>Error!</strong> Something went wrong when reloading the data.
+                    <strong data-translate-name="error">Error!</strong>
+                    <span data-translate-name="reload_failed">Something went wrong when reloading the data.</span>
                 </div>
 
                 <div class="hide alert alert-success alert-dismissable alert-add-success">
                     <button type="button" class="close" aria-hidden="true">&times;</button>
-                    <strong>Success!</strong> The manifest file was successfully added.
+                    <strong data-translate-name="success">Success!</strong>
+                    <span data-translate-name="add_success">The manifest file was successfully added.</span>
                 </div>
                 <div class="hide alert alert-warning alert-dismissable alert-add-duplicate">
                     <button type="button" class="close" aria-hidden="true">&times;</button>
-                    <strong>Warning!</strong> The given manifest is already loaded.
+                    <strong data-translate-name="warning">Warning!</strong>
+                    <span data-translate-name="add_duplicate">The given manifest is already loaded.</span>
                 </div>
                 <div class="hide alert alert-warning alert-dismissable alert-add-warning">
                     <button type="button" class="close" aria-hidden="true">&times;</button>
-                    <strong>Warning!</strong> Something went wrong when adding the manifest.
+                    <strong data-translate-name="warning">Warning!</strong>
+                    <span data-translate-name="add_failed">Something went wrong when adding the manifest.</span>
                 </div>
                 <div class="hide alert alert-danger alert-dismissable alert-add-failed">
                     <button type="button" class="close" aria-hidden="true">&times;</button>
-                    <strong>Error!</strong> Something went wrong when adding the manifest.
+                    <strong data-translate-name="error">Error!</strong>
+                    <span data-translate-name="add_failed">Something went wrong when adding the manifest.</span>
                 </div>
 
                 <div class="hide alert alert-success alert-dismissable alert-remove-success">
                     <button type="button" class="close" aria-hidden="true">&times;</button>
-                    <strong>Success!</strong> The manifest file was successfully removed.
+                    <strong data-translate-name="success">Success!</strong>
+                    <span data-translate-name="remove_success">The manifest file was successfully removed.</span>
                 </div>
                 <div class="hide alert alert-warning alert-dismissable alert-remove-nonexistent">
                     <button type="button" class="close" aria-hidden="true">&times;</button>
-                    <strong>Warning!</strong> The given manifest was not loaded.
+                    <strong data-translate-name="warning">Warning!</strong>
+                    <span data-translate-name="remove_nonexisting">The given manifest was not loaded.</span>
                 </div>
                 <div class="hide alert alert-warning alert-dismissable alert-remove-warning">
                     <button type="button" class="close" aria-hidden="true">&times;</button>
-                    <strong>Warning!</strong> Something went wrong when removing the manifest.
+                    <strong data-translate-name="warning">Warning!</strong>
+                    <span data-translate-name="remove_failed">Something went wrong when removing the manifest.</span>
                 </div>
                 <div class="hide alert alert-danger alert-dismissable alert-remove-failed">
                     <button type="button" class="close" aria-hidden="true">&times;</button>
-                    <strong>Error!</strong> Something went wrong when removing the manifest.
+                    <strong data-translate-name="error">Error!</strong>
+                    <span data-translate-name="remove_failed">Something went wrong when removing the manifest.</span>
                 </div>
 
                 <div class="hide alert alert-success alert-dismissable alert-reorder-success">
                     <button type="button" class="close" aria-hidden="true">&times;</button>
-                    <strong>Success!</strong> The order was successfully changed.
+                    <strong data-translate-name="success">Success!</strong>
+                    <span data-translate-name="reorder_success">The order was successfully changed.</span>
                 </div>
                 <div class="hide alert alert-danger alert-dismissable alert-reorder-nonexistent">
                     <button type="button" class="close" aria-hidden="true">&times;</button>
-                    <strong>Error!</strong> Something went wrong when changing the order.
+                    <strong data-translate-name="error">Error!</strong>
+                    <span data-translate-name="reorder_failed">Something went wrong when changing the order.</span>
                 </div>
 
                 <div class="hide alert alert-success alert-dismissable alert-rename-success">
                     <button type="button" class="close" aria-hidden="true">&times;</button>
-                    <strong>Success!</strong> The manifest was successfully renamed.
+                    <strong data-translate-name="success">Success!</strong>
+                    <span data-translate-name="rename_success">The manifest was successfully renamed.</span>
                 </div>
                 <div class="hide alert alert-danger alert-dismissable alert-rename-failed">
                     <button type="button" class="close" aria-hidden="true">&times;</button>
-                    <strong>Error!</strong> Something went wrong when renaming the manifest.
+                    <strong data-translate-name="error">Error!</strong>
+                    <span data-translate-name="rename_failed">Something went wrong when renaming the manifest.</span>
                 </div>
             </div>
         </div>
         <div class="row">
             <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 sources">
-                <h2>Data Sources <button id="reload_sources" type="button" class="btn btn-default btn-sm" data-loading-text="Reloading...">
-                    <span class="glyphicon glyphicon-refresh"></span>
-                    Force reload
-                </button></h2>
+                <h2>
+                    <span data-translate-name="data_sources">Data Sources</span>
+                    <button id="reload_sources" type="button" class="btn btn-default btn-sm" data-loading-text="Reloading...">
+                        <span class="glyphicon glyphicon-refresh"></span>
+                        <span data-translate-name="force_reload">Force reload</span>
+                    </button>
+                </h2>
                 <div class="row">
                     <div class="col-sm-12 listing">
                         <div id="source_list">
-                            <p>Loading the data...</p>
+                            <p data-translate-name="loading_data">Loading the data&hellip;</p>
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-sm-12 input">
-                        <h3>Add a new manifest</h3>
+                        <h3 data-translate-name="manifest_add_title">Add a new manifest</h3>
                         <form class="manifest_add" role="form" action="#">
                             <div class="form-group">
-                                <label for="manifest_input">Manifest Key</label>
+                                <label for="manifest_input" data-translate-name="manifest_key_label">Manifest Key</label>
                                 <input id="manifest_input" class="form-control" type="text" placeholer="0AtpJ3MMfk4gjdFJxdW41VHdxVC1nTnU2RVh1RUk4THc">
                                 <div class="help-block">
-                                    <p>
+                                    <p data-translate-name="manifest_key_help">
                                         For more information about where to find the manifest key,
                                         please take a look at <a target="_blank" href="help.html#key">the help page</a>.
                                     </p>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="name_input">Manifest Name</label>
+                                <label for="name_input" data-translate-name="manifest_name_label">Manifest Name</label>
                                 <input id="name_input" class="form-control" type="text">
                                 <div class="help-block">
-                                    <p>
+                                    <p data-translate-name="manifest_name_help">
                                         <em>Optional</em>. A human-readable name for your manifest.
                                     </p>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <button type="button" class="btn btn-primary manifest_add" data-loading-text="Adding...">
-                                    <span class="glyphicon glyphicon-plus"></span>
-                                    Add manifest
+                                <button type="button" class="btn btn-primary manifest_add" data-loading-text="Adding..." data-translate-name="manifest_add_button">
+                                    <span class="glyphicon glyphicon-plus"></span> Add manifest
                                 </button>
                             </div>
                             <div>
-                                <p>
+                                <p data-translate-name="manifest_example_intro">
                                     If you want to see an example of a manifest file, add manifest key
                                 </p>
                                 <blockquote>
                                     <a target="_blank" href="https://docs.google.com/spreadsheet/ccc?key=0AlQqEFrEHdKSdG9GTG83T21XZURhZEozd01Lb3BxTmc">0AlQqEFrEHdKSdG9GTG83T21XZURhZEozd01Lb3BxTmc</a>
                                 </blockquote>
-                                <p>
+                                <p data-translate-name="manifest_example_outro">
                                     Then take a look at <a target="_blank" href="https://plus.google.com/+NianticProject/posts/eTDoXUG8TkB">
                                     this post by the Niantic Project</a> or
                                     <a target="_blank" href="https://plus.google.com/110350977702120778591/posts/GH32VJw1fhA">
@@ -165,55 +182,55 @@
         </div>
         <div class="row">
             <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 settings">
-                <h2>Settings</h2>
-                <p>
+                <h2 data-translate-name="settings_title">Settings</h2>
+                <p data-translate-name="settings_intro">
                     This section contains some settings for the extension.
                 </p>
                 <div>
-                    <h3>Layout options</h3>
-                    <p>This subsection contains a couple of layout tweaks.</p>
+                    <h3 data-translate-name="layout_options_title">Layout options</h3>
+                    <p data-translate-name="layout_options_intro">This subsection contains a couple of layout tweaks.</p>
                     <div>
                         <p>
                             <button type="button" data-loading-text="Storing..." class="btn btn-default btn-sm" id="enable_anomalies">
                                 Initializing...
                             </button>
-                            Show anomaly badges
+                            <span data-translate-name="settings_enable_anomalies">Show anomaly badges</span>
                         </p>
                         <p>
                             <button type="button" data-loading-text="Storing..." class="btn btn-default btn-sm" data-match="a.Ug[oid]">
                                 Initializing...
                             </button>
-                            Match profile pop-ups.
+                            <span data-translate-name="settings_match_popups">Match profile pop-ups.</span>
                         </p>
                         <p>
                             <button type="button" data-loading-text="Storing..." class="btn btn-default btn-sm" data-match="a.ob.tv.Ub[oid]">
                                 Initializing...
                             </button>
-                            Match authors of posts and comments, event RSVP, event creator etc.
+                            <span data-translate-name="settings_match_authors">Match authors of posts and comments, event RSVP, event creator etc.</span>
                         </p>
                         <p>
                             <button type="button" data-loading-text="Storing..." class="btn btn-default btn-sm" data-match="a.proflink.aaTEdf[oid]">
                                 Initializing...
                             </button>
-                            Match mentions in posts.
+                            <span data-translate-name="settings_match_mentions">Match mentions in posts.</span>
                         </p>
                         <p>
                             <button type="button" data-loading-text="Storing..." class="btn btn-default btn-sm" data-match="div.o0b[oid]">
                                 Initializing...
                             </button>
-                            Match people in the 'In common with you', 'In his/her circles' or 'Have him/her in circles' sections.
+                            <span data-translate-name="settings_match_people">Match people in the 'In common with you', 'In his/her circles' or 'Have him/her in circles' sections.</span>
                         </p>
                         <p>
                             <button type="button" data-loading-text="Storing..." class="btn btn-default btn-sm" data-match="extra-event">
                                 Initializing...
                             </button>
-                            Show links to the source spreadsheets linked to an event on the page of that event.
+                            <span data-translate-name="settings_extra_event">Show links to the source spreadsheets linked to an event on the page of that event.</span>
                         </p>
                         <p>
                             <button type="button" data-loading-text="Storing..." class="btn btn-default btn-sm" data-match="extra-community">
                                 Initializing...
                             </button>
-                            Show links to the source spreadsheets linked to a community on the page of that community.
+                            <span data-translate-name="settings_extra_community">Show links to the source spreadsheets linked to a community on the page of that community.</span>
                         </p>
                     </div>
                 </div>
@@ -221,32 +238,29 @@
         </div>
         <div class="row">
             <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 about">
-                <h2>About</h2>
-                <p>
+                <h2 data-translate-name="about_title">About</h2>
+                <p data-translate-name="about_text">
                     This extension is written and maintained by <a target="_blank" href="https://github.com/bgotink">Bram Gotink</a>.
                     The code is &copy; 2014 Bram Gotink, licensed under the terms of the <a target="_blank" href="http://en.wikipedia.org/wiki/MIT_License">MIT License</a>.
                     The source of this project can be found on <a target="_blank" href="https://github.com/bgotink/IngressIdentity">GitHub</a>.
                 </p>
-                <h3>Acknowledgements</h3>
-                <p>
+                <h3 data-translate-name="ack_title">Acknowledgements</h3>
+                <p data-translate-name="ack_text">
                     This project uses code by <a target="_blank" href="https://jquery.org/">jQuery</a>,
-                    <a target="_blank" href="http://sugarjs.com/">Sugar.js</a>,
-                    <a target="_blank" href="http://ejohn.org/blog/simple-javascript-inheritance/">John Resig</a>
+                    <a target="_blank" href="http://sugarjs.com/">Sugar.js</a>
                     and <a target="_blank" href="https://github.com/twbs/bootstrap">Twitter's Bootstrap</a>.
-                    The logo is derived from the ingress logos created by <a target="_blank" href="https://github.com/cr0ybot/ingress-logos">cr0ybot</a>.
+                    The logo is derived from the ingress logos created by
+                    <a target="_blank" href="https://github.com/cr0ybot/ingress-logos">cr0ybot</a>.
                 </p>
-                <p>
-                    The logo is derived from the ingress logos created by <a target="_blank" href="https://github.com/cr0ybot/ingress-logos">cr0ybot</a>.
-                </p>
-                <h3>Bug Report / Feature Request</h3>
-                <p>
+                <h3 data-translate-name="bug_title">Bug Report / Feature Request</h3>
+                <p data-translate-name="bug_text">
                     If you've found a bug or have an idea for a killer feature, feel
                     free to let us know <a target="_blank" href="https://github.com/bgotink/IngressIdentity/issues">here</a>
                     if you have a GitHub account or using the feedback feature in the
                     Chrome Web Store found <a target="_blank" href="https://chrome.google.com/webstore/support/pjhgnhcijlkffbncjecmcdpndjckcbik">here</a>.
                 </p>
-                <h3>Disclaimer</h3>
-                <p>
+                <h3 data-translate-name="disclaimer_title">Disclaimer</h3>
+                <p data-translate-name="disclaimer_text">
                     The extension and its author(s) are in no way affiliated with
                     Ingress, Google or NianticLabs@Google. This extension merely
                     serves as third-party tool to support Ingress players and their

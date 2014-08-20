@@ -1,35 +1,10 @@
-# The main content script
+# The main script for Google Talk pages
 #
 # @author Bram Gotink (@bgotink)
 # @license MIT
 
-# Use the following script on G+ pages to identify the elements containing a 'oid' attribute:
-#
-# (function () {
-# var result = {}, elems = document.querySelectorAll('[oid]'), i, length = elems.length, elem, key;
-# for(i = 0; i < length; i++) {
-#     elem = elems.item(i);
-#     key = elem.tagName.toLowerCase() + '.' + elem.className.split(' ').join('.');
-#     if (key in result) {
-#         result[key] ++;
-#     } else {
-#         result[key] = 1;
-#     }
-# }
-# console.log(result);
-# })();
-
 ((module, $, window) ->
     selfTimestamp = '' + +new Date
-
-    observer = new window.MutationObserver (mutations) ->
-        module.checkProfile()
-        module.listSources()
-        module.addExport()
-
-        mutations.each (mutation) ->
-            Array.prototype.each.call mutation.addedNodes, (node) ->
-                module.checkElement node
 
     selfDestructObserver = new window.MutationObserver (mutations) ->
         mutations.each (mutation) ->
@@ -53,11 +28,16 @@
     forceUpdate = ->
         module.doOnce.update()
 
-        module.checkProfile()
-        module.listSources()
-        module.addExport()
+        module.checkElement $root[0]
 
-        module.checkElement window.document
+    observer = new window.MutationObserver (mutations) ->
+        mutations.each (mutation) ->
+            Array.prototype.each.call mutation.addedNodes, (node) ->
+                module.checkElement node
+
+    # use $root instead of document.body, because we don't want to fire our
+    # listeners every time the user types a character.
+    $root = null
 
     $ ->
         $ window.document.body
@@ -67,10 +47,16 @@
 
         module.extension.init() if module.extension.init?
 
-        module.i18n.init ->
-            module.comm.setOnUpdate forceUpdate
+        $root = $ '.Xg .Xg'
 
-            forceUpdate()
-            observer.observe window.document, { childList: true, subtree: true }
+        if $root.length is 0
+            # this is not a chat pane, but the main talk frame on the right
+            $root = $ window.document.body
+
+        module.comm.setOnUpdate forceUpdate
+
+        forceUpdate()
+
+        observer.observe $root[0], { childList: true, subtree: true }
 
 )(iidentity or (iidentity = window.iidentity = {}), window.jQuery, window)

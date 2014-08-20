@@ -27,6 +27,10 @@ html(data-translate-prefix="export")
                     This page tries to fetch Ingress agent data from a Google+
                     community. You can modify it before exporting it to a Google
                     Drive Spreadsheet.
+            +row
+                .alert.alert-warning.warning.hide
+                    strong(data-translate-name='warning') Warning!
+                    span(data-translate-name='warning_all_members') You haven't loaded all players in the community. This exporter can only export the members that are shown on the page. You'll have to scroll down completely before opening the exporter.
             +row.settings
                 h2(data-translate-name="options_title") Options
                 p(data-translate-name="options_intro").

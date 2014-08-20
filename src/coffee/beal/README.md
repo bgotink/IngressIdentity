@@ -18,6 +18,8 @@ or options pages cannot wrongly modify any settings.
     The values in data are always JSONifieable
 - bool isOptionsPage(string url)
     required, checks whether a given url is this extension's option page
+- string getURL(string relative)
+    required, gives the URL of an asset given its relative path
 - void sendToTabs(obj message)
     required, sends the given message to all tabs with a running content script
     of the extension
@@ -52,5 +54,9 @@ This file is included in all javascript files apart from `background.js`.
     required, gives the URL of an asset given its relative path
 - mixed getLastError()
     optional, should be _absent when not implemented_, don't use an empty function!
+- string browser
+    note: not a function ;)
 - void init()
     optional, will be called when DOM is ready if the value isn't null/undefined
+- string getI18nMessage(string name)
+    required, gets the i18n message with the given name

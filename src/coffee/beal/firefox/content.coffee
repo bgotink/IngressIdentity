@@ -1,4 +1,4 @@
-# BEAL file for Safari
+# BEAL file for Firefox
 #
 # @author Bram Gotink (@bgotink)
 # @license MIT
@@ -7,7 +7,7 @@
     exports = module.extension = {}
 
     # firefox does something weird with objects being sent through
-    # i.e.: arrays have length undefined, prototype is _not_ correct etc
+    # e.g.: arrays have length undefined, prototype is _not_ correct etc
     clone = (e) ->
         if typeof e is 'object'
             Object.clone e, true
@@ -16,6 +16,8 @@
         else
             e
 
+    addon = window.addon or self
+
     messageCallbacks = Object.extended {}
     messageCallbacks.nextId = 0
 
@@ -23,20 +25,23 @@
         messageId = '' + ++messageCallbacks.nextId
         messageCallbacks[messageId] = callback
 
-        self.port.emit 'iidentity-request-to-background',
+        addon.port.emit 'iidentity-request-to-background',
             id: messageId
             message: message
 
     exports.addMessageListener = (func) ->
-        self.port.on 'iidentity-request-from-background', func
+        addon.port.on 'iidentity-request-from-background', func
 
     exports.getLastError = null
 
     exports.getURL = (rel) ->
+        # this doesn't work with addon :-/
         self.options.baseURI + rel
 
+    exports.browser = 'firefox'
+
     exports.init = ->
-        self.port.on 'iidentity-answer-from-background', (message) ->
+        addon.port.on 'iidentity-answer-from-background', (message) ->
                 callbackId = message.id
 
                 return unless messageCallbacks.has callbackId

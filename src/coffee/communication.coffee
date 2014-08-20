@@ -16,11 +16,11 @@
 
         try
             module.extension.sendMessage request, (reply) ->
-                    if typeof reply is 'undefined'
+                    if not reply?
                         module.log.error module.extension.getLastError() if module.extension.getLastError
                         return
 
-                    callback reply.reply
+                    callback reply.reply if callback?
 
                     lastUpdate = +new Date
                     if reply.shouldUpdate
@@ -66,4 +66,9 @@
     exports.getSourcesForExtra = (tag, oid, callback) ->
         @send { type: 'getSourcesForExtra', tag: tag, oid: oid }, (result) ->
             callback result.result
+
+    exports.getTranslationsWithPrefix = (locale, prefix, callback) ->
+        @send { type: 'getTranslationsWithPrefix', prefix: prefix, locale: locale }, (result) ->
+            callback result.messages
+
 )(iidentity or (iidentity = window.iidentity = {}))
