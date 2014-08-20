@@ -1,0 +1,158 @@
+include ./_mixins
+
+mixin alert_success(klass, name, text)
+    .hide.alert.alert-success.alert-dismissable(class='alert-' + klass)
+        button.close(type='button', aria-hidden='true') &times;
+        strong(data-translate-name='success') Success!
+        span(data-translate-name=name)= text
+
+mixin alert_warning(klass, name, text)
+    .hide.alert.alert-success.alert-dismissable(class='alert-' + klass)
+        button.close(type='button', aria-hidden='true') &times;
+        strong(data-translate-name='warning') Warning!
+        span(data-translate-name=name)= text
+
+mixin alert_danger(klass, name, text)
+    .hide.alert.alert-danger.alert-dismissable(class='alert-' + klass)
+        button.close(type='button', aria-hidden='true') &times;
+        strong(data-translate-name='error') Error!
+        span(data-translate-name=name)= text
+
+mixin settings_button(name, text)
+    p
+        button(type='button', data-loading-text='Storing...', class='btn btn-default btn-sm')&attributes(attributes).
+            Initializing...
+        span(data-translate-name='settings_' + name)= text
+
+doctype html
+html(data-translate-prefix='options')
+    head
+        title(data-translate-name='title') IngressIdentity Options
+
+        // Bootstrap CSS
+        +css_lib('bootstrap')
+
+        // Our CSS
+        +css('options')
+
+        // jQuery, Sugar and Bootstrap JS
+        +js_lib('jquery')
+        +js_lib('jquery-ui')
+        +js_lib('sugar')
+        +js_lib('bootstrap')
+
+        // Our JS
+        +js('options')
+    body
+        +ingress_background
+            +row
+                h1
+                    span(data-translate-name='title') IngressIdentity Options
+                    a(target='_blank', href='help.html', class='btn btn-default help pull-right', data-translate-name='help') Help
+                p(data-translate-name='intro').
+                    This options page allows you to configure the manifests to use
+                    when identifying people on G+. It also provides some tools to
+                    help acquiring data to put in manifest files or source files.
+            .row
+                .col-sm-8.col-sm-offset-2.col-md-6.col-md-offset-3
+                    +alert_success('reload-success', 'reload_success', 'The data was successfully reloaded.')
+                    +alert_warning('reload-warning', 'reload_failed', 'Something went wrong when reloading the data.')
+                    +alert_danger('reload-failed', 'reload_failed', 'Something went wrong when reloading the data.')
+
+                    +alert_success('add-success', 'add_success', 'The manifest file was successfully added.')
+                    +alert_warning('add-duplicate', 'add_duplicate', 'The given manifest is already loaded.')
+                    +alert_warning('add-warning', 'add_failed', 'Something went wrong when adding the manifest.')
+                    +alert_danger('add-failed', 'add_failed', 'Something went wrong when adding the manifest.')
+
+                    +alert_success('remove-success', 'remove_success', 'The manifest file was successfully removed.')
+                    +alert_warning('remove-nonexistent', 'remove_nonexisting', 'The given manifest was not loaded.')
+                    +alert_warning('remove-warning', 'remove_failed', 'Something went wrong when removing the manifest.')
+                    +alert_danger('remove-failed', 'remove_failed', 'Something went wrong when removing the manifest.')
+
+                    +alert_success('reorder-success', 'reorder_success', 'The order was successfully changed.')
+                    +alert_danger('reoder-nonexistent', 'reorder_failed', 'Something went wrong when changing the order.')
+
+                    +alert_success('rename-success', 'rename_success', 'The manifest was successfully renamed.')
+                    +alert_danger('rename-failed', 'rename_failed', 'Something went wrong when renaming the manifest.')
+            +row
+                h2
+                    span(data-translate-name='data_sources') Data Sources
+                    button#reload_sources(type='button', class='btn btn-default btn-sm', data-loading-text='Reloading...')
+                        span.glyphicon.glyphicon-refresh
+                        span(data-translate-name='force_reload') Force reload
+                .row
+                    .col-sm-12.listing
+                        #source_list
+                            p(data-translate-name='loading_data') Loading the data&hellip;
+                .row
+                    .col-sm-12.input
+                        h3(data-translate-name='manifest_add_title') Add a new manifest
+                        form.manifest_add(role='form', action='#')
+                            .form-group
+                                label(for='manifest_input', data-translate-name='manifest_key_label') Manifest Key
+                                input#manifest_input(class='form-control', type='text', placeholer='0AtpJ3MMfk4gjdFJxdW41VHdxVC1nTnU2RVh1RUk4THc')
+                                .help-block
+                                    p(data-translate-name='manifest_key_help').
+                                        For more information about where to find the manifest key,
+                                        please take a look at <a target="_blank" href="help.html#key">the help page</a>.
+                            .form-group
+                                label(for='name_input', data-translate-name='manifest_name_label') Manifest Name
+                                input#name_input(class='form-control', type='text')
+                                .help-block
+                                    p(data-translate-name='manifest_name_help').
+                                        <em>Optional</em>. A human-readable name for your manifest.
+                            .form-group
+                                button.manifest_add(type='button', class='btn btn-primary', data-loading-text='Adding...', data-translate-name='manifest_add_button')
+                                    span.glyphicon.glyphicon-plus
+                                    | Add manifest
+                            div
+                                p(data-translate-name='manifest_example_intro').
+                                    If you want to see an example of a manifest file, add manifest key
+                                blockquote
+                                    a(target='_blank' href='https://docs.google.com/spreadsheet/ccc?key=0AlQqEFrEHdKSdG9GTG83T21XZURhZEozd01Lb3BxTmc').
+                                        0AlQqEFrEHdKSdG9GTG83T21XZURhZEozd01Lb3BxTmc
+                                p(data-translate-name='manifest_example_outro').
+                                    Then take a look at <a target="_blank" href="https://plus.google.com/+NianticProject/posts/eTDoXUG8TkB">
+                                    this post by the Niantic Project</a> or
+                                    <a target="_blank" href="https://plus.google.com/110350977702120778591/posts/GH32VJw1fhA">
+                                    this post by Klue/ADA</a>.
+            +row
+                h2(data-translate-name='settings_title') Settings
+                p(data-translate-name='settings_intro').
+                    This section contains some settings for the extension.
+                div
+                    h3(data-translate-name='layout_options_title') Layout options
+                    p(data-translate-name='layout_options_intro') This subsection contains a couple of layout tweaks.
+                    div
+                        +settings_button('enable_anomalies', 'Show anomaly badges.')#enable_anomalies
+                        +settings_button('match_popups', 'Match profile pop-ups.')(data-match="a.Ug[oid]")
+                        +settings_button('match_authors', 'Match authors of posts and comments, event RSVP, event creator etc.')(data-match='a.ob.tv.Ub[oid]')
+                        +settings_button('match_mentions', 'Match mentions in posts.')(data-match='a.proflink.aaTEdf[oid]')
+                        +settings_button('match_people', "Match people in the 'In common with you', 'In his/her circles' or 'Have him/her in circles' sections.")(data-match='div.o0b[oid]')
+                        +settings_button('extra_event', 'Show links to the source spreadsheets linked to an event on the page of that event.')(data-match='extra-event')
+                        +settings_button('extra_community', 'Show links to the source spreadsheets linked to a community on the page of that community.')(data-match='extra-community')
+            +row
+                h2(data-translate-name='about_title') About
+                p(data-translate-name='about_text').
+                    This extension is written and maintained by <a target="_blank" href="https://github.com/bgotink">Bram Gotink</a>.
+                    The code is &copy; 2014 Bram Gotink, licensed under the terms of the <a target="_blank" href="http://en.wikipedia.org/wiki/MIT_License">MIT License</a>.
+                    The source of this project can be found on <a target="_blank" href="https://github.com/bgotink/IngressIdentity">GitHub</a>.
+                h3(data-translate-name='ack_title') Acknowledgements
+                p(data-translate-name='ack_text').
+                    This project uses code by <a target="_blank" href="https://jquery.org/">jQuery</a>,
+                    <a target="_blank" href="http://sugarjs.com/">Sugar.js</a>
+                    and <a target="_blank" href="https://github.com/twbs/bootstrap">Twitter's Bootstrap</a>.
+                    The logo is derived from the ingress logos created by
+                    <a target="_blank" href="https://github.com/cr0ybot/ingress-logos">cr0ybot</a>.
+                h3(data-translate-name='bug_title') Bug Report / Feature Request
+                p(data-translate-name='bug_text').
+                    If you've found a bug or have an idea for a killer feature, feel
+                    free to let us know <a target="_blank" href="https://github.com/bgotink/IngressIdentity/issues">here</a>
+                    if you have a GitHub account or using the feedback feature in the
+                    Chrome Web Store found <a target="_blank" href="https://chrome.google.com/webstore/support/pjhgnhcijlkffbncjecmcdpndjckcbik">here</a>.
+                h3(data-translate-name='disclaimer_title') Disclaimer
+                p(data-translate-name='disclaimer_text').
+                    The extension and its author(s) are in no way affiliated with
+                    Ingress, Google or NianticLabs@Google. This extension merely
+                    serves as third-party tool to support Ingress players and their
+                    communities living on Google+.
