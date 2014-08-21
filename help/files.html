@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Files - IngressIdentity Documentation</title>
+    <link rel="stylesheet" href="../vendor/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="../css/help.css"/>
+    <script type="text/javascript" src="../vendor/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../vendor/js/sugar.min.js"></script>
+    <script type="text/javascript" src="../vendor/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../js/help.js"></script>
+  </head>
+  <body>
+    <div class="background"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
+          <h1>Files</h1>
+          <p>
+            This extension makes use of manifest files and source files. This page
+            explains what those are exactly.
+          </p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
+          <h2>Source files</h2>
+          <p>A source file contains a list of players. This list usually looks like this:</p>
+          <table class="table table-striped table-bordered table-condensed">
+            <tr>
+              <th>oid</th>
+              <th>name</th>
+              <th>nickname</th>
+              <th>level</th>
+            </tr>
+            <tr>
+              <td>999999999999999999999</td>
+              <td>Dummy Dummyson</td>
+              <td>dummy</td>
+              <td>0</td>
+            </tr>
+            <tr>
+              <td>103568659333550762891</td>
+              <td>Roland Jarvis</td>
+              <td>__JARVIS__</td>
+              <td>16</td>
+            </tr>
+            <tr>
+              <td>108200572857719809031</td>
+              <td>Oliver Lynton-Wolfe</td>
+              <td>Oliver</td>
+              <td>?</td>
+            </tr>
+          </table>
+          <p>
+            This table links the Google+ profile (the <span class="tt">oid</span> column)
+            with the in-game intel (<span class="tt">nickname</span> and <span class="tt">level</span>).
+            The <span class="tt">name</span> column isn't used. It is there to help you
+            identify a row in the table. A more detailed explanation of the source file
+            format can be found <a href="./sources.html">here</a>.
+          </p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
+          <h2>Manifest files</h2>
+          <p>
+            A manifest file is a list of source files. It adds information to a source,
+            for example to which faction the players in the source file belong. The manifest
+            also defines how often the extension checks for updates. A typical manifest
+            looks like this:
+          </p>
+          <table class="table table-striped table-bordered table-condensed">
+            <tr>
+              <th>lastupdated</th>
+              <th>tag</th>
+              <th>faction</th>
+              <th>key</th>
+              <th>refresh</th>
+            </tr>
+            <tr>
+              <td>2014010101</td>
+              <td>Dummy</td>
+              <td>unknown</td>
+              <td>9999999999999999999999999999999999</td>
+              <td>0</td>
+            </tr>
+            <tr>
+              <td>2014051601</td>
+              <td>13M Resistance</td>
+              <td>resistance</td>
+              <td>&gid=2</td>
+              <td>100</td>
+            </tr>
+            <tr>
+              <td>2014051601</td>
+              <td>13M Enlightened</td>
+              <td>enlightened</td>
+              <td>&gid=5</td>
+              <td>100</td>
+            </tr>
+            <tr>
+              <td>2014042903</td>
+              <td>REC Resistance</td>
+              <td>resistance</td>
+              <td>&gid=6</td>
+              <td>100</td>
+            </tr>
+            <tr>
+              <td>2014043001</td>
+              <td>REC Enlightened</td>
+              <td>enlightened</td>
+              <td>&gid=7</td>
+              <td>100</td>
+            </tr>
+          </table>
+          <p>
+            A more detailed explanation of manifest files can be found
+            <a href="./manifests.html">here</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

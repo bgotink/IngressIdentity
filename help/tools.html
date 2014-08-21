@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Tools - IngressIdentity Documentation</title>
+    <link rel="stylesheet" href="../vendor/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="../css/help.css"/>
+    <script type="text/javascript" src="../vendor/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../vendor/js/sugar.min.js"></script>
+    <script type="text/javascript" src="../vendor/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../js/help.js"></script>
+  </head>
+  <body>
+    <div class="background"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
+          <h1>Tools</h1>
+          <p>This page contains some tools that can help you when using this extension.</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
+          <h2 id="key">Manifest key</h2>
+          <p>
+            Simply enter the manifest URL below, and this page will give you the
+            key to use.
+          </p>
+          <form role="form" action="#">
+            <div class="form-group">
+              <label for="manifest_url">Manifest URL</label>
+              <input id="manifest_url" type="text" class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="manifest_key">Manifest Key</label>
+              <input id="manifest_key" type="text" class="form-control">
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
+          <h2 id="oid">OID</h2>
+          <p>
+            An OID is a unique identifier. People, pages, events and communities
+            each have an OID. Finding it for events and communities is easy, but
+            it can be tricky for people.
+          </p>
+          <h3>Events and Communities</h3>
+          <p>Events and communities have a simple URL structure:</p>
+          <blockquote>
+            <p class="tt">https://plus.google.com/events/OID/...</p>
+            <p class="tt">https://plus.google.com/communities/OID/...</p>
+          </blockquote>
+          <p>Note that there might be a <span class="tt">/u/0</span> in the URL.</p>
+          <h3>People</h3>
+          <p>
+            People are slightly more tricky, as they can choose a custom URL.
+            You'll have to find a link to the person's profile, instead of taking
+            the URL of the profile page itself. To see what we mean, take a look at
+            <a target="_blank" href="https://google.com/+KlueS">Klue's profile</a>.
+            If you look at the URL, you will see the following:
+          </p>
+          <blockquote>
+            <p class="tt">https://plus.google.com/u/0/+KlueS/posts</p>
+          </blockquote>
+          <p>
+            There's no OID there. If you hover over any of the links to Klue's profile,
+            however, you will see a link with an OID:
+          </p>
+          <blockquote>
+            <p class="tt">https://plus.google.com/u/0/110350977702120778591</p>
+          </blockquote>
+          <h3>Tool</h3>
+          <p>
+            This tool filters out the OID for any person, community or event. Note that
+            it won't work with the personalised URLs like Klue's above, you'll have to
+            get the link.
+          </p>
+          <form role="form" action="#">
+            <div class="form-group">
+              <label for="oid_url">Person/Event/Community URL</label>
+              <input id="oid_url" type="text" class="form-control">
+            </div>
+            <div class="form-group">
+              <label for="oid_oid">Person/Event/Community OID</label>
+              <input id="oid_oid" type="text" class="form-control">
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

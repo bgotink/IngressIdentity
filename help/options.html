@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>The Options Page - IngressIdentity Documentation</title>
+    <link rel="stylesheet" href="../vendor/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="../css/help.css"/>
+    <script type="text/javascript" src="../vendor/js/jquery.min.js"></script>
+    <script type="text/javascript" src="../vendor/js/sugar.min.js"></script>
+    <script type="text/javascript" src="../vendor/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../js/help.js"></script>
+  </head>
+  <body>
+    <div class="background"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
+          <h1>The Options Page</h1>
+          <p>
+            The options page is the page you get when clicking the Ingress icon
+            in the top of the browser window. There you can add, edit and remove
+            the manifest files you've loaded.
+          </p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
+          <h2>Adding a manifest</h2>
+          <p>
+            The options page contains a form to add a new manifest. You have to
+            enter the &ldquo;manifest key&rdquo;, and you can optionally add a
+            human readable name so you recognize the manifest in the list.
+          </p>
+          <p>
+            The manifest key can be found in the URL of the manifest spreadsheet.
+            If one of the community leaders provides a manifest for the community,
+            you'll probably simply get the key you have to use. Otherwise you'll
+            have to find it. Google Drive has two URL styles for spreadsheets:
+          </p>
+          <blockquote>
+            <p class="tt">https://docs.google.com/spreadsheet/ccc?key=KEY#...</p>
+            <p class="tt">https://docs.google.com/spreadsheets/d/KEY/edit#...</p>
+          </blockquote>
+          <p>
+            The key becomes slightly more complicated if the manifest isn't on the
+            first tab of the Google Drive Spreadsheet. You have to add <span class="tt">&gid=GID</span>
+            to the key, where <span class="tt">GID</span> can be found in the URL.
+          </p>
+          <p>
+            The <a href="./tools.html">tools page</a> contains a handy tool that
+            extracts the key from any Google Drive URL.
+          </p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
+          <h2>Renaming and removing manifests</h2>
+          <p>
+            Renaming and removing manifests is straightforward. The manifest will
+            be removed when you click the remove button. Clicking the rename button
+            shows a text input where you can enter the new human-readable name for
+            the manifest. Hit enter when you're done to save the new name.
+          </p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
+          <h2>Manifest order</h2>
+          <p>
+            The order of the manifests is of the utmost importance. It matters when
+            multiple sources define the same player.
+          </p>
+          <p>
+            Suppose you have two manifests, each defining one source. Manifest
+            <span class="tt">A</span> defines player <span class="tt">Dummy</span>
+            as a level 7 enlightened player who went to Recursion. Manifest
+            <span class="tt">B</span> however, says he's named <span class="tt">Dammy</span>,
+            a level 8 resistance player who went to Interitus.
+          </p>
+          <p>
+            The extension will merge these multiple entries together. The attributes
+            are merged as follows:
+          </p>
+          <ul>
+            <li>
+              The merged player will have the highest level any of the sources
+              define. In the example, this will be 8.
+            </li>
+            <li>
+              Optional information like anomalies, communities, events and custom
+              data you added is combined. The merged player in the example will
+              have both Recursion and Interitus listed as anomalies.
+            </li>
+            <li>
+              The faction of the merged player will be <span class="tt">error</span>.
+              The faction is merged as follows:
+              <ol>
+                <li>
+                  Any sources listing the faction as <span class="tt">unknown</span>
+                  are ignored.
+                </li>
+                <li>
+                  If any of the sources lists the faction as <span class="tt">error</span>,
+                  that will be the faction of the merged player.
+                </li>
+                <li>
+                  The factions of each of the sources is compared. If there
+                  are two different factions, the merged player will have
+                  faction <span class="tt">error</span>. This is what happened
+                  in the example.
+                </li>
+                <li>
+                  If any faction is defined, the merged player will have that
+                  faction.
+                </li>
+                <li>The player has faction <span class="tt">unknown</span>.</li>
+              </ol>
+            </li>
+            <li>
+              All other attributes (name, nickname) will get the value of the last
+              source file that defines them. In the example, that varies. If manifest
+              <span class="tt">A</span> is listed first, and <span class="tt">B</span>
+              below, the name will be <span class="tt">Dammy</span>. If the manifests
+              are switched, the name will be <span class="tt">Dummy</span>.
+            </li>
+          </ul>
+          <p>
+            So now you know that order is important. You should put the most trustworthy
+            and up-to-date manifests last. In our example, we will put manifest <span class="tt">A</span>
+            before <span class="tt">B</span>. <span class="tt">A</span> describes players from
+            the Recursion anomaly, which occurred before the Interitus anomaly described
+            in manifest <span class="tt">B</span>. The latter is most likely to be up-to-date.
+          </p>
+          <p>
+            You can change the order of the manifests by dragging the manifests
+            in the new order.
+          </p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2">
+          <h2>Settings</h2>
+          <p>
+            The options page contains some buttons you can use to change when the
+            extension adds new elements to the Google+ pages. The text next to these
+            buttons speaks for itself. Simply click the button to enable/disable the
+            option.
+          </p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
