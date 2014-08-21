@@ -1,0 +1,82 @@
+include ./_mixins
+extends ./_layout
+
+block vars
+    - var title = 'Manifest File Format'
+
+block content
+    +row
+        h1 Manifest File Format
+        p.
+            A manifest file is a spreadsheet containing the following columns:
+        dl.dl-horizontal
+            dt lastupdated
+            dd
+                p
+                    em Required.
+                    | A unique number. This number has to be updated every time the source sheet this row describes is updated.
+                p
+                    | Proposed value:
+                    blockquote.
+                        YYYYMMDDXX
+                    | where YYYY is the year, MM is the month, DD is the day
+                    | and XX is the lowest positive number that results in
+                    | a unique number, e.g. 2014043001.
+            dt tag
+            dd
+                p
+                    em Required.
+                    | A human readable name for the source. The extension will display this instead of the key.
+            dt faction
+            dd
+                p
+                    em Required<sup>1</sup>.
+                    | Either 'enlightened', 'resistance' or 'unknown'.
+            dt key
+            dd
+                p
+                    em Required.
+                    | The key of the source file. This tells the extension where to find the spreadsheet. For more information, see <a href="#key">this help section on keys</a>.
+            dt refresh
+            dd
+                p
+                    em Required.
+                    | The amount of hours to wait before updating this source file again. The extension may take up to one hour longer than the alotted refresh rate.
+                p.
+                    All integer values are allowed. Negative values are
+                    the same as 0: reload every hour.
+            dt &hellip;
+            dd
+                p
+                    em Optional.
+                    | You can create other columns at will. These will be
+                    | optional, and will be seen as extratags. If the column name is also added
+                    | in extratags, the data in extratags is overwritten.
+                dl.dl-horizontal
+                    dt anomaly</dt>
+                    dd
+                        p.
+                            One of '13magnus', 'recursion', 'interitus' or 'helios'.
+                            Other values are ignored. New values will
+                            be added for future anomalies.
+                    dt community<br>event
+                    dd
+                        p A value of type
+                        blockquote OID: name
+                        p.
+                            For more information on the OID, see
+                            <a href="./tools.html#oid">the tools page</a>.
+                        p.
+                            The name can be anything as long as the cell
+                            contains valid JSON.
+                p.
+                    Example: the spreadsheet has an 'anomaly' column. The
+                    data in this column will overwrite the 'anomaly' value
+                    in the manifest if that value exists.
+        p.
+            Note 1: The faction has to be defined at least <em>once</em> for every
+            player. You can omit this data if you are sure that all players
+            in the source file are already defined elsewhere. This allows you
+            to e.g. have a source for an event where you include both factions
+            at the same time.
+            See <a href="compatibility.html">the compatibility page</a> for more information.

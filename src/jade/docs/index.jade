@@ -1,9 +1,45 @@
-include ../mixins.jade
+include ./_mixins.jade
 extends ./_layout.jade
 
 block title
     title IngressIdentity Documentation
 
 block content
-    +row.
-        testing
+    +row
+        h1 IngressIdentity Documentation
+        p.
+            These pages contain information on how to use this browser extension,
+            beit as user or as a manifest creator.
+    +row
+        h2 Using the extension
+        p.
+            This extension links ingress players with Google+ identities.
+            It does that using data provided by its user. Yes, that's you.
+        p.
+            You provide the extension with information regarding a player's
+            Google+ userid, their nickname, their level and even which anomalies
+            they went to and in which Google+ communities they're active.
+        p.
+            For more information on how this data is provided to the extension,
+            see the next section. The following pages help you use the extension:
+        ul
+            li
+                a(href='./files.html') What is a manifest?
+            li
+                a(href='./options.html') The options page
+            li
+                a(href='./tools.html') Tools
+    +row
+        h2 Creating and maintaining a manifest
+        ul
+            li
+                a(href='./files.html') What is a manifest?
+                ul
+                    li
+                        a(href='./manifests.html') The manifest file format
+                    li
+                        a(href='./sources.html') The source file format
+            li
+                a(href='./export.html') The community exporter
+            li
+                a(href='./tools.html') Tools
