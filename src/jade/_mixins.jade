@@ -1,0 +1,21 @@
+mixin css(name)
+    link(rel="stylesheet", href="css/" + name + ".css")
+
+mixin js(name)
+    script(type="text/javascript", src="js/" + name + ".js")
+
+mixin css_lib(name)
+    link(rel="stylesheet", href="vendor/css/" + name + ".min.css")
+
+mixin js_lib(name)
+    script(type="text/javascript", src="vendor/js/" + name + ".min.js")
+
+mixin ingress_background
+    .background
+    .container
+        block
+
+mixin row
+    .row
+        .col-sm-10.col-sm-offset-1.col-md-8.col-md-offset-2(class!=attributes.class)
+            block

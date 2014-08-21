@@ -2,18 +2,19 @@ MDs = README.md LICENSE.md NOTICE.md SOURCE.md
 
 JSs = js/content.js js/options.js js/help.js js/background.js js/export.js
 CSSs = css/content.css css/options.css css/help.css css/export.css
-HTMLs = options.html background.html help.html export.html
+HTMLs = options.html background.html export.html
+DOCs = $(addprefix docs/,$(addsuffix .html,index options tools files sources manifests export))
 
 JS_CONTENT_DEPS = $(addprefix src/coffee/,communication.coffee log.coffee $(addprefix content/,doOnce.coffee main.coffee mentions.coffee profile.coffee source.coffee popup.coffee export.coffee i18n.coffee))
 JS_CONTENT_TALK_DEPS = $(addprefix src/coffee/,communication.coffee log.coffee $(addprefix content/,doOnce.coffee mentions.coffee main-talk.coffee))
 JS_OPTIONS_DEPS = $(addprefix src/coffee/,communication.coffee log.coffee options.coffee auto-translate.coffee)
 JS_BACKGROUND_DEPS = $(addprefix src/coffee/,log.coffee data/spreadsheets.coffee data/interpreter.coffee data/merger.coffee data/data.coffee background/i18n.coffee background.coffee)
-JS_HELP_DEPS = src/coffee/help.coffee src/coffee/auto-translate.coffee
+JS_HELP_DEPS = src/coffee/help.coffee
 JS_EXPORT_DEPS = $(addprefix src/coffee/,communication.coffee log.coffee export.coffee auto-translate.coffee)
 
 LANGUAGES=en nl
 
-FILES= $(MDs) $(JSs) $(CSSs) $(HTMLs) vendor
+FILES= $(MDs) $(JSs) $(CSSs) $(HTMLs) $(DOCs) vendor
 
 define copy
 @echo "Copying $<"
@@ -35,6 +36,14 @@ endef
 
 define coffee_release
 @bin/coffee --minify $@ src/coffee/release-header.coffee $^
+endef
+
+define jade
+jade -P -o $(dir $@) $<
+endef
+
+define jade_release
+jade -o $(dir $@) $<
 endef
 
 define mkdir
@@ -115,17 +124,19 @@ build/%/NOTICE.md: NOTICE.md
 build/%/SOURCE.md: SOURCE.md
 	$(copy)
 
-build/%/background.html: src/background.html
-	$(copy)
+build/common/%.html: src/jade/%.jade src/jade/_mixins.jade
+	$(jade)
 
-build/%/help.html: src/help.html
-	$(copy)
+build/common-release/%.html: src/jade/%.jade src/jade/_mixins.jade
+	$(jade_release)
 
-build/%/options.html: src/options.html
-	$(copy)
+build/common/docs/%.html: src/jade/docs/export.jade src/jade/docs/_mixins.jade src/jade/docs/_layout.jade
+	@mkdir -p $(dir $@)
+	$(jade)
 
-build/%/export.html: src/export.html
-	$(copy)
+build/common-release/docs/%.html: src/jade/docs/export.jade src/jade/docs/_mixins.jade src/jade/docs/_layout.jade
+	@mkdir -p $(dir $@)
+	$(jade_release)
 
 build/common-release/css/content.css: src/less/content.less src/less/variables.less src/less/general.less
 	$(less_release)
@@ -178,8 +189,8 @@ build/common-release/i18n/%.json: src/i18n/%.cson build/common-release/i18n
 
 # main
 
-common: build/common $(addprefix build/common/,$(CSSs) $(addprefix i18n/,$(addsuffix .json,$(LANGUAGES))))
-common-release: build/common-release $(addprefix build/common-release/,$(CSSs) $(addprefix i18n/,$(addsuffix .json,$(LANGUAGES))))
+common: build/common $(addprefix build/common/,$(CSSs) $(DOCs) $(HTMLs) $(addprefix i18n/,$(addsuffix .json,$(LANGUAGES))))
+common-release: build/common-release $(addprefix build/common-release/,$(CSSs) $(DOCs) $(HTMLs) $(addprefix i18n/,$(addsuffix .json,$(LANGUAGES))))
 
 # Chrome targets
 #
@@ -194,6 +205,20 @@ build/%/img/logo/19.png: src/img/logo.svg build/%/img/logo
 
 build/%/img/logo/38.png: src/img/logo.svg build/%/img/logo
 	convert -background none $< -resize 38 $@
+
+build/chrome/docs/%.html: build/common/docs/%.html
+	@mkdir -p $(dir $@)
+	$(copy)
+
+build/chrome-release/docs/%.html: build/common-release/docs/%.html
+	@mkdir -p $(dir $@)
+	$(copy)
+
+build/chrome/%.html: build/common/%.html
+	$(copy)
+
+build/chrome-release/%.html: build/common-release/%.html
+	$(copy)
 
 build/chrome/js/content.js: src/coffee/beal/chrome/content.coffee $(JS_CONTENT_DEPS)
 	$(coffee)
@@ -311,6 +336,20 @@ build/IngressIdentity-release.safariextension/_locales/%/messages.json: build/co
 	@mkdir -p $(dir $@)
 	$(copy)
 
+build/IngressIdentity.safariextension/docs/%.html: build/common/docs/%.html
+	@mkdir -p $(dir $@)
+	$(copy)
+
+build/IngressIdentity-release.safariextension/docs/%.html: build/common-release/docs/%.html
+	@mkdir -p $(dir $@)
+	$(copy)
+
+build/IngressIdentity.safariextension/%.html: build/common/%.html
+	$(copy)
+
+build/IngressIdentity-release.safariextension/%.html: build/common-release/%.html
+	$(copy)
+
 build/%.safariextension: build/%.safariextension/js build/%.safariextension/css
 
 build/%.safariextension/img/logo/toolbar.png: src/img/logo.svg build/%.safariextension/img/logo tools/gray2transparent/gray2transparent
@@ -374,25 +413,43 @@ build/%/data/img/logo/32.png: src/img/logo.svg
 build/%/data/img/logo/64.png: src/img/logo.svg
 	convert -background none $< -resize 64 $@
 
-build/firefox/data/css/%: build/common/css/% build/firefox/data/css
+build/firefox/data/css/%: build/common/css/%
 	$(copy)
 
-build/firefox-release/data/css/%: build/common-release/css/% build/firefox-release/data/css
+build/firefox-release/data/css/%: build/common-release/css/%
 	$(copy)
 
-build/firefox/data/options.html: src/options.html build/firefox/data
+build/firefox/data/options.html: build/common/options.html
+	@mkdir -p $(dir $@)
 	grep -vE '<script type="text/javascript" src=' $< > $@
 
-build/firefox-release/data/options.html: src/options.html build/firefox-release/data
+# use common, not common-release because common-release is single-line...
+build/firefox-release/data/options.html: build/common/options.html
+	@mkdir -p $(dir $@)
 	grep -vE '<script type="text/javascript" src=' $< > $@
 
-build/firefox/data/export.html: src/export.html build/firefox/data
+build/firefox/data/export.html: build/common/export.html
+	@mkdir -p $(dir $@)
 	grep -vE '<script type="text/javascript" src=' $< > $@
 
-build/firefox-release/data/export.html: src/export.html build/firefox-release/data
+build/firefox-release/data/export.html: build/common/export.html
+	@mkdir -p $(dir $@)
 	grep -vE '<script type="text/javascript" src=' $< > $@
 
-build/firefox-release/data/%.html: src/%.html build/firefox-release/data
+build/firefox/data/%.html: build/common/%.html
+	@mkdir -p $(dir $@)
+	$(copy)
+
+build/firefox-release/data/%.html: build/common-release/%.html
+	@mkdir -p $(dir $@)
+	$(copy)
+
+build/firefox/data/docs/%.html: build/common/docs/%.html
+	@mkdir -p $(dir $@)
+	$(copy)
+
+build/firefox-release/data/docs/%.html: build/common-release/docs/%.html
+	@mkdir -p $(dir $@)
 	$(copy)
 
 build/firefox/%.md: %.md build/firefox
@@ -465,9 +522,9 @@ build/firefox-release/data/_locales/%/messages.json: build/common-release/i18n/%
 
 # main
 
-firefox: common build/firefox $(addprefix build/firefox/, icon.png icon64.png lib lib/bootstrap.js lib/resources.js package.json $(MDs) data $(addprefix data/, js css $(JSs) $(HTMLs) $(CSSs) vendor $(addprefix _locales/,$(addsuffix /messages.json,$(LANGUAGES))) img $(addprefix img/, anomalies logo $(addprefix logo/, ingress.png 16.png 32.png 64.png))))
+firefox: common build/firefox $(addprefix build/firefox/, icon.png icon64.png lib lib/bootstrap.js lib/resources.js package.json $(MDs) data $(addprefix data/, js css $(JSs) $(HTMLs) $(CSSs) $(DOCs) vendor $(addprefix _locales/,$(addsuffix /messages.json,$(LANGUAGES))) img $(addprefix img/, anomalies logo $(addprefix logo/, ingress.png 16.png 32.png 64.png))))
 
-firefox-release: common-release build/firefox-release $(addprefix build/firefox-release/, icon.png icon64.png lib lib/bootstrap.js lib/resources.js package.json $(MDs) data $(addprefix data/, js css $(JSs) $(HTMLs) $(CSSs) vendor $(addprefix _locales/,$(addsuffix /messages.json,$(LANGUAGES))) img $(addprefix img/, anomalies logo $(addprefix logo/, ingress.png 16.png 32.png 64.png))))
+firefox-release: common-release build/firefox-release $(addprefix build/firefox-release/, icon.png icon64.png lib lib/bootstrap.js lib/resources.js package.json $(MDs) data $(addprefix data/, js css $(JSs) $(HTMLs) $(CSSs) $(DOCs) vendor $(addprefix _locales/,$(addsuffix /messages.json,$(LANGUAGES))) img $(addprefix img/, anomalies logo $(addprefix logo/, ingress.png 16.png 32.png 64.png))))
 
 firefox-all: firefox firefox-release
 

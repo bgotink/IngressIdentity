@@ -1,0 +1,63 @@
+include ./_mixins
+extends ./_layout
+
+block vars
+    - var title = 'Tools'
+
+block content
+    +row
+        h1 Tools
+        p.
+            This page contains some tools that can help you when using this extension.
+    +row
+        h2#key Manifest key
+        p.
+            Simply enter the manifest URL below, and this page will give you the
+            key to use.
+        form(role='form', action='#')
+            .form-group
+                label(for='manifest_url') Manifest URL
+                input#manifest_url(type='text', class='form-control')
+            .form-group
+                label(for='manifest_key') Manifest Key
+                input#manifest_key(type='text', class='form-control')
+    +row
+        h2#oid OID
+        p.
+            An OID is a unique identifier. People, pages, events and communities
+            each have an OID. Finding it for events and communities is easy, but
+            it can be tricky for people.
+        h3 Events and Communities
+        p.
+            Events and communities have a simple URL structure:
+        blockquote
+            p.tt https://plus.google.com/events/OID/...
+            p.tt https://plus.google.com/communities/OID/...
+        p.
+            Note that there might be a <span class="tt">/u/0</span> in the URL.
+        h3 People
+        p.
+            People are slightly more tricky, as they can choose a custom URL.
+            You'll have to find a link to the person's profile, instead of taking
+            the URL of the profile page itself. To see what we mean, take a look at
+            <a target="_blank" href="https://google.com/+KlueS">Klue's profile</a>.
+            If you look at the URL, you will see the following:
+        blockquote
+            p.tt https://plus.google.com/u/0/+KlueS/posts
+        p.
+            There's no OID there. If you hover over any of the links to Klue's profile,
+            however, you will see a link with an OID:
+        blockquote
+            p.tt https://plus.google.com/u/0/110350977702120778591
+        h3 Tool
+        p.
+            This tool filters out the OID for any person, community or event. Note that
+            it won't work with the personalised URLs like Klue's above, you'll have to
+            get the link.
+        form(role='form', action='#')
+            .form-group
+                label(for='oid_url') Person/Event/Community URL
+                input#oid_url(type='text', class='form-control')
+            .form-group
+                label(for='oid_oid') Person/Event/Community OID
+                input#oid_oid(type='text', class='form-control')
