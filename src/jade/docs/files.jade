@@ -1,0 +1,90 @@
+include ./_mixins.jade
+extends ./_layout.jade
+
+block vars
+    - var title = 'Files'
+
+block content
+    +row
+        h1 Files
+        p.
+            This extension makes use of manifest files and source files. This page
+            explains what those are exactly.
+    +row
+        h2 Source files
+        p.
+            A source file contains a list of players. This list usually looks like this:
+        table.table.table-striped.table-bordered.table-condensed
+            tr
+                th oid
+                th name
+                th nickname
+                th level
+            tr
+                td 999999999999999999999
+                td Dummy Dummyson
+                td dummy
+                td 0
+            tr
+                td 103568659333550762891
+                td Roland Jarvis
+                td __JARVIS__
+                td 16
+            tr
+                td 108200572857719809031
+                td Oliver Lynton-Wolfe
+                td Oliver
+                td ?
+        p.
+            This table links the Google+ profile (the <span class="tt">oid</span> column)
+            with the in-game intel (<span class="tt">nickname</span> and <span class="tt">level</span>).
+            The <span class="tt">name</span> column isn't used. It is there to help you
+            identify a row in the table. A more detailed explanation of the source file
+            format can be found <a href="./sources.html">here</a>.
+    +row
+        h2 Manifest files
+        p.
+            A manifest file is a list of source files. It adds information to a source,
+            for example to which faction the players in the source file belong. The manifest
+            also defines how often the extension checks for updates. A typical manifest
+            looks like this:
+        table.table.table-striped.table-bordered.table-condensed
+            tr
+                th lastupdated
+                th tag
+                th faction
+                th key
+                th refresh
+            tr
+                td 2014010101
+                td Dummy
+                td unknown
+                td 9999999999999999999999999999999999
+                td 0
+            tr
+                td 2014051601
+                td 13M Resistance
+                td resistance
+                td &gid=2
+                td 100
+            tr
+                td 2014051601
+                td 13M Enlightened
+                td enlightened
+                td &gid=5
+                td 100
+            tr
+                td 2014042903
+                td REC Resistance
+                td resistance
+                td &gid=6
+                td 100
+            tr
+                td 2014043001
+                td REC Enlightened
+                td enlightened
+                td &gid=7
+                td 100
+        p.
+            A more detailed explanation of manifest files can be found
+            <a href="./manifests.html">here</a>.

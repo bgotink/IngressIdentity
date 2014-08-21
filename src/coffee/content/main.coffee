@@ -25,6 +25,7 @@
     observer = new window.MutationObserver (mutations) ->
         module.checkProfile()
         module.listSources()
+        module.addExport()
 
         mutations.each (mutation) ->
             Array.prototype.each.call mutation.addedNodes, (node) ->
@@ -54,6 +55,7 @@
 
         module.checkProfile()
         module.listSources()
+        module.addExport()
 
         module.checkElement window.document
 
@@ -64,9 +66,11 @@
             attributes: true
 
         module.extension.init() if module.extension.init?
-        module.comm.setOnUpdate forceUpdate
 
-        forceUpdate()
-        observer.observe window.document, { childList: true, subtree: true }
+        module.i18n.init ->
+            module.comm.setOnUpdate forceUpdate
+
+            forceUpdate()
+            observer.observe window.document, { childList: true, subtree: true }
 
 )(iidentity or (iidentity = window.iidentity = {}), window.jQuery, window)

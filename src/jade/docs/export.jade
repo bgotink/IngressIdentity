@@ -1,0 +1,16 @@
+include ./_mixins
+extends ./_layout
+
+block vars
+    - var title = 'Community Exporter'
+
+block content
+    +row
+        h1 Community Exporter
+        p.
+            The community exporter is a tool provided by the extension to help
+            create and maintain a Source document for a community. Simply go to
+            the members page of your community. Scroll all the way down until all
+            members have been loaded on the page. Then scroll back up and hit the
+            &ldquo;Export to IngressIdentity&rdquo; button. The rest of the process
+            is self-explanatory.

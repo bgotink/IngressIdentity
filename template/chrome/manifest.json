@@ -1,14 +1,16 @@
 {
     "manifest_version": 2,
 
-    "name": "Ingress Identity - dev",
-    "version": "0.6.4",
-    "description": "Adds Ingress identity to G+ profiles",
+    "name": "__MSG_extDevName__",
+    "version": "0.7.0",
+    "description": "__MSG_extDescription__",
     "icons": {
         "16":  "img/logo/16.png",
         "48":  "img/logo/48.png",
         "128": "img/logo/128.png"
     },
+
+    "default_locale": "en",
 
     "permissions": [ "storage" ],
     "optional_permissions": [ "https://*.google.com/*" ],
@@ -27,6 +29,13 @@
             "all_frames": true,
             "css": [ "css/content.css" ],
             "js": [ "vendor/js/jquery.min.js", "vendor/js/sugar.min.js", "js/content.js" ]
+        },
+        {
+            "matches": [ "https://talkgadget.google.com/*" ],
+            "run_at": "document_end",
+            "all_frames": true,
+            "css": [ "css/content.css" ],
+            "js": [ "vendor/js/jquery.min.js", "vendor/js/sugar.min.js", "js/content-talk.js" ]
         }
     ],
 
@@ -35,10 +44,11 @@
             "19": "img/logo/19.png",
             "38": "img/logo/38.png"
         },
-        "default_title": "IngressIdentity Options"
+        "default_title": "__MSG_extBrowserAction__"
     },
 
     "web_accessible_resources": [
-        "img/anomalies/*.png"
+        "img/anomalies/*.png",
+        "export.html"
     ]
 }

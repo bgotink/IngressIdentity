@@ -61,3 +61,13 @@ Please ensure that the `coffee` program is in the `$PATH`.
 
 The less compiler is required to compile all LESS files to CSS. You can install
 it using `npm install -g less`. Please ensure that the `lessc` program is in the `$PATH`.
+
+### cson2json
+
+The cson2json program is needed to compile the CSON files into JSON. Install it
+by running `npm install -g cson`.
+
+### bower
+
+We use bower to update the vendor libraries (except jquery-ui and sugar). Install
+it using `npm install -g bower` and run it using `make vendor-update`.

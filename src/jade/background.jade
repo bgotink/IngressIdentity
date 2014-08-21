@@ -1,0 +1,17 @@
+include ./_mixins
+
+doctype html
+html
+    head
+        title IngressIdentity Background Page
+
+        // jQuery and Sugar
+        +js_lib('jquery')
+        +js_lib('sugar')
+
+        // Google JS API
+        script(type='text/javascript', src='https://www.google.com/jsapi')
+
+        // Our JS
+        +js('background')
+    body

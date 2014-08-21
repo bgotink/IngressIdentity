@@ -8,7 +8,7 @@
     # find the smallest of a list of elements
     # smallest = lowest height
     $.fn.smallest = ->
-        return  @ if @length is 0
+        return @ if @length is 0
 
         smallest = null
         smallestHeight = Infinity
@@ -23,18 +23,18 @@
 
     helper =
         createWrapper: ->
-            $ '''
+            $ """
               <div class="Ee h5a vna iidentity-profile-wrapper" role="article">
                   <div class="ZYa ukoEtf">
                       <div class="Lqc">
-                          <div class="F9a">Ingress Agent Profile</div>
+                          <div class="F9a">#{ module.i18n.getMessage 'profileTitle' }</div>
                           <div class="miIoOb Cdmn9d"></div>
                       </div>
                   </div>
                   <div class="Uia"><div class="iec Iqc iidentity-profile"></div></div>
                   <div class="Iqc"></div>
               </div>
-              '''
+              """
 
         createTable: (rows) ->
             $ '<div class="Qqc wna"></div>'
@@ -50,7 +50,7 @@
         createAnomalySubtitle: (anomalies) ->
             $ '<div class="wna fa-TCa Ala">'
                 .append(
-                    $ '<div class="Cr Aha">Anomalies</div>'
+                    $ "<div class=\"Cr Aha\">#{ module.i18n.getMessage 'anomalies' }</div>"
                 )
                 .append(
                     $ '<div class="y4"></div>'
@@ -146,9 +146,9 @@
             .append(
                 helper.createTable(
                     [
-                        helper.createRow 'Agent name', player.nickname
-                        helper.createRow 'Level', 'L' + (if level is '0' then '?' else level)
-                        helper.createRow 'Faction', player.faction.capitalize()
+                        helper.createRow module.i18n.getMessage('agentName'), player.nickname
+                        helper.createRow module.i18n.getMessage('level'), module.i18n.getMessage('levelValue', { value: (if level is '0' then '?' else level) })
+                        helper.createRow module.i18n.getMessage('faction'), module.i18n.getMessage(player.faction)
                     ].concat(customExtra.keys()
                         .filter (e) ->
                             v = customExtra[e];
@@ -177,19 +177,19 @@
             unless Array.isArray player.extra.community
                 player.extra.community = [ player.extra.community ]
 
-            $profile.append helper.createLinkedSubtitle 'Communities', player.extra.community, 'https://plus.google.com/communities/'
+            $profile.append helper.createLinkedSubtitle module.i18n.getMessage('communities'), player.extra.community, 'https://plus.google.com/communities/'
 
         if Object.has player.extra, 'event'
             unless Array.isArray player.extra.event
                 player.extra.event = [ player.extra.event ]
 
-            $profile.append helper.createLinkedSubtitle 'Events', player.extra.event, 'https://plus.google.com/event/'
+            $profile.append helper.createLinkedSubtitle module.i18n.getMessage('events'), player.extra.event, 'https://plus.google.com/event/'
 
         if Object.has(player, 'err') and not (Array.isArray(player.err) and player.err.length is 0)
             unless Array.isArray player.err
                 player.err = [ player.err ]
 
-            $profile.append helper.createSubtitle 'Errors', $ player.err.map (e) ->
+            $profile.append helper.createSubtitle module.i18n.getMessage('errors'), $ player.err.map (e) ->
                 $ '<div class="fIa s"></div>'
                     .text(e)[0]
 

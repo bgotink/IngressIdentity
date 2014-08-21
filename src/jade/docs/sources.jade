@@ -1,0 +1,46 @@
+include ./_mixins
+extends ./_layout
+
+block vars
+    - var title = 'Source File Format'
+
+block content
+    +row
+        h1 Source File Format
+        p.
+            A source file is a spreadsheet containing the following columns:
+        dl.dl-horizontal
+            dt oid
+            dd
+                p
+                    em Required.
+                    | The OID of the player. For information about where to find the OID, see <a href="tools.html#oid">tools</a>.
+            dt name
+            dd
+                p
+                    em Required<sup>1</sup>.
+                    | The player's real name. This is currently not used, but is useful to recognize OIDs in the spreadsheets.
+            dt nickname
+            dd
+                p
+                    em Required<sup>1</sup>.
+                    | The player's in game nickname. This is shown everywhere this extension adds data.
+            dt level
+            dd
+                p
+                    em Required<sup>1</sup>.
+                    | The player's level. This is shown everywhere this extension adds data.
+            dt &hellip;
+            dd
+                p
+                    em Optional.
+                    | You can create other columns at will. These will be optional, and will be added to the extratags of the source, but only for the player in the row where the data is written. If the column name is also added in extratags, the data in extratags is overwritten.
+                p.
+                    Example: the spreadsheet has an '<span class="tt">anomaly</span>' column. The
+                    data in this column will overwrite any '<span class="tt">anomaly</span>' values
+                    in extratags for the individual players.
+        p.
+            Note 1: These values are required <em>once</em>. That is, it's
+            perfectly fine for this extension if you don't include
+            this data the second time a player is used. See <a href="compatibility.html">the compatibility page</a>
+            for more information.

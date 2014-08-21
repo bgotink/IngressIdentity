@@ -33,7 +33,7 @@
                         $ '<div class="pD iidentity-event"></pd>'
                             .append(
                                 $ '<b>'
-                                    .text 'IngressIdentity Source Files'
+                                    .text module.i18n.getMessage 'sourceFiles'
                             )
                             .append(
                                 $ sources.map (source) ->
@@ -49,7 +49,7 @@
                     )
 
     checkCommunity = ->
-        if not match = window.document.location.pathname.match /(^|\/)communities\/([a-zA-Z0-9]+)$/
+        if not match = window.document.location.pathname.match /(^|\/)communities\/([a-zA-Z0-9]+)($|\/)/
             return
 
         oid = match[2]
@@ -67,10 +67,10 @@
 
                 $parent.find 'div.LEd'
                     .before(
-                        $ '<div class="g0d iidentity-community"></pd>'
+                        $ '<div class="g0d iidentity-community">'
                             .append(
                                 $ '<b>'
-                                    .text 'IngressIdentity Source Files'
+                                    .text module.i18n.getMessage 'sourceFiles'
                             )
                             .append(
                                 $ sources.map (source) ->
