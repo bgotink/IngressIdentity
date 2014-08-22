@@ -3,7 +3,7 @@ MDs = README.md LICENSE.md NOTICE.md SOURCE.md
 JSs = js/content.js js/options.js js/help.js js/background.js js/export.js
 CSSs = css/content.css css/options.css css/help.css css/export.css
 HTMLs = options.html background.html export.html
-DOCs = $(addprefix docs/,$(addsuffix .html,index options tools files sources manifests export))
+DOCs = $(addprefix docs/,$(addsuffix .html,index options tools files sources manifests export compatibility))
 LIBs = $(addprefix vendor/,css/bootstrap.min.css $(addprefix fonts/glyphicons-halflings-regular.,eot svg ttf woff) js/jquery.min.js js/jquery-ui.min.js js/sugar.min.js js/bootstrap.min.js)
 
 JS_CONTENT_DEPS = $(addprefix src/coffee/,communication.coffee log.coffee $(addprefix content/,doOnce.coffee main.coffee mentions.coffee profile.coffee source.coffee popup.coffee export.coffee i18n.coffee))
