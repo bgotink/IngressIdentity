@@ -13,6 +13,8 @@
             Object.clone e, true
         else if typeof e is 'array'
             Array.clone e, true
+        else if typeof e is 'string'
+            '' + e
         else
             e
 
