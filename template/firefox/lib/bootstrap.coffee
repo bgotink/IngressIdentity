@@ -22,6 +22,7 @@ web_resources = require './resources'
 backgroundPage = null
 contentScript = null
 exportScript = null
+optionsTab = null
 actionButton = null
 
 url = (page) ->
@@ -123,9 +124,15 @@ startup = ->
             '32': url 'img/logo/32.png'
             '64': url 'img/logo/64.png'
         onClick: ->
+            if optionsTab?
+                optionsTab.activate()
+                return
+
             tabs.open
                 url: url 'options.html'
                 onReady: (tab) ->
+                    optionsTab = tab
+
                     console.log 'Attaching options scripts to options.html'
                     worker = tab.attach
                         contentScriptFile: [
@@ -138,6 +145,7 @@ startup = ->
 
                     workers[tab.id] = worker
                     worker.on 'detach', ->
+                        optionsTab = null
                         delete workers[tab.id]
 
                     worker.port.on 'iidentity-request-to-background', createContentScriptMessageListener worker, tab
