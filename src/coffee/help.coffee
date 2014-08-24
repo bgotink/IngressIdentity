@@ -7,6 +7,7 @@ $ ->
         .on 'keyup', ->
             url = $ '#manifest_url'
                 .val()
+                .trim()
 
             $result = $ '#manifest_key'
 
@@ -45,12 +46,13 @@ $ ->
                 # new URL style
                 url = url.from 4 # 's/d/'.length
 
-                $result.val url.remove(/[#?].*$/) + gid
+                $result.val url.remove(/[#?/].*$/) + gid
 
     $ '#oid_url'
         .on 'keyup', ->
             url = $ '#oid_url'
                 .val()
+                .trim()
 
             $result = $ '#oid_oid'
 
@@ -72,15 +74,9 @@ $ ->
             if type is 'events' or type is 'communities'
                 url = url.from type.length + 1
 
-                [ '/', '?', '#' ].each (e) ->
-                    i = url.indexOf e
-                    url = url.to i if i isnt -1
-
-                $result.val url
+                $result.val url.remove /[#?/].*$/
             else
-                [ '/', '?', '#' ].each (e) ->
-                    i = url.indexOf e
-                    url = url.to i if i isnt -1
+                url = url.remove /[#?/].*$/
 
                 if url.match /[0-9]{21}/
                     $result.val url

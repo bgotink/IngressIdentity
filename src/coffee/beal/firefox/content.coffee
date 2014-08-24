@@ -3,7 +3,7 @@
 # @author Bram Gotink (@bgotink)
 # @license MIT
 
-((module) ->
+((module, $) ->
     exports = module.extension = {}
 
     # firefox does something weird with objects being sent through
@@ -13,6 +13,8 @@
             Object.clone e, true
         else if typeof e is 'array'
             Array.clone e, true
+        else if typeof e is 'string'
+            '' + e
         else
             e
 
@@ -30,7 +32,8 @@
             message: message
 
     exports.addMessageListener = (func) ->
-        addon.port.on 'iidentity-request-from-background', func
+        addon.port.on 'iidentity-request-from-background', (message) ->
+            func clone message
 
     exports.getLastError = null
 
@@ -41,6 +44,9 @@
     exports.browser = 'firefox'
 
     exports.init = ->
+        $ '.alert-no-script'
+            .addClass 'hide'
+
         addon.port.on 'iidentity-answer-from-background', (message) ->
                 callbackId = message.id
 
@@ -51,4 +57,4 @@
 
                 delete messageCallbacks[callbackId]
 
-)(iidentity or (iidentity = window.iidentity = {}))
+)(iidentity or (iidentity = window.iidentity = {}), window.jQuery)

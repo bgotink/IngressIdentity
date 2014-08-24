@@ -102,7 +102,7 @@
     exports.getMessage = (locale, name, placeholders, callback) ->
         locales = [ locale ]
 
-        if locale.has '_'
+        if locale.contains '_'
             locales.push locale.to locale.indexOf '_'
 
         locales.push defaultLocale
@@ -118,7 +118,7 @@
     exports.getPrefixedMessages = (locale, prefix, callback) ->
         locales = [ locale ]
 
-        if locale.has '_'
+        if locale.contains '_'
             locales.push locale.to locale.indexOf '_'
 
         locales.push defaultLocale

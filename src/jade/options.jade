@@ -35,14 +35,15 @@ html(data-translate-prefix='options')
         // Our CSS
         +css('options')
 
-        // jQuery, Sugar and Bootstrap JS
-        +js_lib('jquery')
-        +js_lib('jquery-ui')
-        +js_lib('sugar')
-        +js_lib('bootstrap')
+        unless browser === 'firefox'
+            // jQuery, Sugar and Bootstrap JS
+            +js_lib('jquery')
+            +js_lib('jquery-ui')
+            +js_lib('sugar')
+            +js_lib('bootstrap')
 
-        // Our JS
-        +js('options')
+            // Our JS
+            +js('options')
     body
         +ingress_background
             +row
@@ -55,6 +56,11 @@ html(data-translate-prefix='options')
                     help acquiring data to put in manifest files or source files.
             .row
                 .col-sm-8.col-sm-offset-2.col-md-6.col-md-offset-3
+                    if browser === 'firefox'
+                        .alert.alert-danger.alert-no-script
+                            strong(data-translate-name='error') Error!
+                            span(data-translate-name='no-script') Please close this tab and re-open it by clicking the action button.
+
                     +alert_success('reload-success', 'reload_success', 'The data was successfully reloaded.')
                     +alert_warning('reload-warning', 'reload_failed', 'Something went wrong when reloading the data.')
                     +alert_danger('reload-failed', 'reload_failed', 'Something went wrong when reloading the data.')
@@ -70,7 +76,7 @@ html(data-translate-prefix='options')
                     +alert_danger('remove-failed', 'remove_failed', 'Something went wrong when removing the manifest.')
 
                     +alert_success('reorder-success', 'reorder_success', 'The order was successfully changed.')
-                    +alert_danger('reoder-nonexistent', 'reorder_failed', 'Something went wrong when changing the order.')
+                    +alert_danger('reoder-failed', 'reorder_failed', 'Something went wrong when changing the order.')
 
                     +alert_success('rename-success', 'rename_success', 'The manifest was successfully renamed.')
                     +alert_danger('rename-failed', 'rename_failed', 'Something went wrong when renaming the manifest.')

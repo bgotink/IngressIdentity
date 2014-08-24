@@ -3,7 +3,7 @@ MDs = README.md LICENSE.md NOTICE.md SOURCE.md
 JSs = js/content.js js/options.js js/help.js js/background.js js/export.js
 CSSs = css/content.css css/options.css css/help.css css/export.css
 HTMLs = options.html background.html export.html
-DOCs = $(addprefix docs/,$(addsuffix .html,index options tools files sources manifests export))
+DOCs = $(addprefix docs/,$(addsuffix .html,index options tools files sources manifests export compatibility))
 LIBs = $(addprefix vendor/,css/bootstrap.min.css $(addprefix fonts/glyphicons-halflings-regular.,eot svg ttf woff) js/jquery.min.js js/jquery-ui.min.js js/sugar.min.js js/bootstrap.min.js)
 
 JS_CONTENT_DEPS = $(addprefix src/coffee/,communication.coffee log.coffee $(addprefix content/,doOnce.coffee main.coffee mentions.coffee profile.coffee source.coffee popup.coffee export.coffee i18n.coffee))
@@ -50,12 +50,12 @@ endef
 
 define jade
 @mkdir -p $(dir $@)
-jade -P -o $(dir $@) $<
+jade -P -o $(dir $@) -O $< $(word 2,$^)
 endef
 
 define jade_release
 @mkdir -p $(dir $@)
-jade -o $(dir $@) $<
+jade -o $(dir $@) -O $< $(word 2,$^)
 endef
 
 define mkdir
@@ -108,7 +108,10 @@ tools/bower:
 tools/bower/bower.json: bin/vendor
 	@bin/vendor init
 
-vendor-update: tools/bower/bower.json
+tools/Sugar:
+	@cd tools && git clone git@github.com:andrewplummer/Sugar.git
+
+vendor-update: tools/bower/bower.json tools/Sugar
 	@bin/vendor update
 
 # Common targets
@@ -127,18 +130,6 @@ build/%/NOTICE.md: NOTICE.md
 
 build/%/SOURCE.md: SOURCE.md
 	$(copy)
-
-build/common/%.html: src/jade/%.jade src/jade/_mixins.jade
-	$(jade)
-
-build/common-release/%.html: src/jade/%.jade src/jade/_mixins.jade
-	$(jade_release)
-
-build/common/docs/%.html: src/jade/docs/export.jade src/jade/docs/_mixins.jade src/jade/docs/_layout.jade
-	$(jade)
-
-build/common-release/docs/%.html: src/jade/docs/export.jade src/jade/docs/_mixins.jade src/jade/docs/_layout.jade
-	$(jade_release)
 
 build/common-release/css/content.css: src/less/content.less src/less/variables.less src/less/general.less
 	$(less_release)
@@ -182,8 +173,8 @@ build/common-release/i18n/%.json: src/i18n/%.cson
 
 # main
 
-common: $(addprefix build/common/,$(CSSs) $(DOCs) $(HTMLs) $(addprefix i18n/,$(addsuffix .json,$(LANGUAGES))))
-common-release: $(addprefix build/common-release/,$(CSSs) $(DOCs) $(HTMLs) $(addprefix i18n/,$(addsuffix .json,$(LANGUAGES))))
+common: $(addprefix build/common/,$(CSSs) $(addprefix i18n/,$(addsuffix .json,$(LANGUAGES))))
+common-release: $(addprefix build/common-release/,$(CSSs) $(addprefix i18n/,$(addsuffix .json,$(LANGUAGES))))
 
 # Chrome targets
 #
@@ -200,18 +191,6 @@ build/%/img/logo/19.png: src/img/logo.svg
 build/%/img/logo/38.png: src/img/logo.svg
 	$(ensure_exists)
 	convert -background none $< -resize 38 $@
-
-build/chrome/docs/%.html: build/common/docs/%.html
-	$(copy)
-
-build/chrome-release/docs/%.html: build/common-release/docs/%.html
-	$(copy)
-
-build/chrome/%.html: build/common/%.html
-	$(copy)
-
-build/chrome-release/%.html: build/common-release/%.html
-	$(copy)
 
 build/chrome/js/content.js: src/coffee/beal/chrome/content.coffee $(JS_CONTENT_DEPS)
 	$(coffee)
@@ -266,6 +245,18 @@ build/chrome/vendor/%: src/vendor/%
 
 build/chrome-release/vendor/%: src/vendor/%
 	$(copy)
+
+build/chrome/%.html: src/jade/_config/chrome.json src/jade/%.jade src/jade/_mixins.jade
+	$(jade)
+
+build/chrome-release/%.html: src/jade/_config/chrome.json src/jade/%.jade src/jade/_mixins.jade
+	$(jade_release)
+
+build/chrome/docs/%.html: src/jade/_config/chrome.json src/jade/docs/export.jade src/jade/docs/_mixins.jade src/jade/docs/_layout.jade
+	$(jade)
+
+build/chrome-release/docs/%.html: src/jade/docs/export.jade src/jade/docs/_mixins.jade src/jade/docs/_layout.jade
+	$(jade_release)
 
 # main
 
@@ -353,6 +344,18 @@ build/%.safariextension/img/logo/toolbar.png: src/img/logo.svg tools/gray2transp
 	convert tmp2.exr $@
 	rm tmp.exr tmp2.exr
 
+build/IngressIdentity.safariextension/%.html: src/jade/_config/safari.json src/jade/%.jade src/jade/_mixins.jade
+	$(jade)
+
+build/IngressIdentity-release.safariextension/%.html: src/jade/_config/safari.json src/jade/%.jade src/jade/_mixins.jade
+	$(jade_release)
+
+build/IngressIdentity.safariextension/docs/%.html: src/jade/_config/safari.json src/jade/docs/export.jade src/jade/docs/_mixins.jade src/jade/docs/_layout.jade
+	$(jade)
+
+build/IngressIdentity-release.safariextension/docs/%.html: src/jade/_config/safari.json src/jade/docs/export.jade src/jade/docs/_mixins.jade src/jade/docs/_layout.jade
+	$(jade_release)
+
 # main
 
 safari: $(addprefix build/IngressIdentity.safariextension/, $(FILES) Info.plist img/anomalies img/logo/toolbar.png img/logo/ingress.png $(addprefix _locales/,$(addsuffix /messages.json,$(LANGUAGES))))
@@ -417,23 +420,6 @@ build/firefox/data/css/%: build/common/css/%
 
 build/firefox-release/data/css/%: build/common-release/css/%
 	$(copy)
-
-build/firefox/data/options.html: build/common/options.html
-	$(ensure_exists)
-	grep -vE '<script type="text/javascript" src=' $< > $@
-
-# use common, not common-release because common-release is single-line...
-build/firefox-release/data/options.html: build/common/options.html
-	$(ensure_exists)
-	grep -vE '<script type="text/javascript" src=' $< > $@
-
-build/firefox/data/export.html: build/common/export.html
-	$(ensure_exists)
-	grep -vE '<script type="text/javascript" src=' $< > $@
-
-build/firefox-release/data/export.html: build/common/export.html
-	$(ensure_exists)
-	grep -vE '<script type="text/javascript" src=' $< > $@
 
 build/firefox/data/%.html: build/common/%.html
 	$(copy)
@@ -517,6 +503,18 @@ build/firefox/data/_locales/%/messages.json: build/common/i18n/%.json
 
 build/firefox-release/data/_locales/%/messages.json: build/common-release/i18n/%.json
 	$(copy)
+
+build/firefox/data/%.html: src/jade/_config/firefox.json src/jade/%.jade src/jade/_mixins.jade
+	$(jade)
+
+build/firefox-release/data/%.html: src/jade/_config/firefox.json src/jade/%.jade src/jade/_mixins.jade
+	$(jade_release)
+
+build/firefox/data/docs/%.html: src/jade/_config/firefox.json src/jade/docs/export.jade src/jade/docs/_mixins.jade src/jade/docs/_layout.jade
+	$(jade)
+
+build/firefox-release/data/docs/%.html: src/jade/_config/firefox.json src/jade/docs/export.jade src/jade/docs/_mixins.jade src/jade/docs/_layout.jade
+	$(jade_release)
 
 # main
 

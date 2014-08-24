@@ -15,7 +15,7 @@ install_file() {
     src='bower_components/'"$2"
 
     if ! diff -q "$dest" "$src"; then
-        cat "$src" > "$dest"
+        grep -v 'sourceMappingURL' "$src" > "$dest"
     fi
 }
 
@@ -33,6 +33,13 @@ install() {
 
     install_file 'js/jquery.min.js'                         'jquery/dist/jquery.min.js'
     install_file 'js/bootstrap.min.js'                      'bootstrap/dist/js/bootstrap.min.js'
+}
+
+install_sugar() {
+    # this is run from PROJECT_ROOT/tools/Sugar
+    log 'Installing Sugar'
+
+    cat 'release/sugar-full.min.js' > '../../src/vendor/js/sugar.min.js'
 }
 
 init() {
@@ -61,6 +68,13 @@ EOF
     bower install
 
     install
+
+    cd - >/dev/null
+
+    make tools/Sugar
+    cd tools/Sugar
+
+    install_sugar
 }
 
 update() {
@@ -70,6 +84,12 @@ update() {
     bower update
 
     install
+
+    cd - >/dev/null
+
+    cd tools/Sugar
+
+    install_sugar
 }
 
 case "$1" in

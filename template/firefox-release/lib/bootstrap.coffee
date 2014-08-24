@@ -22,6 +22,7 @@ web_resources = require './resources'
 backgroundPage = null
 contentScript = null
 exportScript = null
+optionsTab = null
 actionButton = null
 
 url = (page) ->
@@ -56,12 +57,11 @@ createContentScriptMessageListener = (sender, tab) ->
 
         backgroundPage.port.emit 'iidentity-request-to-background', message
 
-startup = ->
+exports.main = ->
     console.log 'Bootstrapping IngressIdentity'
 
     # start the background page
     console.log 'Creating background page'
-    backgroundPage.destroy() if backgroundPage?
     backgroundPage = pageWorker
         contentURL: url 'background.html'
     backgroundPage.port.on 'iidentity-background-ready', ->
@@ -74,13 +74,14 @@ startup = ->
 
         callback reply.reply
     backgroundPage.port.on 'iidentity-request-from-background', (message) ->
+        console.log 'Forwarding message to tabs'
         for tab in tabs
-            if tab.id in workers
+            if workers[tab.id]?
+                console.log '-- tab', tab.id
                 workers[tab.id].port.emit 'iidentity-request-from-background', message
 
     # start the content scripts
-    console.log 'Creating content script'
-    contentScript.destroy() if contentScript?
+    console.log 'Creating content scripts'
     contentScript = pageMod
         include: [ "https://plus.google.com/*", "https://apis.google.com/*" ]
         contentScriptFile: [ 'vendor/js/jquery.min.js', 'vendor/js/sugar.min.js', 'js/content.js' ].map url
@@ -99,7 +100,6 @@ startup = ->
             worker.port.on 'iidentity-request-to-background', createContentScriptMessageListener worker, worker.tab
 
     # create script for export page
-    exportScript.destroy() if exportScript?
     exportScript = pageMod
         include: [ web_url 'export.html' ]
         contentScriptFile: [ 'vendor/js/jquery.min.js', 'vendor/js/jquery-ui.min.js', 'vendor/js/sugar.min.js', 'vendor/js/bootstrap.min.js', 'js/export.js' ].map url
@@ -112,7 +112,6 @@ startup = ->
 
     # create action button
     console.log 'Creating button'
-    actionButton.destroy() if actionButton?
     actionButton = createActionButton
         id: 'iidenitty-show-options'
         label: 'IngressIdentity Options'
@@ -121,9 +120,15 @@ startup = ->
             '32': url 'img/logo/32.png'
             '64': url 'img/logo/64.png'
         onClick: ->
+            if optionsTab?
+                optionsTab.activate()
+                return
+
             tabs.open
                 url: url 'options.html'
                 onReady: (tab) ->
+                    optionsTab = tab
+
                     console.log 'Attaching options scripts to options.html'
                     worker = tab.attach
                         contentScriptFile: [
@@ -134,12 +139,35 @@ startup = ->
                             'js/options.js'
                         ].map url
 
+                    workers[tab.id] = worker
+                    worker.on 'detach', ->
+                        optionsTab = null
+                        delete workers[tab.id]
+
                     worker.port.on 'iidentity-request-to-background', createContentScriptMessageListener worker, tab
 
+exports.onUnload = ->
+    console.log 'Unloading add-on...'
 
-try
-    startup()
-catch e
-    console.error e
-    console.error e.stack
-    throw e
+    console.log 'Destroying the action button'
+    actionButton?.destroy()
+
+    if optionsTab?
+        console.log 'Closing options page'
+        optionsTab.close()
+        optionsTab = null
+
+    console.log 'Destroying content scripts'
+    contentScript?.destroy()
+    exportScript?.destroy()
+
+    console.log 'Destroying background page'
+    backgroundPage?.destroy()
+
+    console.log 'Clearing data'
+    callbacks =
+        nextId: 0
+
+    workers = {}
+
+    console.log 'Add-on unloaded'
