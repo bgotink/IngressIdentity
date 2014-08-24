@@ -50,12 +50,12 @@ endef
 
 define jade
 @mkdir -p $(dir $@)
-jade -P -o $(dir $@) $<
+jade -P -o $(dir $@) -O $< $(word 2,$^)
 endef
 
 define jade_release
 @mkdir -p $(dir $@)
-jade -o $(dir $@) $<
+jade -o $(dir $@) -O $< $(word 2,$^)
 endef
 
 define mkdir
@@ -131,18 +131,6 @@ build/%/NOTICE.md: NOTICE.md
 build/%/SOURCE.md: SOURCE.md
 	$(copy)
 
-build/common/%.html: src/jade/%.jade src/jade/_mixins.jade
-	$(jade)
-
-build/common-release/%.html: src/jade/%.jade src/jade/_mixins.jade
-	$(jade_release)
-
-build/common/docs/%.html: src/jade/docs/export.jade src/jade/docs/_mixins.jade src/jade/docs/_layout.jade
-	$(jade)
-
-build/common-release/docs/%.html: src/jade/docs/export.jade src/jade/docs/_mixins.jade src/jade/docs/_layout.jade
-	$(jade_release)
-
 build/common-release/css/content.css: src/less/content.less src/less/variables.less src/less/general.less
 	$(less_release)
 
@@ -185,8 +173,8 @@ build/common-release/i18n/%.json: src/i18n/%.cson
 
 # main
 
-common: $(addprefix build/common/,$(CSSs) $(DOCs) $(HTMLs) $(addprefix i18n/,$(addsuffix .json,$(LANGUAGES))))
-common-release: $(addprefix build/common-release/,$(CSSs) $(DOCs) $(HTMLs) $(addprefix i18n/,$(addsuffix .json,$(LANGUAGES))))
+common: $(addprefix build/common/,$(CSSs) $(addprefix i18n/,$(addsuffix .json,$(LANGUAGES))))
+common-release: $(addprefix build/common-release/,$(CSSs) $(addprefix i18n/,$(addsuffix .json,$(LANGUAGES))))
 
 # Chrome targets
 #
@@ -203,18 +191,6 @@ build/%/img/logo/19.png: src/img/logo.svg
 build/%/img/logo/38.png: src/img/logo.svg
 	$(ensure_exists)
 	convert -background none $< -resize 38 $@
-
-build/chrome/docs/%.html: build/common/docs/%.html
-	$(copy)
-
-build/chrome-release/docs/%.html: build/common-release/docs/%.html
-	$(copy)
-
-build/chrome/%.html: build/common/%.html
-	$(copy)
-
-build/chrome-release/%.html: build/common-release/%.html
-	$(copy)
 
 build/chrome/js/content.js: src/coffee/beal/chrome/content.coffee $(JS_CONTENT_DEPS)
 	$(coffee)
@@ -269,6 +245,18 @@ build/chrome/vendor/%: src/vendor/%
 
 build/chrome-release/vendor/%: src/vendor/%
 	$(copy)
+
+build/chrome/%.html: src/jade/_config/chrome.json src/jade/%.jade src/jade/_mixins.jade
+	$(jade)
+
+build/chrome-release/%.html: src/jade/_config/chrome.json src/jade/%.jade src/jade/_mixins.jade
+	$(jade_release)
+
+build/chrome/docs/%.html: src/jade/_config/chrome.json src/jade/docs/export.jade src/jade/docs/_mixins.jade src/jade/docs/_layout.jade
+	$(jade)
+
+build/chrome-release/docs/%.html: src/jade/docs/export.jade src/jade/docs/_mixins.jade src/jade/docs/_layout.jade
+	$(jade_release)
 
 # main
 
@@ -356,6 +344,18 @@ build/%.safariextension/img/logo/toolbar.png: src/img/logo.svg tools/gray2transp
 	convert tmp2.exr $@
 	rm tmp.exr tmp2.exr
 
+build/IngressIdentity.safariextension/%.html: src/jade/_config/safari.json src/jade/%.jade src/jade/_mixins.jade
+	$(jade)
+
+build/IngressIdentity-release.safariextension/%.html: src/jade/_config/safari.json src/jade/%.jade src/jade/_mixins.jade
+	$(jade_release)
+
+build/IngressIdentity.safariextension/docs/%.html: src/jade/_config/safari.json src/jade/docs/export.jade src/jade/docs/_mixins.jade src/jade/docs/_layout.jade
+	$(jade)
+
+build/IngressIdentity-release.safariextension/docs/%.html: src/jade/_config/safari.json src/jade/docs/export.jade src/jade/docs/_mixins.jade src/jade/docs/_layout.jade
+	$(jade_release)
+
 # main
 
 safari: $(addprefix build/IngressIdentity.safariextension/, $(FILES) Info.plist img/anomalies img/logo/toolbar.png img/logo/ingress.png $(addprefix _locales/,$(addsuffix /messages.json,$(LANGUAGES))))
@@ -420,23 +420,6 @@ build/firefox/data/css/%: build/common/css/%
 
 build/firefox-release/data/css/%: build/common-release/css/%
 	$(copy)
-
-build/firefox/data/options.html: build/common/options.html
-	$(ensure_exists)
-	grep -vE '<script type="text/javascript" src=' $< > $@
-
-# use common, not common-release because common-release is single-line...
-build/firefox-release/data/options.html: build/common/options.html
-	$(ensure_exists)
-	grep -vE '<script type="text/javascript" src=' $< > $@
-
-build/firefox/data/export.html: build/common/export.html
-	$(ensure_exists)
-	grep -vE '<script type="text/javascript" src=' $< > $@
-
-build/firefox-release/data/export.html: build/common/export.html
-	$(ensure_exists)
-	grep -vE '<script type="text/javascript" src=' $< > $@
 
 build/firefox/data/%.html: build/common/%.html
 	$(copy)
@@ -520,6 +503,18 @@ build/firefox/data/_locales/%/messages.json: build/common/i18n/%.json
 
 build/firefox-release/data/_locales/%/messages.json: build/common-release/i18n/%.json
 	$(copy)
+
+build/firefox/data/%.html: src/jade/_config/firefox.json src/jade/%.jade src/jade/_mixins.jade
+	$(jade)
+
+build/firefox-release/data/%.html: src/jade/_config/firefox.json src/jade/%.jade src/jade/_mixins.jade
+	$(jade_release)
+
+build/firefox/data/docs/%.html: src/jade/_config/firefox.json src/jade/docs/export.jade src/jade/docs/_mixins.jade src/jade/docs/_layout.jade
+	$(jade)
+
+build/firefox-release/data/docs/%.html: src/jade/_config/firefox.json src/jade/docs/export.jade src/jade/docs/_mixins.jade src/jade/docs/_layout.jade
+	$(jade_release)
 
 # main
 

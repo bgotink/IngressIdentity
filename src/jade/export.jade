@@ -11,13 +11,14 @@ html(data-translate-prefix="export")
         // Our CSS
         +css('export')
 
-        // jQuery, Sugar and Bootstrap JS
-        +js_lib('jquery')
-        +js_lib('sugar')
-        +js_lib('bootstrap')
+        unless browser === 'firefox'
+            // jQuery, Sugar and Bootstrap JS
+            +js_lib('jquery')
+            +js_lib('sugar')
+            +js_lib('bootstrap')
 
-        // Our JS
-        +js('export')
+            // Our JS
+            +js('export')
 
     body
         +ingress_background
