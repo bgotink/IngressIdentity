@@ -108,7 +108,10 @@ tools/bower:
 tools/bower/bower.json: bin/vendor
 	@bin/vendor init
 
-vendor-update: tools/bower/bower.json
+tools/Sugar:
+	@cd tools && git clone git@github.com:andrewplummer/Sugar.git
+
+vendor-update: tools/bower/bower.json tools/Sugar
 	@bin/vendor update
 
 # Common targets
