@@ -7,6 +7,7 @@ $ ->
         .on 'keyup', ->
             url = $ '#manifest_url'
                 .val()
+                .trim()
 
             $result = $ '#manifest_key'
 
@@ -51,6 +52,7 @@ $ ->
         .on 'keyup', ->
             url = $ '#oid_url'
                 .val()
+                .trim()
 
             $result = $ '#oid_oid'
 
