@@ -220,6 +220,9 @@
     options_disabled:
         message: 'Disabled'
         description: 'The text on the button for an option that has been disabled by the user.'
+    options_no_script:
+        message: 'Please close this tab and re-open it by clicking the action button.'
+        description: 'Message shown in the options page if it needs to be re-opened in firefox.'
 
     # Export page
     export_title:

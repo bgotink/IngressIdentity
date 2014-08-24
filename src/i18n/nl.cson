@@ -220,6 +220,9 @@
     options_disabled:
         message: 'Uitgeschakeld'
         description: 'The text on the button for an option that has been disabled by the user.'
+    options_no_script:
+        message: 'Gelieve deze tab te sluiten en deze pagina te heropenen door op de action button te klikken.'
+        description: 'Message shown in the options page if it needs to be re-opened in firefox.'
 
     # Export page
     export_title:

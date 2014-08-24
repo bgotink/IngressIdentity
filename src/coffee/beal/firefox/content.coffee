@@ -3,7 +3,7 @@
 # @author Bram Gotink (@bgotink)
 # @license MIT
 
-((module) ->
+((module, $) ->
     exports = module.extension = {}
 
     # firefox does something weird with objects being sent through
@@ -44,6 +44,9 @@
     exports.browser = 'firefox'
 
     exports.init = ->
+        $ '.alert-no-script'
+            .addClass 'hide'
+
         addon.port.on 'iidentity-answer-from-background', (message) ->
                 callbackId = message.id
 
@@ -54,4 +57,4 @@
 
                 delete messageCallbacks[callbackId]
 
-)(iidentity or (iidentity = window.iidentity = {}))
+)(iidentity or (iidentity = window.iidentity = {}), window.jQuery)
