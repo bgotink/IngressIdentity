@@ -74,8 +74,10 @@ startup = ->
 
         callback reply.reply
     backgroundPage.port.on 'iidentity-request-from-background', (message) ->
+        console.log 'Forwarding message to tabs'
         for tab in tabs
-            if tab.id in workers
+            if workers[tab.id]?
+                console.log '-- tab', tab.id
                 workers[tab.id].port.emit 'iidentity-request-from-background', message
 
     # start the content scripts
@@ -133,6 +135,10 @@ startup = ->
                             'vendor/js/bootstrap.min.js'
                             'js/options.js'
                         ].map url
+
+                    workers[tab.id] = worker
+                    worker.on 'detach', ->
+                        delete workers[tab.id]
 
                     worker.port.on 'iidentity-request-to-background', createContentScriptMessageListener worker, tab
 

@@ -32,7 +32,8 @@
             message: message
 
     exports.addMessageListener = (func) ->
-        addon.port.on 'iidentity-request-from-background', func
+        addon.port.on 'iidentity-request-from-background', (message) ->
+            func clone message
 
     exports.getLastError = null
 
