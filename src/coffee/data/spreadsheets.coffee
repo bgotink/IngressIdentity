@@ -90,6 +90,10 @@
                 headers = []
                 result = []
 
+                if nbCols is 0 or nbRows is 0
+                    callback 'The spreadsheet is empty.', null
+                    return
+
                 for i in [0..nbCols-1]
                     headers[i] = data.getColumnLabel i
 
