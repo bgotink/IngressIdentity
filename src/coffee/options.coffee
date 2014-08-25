@@ -167,6 +167,16 @@
                                         $ '<span>'
                                             .addClass 'buttons'
                                             .append(
+                                                if not value.url? then null else ($ '<a>'
+                                                    .attr 'aria-hidden', 'true'
+                                                    .attr 'title', module._('view', 'View')
+                                                    .attr 'href', value.url
+                                                    .attr 'target', '_blank'
+                                                    .addClass 'link'
+                                                    .append $ '<span class="glyphicon glyphicon-link"></span>'
+                                                )
+                                            )
+                                            .append(
                                                 $ '<button>'
                                                     .attr 'type', 'button'
                                                     .attr 'aria-hidden', 'true'
