@@ -26,3 +26,31 @@ button + span,
 .alert > strong + span {
     margin-left: 1ex;
 }
+
+// No more border-radius
+
+.btn,
+.panel {
+    border-radius: 0px;
+}
+
+// Source colors
+
+.source {
+    &.faction-resistance,
+    &.faction-enlightened {
+        color: initial;
+
+        > a {
+            color: initial;
+        }
+    }
+
+    &.faction-resistance {
+        background-color: fade(@c_resistance, 10%);
+    }
+
+    &.faction-enlightened {
+        background-color: fade(@c_enlightened, 10%);
+    }
+}
