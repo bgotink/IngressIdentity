@@ -1,5 +1,9 @@
 #!/bin/bash
 
+log() {
+    echo "$@" >&2
+}
+
 cd $(dirname "$0")/../..
 
 # ensure firefox sdk is installed
@@ -18,9 +22,25 @@ cd build/firefox-release
 # extract version
 buildversion=$(grep -F '"version"' package.json | cut -d':' -f2 | tr -d ' ",')
 
+log "Building minified XPI"
+
 # build and move
 # cfx xpi --update-url='http://bram.gotink.me/IngressIdentity/assets/firefox/update.rdf' --update-link='https://raw.githubusercontent.com/bgotink/IngressIdentity/gh-pages/assets/firefox/IngressIdentity.xpi'
 cfx xpi
 
 mv ingress-identity.xpi ../../versions/firefox/v$buildversion.xpi
 # mv ingress-identity.update.rdf ../../versions/firefox/update.rdf
+
+cd - >/dev/null
+
+log "Creating non-minified tarball"
+
+make firefox
+
+tar czf versions/firefox/v$buildversion-max.tar.gz -C build/firefox .
+
+log "Creating source tarball"
+
+tar czf versions/firefox/v$buildversion-src.tar.gz bin src template Makefile *.md
+
+tar cf versions/firefox/v$buildversion.tar -C versions/firefox v$buildversion-{src,max}.tar.gz

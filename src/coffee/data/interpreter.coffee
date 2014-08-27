@@ -9,8 +9,6 @@
     standardManifestKeys = [ 'key', 'lastupdated', 'tag', 'faction', 'refresh' ]
     standardSourceKeys = [ 'oid', 'nickname', 'name', 'level' ]
 
-    anomalies = [ '13magnus', 'recursion', 'interitus' ]
-
     filterEmpty = (obj) ->
         Object.each obj, (key, value) ->
             if Object.isObject value
