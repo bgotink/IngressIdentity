@@ -36,10 +36,6 @@
             module.comm.send { type: 'getOption', option: option, defaultValue: defaultValue }, (result) ->
                 callback result.value
 
-        find: (pattern, callback) ->
-            module.comm.send { type: 'find', pattern: pattern }, (result) ->
-                callback result.data
-
     showAlert = (id) ->
         module.log.log 'showing alert %s', id
         $ '.alert'
@@ -452,50 +448,4 @@
             reloadManifests()
             updateButtons()
 
-        # search
-
-        if not $.fn.selected?
-            $.fn.selected = ->
-                $ @
-                    .find 'option:selected'
-                    .map ->
-                        $ @
-                            .val()
-                    .toArray()
-
-        $ '#search_enable_extra'
-            .on 'change', ->
-                val = $ @
-                    .is ':checked'
-
-                $ '#search_faction, #search_anomalies'
-                    .attr 'disabled', !val
-
-        search = ->
-            pattern = {}
-
-            if 0 isnt (val = $('#search_name').val().trim()).length
-                pattern.name = val
-            if 0 isnt (val = $('#search_nickname').val().trim()).length
-                pattern.nickname = val
-
-            if $('#search_enable_extra').is(':checked')
-                if 'unknown' isnt (val = $('#search_faction > option:selected').val())
-                    pattern.faction = val
-
-                if 0 isnt (val = $('#search_anomalies').selected()).length
-                    pattern.extra =
-                        anomalies: if val.length is 1 then val[0] else val
-
-            comm.find pattern, (results) ->
-                module.log.log results
-                # do stuff
-
-        $ 'button.search'
-            .on 'click', search
-        $ 'form.search'
-            .on 'submit', ->
-                search()
-
-                false
 )(iidentity or (iidentity = window.iidentity = {}), window.jQuery)
