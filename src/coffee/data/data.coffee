@@ -6,7 +6,35 @@
 ((module, $) ->
     exports = if Object.has(module, 'data') then module.data else module.data = {}
 
+    stdPatternKeys = [ 'name', 'nickname', 'level', 'oid' ]
+
     # unexported helper functions and classes
+
+    stringToRegExp = (str) ->
+        re = ''
+
+        if not str.startsWith '^'
+            re += '^.*'
+
+        re += (
+            str.split /\s+/
+                .join '(.*\\s+.*)?'
+        )
+
+        if not str.endsWith '$'
+            re += '.*$'
+
+        new RegExp re, 'i'
+
+    createPattern = (original) ->
+        Object.map original, (key, value) ->
+            if key is 'faction'
+                value
+            else if key is 'extra'
+                # TODO
+                value
+            else
+                stringToRegExp value
 
     resolveKey = (key, parent, err) ->
         data = exports.spreadsheets.parseKey key
@@ -100,6 +128,15 @@
 
         hasExtra: (tag, oid) -> @data.hasExtra tag, oid
 
+        find: (pattern) ->
+            oids = []
+
+            Object.each Object.findAll(@players, pattern), (oid) ->
+                    oids.push oid
+
+            oids
+
+
     class ErroredPlayerSource
         constructor: (key, err, data) ->
             @key = key
@@ -133,6 +170,8 @@
         shouldUpdate: -> false
         setUpdated: ->
         update: (callback) -> callback false
+
+        find: -> []
 
     class CombinedPlayerSource
         constructor: (sources, key, spreadsheet) ->
@@ -325,7 +364,28 @@
 
             result.reduce (res, elem) ->
                 res.concat elem
-            , []
+            ,
+
+        find: (pattern) ->
+            if @topLevel
+                pattern = createPattern pattern
+
+                stdPattern = Object.select pattern, stdPatternKeys
+                result = []
+
+                @getSources().each (source) ->
+                    result = result.union source.find stdPattern
+
+                return result.map (oid) =>
+                        @getPlayer oid
+                    .findAll pattern
+            else # not @topLevel
+                result = []
+
+                @getSources().each (source) ->
+                    result = result.union source.find pattern
+
+                result
 
     loadSource = (data, parentKey, callback) ->
         err = []

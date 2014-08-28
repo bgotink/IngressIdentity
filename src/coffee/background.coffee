@@ -469,6 +469,14 @@
 
             true
 
+        find: (request, sender, sendResponse) ->
+            module.log.log 'Trying to find', request.pattern
+
+            sendResponse
+                data: data.find request.pattern
+
+            false
+
     module.extension.addMessageListener (request, sender, sendResponse) ->
         reply = null
 
