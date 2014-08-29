@@ -136,15 +136,24 @@
                         target.extra[key] = srcValue
             level: (target, src) ->
                 # target has level, see merge function
-                level = +src.level;
+                level = +src.level
 
-                if isNaN level
-                    return;
+                return if isNaN level
 
                 level = Number.range(0, 16).clamp level
 
                 if level > target.level
-                    target.level = level;
+                    target.level = level
+            source: (target, src) ->
+                # target's source is an array
+
+                # src has a source, otherwise something's going wrong
+                return unless Object.has src, 'source'
+
+                if Array.isArray src.source
+                    target.source = target.source.union src.source
+                else
+                    target.source.push src.source
 
     # pre-merge validation
 
@@ -182,6 +191,8 @@
             target.extra = {}
         if not Object.has target, 'level'
             target.level = 0
+        if not Array.isArray target.source
+            target.source = if Object.has target, 'source' then [ target.source ] else []
 
         Object.keys(src).each (key) ->
             if Object.has helpers.merge, key

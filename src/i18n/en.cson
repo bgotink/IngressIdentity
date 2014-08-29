@@ -38,6 +38,12 @@
     content_resistance:
         message: 'Resistance'
         description: 'The name of the resistance faction'
+    content_unknown:
+        message: 'Unknown'
+        description: 'The name of the "unknown" faction'
+    content_error:
+        message: 'Error'
+        description: 'The name of the "error" faction'
     content_communities:
         message: 'Communities'
         description: 'The plural of community'
@@ -223,6 +229,12 @@
     options_no_script:
         message: 'Please close this tab and re-open it by clicking the action button.'
         description: 'Message shown in the options page if it needs to be re-opened in firefox.'
+    options_search_title:
+        message: 'Search'
+        description: 'The "Search" section'
+    options_search_intro:
+        message: 'The <a href="search.html">search page</a> allows you to query which people this extension has data on. It shows their name, nickname, level, the anomalies they went to and which source files list them.'
+        description: 'The intro for the "Search" section'
 
     # Export page
     export_title:
@@ -282,4 +294,47 @@
     export_warning_all_members:
         message: 'You haven\'t loaded all players in the community. This exporter can only export the members that are shown on the page. You\'ll have to scroll down completely before opening the exporter.'
         description: 'Warning shown when not all members have been loaded.'
+
+    search_title:
+        message: 'IngressIdentity Search'
+        description: 'The title of the search page'
+    search_intro:
+        message: 'This page allows you to query which people this extension has data on. It shows their name, nickname, level, the anomalies they went to and which source files list them.'
+        description: 'The intro of the search page'
+    search_name:
+        message: 'Name'
+        description: 'The label for the "Name" input'
+    search_nickname:
+        message: 'Agent Name'
+        description: 'The label for the "Agent Name" input'
+    search_enable_extra:
+        message: 'Enable extra search patterns? This can make the search significantly slower!'
+        description: 'The label for the checkbox that enables extra inputs.'
+    search_faction:
+        message: 'Faction'
+        description: 'The label for the "Faction" input'
+    search_faction_unknown:
+        message: 'Unknown'
+        description: 'The label for the "Unknown" faction.'
+    search_faction_enlightened:
+        message: 'Enlightened'
+        description: 'The label for the "Enlightened" faction.'
+    search_faction_resistance:
+        message: 'Resistance'
+        description: 'The label for the "Resistance" faction.'
+    search_faction_error:
+        message: 'Error'
+        description: 'The label for the "Error" faction.'
+    search_anomalies:
+        message: 'Anomalies'
+        description: 'The label for the "Anomalies" input'
+    search_search_button:
+        message: '<span class="glyphicon glyphicon-search"></span> Search'
+        description: 'The search button context.'
+    search_results:
+        message: 'Results'
+        description: 'The "Results" section'
+    search_levelValue:
+        message: 'L{value}'
+        description: 'How the level is shown (L1, L2, ... L16 in English)'
 }
