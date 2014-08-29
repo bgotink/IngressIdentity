@@ -8,14 +8,23 @@ button + span,
 
 .anomalies img {
     height: 1em;
+    padding-left: .5ex;
 }
 
 .panel-resistance {
     border-color: #bce8f1;
 
+    a {
+        color: #31708f;
+    }
+
     .panel-heading {
         color: #31708f;
         background-color: #d9edf7;
+        border-color: #bce8f1;
+    }
+
+    .list-group-item {
         border-color: #bce8f1;
     }
 }
@@ -23,13 +32,36 @@ button + span,
 .panel-enlightened {
     border-color: #d6e9c6;
 
+    a {
+        color: #3c763d;
+    }
+
     >.panel-heading {
         color: #3c763d;
         background-color: #dff0d8;
+        border-color: #d6e9c6;
+    }
+
+    .list-group-item {
         border-color: #d6e9c6;
     }
 }
 
 .anomalies, .level {
     margin-left: 2.5em;
+}
+
+.panel-body {
+    visibility: none;
+}
+
+.google-plus {
+    img {
+        width: 100%;
+        padding-left: 10px;
+
+        min-width: 1em;
+
+        height: auto;
+    }
 }

@@ -69,6 +69,7 @@
         setPlayers: (players) ->
             @players = {}
             newPlayers = @players
+
             players.each (player) ->
                 if not (Object.isNumber(player.oid) or Object.isString(player.oid)) or ('' + player.oid).match(/^9*$/)
                     return
@@ -79,7 +80,12 @@
         getPlayer: (oid) ->
             return null unless @hasPlayer oid
 
-            exports.interpreter.interpretSourceEntry @data, @players[oid]
+            player = exports.interpreter.interpretSourceEntry @data, @players[oid]
+            player.source =
+                url: @getUrl()
+                tag: @getTag()
+
+            player
 
         getNbPlayers: -> Object.size @players
 

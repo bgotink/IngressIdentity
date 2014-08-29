@@ -23,6 +23,7 @@ backgroundPage = null
 contentScript = null
 exportScript = null
 optionsScript = null
+searchScript = null
 optionsTab = null
 actionButton = null
 
@@ -134,6 +135,28 @@ exports.main = ->
 
             worker.port.on 'iidentity-request-to-background', createContentScriptMessageListener worker, worker.tab
 
+    # create script for search page
+    searchScript = pageMod
+        include: [ url 'search.html' ]
+        contentScriptFile: [
+                'vendor/js/jquery.min.js'
+                'vendor/js/sugar.min.js'
+                'vendor/js/bootstrap.min.js'
+                'js/search.js'
+            ].map url
+        contentScriptWhen: 'end'
+        contentScriptOptions:
+            baseURI: url ''
+        attachTo: [ 'existing', 'top' ]
+        onAttach: (worker) ->
+            tabId = worker.tab.id
+            workers[tabId] = worker
+
+            worker.on 'detach', ->
+                delete workers[tabId]
+
+            worker.port.on 'iidentity-request-to-background', createContentScriptMessageListener worker, worker.tab
+
     # create action button
     console.log 'Creating button'
     actionButton = createActionButton
@@ -166,6 +189,7 @@ exports.onUnload = ->
     contentScript?.destroy()
     exportScript?.destroy()
     optionsScript?.destroy()
+    searchScript?.destroy()
 
     console.log 'Destroying background page'
     backgroundPage?.destroy()

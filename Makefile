@@ -12,7 +12,7 @@ JS_OPTIONS_DEPS = $(addprefix src/coffee/,$(addsuffix .coffee,communication log 
 JS_BACKGROUND_DEPS = $(addprefix src/coffee/,$(addsuffix .coffee,log data/spreadsheets data/interpreter data/merger data/data background/i18n background))
 JS_HELP_DEPS = src/coffee/help.coffee
 JS_EXPORT_DEPS = $(addprefix src/coffee/,$(addsuffix .coffee,communication log export auto-translate))
-JS_SEARCH_DEPS = $(addprefix src/coffee/,$(addsuffix .coffee,communication log search))
+JS_SEARCH_DEPS = $(addprefix src/coffee/,$(addsuffix .coffee,communication log search auto-translate))
 
 LANGUAGES=en nl
 
@@ -172,6 +172,9 @@ build/common-release/i18n/%.json: src/i18n/%.cson
 	$(ensure_exists)
 	$(cson)
 
+build/%/img/g+.png: src/img/g+.png
+	$(copy)
+
 # main
 
 common: $(addprefix build/common/,$(CSSs) $(addprefix i18n/,$(addsuffix .json,$(LANGUAGES))))
@@ -267,9 +270,9 @@ build/chrome-release/docs/%.html: src/jade/docs/export.jade src/jade/docs/_mixin
 
 # main
 
-chrome: $(addprefix build/chrome/, $(FILES) js/content-talk.js manifest.json $(addprefix _locales/,$(addsuffix /messages.json,$(LANGUAGES))) img/anomalies $(addprefix img/logo/, ingress.png 16.png 19.png 38.png 48.png 128.png))
+chrome: $(addprefix build/chrome/, $(FILES) js/content-talk.js manifest.json $(addprefix _locales/,$(addsuffix /messages.json,$(LANGUAGES))) img/anomalies img/g+.png $(addprefix img/logo/, ingress.png 16.png 19.png 38.png 48.png 128.png))
 
-chrome-release: $(addprefix build/chrome-release/, $(FILES) js/content-talk.js manifest.json $(addprefix _locales/,$(addsuffix /messages.json,$(LANGUAGES))) img/anomalies $(addprefix img/logo/, ingress.png 16.png 19.png 38.png 48.png 128.png))
+chrome-release: $(addprefix build/chrome-release/, $(FILES) js/content-talk.js manifest.json $(addprefix _locales/,$(addsuffix /messages.json,$(LANGUAGES))) img/anomalies img/g+.png $(addprefix img/logo/, ingress.png 16.png 19.png 38.png 48.png 128.png))
 
 chrome-all: chrome chrome-release
 
@@ -359,9 +362,9 @@ build/IngressIdentity-release.safariextension/docs/%.html: src/jade/_config/safa
 
 # main
 
-safari: $(addprefix build/IngressIdentity.safariextension/, $(FILES) Info.plist img/anomalies img/logo/toolbar.png img/logo/ingress.png $(addprefix _locales/,$(addsuffix /messages.json,$(LANGUAGES))))
+safari: $(addprefix build/IngressIdentity.safariextension/, $(FILES) Info.plist img/anomalies img/g+.png img/logo/toolbar.png img/logo/ingress.png $(addprefix _locales/,$(addsuffix /messages.json,$(LANGUAGES))))
 
-safari-release: $(addprefix build/IngressIdentity-release.safariextension/, $(FILES) Info.plist img/anomalies img/logo/toolbar.png img/logo/ingress.png $(addprefix _locales/,$(addsuffix /messages.json,$(LANGUAGES))))
+safari-release: $(addprefix build/IngressIdentity-release.safariextension/, $(FILES) Info.plist img/anomalies img/g+.png img/logo/toolbar.png img/logo/ingress.png $(addprefix _locales/,$(addsuffix /messages.json,$(LANGUAGES))))
 
 safari-all: safari safari-release
 
@@ -487,11 +490,14 @@ build/firefox/data/docs/%.html: src/jade/_config/firefox.json src/jade/docs/expo
 build/firefox-release/data/docs/%.html: src/jade/_config/firefox.json src/jade/docs/export.jade src/jade/docs/_mixins.jade src/jade/docs/_layout.jade
 	$(jade_release)
 
+build/%/data/img/g+.png: src/img/g+.png
+	$(copy)
+
 # main
 
-firefox: $(addprefix build/firefox/, icon.png icon64.png lib/bootstrap.js lib/resources.js package.json $(MDs) $(addprefix data/, $(JSs) $(HTMLs) $(CSSs) $(DOCs) $(LIBs) $(addprefix _locales/,$(addsuffix /messages.json,$(LANGUAGES))) $(addprefix img/,anomalies $(addprefix logo/, ingress.png 16.png 32.png 64.png))))
+firefox: $(addprefix build/firefox/, icon.png icon64.png lib/bootstrap.js lib/resources.js package.json $(MDs) $(addprefix data/, $(JSs) $(HTMLs) $(CSSs) $(DOCs) $(LIBs) $(addprefix _locales/,$(addsuffix /messages.json,$(LANGUAGES))) $(addprefix img/,anomalies g+.png $(addprefix logo/, ingress.png 16.png 32.png 64.png))))
 
-firefox-release: $(addprefix build/firefox-release/, icon.png icon64.png lib/bootstrap.js lib/resources.js package.json $(MDs) $(addprefix data/, $(JSs) $(HTMLs) $(CSSs) $(DOCs) $(LIBs) $(addprefix _locales/,$(addsuffix /messages.json,$(LANGUAGES))) $(addprefix img/, anomalies $(addprefix logo/, ingress.png 16.png 32.png 64.png))))
+firefox-release: $(addprefix build/firefox-release/, icon.png icon64.png lib/bootstrap.js lib/resources.js package.json $(MDs) $(addprefix data/, $(JSs) $(HTMLs) $(CSSs) $(DOCs) $(LIBs) $(addprefix _locales/,$(addsuffix /messages.json,$(LANGUAGES))) $(addprefix img/, anomalies g+.png $(addprefix logo/, ingress.png 16.png 32.png 64.png))))
 
 firefox-all: firefox firefox-release
 

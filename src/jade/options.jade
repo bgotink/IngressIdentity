@@ -56,11 +56,6 @@ html(data-translate-prefix='options')
                     help acquiring data to put in manifest files or source files.
             .row
                 .col-sm-8.col-sm-offset-2.col-md-6.col-md-offset-3
-                    if browser === 'firefox'
-                        .alert.alert-danger.alert-no-script
-                            strong(data-translate-name='error') Error!
-                            span(data-translate-name='no-script') Please close this tab and re-open it by clicking the action button.
-
                     +alert_success('reload-success', 'reload_success', 'The data was successfully reloaded.')
                     +alert_warning('reload-warning', 'reload_failed', 'Something went wrong when reloading the data.')
                     +alert_danger('reload-failed', 'reload_failed', 'Something went wrong when reloading the data.')
@@ -122,6 +117,12 @@ html(data-translate-prefix='options')
                                     this post by the Niantic Project</a> or
                                     <a target="_blank" href="https://plus.google.com/110350977702120778591/posts/GH32VJw1fhA">
                                     this post by Klue/ADA</a>.
+            +row
+                h2(data-translate-name='search_title') Search
+                p(data-translate-name='search_intro').
+                    The <a href="search.html">search page</a> allows you to query which people this extension has data on.
+                    It shows their name, nickname, level, the anomalies they went to and
+                    which source files list them.
             +row
                 h2(data-translate-name='settings_title') Settings
                 p(data-translate-name='settings_intro').

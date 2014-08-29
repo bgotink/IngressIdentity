@@ -26,31 +26,33 @@ html(data-translate-prefix='search')
             +row
                 h1(data-translate-name='title') IngressIdentity Search
                 p(data-translate-name='intro').
-                    This page allows you to see what data the extension has about
-                    certain people, as well as which source files mention them.
+                    This page allows you to query which people this extension has data on.
+                    It shows their name, nickname, level, the anomalies they went to and
+                    which source files list them.
             +row.search
                 h2 Search
                 div
                     form.search(role='form', action='#')
                         .form-group
-                            label(for='search_name') Name
+                            label(for='search_name', data-translate-name='name') Name
                             input#search_name(class='form-control', type='text')
                         .form-group
-                            label(for='search_nickname') Nickname
+                            label(for='search_nickname', data-translate-name='nickname') Agent Name
                             input#search_nickname(class='form-control', type='text')
                         div
                             .checkbox
                                 label
                                     input#search_enable_extra(type='checkbox')
-                                    | Enable extra search patterns? This will make the search significantly slower!
+                                    span(data-translate-name='enable_extra') Enable extra search patterns? This will make the search significantly slower!
                             .form-group
-                                label(for='search_faction') Faction
+                                label(for='search_faction', data-translate-name='faction') Faction
                                 select#search_faction(class='form-control', disabled)
-                                    option(value='unknown', selected) Unknown
-                                    option(value='enlightened') Enlightened
-                                    option(value='resistance') Resistance
+                                    option(value='unknown', selected, data-translate-name='faction_unknown') Unknown
+                                    option(value='enlightened', data-translate-name='faction_enlightened') Enlightened
+                                    option(value='resistance', data-translate-name='faction_resistance') Resistance
+                                    option(value='error', data-translate-name='faction_error') Error
                             .form-group
-                                label(for='search_anomalies') Anomalies
+                                label(for='search_anomalies', data-translate-name='anomalies') Anomalies
                                 select#search_anomalies(class='form-control', multiple, disabled)
                                     option(value='13magnus') 13Magnus
                                     option(value='recursion') Recursion
@@ -58,9 +60,9 @@ html(data-translate-prefix='search')
                                     option(value='initio') Initio
                                     option(value='helios') Helios
                         .form-group
-                            button.search(type='button', class='btn btn-primary')
+                            button.search(type='button', class='btn btn-primary' data-translate-name='search_button')
                                 span.glyphicon.glyphicon-search
                                 | Search
             +row
-                h2 Results
+                h2(data-translate-name='results') Results
                 .results
