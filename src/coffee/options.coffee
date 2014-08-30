@@ -156,16 +156,11 @@
                                 $ '<div class="panel-heading"></div>'
                                     .append(
                                         $ '<span class="key-container"></span>'
-                                            .append if value.url
-                                                    $ '<a>'
-                                                        .text if Object.isString(value.name) and not value.name.isBlank() then value.name else key
-                                                        .attr 'target', '_blank'
-                                                        .attr 'href', value.url
-                                                        .addClass 'manifest-key'
-                                                else
-                                                    $ '<span>'
-                                                        .text if Object.isString(value.name) and not value.name.isBlank() then value.name else key
-                                                        .addClass 'manifest-key'
+                                            .append(
+                                                $ '<span>'
+                                                    .text if Object.isString(value.name) and not value.name.isBlank() then value.name else key
+                                                    .addClass 'manifest-key'
+                                            )
                                     )
                                     .append(
                                         $ '<span>'

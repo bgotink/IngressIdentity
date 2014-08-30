@@ -214,6 +214,9 @@
     options_manifest_info:
         message: 'Factie: {faction}, {count} spelers, versie {version}'
         description: 'Information shown about the manifests.'
+    options_view:
+        message: 'Bekijken'
+        description: 'Tooltip for the view button.'
     options_rename:
         message: 'Hernoem'
         description: 'Tooltip for the rename button.'

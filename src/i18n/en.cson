@@ -214,6 +214,9 @@
     options_manifest_info:
         message: 'Faction: {faction}, {count} players, version {version}'
         description: 'Information shown about the manifests.'
+    options_view:
+        message: 'View'
+        description: 'Tooltip for the view button.'
     options_rename:
         message: 'Rename'
         description: 'Tooltip for the rename button.'
