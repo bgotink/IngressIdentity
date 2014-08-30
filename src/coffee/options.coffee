@@ -428,27 +428,6 @@
                         .button 'reset'
                         .removeClass 'disable-hover'
 
-        [ $('#enable_anomalies'), $('button[data-match]') ].each ($buttons) ->
-            $buttons
-                .on 'mouseenter', () ->
-                    $this = $ @
-
-                    return if $this.hasClass 'disable-hover'
-
-                    if $this.hasClass 'active'
-                        $this.text module._('disabled', 'Disabled')
-                    else
-                        $this.text module._('enabled', 'Enabled')
-                .on 'mouseleave', () ->
-                    $this = $ @
-
-                    return if $this.hasClass 'disable-hover'
-
-                    if $this.hasClass 'active'
-                        $this.text module._('enabled', 'Enabled')
-                    else
-                        $this.text module._('disabled', 'Disabled')
-
         updateButtons()
 
         module.comm.setOnUpdate ->
