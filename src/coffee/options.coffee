@@ -90,6 +90,10 @@
                     $elem.append $('<p class="error">').text err
         else
             Object.each errors, (key, value) ->
+                if key is '__errors'
+                    $ '<div class="panel-body" data-key="__errors">'
+                        .insertBefore $elem.find '> .panel > .list-group'
+
                 reloadManifestErrors.helper value, $elem.find '[data-key="' + key + '"]'
 
     reloadManifests = ->
@@ -127,7 +131,7 @@
                     module.log.log '-- Source key %s', source.key
 
                     sourceList.push($ '<li>'
-                        .addClass 'source faction-' + source.faction
+                        .addClass 'list-group-item source faction-' + source.faction
                         .attr 'data-key', source.key
                         .append if source.url
                                 $ '<a>'
@@ -195,17 +199,9 @@
                                     )
                             )
                             .append(
-                                $ '<div class="panel-body"></div>'
-                                    .append(
-                                        $ '<ul>'
-                                            .addClass 'errors list-unstyled'
-                                            .attr 'data-key', '__errors'
-                                    )
-                                    .append(
-                                        $ '<ul>'
-                                            .addClass 'list-unstyled'
-                                            .append sourceList
-                                    )
+                                $ '<ul>'
+                                    .addClass 'list-group'
+                                    .append sourceList
                             )
                     )
                 )

@@ -7,7 +7,7 @@ mixin alert_success(klass, name, text)
         span(data-translate-name=name)= text
 
 mixin alert_warning(klass, name, text)
-    .hide.alert.alert-success.alert-dismissable(class='alert-' + klass)
+    .hide.alert.alert-warning.alert-dismissable(class='alert-' + klass)
         button.close(type='button', aria-hidden='true') &times;
         strong(data-translate-name='warning') Warning!
         span(data-translate-name=name)= text
