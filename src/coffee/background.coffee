@@ -469,6 +469,14 @@
 
             true
 
+        find: (request, sender, sendResponse) ->
+            module.log.log 'Trying to find', request.pattern
+
+            sendResponse
+                data: data.find request.pattern
+
+            false
+
     module.extension.addMessageListener (request, sender, sendResponse) ->
         reply = null
 
@@ -502,33 +510,44 @@
 
             false
 
+    initGoogle = ->
+        return if google?
+
+        $.getScript 'https://www.google.com/jsapi'
+            .fail ->
+                module.log.error 'Failed to load the Google API, trying again in 20 seconds'
+                setTimeout initGoogle, 20 * 1000
+            .done ->
+                google.load 'visualization', '1',
+                    callback: ->
+                        reloadData (err, success) ->
+                            if success
+                                module.log.log 'Successfully loaded existing configuration'
+                                if err
+                                    err.each module.log.warn
+                            else
+                                module.log.error 'Something went wrong while loading existing configuration'
+                                err.each module.log.error
+
+                        window.setInterval ->
+                            return unless data?
+
+                            module.log.log 'Performing hourly update...'
+                            data.update (updated) ->
+                                if updated
+                                    data.invalidateCache()
+
+                                    if Object.has storageCache, 'manifests'
+                                        delete storageCache.manifests
+
+                                    updateTabs()
+                        , 60 * 60 * 1000
+
+
     $ ->
         module.extension.init() if module.extension.init?
 
-        google.load 'visualization', '1',
-            callback: ->
-                reloadData (err, success) ->
-                    if success
-                        module.log.log 'Successfully loaded existing configuration'
-                        if err
-                            err.each module.log.warn
-                    else
-                        module.log.error 'Something went wrong while loading existing configuration'
-                        err.each module.log.error
-
-                window.setInterval ->
-                    return unless data?
-
-                    module.log.log 'Performing hourly update...'
-                    data.update (updated) ->
-                        if updated
-                            data.invalidateCache()
-
-                            if Object.has storageCache, 'manifests'
-                                delete storageCache.manifests
-
-                            updateTabs()
-                , 60 * 60 * 1000
+        initGoogle()
 
         module.extension.addDataChangedListener onDataUpdated
 

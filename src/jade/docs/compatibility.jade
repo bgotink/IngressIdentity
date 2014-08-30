@@ -1,0 +1,79 @@
+include ./_mixins
+extends ./_layout
+
+block vars
+    - var title = 'Compatibility'
+
+block content
+    +row
+        h1 Compatibility with <a href="https://chrome.google.com/webstore/detail/cemdjcbehkacgpiielmiakooedjkkphk">Ingress G+ Ident</a>
+        p.
+            This page contains some notes on the compatibility between this extension
+            and the Ingress G+ Ident extension written by Zdenek Behan. If you don't
+            know what that is, you don't have to read this page.
+        h2 Source file compatibility
+        p.
+            The Ingress G+ Ident extension, let's call it IGI for short, requires every
+            entry in a source file to have an OID, a name and a nickname. Failure to
+            include one in any of the lines results in the source being ignored.
+            This extension requires the name and nickname information only <em>once</em>.
+            The only information required every time in the source is the OID, though
+            we advise to give the name as well. Recognizing an entry based on an OID
+            can be tough, that's why a human-readable name can come in handy.
+        h2 Manifest file compatibility
+        p.
+            The IGI extension defines an <span class="tt">extratags</span> column in
+            the manifest, which can contain extra information about the players in the
+            source entry. This extension supports the IGI syntax, but we discourage
+            using it. You can add custom columns to your manifest instead, which is
+            easier to read and write. You don't have to write JSON anymore, simply
+            enter the value in the column, or leave it blank if it doesn't apply to
+            that entry in the manifest. Beware that the dummy row must have a value
+            in every column though!
+        p.
+            The IGI extension requires the key of manifest entries to contain the spreadsheet
+            key and GID. The GID is the ID of the tab in the spreadsheet document. Most of the
+            times, a manifest will simply list sources in the same document, resulting in a duplication
+            of the key of the manifest. This extension allows you to omit the key if it's the
+            same as the manifest key. To give an example:
+        blockquote
+            p The manifest with the following key
+            p.tt
+                a(href='https://docs.google.com/spreadsheet/ccc?key=0AlQqEFrEHdKSdG9GTG83T21XZURhZEozd01Lb3BxTmc', target='_blank') 0AlQqEFrEHdKSdG9GTG83T21XZURhZEozd01Lb3BxTmc
+            p contains a list of sources in the same document. This is how they are listed in the different extensions:
+            table.table.table-striped.table-bordered.table-condensed
+                tr
+                    th name
+                    th key (IGI extension)
+                    th key (this extension)
+                tr
+                    td 13M Resistance
+                    td 0AlQqEFrEHdKSdG9GTG83T21XZURhZEozd01Lb3BxTmc&gid=2
+                    td &gid=2
+                tr
+                    td 13M Enlightened
+                    td 0AlQqEFrEHdKSdG9GTG83T21XZURhZEozd01Lb3BxTmc&gid=5
+                    td &gid=5
+                tr
+                    td REC Resistance
+                    td 0AlQqEFrEHdKSdG9GTG83T21XZURhZEozd01Lb3BxTmc&gid=6
+                    td &gid=6
+                tr
+                    td REC Enlightened
+                    td 0AlQqEFrEHdKSdG9GTG83T21XZURhZEozd01Lb3BxTmc&gid=7
+                    td &gid=7
+                tr
+                    td INT Resistance
+                    td 0AlQqEFrEHdKSdG9GTG83T21XZURhZEozd01Lb3BxTmc&gid=8
+                    td &gid=8
+                tr
+                    td INT Enlightened
+                    td 0AlQqEFrEHdKSdG9GTG83T21XZURhZEozd01Lb3BxTmc&gid=9
+                    td &gid=9
+        h2 Summary
+        p.
+            The IGI extension files can be used in this extension without any changes.
+            This extension has made various improvements and simplifications to the file
+            format, however, which aren't compatible with the original extension. If you
+            know your manifest will only be used by this extension, we advise you to take
+            use the simplified format.

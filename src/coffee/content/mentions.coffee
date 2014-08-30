@@ -339,6 +339,11 @@
                 $root = $elem.closest 'div.KL'
                     .find 'div.UR.UG'
 
+                if $root.length is 0
+                    # this is the list of people in the hangout
+                    $root = $elem.closest 'li.rI'
+                        .find 'div.vT'
+
                 createConciseInlineElement oid, match, (err, $infoElement) ->
                     if err?
                         if err is 'not-found'
@@ -351,6 +356,7 @@
                         return
 
                     $root
+                        .addClass 'iidentity-matched'
                         .find '.iidentity-ciwrapper[data-oid=' + oid + ']'
                         .remove()
 

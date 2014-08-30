@@ -6,6 +6,18 @@
 ((module, $) ->
     exports = module.extension = {}
 
+    # firefox does something weird with objects being sent through
+    # e.g.: arrays have length undefined, prototype is _not_ correct etc
+    clone = (e) ->
+        if typeof e is 'object'
+            Object.clone e, true
+        else if typeof e is 'array'
+            Array.clone e, true
+        else if typeof e is 'string'
+            '' + e
+        else
+            e
+
     exports.storage =
         get: (data, callback) ->
             callback Object.map data, (key, defaultValue) ->
@@ -40,7 +52,7 @@
             reply =
                 id: message.id
 
-            request = message.message
+            request = clone message.message
             sender = message.sender
 
             sent = false

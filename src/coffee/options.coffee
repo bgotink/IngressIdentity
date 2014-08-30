@@ -453,4 +453,5 @@
         module.comm.setOnUpdate ->
             reloadManifests()
             updateButtons()
+
 )(iidentity or (iidentity = window.iidentity = {}), window.jQuery)
