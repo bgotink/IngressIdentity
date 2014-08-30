@@ -1,7 +1,7 @@
 @import 'general_background.less';
 
 p.error {
-    color: red;
+    color: @c_error;
 
     &:last-child {
         margin-bottom: 0;
@@ -41,20 +41,13 @@ button + span,
 // Source colors
 
 .source {
-    &.faction-resistance,
-    &.faction-enlightened {
-        color: initial;
-
-        > a {
-            color: initial;
-        }
-    }
-
     &.faction-resistance {
-        background-color: fade(@c_resistance, 10%);
+        background-color: @c_background_resistance;
+        color: @c_resistance;
     }
 
     &.faction-enlightened {
-        background-color: fade(@c_enlightened, 10%);
+        background-color: @c_background_enlightened;
+        color: @c_enlightened;
     }
 }
