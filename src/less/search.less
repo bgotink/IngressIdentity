@@ -18,7 +18,7 @@ button + span,
         color: @c_resistance;
     }
 
-    .panel-heading {
+    > .panel-heading {
         color: @c_resistance;
         background-color: @c_background_resistance;
         border-color: @c_border_resistance;
@@ -36,7 +36,7 @@ button + span,
         color: @c_enlightened;
     }
 
-    >.panel-heading {
+    > .panel-heading {
         color: @c_enlightened;
         background-color: @c_background_enlightened;
         border-color: @c_border_enlightened;
@@ -44,6 +44,42 @@ button + span,
 
     .list-group-item {
         border-color: @c_border_enlightened;
+    }
+}
+
+.panel-unknown {
+    border-color: @c_border_unknown;
+
+    a {
+        color: @c_unknown;
+    }
+
+    > .panel-heading {
+        color: @c_unknown;
+        background-color: @c_background_unknown;
+        border-color: @c_border_unknown;
+    }
+
+    .list-group-item {
+        border-color: @c_border_unknown;
+    }
+}
+
+.panel-error {
+    border-color: @c_border_error;
+
+    a {
+        color: @c_error;
+    }
+
+    > .panel-heading {
+        color: @c_error;
+        background-color: @c_background_error;
+        border-color: @c_border_error;
+    }
+
+    .list-group-item {
+        border-color: @c_border_error;
     }
 }
 
