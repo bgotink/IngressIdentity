@@ -226,12 +226,13 @@
                 .sortable {
                     axis: 'y'
                     containment: 'parent'
+                    handle: '.panel-heading'
                     cursor: '-webkit-grabbing'
                     distance: 5
                     revert: true
                     stop: onOrderChanged
                 }
-            $ '#source_list > ul'
+            $ '#source_list .panel-heading'
                 .disableSelection()
 
             reloadManifestErrors();
