@@ -386,7 +386,7 @@
 
         getSourcesForExtra: (request, sender, sendResponse) ->
             if data?
-                getStoredData 'option-match-extra-' + request.tag, true, (match) ->
+                getStoredData 'option-show-sources', true, (match) ->
                     if match
                         sendResponse
                             result: data.getSourcesForExtra request.tag, request.oid

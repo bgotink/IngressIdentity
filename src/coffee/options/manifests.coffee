@@ -1,48 +1,9 @@
-# The main script for the options page
+# Shows the manifests and allows manipulation.
 #
 # @author Bram Gotink (@bgotink)
 # @license MIT
 
 ((module, $) ->
-    comm =
-        getManifests: (callback) ->
-            module.comm.send { type: 'getManifests' }, (result) ->
-                callback result
-        getManifestErrors: (callback) ->
-            module.comm.send { type: 'getManifestErrors' }, (result) ->
-                callback result
-        addManifest: (key, name, callback) ->
-            module.comm.send { type: 'addManifest', key: key, name: (if Object.isString(name) then name else '') }, (result) ->
-                callback result.status
-        renameManifest: (key, oldName, newName, callback) ->
-            module.comm.send {type: 'renameManifest', key: key, oldName: oldName, newName: newName}, (result) ->
-                callback result.status
-        removeManifest: (key, callback) ->
-            module.comm.send { type: 'removeManifest', key: key }, (result) ->
-                callback result.status
-
-        changeManifestOrder: (oldOrder, newOrder, callback) ->
-            module.comm.send { type: 'changeManifestOrder', oldOrder: oldOrder, newOrder: newOrder }, (result) ->
-                callback result.status
-
-        reloadData: (callback) ->
-            module.comm.send { type: 'reloadData' }, (result) ->
-                callback result.status
-
-        setOption: (option, value, callback) ->
-            module.comm.send { type: 'setOption', option: option, value: value }, (result) ->
-                callback result.result
-        getOption: (option, defaultValue, callback) ->
-            module.comm.send { type: 'getOption', option: option, defaultValue: defaultValue }, (result) ->
-                callback result.value
-
-    showAlert = (id) ->
-        module.log.log 'showing alert %s', id
-        $ '.alert'
-            .addClass 'hide'
-        $ '.alert-' + id
-            .removeClass 'hide'
-
     lastOrderRecorded = []
     onOrderChanged = ->
         newOrder = $.makeArray $('#source_list > ul > li').map ->
@@ -61,8 +22,8 @@
                 break
 
         if updated
-            comm.changeManifestOrder lastOrderRecorded, newOrder, (status) ->
-                showAlert 'reorder-' + status
+            module.comm.changeManifestOrder lastOrderRecorded, newOrder, (status) ->
+                module.showAlert 'reorder-' + status
 
             lastOrderRecorded = newOrder
 
@@ -73,7 +34,7 @@
             .data 'errors-loaded', true
 
         module.log.log 'Reloading manifest errors...'
-        comm.getManifestErrors (result) ->
+        module.comm.getManifestErrors (result) ->
             module.log.log 'Got manifest errors: ', result
 
             reloadManifestErrors.helper result, $ '#source_list > ul'
@@ -98,7 +59,7 @@
 
     reloadManifests = ->
         module.log.log 'Reloading manifests...'
-        comm.getManifests (result) ->
+        module.comm.getManifests (result) ->
             manifestList = []
 
             module.log.log 'Got manifest info: ', result
@@ -230,32 +191,7 @@
             $ '#source_list .panel-heading'
                 .disableSelection()
 
-            reloadManifestErrors();
-
-    updateButtons = ->
-        comm.getOption 'show-anomalies', true, (state) ->
-            if state
-                $ '#enable_anomalies'
-                    .addClass 'active'
-                    .text module._('enabled', 'Enabled')
-            else
-                $ '#enable_anomalies'
-                    .removeClass 'active'
-                    .text module._('disabled', 'Disabled')
-
-        $ 'button[data-match]'
-            .each ->
-                $this = $ @
-
-                comm.getOption 'match-' + $this.attr('data-match'), true, (state) ->
-                    if state
-                        $this
-                            .addClass 'active'
-                            .text module._('enabled', 'Enabled')
-                    else
-                        $this
-                            .removeClass 'active'
-                            .text module._('disabled', 'Disabled')
+            reloadManifestErrors()
 
     addManifest = ->
         module.log.log 'Adding manifest %s', $('#manifest_input').val()
@@ -267,7 +203,7 @@
         $ 'button.manifest_add'
             .button 'loading'
 
-        comm.addManifest $('#manifest_input').val(), $('#name_input').val(), (result) ->
+        module.comm.addManifest $('#manifest_input').val(), $('#name_input').val(), (result) ->
             if result isnt 'failed'
                 $ '#manifest_input'
                     .val ''
@@ -281,27 +217,11 @@
             $ 'button.manifest_add'
                 .button 'reset'
 
-            showAlert 'add-' + result
+            module.showAlert 'add-' + result
 
-    $ ->
-        module.extension.init() if module.extension.init?
+    module.reloadManifests = reloadManifests
 
-        $ '.alert .close'
-            .on 'click.ii.close', ->
-                $ @
-                    .parent()
-                    .addClass 'hide'
-
-        $ '#reload_sources'
-            .on 'click.ii.reload', ->
-                $this = $ @
-
-                $this.button 'loading'
-
-                comm.reloadData (result) ->
-                    showAlert 'reload-' + result
-                    $this.button 'reset'
-
+    module.initManifests = ->
         $ 'button.manifest_add'
             .on 'click.ii.add', addManifest
         $ 'form.manifest_add'
@@ -310,20 +230,10 @@
 
                 false
 
-        # make enter submit a form
-        $ 'input[type="text"]'
-            .on 'keypress', (e) ->
-                if e.which is 13
-                    $ @
-                        .closest 'form'
-                        .submit()
-
-                    false
-
         $ '#source_list'
             .on 'click.ii.remove', '.manifest .remove', ->
-                comm.removeManifest $(@).closest('.manifest').data('key'), (result) ->
-                        showAlert 'remove-' + result
+                module.comm.removeManifest $(@).closest('.manifest').data('key'), (result) ->
+                    module.showAlert 'remove-' + result
 
         $ '#source_list'
             .on 'click.ii.rename', '.manifest .rename', ->
@@ -363,8 +273,8 @@
 
                     module.log.log 'Renaming manifest %s from %s to %s', key, oldName, if newName != null then newName else ''
 
-                    comm.renameManifest key, oldName, newName, (status) ->
-                        showAlert 'rename-' + status
+                    module.comm.renameManifest key, oldName, newName, (status) ->
+                        module.showAlert 'rename-' + status
 
                 if Object.isString $this.data 'url'
                     $replacement = $ '<a target="_blank">'
@@ -380,53 +290,4 @@
                 false
 
         reloadManifests()
-
-        $ '#enable_anomalies'
-            .on 'click.set-option', ->
-                $this = $ @
-                $this
-                    .button 'loading'
-                    .addClass 'disable-hover'
-
-                comm.setOption 'show-anomalies', !$this.hasClass('active'), (state) ->
-                    if state
-                        $this
-                            .addClass 'active'
-                            .text module._('enabled', 'Enabled')
-                    else
-                        $this
-                            .removeClass 'active'
-                            .text module._('disabled', 'Disabled')
-
-                    $this
-                        .button 'reset'
-                        .removeClass 'disable-hover'
-
-        $ 'button[data-match]'
-            .on 'click.set-option', ->
-                $this = $ @
-                $this
-                    .button 'loading'
-                    .addClass 'disable-hover'
-
-                comm.setOption 'match-' + $this.attr('data-match'), !$this.hasClass('active'), (state) ->
-                    if state
-                        $this
-                            .addClass 'active'
-                            .text module._('enabled', 'Enabled')
-                    else
-                        $this
-                            .removeClass 'active'
-                            .text module._('disabled', 'Disabled')
-
-                    $this
-                        .button 'reset'
-                        .removeClass 'disable-hover'
-
-        updateButtons()
-
-        module.comm.setOnUpdate ->
-            reloadManifests()
-            updateButtons()
-
 )(iidentity or (iidentity = window.iidentity = {}), window.jQuery)
