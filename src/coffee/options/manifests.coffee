@@ -91,6 +91,12 @@
                 value.sources.each (source) ->
                     module.log.log '-- Source key %s', source.key
 
+                    # clean-up info to show, in case the manifest is faulty
+                    source.faction = 'unknown' unless source.faction?
+                    source.players = 0 unless Object.isNumber source.players
+                    source.tag = source.key if Object.has(source, 'key') and not Object.has(source, 'tag')
+                    source.version = 0 unless source.version?
+
                     sourceList.push($ '<li>'
                         .addClass 'list-group-item source faction-' + source.faction
                         .attr 'data-key', source.key
