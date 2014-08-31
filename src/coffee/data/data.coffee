@@ -453,7 +453,13 @@
                 callback (if Object.size(err) > 0 then err else null), (if sources.length > 0 then (new CombinedPlayerSource(sources)).setTopLevel() else null)
                 return
 
-            key = resolveKey keys[i], '', err
+            tmpErr = []
+            key = resolveKey keys[i], '', tmpErr
+
+            if key is false
+                err[keys[i]] = tmpErr
+                step i + 1
+                return
 
             loadManifest key, (err2, manifest) ->
                 if err2?
