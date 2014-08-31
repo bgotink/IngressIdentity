@@ -152,7 +152,7 @@
         message: 'This section contains some settings for the extension.'
         description: 'Intro text to the settings section.'
     options_matcher_options_title:
-        message: 'Matcher Options'
+        message: 'Matcher Settings'
         description: 'Title of the matcher settings subsection.'
     options_matcher_options_intro:
         message: 'This subsection contains a couple of matcher tweaks.'
@@ -170,7 +170,7 @@
         message: 'Match people in the \'In common with you\', \'In his/her circles\' or \'Have him/her in circles\' sections.'
         description: 'One of the settings.'
     options_settings_match_gapi_comments:
-        message: 'Match Google API comments.'
+        message: 'Match Google API comments (e.g. YouTube).'
         description: 'One of the settings.'
     options_settings_match_community_members:
         message: 'Match people on member lists in communities.'
@@ -179,7 +179,7 @@
         message: 'Match Hangouts conversations and member lists.'
         description: 'One of the settings.'
     options_display_options_title:
-        message: 'Display Options'
+        message: 'Display Settings'
         description: 'Title of the matcher settings subsection.'
     options_display_options_intro:
         message: 'This subsection contains some display settings.'

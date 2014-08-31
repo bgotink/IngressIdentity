@@ -164,7 +164,7 @@
         message: 'Match mensen in de \'In common with you\', \'In his/her circles\' or \'Have him/her in circles\' secties.'
         description: 'One of the settings.'
     options_settings_match_gapi_comments:
-        message: 'Match Google API commentaren.'
+        message: 'Match Google API commentaren (bvb. YouTube).'
         description: 'One of the settings.'
     options_settings_match_community_members:
         message: 'Match mensen in ledenlijsten van communities.'
