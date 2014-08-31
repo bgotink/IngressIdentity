@@ -194,6 +194,8 @@
             reloadManifestErrors()
 
     addManifest = ->
+        return if '' is $('#manifest_input').val()
+
         module.log.log 'Adding manifest %s', $('#manifest_input').val()
 
         $ '#manifest_input'
