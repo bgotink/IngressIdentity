@@ -24,7 +24,7 @@
                 $this.button 'loading'
 
                 module.comm.reloadData (result) ->
-                    showAlert 'reload-' + result
+                    module.showAlert 'reload-' + result
                     $this.button 'reset'
 
         module.initManifests()
