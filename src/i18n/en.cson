@@ -128,7 +128,7 @@
         message: 'Manifest Key'
         description: 'Label for the input for manifest keys.'
     options_manifest_key_help:
-        message: 'For more information about where to find the manifest key, please take a look at <a target="_blank" href="help.html#key">the help page</a>.'
+        message: 'For more information about where to find the manifest key, please take a look at <a target="_blank" href="docs/options.html">the help page</a>.'
         description: 'Help text for the input for manifest keys.'
     options_manifest_name_label:
         message: 'Manifest Name'

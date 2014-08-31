@@ -128,7 +128,7 @@
         message: 'Manifest Sleutel'
         description: 'Label for the input for manifest keys.'
     options_manifest_key_help:
-        message: 'Voor meer informatie over waar je de manifest sleutel kan terugvinden, neem je best een kijkje op <a target="_blank" href="help.html#key">de help pagina</a>.'
+        message: 'Voor meer informatie over waar je de manifest sleutel kan terugvinden, neem je best een kijkje op <a target="_blank" href="docs/options.html">de help pagina</a>.'
         description: 'Help text for the input for manifest keys.'
     options_manifest_name_label:
         message: 'Manifest Naam'
