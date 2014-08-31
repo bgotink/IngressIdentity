@@ -151,15 +151,12 @@
     options_settings_intro:
         message: 'This section contains some settings for the extension.'
         description: 'Intro text to the settings section.'
-    options_layout_options_title:
-        message: 'Layout Options'
-        description: 'Title of the layout settings subsection.'
-    options_layout_options_intro:
-        message: 'This subsection contains a couple of layout tweaks.'
-        description: 'Intro to the layout settings subsection.'
-    options_settings_enable_anomalies:
-        message: 'Show anomaly badges'
-        description: 'One of the settings.'
+    options_matcher_options_title:
+        message: 'Matcher Settings'
+        description: 'Title of the matcher settings subsection.'
+    options_matcher_options_intro:
+        message: 'This subsection contains a couple of matcher tweaks.'
+        description: 'Intro to the matcher settings subsection.'
     options_settings_match_popups:
         message: 'Match profile pop-ups.'
         description: 'One of the settings.'
@@ -172,12 +169,36 @@
     options_settings_match_people:
         message: 'Match people in the \'In common with you\', \'In his/her circles\' or \'Have him/her in circles\' sections.'
         description: 'One of the settings.'
-    options_settings_extra_event:
-        message: 'Show links to the source spreadsheets linked to an event on the page of that event.'
+    options_settings_match_gapi_comments:
+        message: 'Match Google API comments (e.g. YouTube).'
         description: 'One of the settings.'
-    options_settings_extra_community:
-        message: 'Show links to the source spreadsheets linked to a community on the page of that community.'
+    options_settings_match_community_members:
+        message: 'Match people on member lists in communities.'
         description: 'One of the settings.'
+    options_settings_match_hangouts:
+        message: 'Match Hangouts conversations and member lists.'
+        description: 'One of the settings.'
+    options_display_options_title:
+        message: 'Display Settings'
+        description: 'Title of the matcher settings subsection.'
+    options_display_options_intro:
+        message: 'This subsection contains some display settings.'
+        description: 'Intro to the matcher settings subsection.'
+    options_settings_display_anomalies:
+        message: 'Show anomaly badges.'
+        description: 'One of the settings.'
+    options_settings_display_export:
+        message: 'Show export button in communities.'
+        description: 'One of the settings.'
+    options_settings_display_sources:
+        message: 'Show source files linked to communities and events.'
+        description: 'One of the settings.'
+    options_settings_display_hide_self:
+        message: 'Hide own user data. Fill your OID in below:'
+        description: 'One of the settings.'
+    options_save:
+        message: 'Save'
+        description: 'Text on a button that saves stuff.'
     options_about_title:
         message: 'About'
         description: 'Title of the section containing info about the extension.'
@@ -214,6 +235,9 @@
     options_manifest_info:
         message: 'Faction: {faction}, {count} players, version {version}'
         description: 'Information shown about the manifests.'
+    options_view:
+        message: 'View'
+        description: 'Tooltip for the view button.'
     options_rename:
         message: 'Rename'
         description: 'Tooltip for the rename button.'

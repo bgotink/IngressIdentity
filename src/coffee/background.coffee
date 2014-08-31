@@ -78,6 +78,15 @@
 
             callback()
 
+    setStoredDatas = (data, callback) ->
+        module.log.log 'Settings multiple storage values:', data
+        storage.set data, ->
+            Object.each data, (key) ->
+                if Object.has storageCache, key
+                    delete storageCache[key]
+
+            callback()
+
     getManifestKeys = (callback) ->
         module.log.log 'Fetching manifest keys...'
         storage.get { manifest_keys: [] }, (result) ->
@@ -354,15 +363,26 @@
 
             true
 
-        setOption: (request, sender, sendResponse) ->
+        setOptions: (request, sender, sendResponse) ->
             unless isOptionsPage sender.url
-                module.log.error 'A \'setOption\' message can only originate from the options page'
+                module.log.error 'A \'setOptions\' message can only originate from the options page'
                 module.log.error 'Not from %s', sender.url
                 # silently die by not sending a response
                 return false
 
-            setStoredData 'option-' + request.option, request.value, ->
-                data.invalidateCache()
+            options = {}
+            sentOptions = request.options
+
+            [ 'match', 'show' ].each (attr) ->
+                if Object.has sentOptions, attr
+                    Object.each sentOptions[attr], (key, value) ->
+                        options['option-' + attr + '-' + key] = value
+
+            if Object.has sentOptions, 'own-oid'
+                options['option-own-oid'] = sentOptions['own-oid']
+
+            setStoredDatas options, ->
+                data?.invalidateCache()
                 updateTabs()
                 sendResponse { result: request.value }
 
@@ -386,7 +406,7 @@
 
         getSourcesForExtra: (request, sender, sendResponse) ->
             if data?
-                getStoredData 'option-match-extra-' + request.tag, true, (match) ->
+                getStoredData 'option-show-sources', true, (match) ->
                     if match
                         sendResponse
                             result: data.getSourcesForExtra request.tag, request.oid
@@ -409,8 +429,7 @@
 
                 unless player?
                     sendResponse { status: 'not-found' }
-
-                    return false
+                    return
 
                 if Object.has player.extra, 'anomaly'
                     getStoredData 'option-show-anomalies', true, (showAnomalies) ->
@@ -418,22 +437,36 @@
                             delete player.extra.anomaly
 
                         sendResponse { status: 'success', player: player }
+                else
+                    sendResponse { status: 'success', player: player }
 
-                    return true
+            checkForSelf = ->
+                if Object.has(request, 'extra') and Object.has(request.extra, 'show_self') and request.extra.show_self
+                    doGetPlayer()
+                    return
 
-                sendResponse { status: 'success', player: player }
-
-                return false
+                getStoredData 'option-show-hide-self', false, (hide) ->
+                    if hide
+                        # user wants to hide his/her own oid
+                        getStoredData 'option-own-oid', '', (foundOid) ->
+                            if foundOid is request.oid
+                                # this is the user
+                                sendResponse { status: 'not-found' }
+                            else
+                                doGetPlayer()
+                    else
+                        doGetPlayer()
 
             if not Object.has(request, 'extra') or not Object.has(request.extra, 'match')
-                return doGetPlayer()
+                checkForSelf()
+                return
 
             getStoredData 'option-match-' + request.extra.match, true, (doMatch) ->
                 unless doMatch
                     sendResponse { status: 'not-found' }
                     return
 
-                doGetPlayer()
+                checkForSelf()
 
             true
 
@@ -476,6 +509,15 @@
                 data: data.find request.pattern
 
             false
+
+        shouldShowExport: (request, sender, sendResponse) ->
+            sent = false
+
+            getStoredData 'option-show-export', true, (show) ->
+                sent = true
+                sendResponse { value: show }
+
+            !sent
 
     module.extension.addMessageListener (request, sender, sendResponse) ->
         reply = null

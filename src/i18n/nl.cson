@@ -145,39 +145,54 @@
     options_manifest_example_outro:
         message: 'toe. Neem dan eens een kijkje naar <a target="_blank" href="https://plus.google.com/+NianticProject/posts/eTDoXUG8TkB"> deze post van het Niantic Project</a> of <a target="_blank" href="https://plus.google.com/110350977702120778591/posts/GH32VJw1fhA"> deze post van Klue/ADA</a>.'
         description: 'Text below the link to the example manifest.'
-    options_settings_title:
-        message: 'Instellingen'
-        description: 'Title of the settings section.'
-    options_settings_intro:
-        message: 'Deze sectie bevat een aantal instellingen van de extensie.'
-        description: 'Intro text to the settings section.'
-    options_layout_options_title:
-        message: 'Layout Opties'
-        description: 'Title of the layout settings subsection.'
-    options_layout_options_intro:
-        message: 'Deze subsectie bevat een aantal layout tweaks.'
-        description: 'Intro to the layout settings subsection.'
-    options_settings_enable_anomalies:
-        message: 'Toon anomalieën.'
-        description: 'One of the settings.'
+    options_matcher_options_title:
+        message: 'Matcher Opties'
+        description: 'Title of the matcher settings subsection.'
+    options_matcher_options_intro:
+        message: 'Deze subsectie laat toe de matcher in te stellen.'
+        description: 'Intro to the matcher settings subsection.'
     options_settings_match_popups:
-        message: 'Controleer profiel pop-ups.'
+        message: 'Match profiel pop-ups.'
         description: 'One of the settings.'
     options_settings_match_authors:
-        message: 'Controleer auteurs van berichten en commentaren, event RSVP\'s, de event aanmaker etc.'
+        message: 'Match auteurs van posts en commentaren, evenement RSVP\'s, de makers van evenementen etc.'
         description: 'One of the settings.'
     options_settings_match_mentions:
-        message: 'Controleer mentions in posts.'
+        message: 'Match vermeldingen in posts.'
         description: 'One of the settings.'
     options_settings_match_people:
-        message: 'Controleer mensen in de \'Gemeenschappelijk met jou\' secties.'
+        message: 'Match mensen in de \'In common with you\', \'In his/her circles\' or \'Have him/her in circles\' secties.'
         description: 'One of the settings.'
-    options_settings_extra_event:
-        message: 'Toon een link naar het bronbestand dat bij een event hoort op de pagina van dat event.'
+    options_settings_match_gapi_comments:
+        message: 'Match Google API commentaren (bvb. YouTube).'
         description: 'One of the settings.'
-    options_settings_extra_community:
-        message: 'Toon een link naar het bronbestand dat bij een community hoort op de pagina van die community.'
+    options_settings_match_community_members:
+        message: 'Match mensen in ledenlijsten van communities.'
         description: 'One of the settings.'
+    options_settings_match_hangouts:
+        message: 'Match Hangouts conversaties en ledenlijsten.'
+        description: 'One of the settings.'
+    options_display_options_title:
+        message: 'Weergave Opties'
+        description: 'Title of the matcher settings subsection.'
+    options_display_options_intro:
+        message: 'Deze subsectie bevat enkele weergave opties.'
+        description: 'Intro to the matcher settings subsection.'
+    options_settings_display_anomalies:
+        message: 'Toon anomaly logo\'s.'
+        description: 'One of the settings.'
+    options_settings_display_export:
+        message: 'Toon een export-knop in communities'
+        description: 'One of the settings.'
+    options_settings_display_sources:
+        message: 'Toon bronbestanden verbonden aan communities en evenementen.'
+        description: 'One of the settings.'
+    options_settings_display_hide_self:
+        message: 'Verberg eigen data. Vul hieronder je OID in:'
+        description: 'One of the settings.'
+    options_save:
+        message: 'Opslaan'
+        description: 'Text on a button that saves stuff.'
     options_about_title:
         message: 'Over'
         description: 'Title of the section containing info about the extension.'
@@ -214,6 +229,9 @@
     options_manifest_info:
         message: 'Factie: {faction}, {count} spelers, versie {version}'
         description: 'Information shown about the manifests.'
+    options_view:
+        message: 'Bekijken'
+        description: 'Tooltip for the view button.'
     options_rename:
         message: 'Hernoem'
         description: 'Tooltip for the rename button.'

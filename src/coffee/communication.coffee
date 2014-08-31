@@ -71,4 +71,8 @@
         @send { type: 'getTranslationsWithPrefix', prefix: prefix, locale: locale }, (result) ->
             callback result.messages
 
+    exports.shouldShowExport = (callback) ->
+        @send { type: 'shouldShowExport' }, (result) ->
+            callback result.value
+
 )(iidentity or (iidentity = window.iidentity = {}))
