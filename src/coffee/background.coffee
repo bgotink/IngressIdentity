@@ -409,8 +409,7 @@
 
                 unless player?
                     sendResponse { status: 'not-found' }
-
-                    return false
+                    return
 
                 if Object.has player.extra, 'anomaly'
                     getStoredData 'option-show-anomalies', true, (showAnomalies) ->
@@ -418,22 +417,33 @@
                             delete player.extra.anomaly
 
                         sendResponse { status: 'success', player: player }
+                else
+                    sendResponse { status: 'success', player: player }
 
-                    return true
-
-                sendResponse { status: 'success', player: player }
-
-                return false
+            checkForSelf = ->
+                getStoredData 'option-show-hide-self', false, (hide) ->
+                    if hide
+                        # user wants to hide his/her own oid
+                        getStoredData 'option-own-oid', '', (foundOid) ->
+                            if foundOid is request.oid
+                                # this is the user
+                                sendResponse { status: 'not-found' }
+                            else
+                                doGetPlayer()
+                    else
+                        doGetPlayer()
 
             if not Object.has(request, 'extra') or not Object.has(request.extra, 'match')
-                return doGetPlayer()
+                checkForSelf()
+
+                true
 
             getStoredData 'option-match-' + request.extra.match, true, (doMatch) ->
                 unless doMatch
                     sendResponse { status: 'not-found' }
                     return
 
-                doGetPlayer()
+                checkForSelf()
 
             true
 
