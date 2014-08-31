@@ -154,6 +154,9 @@
         getVersion: -> @data and @data.getVersion()
         getFaction: -> @data and @data.getFaction()
 
+        hasPlayer: -> false
+        getPlayer: -> null
+
         getNbPlayers: -> 0
 
         getUrl: -> exports.spreadsheets.keyToUrl @key
