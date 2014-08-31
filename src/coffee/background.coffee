@@ -421,6 +421,10 @@
                     sendResponse { status: 'success', player: player }
 
             checkForSelf = ->
+                if Object.has(request, 'extra') and Object.has(request.extra, 'show_self') and request.extra.show_self
+                    doGetPlayer()
+                    return
+
                 getStoredData 'option-show-hide-self', false, (hide) ->
                     if hide
                         # user wants to hide his/her own oid
@@ -435,8 +439,7 @@
 
             if not Object.has(request, 'extra') or not Object.has(request.extra, 'match')
                 checkForSelf()
-
-                true
+                return
 
             getStoredData 'option-match-' + request.extra.match, true, (doMatch) ->
                 unless doMatch

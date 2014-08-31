@@ -65,19 +65,20 @@
 
     parseName = (entry, callback) ->
         module.comm.getPlayer entry.oid, (err, player) ->
-            if player?.nickname?
-                entry.name = player.name
-                # entry.nickname = player.nickname
-            else
-                nameRegexes.each (re) ->
-                    matches = false
-                    if matches = entry.name.match re
-                        entry.nickname = matches[1].compact()
-                        entry.name = entry.name.remove(re).compact()
+                if player?.nickname?
+                    entry.name = player.name
+                    # entry.nickname = player.nickname
+                else
+                    nameRegexes.each (re) ->
+                        matches = false
+                        if matches = entry.name.match re
+                            entry.nickname = matches[1].compact()
+                            entry.name = entry.name.remove(re).compact()
 
-                        false
+                            false
 
-            callback()
+                callback()
+            , { show_self: true }
 
     parseHelper = (i, l, extractName, removeExisting, callback) ->
         # call callback when done
@@ -110,21 +111,22 @@
 
         if removeExisting
             module.comm.getPlayer entry.oid, (err, player) ->
-                module.log.error err if err? and err isnt 'not-found'
+                    module.log.error err if err? and err isnt 'not-found'
 
-                if not removeExisting or not player?.extra?.community?
-                    doParseHelper true
-                else
-                    communities = player.extra.community
-                    communities = [ communities ] unless Array.isArray communities
+                    if not removeExisting or not player?.extra?.community?
+                        doParseHelper true
+                    else
+                        communities = player.extra.community
+                        communities = [ communities ] unless Array.isArray communities
 
-                    found = false
-                    communities.each (community) ->
-                        if rawData.oid is community.to(community.indexOf ':').compact()
-                            found = true
-                            false
+                        found = false
+                        communities.each (community) ->
+                            if rawData.oid is community.to(community.indexOf ':').compact()
+                                found = true
+                                false
 
-                    doParseHelper !found
+                        doParseHelper !found
+                , { show_self: true }
         else
             doParseHelper true
 
