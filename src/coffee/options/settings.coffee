@@ -22,16 +22,12 @@
                     self.checked = state
 
                     if attr is 'hide-self'
-                        if state
-                            module.comm.getOption 'own-oid', '', (oid) ->
-                                $ '.own-oid > input'
-                                    .prop 'disabled', false
-                                    .val oid
-                                $ '.own-oid button'
-                                    .prop 'disabled', false
-                        else
-                            $ '.own-oid > input, .own-oid button'
-                                .prop 'disabled', true
+                        $ '.own-oid > input, .own-oid button'
+                            .prop 'disabled', !state
+
+        module.comm.getOption 'own-oid', '', (oid) ->
+            $ '.own-oid > input'
+                .val oid
 
     saveName = ->
         return unless $('input.hide-self').is ':checked'
@@ -62,7 +58,7 @@
                 module.comm.setOption 'match-' + $this.attr('data-match'), newState, (state) ->
                     $this.prop 'disabled', false
 
-                    if state isn newState
+                    if state isnt newState
                         # something went wrong :(
                         self.checked = state
 
@@ -79,7 +75,7 @@
                 module.comm.setOption 'show-' + attr, newState, (state) ->
                     $this.prop 'disabled', false
 
-                    if state isn newState
+                    if state isnt newState
                         # something went wrong :(
                         self.checked = state
                         return
