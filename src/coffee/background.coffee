@@ -362,7 +362,7 @@
                 return false
 
             setStoredData 'option-' + request.option, request.value, ->
-                data.invalidateCache()
+                data?.invalidateCache()
                 updateTabs()
                 sendResponse { result: request.value }
 
