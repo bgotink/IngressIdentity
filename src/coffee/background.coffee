@@ -490,6 +490,15 @@
 
             false
 
+        shouldShowExport: (request, sender, sendResponse) ->
+            sent = false
+
+            getStoredData 'option-show-export', true, (show) ->
+                sent = true
+                sendResponse { value: show }
+
+            !sent
+
     module.extension.addMessageListener (request, sender, sendResponse) ->
         reply = null
 

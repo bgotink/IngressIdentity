@@ -12,40 +12,46 @@
 
         oid = match[2]
 
-        return unless $('.iidentity-export').length is 0
+        module.comm.shouldShowExport (show) ->
+            if not show
+                $ '.iidentity-export'
+                    .remove()
+                return
+            else if $('.iidentity-export').length isnt 0
+                return
 
-        $ 'div.WZd.wTc'
-            .append $ '''
-            <a href="#export" class="d-s ob UCc eke iidentity-export" tabindex="0">
-                <div class="TZd SZd">
-                    <span class="VZd NEd">Export to IngressIdentity</span>
-                </div>
-            </a>
-                      '''
+            $ 'div.WZd.wTc'
+                .append $ '''
+                <a href="#export" class="d-s ob UCc eke iidentity-export" tabindex="0">
+                    <div class="TZd SZd">
+                        <span class="VZd NEd">Export to IngressIdentity</span>
+                    </div>
+                </a>
+                          '''
 
-        $ '.iidentity-export'
-            .on 'click', ->
-                $loadMore = $ 'span.L5'
+            $ '.iidentity-export'
+                .on 'click', ->
+                    $loadMore = $ 'span.L5'
 
-                data =
-                    oid: oid
-                    showWarning: $loadMore.length isnt 0 and 'none' isnt $loadMore.css 'display'
-                    entries: []
+                    data =
+                        oid: oid
+                        showWarning: $loadMore.length isnt 0 and 'none' isnt $loadMore.css 'display'
+                        entries: []
 
-                $ 'div.X8c.xTc'
-                    .each ->
-                        $this = $ @
-                        data.entries.push
-                            oid: $this.attr 'oid'
-                            name: $this.find('.l0d > .n0d .VCc').text()
+                    $ 'div.X8c.xTc'
+                        .each ->
+                            $this = $ @
+                            data.entries.push
+                                oid: $this.attr 'oid'
+                                name: $this.find('.l0d > .n0d .VCc').text()
 
-                module.comm.send
-                    type: 'setExportData'
-                    data: data
+                    module.comm.send
+                        type: 'setExportData'
+                        data: data
 
-                module.showPopup 'Export Community', 'gray', module.extension.getURL 'export.html'
+                    module.showPopup 'Export Community', 'gray', module.extension.getURL 'export.html'
 
-                false
+                    false
 
     module.addExport = addExport
 )(iidentity or (iidentity = window.iidentity = {}), window.jQuery, window)
