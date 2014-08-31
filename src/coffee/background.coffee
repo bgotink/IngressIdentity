@@ -279,7 +279,10 @@
                 return false
 
             if data?
-                sendResponse data.getErrors()
+                errors = data.getErrors()
+
+                module.log.log 'Sending manifest errors', errors
+                sendResponse errors
             else
                 sendResponse {}
 

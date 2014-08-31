@@ -120,8 +120,8 @@
 
                     callback false
 
-        hasErrors: -> @err? and @err.length > 0
-        getErrors: -> $.extend {}, @err, @loadingErrors
+        hasErrors: -> @loadingErrors?.length > 0 or @err?.length > 0
+        getErrors: -> if @loadingErrors? then @loadingErrors.union @err else @err
 
         hasLoadingErrors: -> !!@loadingErrors
         setLoadingErrors: (err) ->
