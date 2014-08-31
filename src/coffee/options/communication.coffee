@@ -33,8 +33,8 @@
         @send { type: 'reloadData' }, (result) ->
             callback result.status
 
-    module.comm.setOption = (option, value, callback) ->
-        @send { type: 'setOption', option: option, value: value }, (result) ->
+    module.comm.setOptions = (options, callback) ->
+        @send { type: 'setOptions', options: options }, (result) ->
             callback result.result
     module.comm.getOption = (option, defaultValue, callback) ->
         @send { type: 'getOption', option: option, defaultValue: defaultValue }, (result) ->

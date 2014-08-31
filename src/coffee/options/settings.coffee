@@ -4,13 +4,21 @@
 # @license MIT
 
 ((module, $) ->
+    currentSettings =
+        match: {}
+        show: {}
+        'own-oid': ''
+
     updateSettings = ->
         $ 'input[data-match]'
             .each ->
                 self = @
+                attr = $ @
+                    .attr 'data-match'
 
-                module.comm.getOption 'match-' + $(@).attr('data-match'), true, (state) ->
+                module.comm.getOption 'match-' + attr, true, (state) ->
                     self.checked = state
+                    currentSettings.match[attr] = state
 
         $ 'input[data-show]'
             .each ->
@@ -20,78 +28,90 @@
 
                 module.comm.getOption 'show-' + attr, (attr isnt 'hide-self'), (state) ->
                     self.checked = state
+                    currentSettings.show[attr] = state
 
                     if attr is 'hide-self'
-                        $ '.own-oid > input, .own-oid button'
+                        $ '.own-oid > input'
                             .prop 'disabled', !state
 
         module.comm.getOption 'own-oid', '', (oid) ->
             $ '.own-oid > input'
                 .val oid
+            currentSettings['own-oid'] = oid
 
-    saveName = ->
-        return unless $('input.hide-self').is ':checked'
+    findChangedOptions = ->
+        newSettings =
+            match: {}
+            show: {}
+            'own-oid': ''
 
-        $oid = $ '.own-oid > input'
+        [ 'match', 'show' ].each (attr) ->
+            $ 'input[data-' + attr + ']'
+                .each ->
+                    newSettings[attr][$(@).attr 'data-' + attr] = @.checked
 
-        $ '.own-oid > input, .own-oid button'
-            .prop 'disabled', true
+                    # if @.checked is false, the auto-return of CoffeeScript will break the loop...
+                    true
 
-        module.comm.setOption 'own-oid', $oid.val(), (oid) ->
-            $oid.val oid
+        newSettings['own-oid'] = $ '.own-oid > input'
+            .val()
 
-            $ '.own-oid > input, .own-oid button'
-                .prop 'disabled', false
+        module.log.log 'Old settings state', currentSettings, 'new settings state', newSettings
+
+        if not newSettings.show['hide-self'] or currentSettings['own-oid'] is newSettings['own-oid']
+            delete newSettings['own-oid']
+
+        [ 'match', 'show' ].each (attr) ->
+            Object.each currentSettings[attr], (key, value) ->
+                if value is newSettings[attr][key]
+                    delete newSettings[attr][key]
+
+            if Object.isEmpty newSettings[attr]
+                delete newSettings[attr]
+
+        if Object.isEmpty newSettings
+            module.log.log 'No settings have been changed'
+            return false
+
+        module.log.log 'Found changed settings:', newSettings
+        newSettings
+
+    save = ->
+        changes = findChangedOptions()
+
+        # return if there are no changes
+        return if changes is false
+
+        $button = $ '.settings button'
+        $inputs = $ '.settings input'
+
+        $button.prop 'disabled', true
+        $inputs.prop 'disabled', true
+
+        module.comm.setOptions changes, ->
+            updateSettings()
+
+            $button.prop 'disabled', false
+            $inputs.prop 'disabled', false
+
+    onSettingChanged = ->
+        $ '.settings button'
+            .prop 'disabled', (findChangedOptions() is false)
+
+        $ '.own-oid input'
+            .prop 'disabled', (not $('input[data-show="hide-self"]').is(':checked'))
 
     module.updateSettings = updateSettings
 
     module.initSettings = ->
-        $ 'input[data-match]'
-            .on 'change', ->
-                $this = $ @
-                self = @
+        $ 'input[data-match], input[data-show]'
+            .on 'change', onSettingChanged
 
-                newState = @.checked
-
-                $this.prop 'disabled', true
-
-                module.comm.setOption 'match-' + $this.attr('data-match'), newState, (state) ->
-                    $this.prop 'disabled', false
-
-                    if state isnt newState
-                        # something went wrong :(
-                        self.checked = state
-
-        $ 'input[data-show]'
-            .on 'change', ->
-                $this = $ @
-                self = @
-
-                attr = $this.attr 'data-show'
-                newState = @.checked
-
-                $this.prop 'disabled', true
-
-                module.comm.setOption 'show-' + attr, newState, (state) ->
-                    $this.prop 'disabled', false
-
-                    if state isnt newState
-                        # something went wrong :(
-                        self.checked = state
-                        return
-
-                    if attr is 'hide-self'
-                        $ '.own-oid > input, .own-oid button'
-                            .prop 'disabled', !state
-
-        $ '.own-oid button'
-            .on 'click', saveName
         $ '.own-oid > input'
-            .on 'keypress', (e) ->
-                if e.which is 13
-                    saveName()
+            .on 'change', onSettingChanged
 
-                    false
+        $ '.settings button'
+            .on 'click', save
 
         updateSettings()
 )(iidentity or (iidentity = window.iidentity = {}), window.jQuery)

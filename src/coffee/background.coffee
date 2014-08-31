@@ -78,6 +78,15 @@
 
             callback()
 
+    setStoredDatas = (data, callback) ->
+        module.log.log 'Settings multiple storage values:', data
+        storage.set data, ->
+            Object.each data, (key) ->
+                if Object.has storageCache, key
+                    delete storageCache[key]
+
+            callback()
+
     getManifestKeys = (callback) ->
         module.log.log 'Fetching manifest keys...'
         storage.get { manifest_keys: [] }, (result) ->
@@ -354,14 +363,25 @@
 
             true
 
-        setOption: (request, sender, sendResponse) ->
+        setOptions: (request, sender, sendResponse) ->
             unless isOptionsPage sender.url
-                module.log.error 'A \'setOption\' message can only originate from the options page'
+                module.log.error 'A \'setOptions\' message can only originate from the options page'
                 module.log.error 'Not from %s', sender.url
                 # silently die by not sending a response
                 return false
 
-            setStoredData 'option-' + request.option, request.value, ->
+            options = {}
+            sentOptions = request.options
+
+            [ 'match', 'show' ].each (attr) ->
+                if Object.has sentOptions, attr
+                    Object.each sentOptions[attr], (key, value) ->
+                        options['option-' + attr + '-' + key] = value
+
+            if Object.has sentOptions, 'own-oid'
+                options['option-own-oid'] = sentOptions['own-oid']
+
+            setStoredDatas options, ->
                 data?.invalidateCache()
                 updateTabs()
                 sendResponse { result: request.value }
