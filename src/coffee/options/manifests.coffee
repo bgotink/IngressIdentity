@@ -51,7 +51,7 @@
                     $elem.append $('<p class="error">').text err
         else
             Object.each errors, (key, value) ->
-                if key is '__errors'
+                if key is '__errors' and 0 is $elem.find('> .panel > .panel-body').length
                     $ '<div class="panel-body" data-key="__errors">'
                         .insertBefore $elem.find '> .panel > .list-group'
 
