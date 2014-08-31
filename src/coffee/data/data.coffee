@@ -368,9 +368,7 @@
                         key: source.getTag()
                     }]
 
-            result.reduce (res, elem) ->
-                res.concat elem
-            ,
+            result.flatten()
 
         find: (pattern) ->
             if @topLevel
