@@ -45,7 +45,7 @@
             if not Object.isString(parentData.key) or parentData.key.isBlank()
                 if err?
                     err.push 'Cannot resolve key ' + key
-                return false
+                return ''
 
             data.key = exports.spreadsheets.parseKey(parent).key
 
@@ -456,7 +456,7 @@
             tmpErr = []
             key = resolveKey keys[i], '', tmpErr
 
-            if key is false
+            if key is ''
                 err[keys[i]] = tmpErr
                 step i + 1
                 return
