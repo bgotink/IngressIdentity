@@ -38,12 +38,13 @@
             pattern.nickname = val
 
         if $('#search_enable_extra').is ':checked'
-            if 'unknown' isnt (val = $('#search_faction').selected())
+            if '' isnt (val = $('#search_faction').selected())
                 pattern.faction = val
 
             if 0 isnt (val = $('#search_anomalies').selected()).length
                 pattern.extra =
-                    anomalies: if val.length is 1 then val[0] else val
+                    anomaly: val
+
         $modal = $ '.modal'
             .modal 'show'
             .delay 1000

@@ -508,8 +508,12 @@
         find: (request, sender, sendResponse) ->
             module.log.log 'Trying to find', request.pattern
 
-            sendResponse
-                data: data.find request.pattern
+            if data?
+                sendResponse
+                    data: data.find request.pattern
+            else
+                sendResponse
+                    data: []
 
             false
 

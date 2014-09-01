@@ -6,35 +6,7 @@
 ((module, $) ->
     exports = if Object.has(module, 'data') then module.data else module.data = {}
 
-    stdPatternKeys = [ 'name', 'nickname', 'level', 'oid' ]
-
     # unexported helper functions and classes
-
-    stringToRegExp = (str) ->
-        re = ''
-
-        if not str.startsWith '^'
-            re += '^.*'
-
-        re += (
-            str.split /\s+/
-                .join '(.*\\s+.*)?'
-        )
-
-        if not str.endsWith '$'
-            re += '.*$'
-
-        new RegExp re, 'i'
-
-    createPattern = (original) ->
-        Object.map original, (key, value) ->
-            if key is 'faction'
-                value
-            else if key is 'extra'
-                # TODO
-                value
-            else
-                stringToRegExp value
 
     resolveKey = (key, parent, err) ->
         data = exports.spreadsheets.parseKey key
@@ -375,9 +347,8 @@
 
         find: (pattern) ->
             if @topLevel
-                pattern = createPattern pattern
-
-                stdPattern = Object.select pattern, stdPatternKeys
+                stdPattern = module.data.createStandardPlayerFinder pattern
+                pattern = module.data.createPlayerFinder pattern
                 result = []
 
                 @getSources().each (source) ->
