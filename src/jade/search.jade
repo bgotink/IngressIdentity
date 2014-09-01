@@ -47,7 +47,8 @@ html(data-translate-prefix='search')
                             .form-group
                                 label(for='search_faction', data-translate-name='faction') Faction
                                 select#search_faction(class='form-control', disabled)
-                                    option(value='unknown', selected, data-translate-name='faction_unknown') Unknown
+                                    option(value='', selected, data-translate-name='faction_all') All
+                                    option(value='unknown', data-translate-name='faction_unknown') Unknown
                                     option(value='enlightened', data-translate-name='faction_enlightened') Enlightened
                                     option(value='resistance', data-translate-name='faction_resistance') Resistance
                                     option(value='error', data-translate-name='faction_error') Error
@@ -66,3 +67,11 @@ html(data-translate-prefix='search')
             +row
                 h2(data-translate-name='results') Results
                 .results
+        .modal.fade(data-backdrop='static', data-keyboard='false', data-show='false')
+            .modal-dialog
+                .modal-content
+                    .modal-header
+                        h4.modal-title(data-translate-name='searching') Searching...
+                    .modal-body
+                        .progress
+                            .progress-bar.progress-bar-striped.active(style='width: 100%')

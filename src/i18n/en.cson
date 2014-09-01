@@ -337,6 +337,9 @@
     search_faction:
         message: 'Faction'
         description: 'The label for the "Faction" input'
+    search_faction_all:
+        message: 'All'
+        description: 'The label for selecting all factions.'
     search_faction_unknown:
         message: 'Unknown'
         description: 'The label for the "Unknown" faction.'
@@ -361,4 +364,7 @@
     search_levelValue:
         message: 'L{value}'
         description: 'How the level is shown (L1, L2, ... L16 in English)'
+    search_searching:
+        message: 'Searching...'
+        description: 'Title of the modal that shows the extension is searching.'
 }
