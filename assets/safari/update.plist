@@ -10,9 +10,9 @@
        <key>Developer Identifier</key>
        <string>MTD9B5KP5G</string>
        <key>CFBundleVersion</key>
-       <string>7</string>
+       <string>9</string>
        <key>CFBundleShortVersionString</key>
-       <string>0.7.1</string>
+       <string>0.8.0</string>
        <key>URL</key>
        <string>https://raw.githubusercontent.com/bgotink/IngressIdentity/gh-pages/assets/safari/IngressIdentity.safariextz</string>
      </dict>
