@@ -76,18 +76,22 @@ button {
 }
 
 .panel-heading {
+    display: -webkit-flex;
     display: flex;
     align-items: center;
+    -webkit-flex-direction: row;
     flex-direction: row;
 
     > .buttons {
         color: inherit;
+        -webkit-flex: none;
         flex: none;
         height: 23px;
         margin-left: 1em;
     }
 
     > .key-container {
+        -webkit-flex: 1 0 auto;
         flex: 1 0 auto;
     }
 
