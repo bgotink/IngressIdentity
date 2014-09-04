@@ -328,9 +328,6 @@
     search_nickname:
         message: 'Agent Naam'
         description: 'The label for the "Agent Name" input'
-    search_enable_extra:
-        message: 'Extra zoekvelden inschakelen? Dit kan het zoeken significant vertragen!'
-        description: 'The label for the checkbox that enables extra inputs.'
     search_faction:
         message: 'Factie'
         description: 'The label for the "Faction" input'

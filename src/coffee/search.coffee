@@ -37,13 +37,12 @@
         if 0 isnt (val = $('#search_nickname').val().trim()).length
             pattern.nickname = val
 
-        if $('#search_enable_extra').is ':checked'
-            if '' isnt (val = $('#search_faction').selected())
-                pattern.faction = val
+        if '' isnt (val = $('#search_faction').selected())
+            pattern.faction = val
 
-            if 0 isnt (val = $('#search_anomalies').selected()).length
-                pattern.extra =
-                    anomaly: val
+        if 0 isnt (val = $('#search_anomalies').selected()).length
+            pattern.extra =
+                anomaly: val
 
         $modal = $ '.modal'
             .modal 'show'
@@ -139,14 +138,6 @@
                         .submit()
 
                     false
-
-        $ '#search_enable_extra'
-            .on 'change', ->
-                val = $ @
-                    .is ':checked'
-
-                $ '#search_faction, #search_anomalies'
-                    .attr 'disabled', !val
 
         $ 'button.search'
             .on 'click', search

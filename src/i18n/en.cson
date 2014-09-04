@@ -331,9 +331,6 @@
     search_nickname:
         message: 'Agent Name'
         description: 'The label for the "Agent Name" input'
-    search_enable_extra:
-        message: 'Enable extra search patterns? This can make the search significantly slower!'
-        description: 'The label for the checkbox that enables extra inputs.'
     search_faction:
         message: 'Faction'
         description: 'The label for the "Faction" input'
