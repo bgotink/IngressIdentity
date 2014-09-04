@@ -84,29 +84,32 @@
                         )
 
                 $result.append(
-                    $ '<div class="panel-heading"><div class="panel-title row">'
+                    $ '<div class="panel-heading">'
                         .append(
-                            $ '<div class="col-xs-1 google-plus">'
+                            $ '<div class="row">'
                                 .append(
-                                    $ '<a target="_blank">'
-                                        .attr 'href', 'https://plus.google.com/' + result.oid
-                                        .append $ '<img src="img/g+.png" />'
+                                    $ '<div class="col-xs-1 google-plus">'
+                                        .append(
+                                            $ '<a target="_blank">'
+                                                .attr 'href', 'https://plus.google.com/' + result.oid
+                                                .append $ '<img src="img/g+.png" />'
+                                        )
                                 )
+                                .append(
+                                    $ '<div class="col-xs-3">'
+                                        .text result.name
+                                )
+                                .append(
+                                    $ '<div class="col-xs-3">'
+                                        .text result.nickname or '?'
+                                )
+                                .append(
+                                    $ '<div class="col-xs-1">'
+                                        .addClass 'iidentity-level-' + level
+                                        .text module._('levelValue', 'L{value}').assign { value: if level is '0' then '?' else level }
+                                )
+                                .append $anomalies
                         )
-                        .append(
-                            $ '<div class="col-xs-3">'
-                                .text result.name
-                        )
-                        .append(
-                            $ '<div class="col-xs-3">'
-                                .text result.nickname or '?'
-                        )
-                        .append(
-                            $ '<div class="col-xs-1">'
-                                .addClass 'iidentity-level-' + level
-                                .text module._('levelValue', 'L{value}').assign { value: if level is '0' then '?' else level }
-                        )
-                        .append $anomalies
                 )
 
                 # append sources

@@ -41,7 +41,7 @@ html(data-translate-prefix='search')
                             input#search_nickname(class='form-control', type='text')
                         .form-group
                             label(for='search_faction', data-translate-name='faction') Faction
-                            select#search_faction(class='form-control', disabled)
+                            select#search_faction(class='form-control')
                                 option(value='', selected, data-translate-name='faction_all') All
                                 option(value='unknown', data-translate-name='faction_unknown') Unknown
                                 option(value='enlightened', data-translate-name='faction_enlightened') Enlightened
@@ -49,7 +49,7 @@ html(data-translate-prefix='search')
                                 option(value='error', data-translate-name='faction_error') Error
                         .form-group
                             label(for='search_anomalies', data-translate-name='anomalies') Anomalies
-                            select#search_anomalies(class='form-control', multiple, disabled)
+                            select#search_anomalies(class='form-control', multiple)
                                 option(value='13magnus') 13Magnus
                                 option(value='recursion') Recursion
                                 option(value='interitus') Interitus
