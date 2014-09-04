@@ -6,7 +6,7 @@
     "description": "Adds Ingress players' information on Google+",
     "author": "Bram Gotink",
     "license": "MIT",
-    "version": "0.7.2",
+    "version": "0.8.0",
     "engines": {
         "firefox": ">=30.0 <=33.0"
     }
