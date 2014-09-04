@@ -22,6 +22,8 @@ web_resources = require './resources'
 backgroundPage = null
 contentScript = null
 exportScript = null
+optionsScript = null
+searchScript = null
 optionsTab = null
 actionButton = null
 
@@ -110,6 +112,51 @@ exports.main = ->
         onAttach: (worker) ->
             worker.port.on 'iidentity-request-to-background', createContentScriptMessageListener worker, worker.tab
 
+    # create script for options page
+    optionsScript = pageMod
+        include: [ url 'options.html' ]
+        contentScriptFile: [
+                'vendor/js/jquery.min.js'
+                'vendor/js/jquery-ui.min.js'
+                'vendor/js/sugar.min.js'
+                'vendor/js/bootstrap.min.js'
+                'js/options.js'
+            ].map url
+        contentScriptWhen: 'end'
+        contentScriptOptions:
+            baseURI: url ''
+        attachTo: [ 'existing', 'top' ]
+        onAttach: (worker) ->
+            tabId = worker.tab.id
+            workers[tabId] = worker
+
+            worker.on 'detach', ->
+                delete workers[tabId]
+
+            worker.port.on 'iidentity-request-to-background', createContentScriptMessageListener worker, worker.tab
+
+    # create script for search page
+    searchScript = pageMod
+        include: [ url 'search.html' ]
+        contentScriptFile: [
+                'vendor/js/jquery.min.js'
+                'vendor/js/sugar.min.js'
+                'vendor/js/bootstrap.min.js'
+                'js/search.js'
+            ].map url
+        contentScriptWhen: 'end'
+        contentScriptOptions:
+            baseURI: url ''
+        attachTo: [ 'existing', 'top' ]
+        onAttach: (worker) ->
+            tabId = worker.tab.id
+            workers[tabId] = worker
+
+            worker.on 'detach', ->
+                delete workers[tabId]
+
+            worker.port.on 'iidentity-request-to-background', createContentScriptMessageListener worker, worker.tab
+
     # create action button
     console.log 'Creating button'
     actionButton = createActionButton
@@ -126,25 +173,6 @@ exports.main = ->
 
             tabs.open
                 url: url 'options.html'
-                onReady: (tab) ->
-                    optionsTab = tab
-
-                    console.log 'Attaching options scripts to options.html'
-                    worker = tab.attach
-                        contentScriptFile: [
-                            'vendor/js/jquery.min.js'
-                            'vendor/js/jquery-ui.min.js'
-                            'vendor/js/sugar.min.js'
-                            'vendor/js/bootstrap.min.js'
-                            'js/options.js'
-                        ].map url
-
-                    workers[tab.id] = worker
-                    worker.on 'detach', ->
-                        optionsTab = null
-                        delete workers[tab.id]
-
-                    worker.port.on 'iidentity-request-to-background', createContentScriptMessageListener worker, tab
 
 exports.onUnload = ->
     console.log 'Unloading add-on...'
@@ -160,6 +188,8 @@ exports.onUnload = ->
     console.log 'Destroying content scripts'
     contentScript?.destroy()
     exportScript?.destroy()
+    optionsScript?.destroy()
+    searchScript?.destroy()
 
     console.log 'Destroying background page'
     backgroundPage?.destroy()

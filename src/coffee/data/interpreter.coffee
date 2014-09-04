@@ -19,7 +19,7 @@
     # An instance of ManifestEntry represents one row in a manifest.
     class ManifestEntry
         constructor: (data) ->
-            @err = [];
+            @err = []
 
             data = filterEmpty Object.clone data, true
 
@@ -34,6 +34,10 @@
                 # old-school stuff
                 if not Object.extended(@nonManifestData).reject('extratags').isEmpty()
                     @err.push 'Using old-type extratags combined with extra columns is discouraged.'
+
+            [ 'tag', 'faction', 'key', 'lastupdated', 'refresh' ].each (column) =>
+                if not Object.has @manifestData, column
+                    @err.push 'No ' + column + ' defined for source.'
 
         getExtraData: ->
             extratags = null;

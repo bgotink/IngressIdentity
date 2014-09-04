@@ -66,7 +66,6 @@
         # data will be null only if an error occured, otherwise it will be an
         #      array containing the tuples in the spreadsheet
         loadRaw: (callback) ->
-            self = @
             key = parseKey @key
 
             if not Object.has key, 'gid'
@@ -77,9 +76,9 @@
             else
                 url = baseQueryUrl.newSheet.assign key
 
-            (new google.visualization.Query(url)).send (response) ->
+            (new google.visualization.Query(url)).send (response) =>
                 if response.isError()
-                    module.log.error 'An error occured while fetching data from ' + self.key, response
+                    module.log.error 'An error occured while fetching data from ' + @key, response
                     callback response.getDetailedMessage(), null
                     return
 
@@ -117,10 +116,9 @@
         # data will be null only if an error occured, otherwise it will be an
         #      array containing the tuples in the spreadsheet
         load: (callback) ->
-            self = @
-            @loadRaw (err, data) ->
+            @loadRaw (err, data) =>
                 if data?
-                    dataErr = self.isValid data
+                    dataErr = @isValid data
                     if dataErr isnt true
                         if not err?
                             err = dataErr

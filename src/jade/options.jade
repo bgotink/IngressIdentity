@@ -7,7 +7,7 @@ mixin alert_success(klass, name, text)
         span(data-translate-name=name)= text
 
 mixin alert_warning(klass, name, text)
-    .hide.alert.alert-success.alert-dismissable(class='alert-' + klass)
+    .hide.alert.alert-warning.alert-dismissable(class='alert-' + klass)
         button.close(type='button', aria-hidden='true') &times;
         strong(data-translate-name='warning') Warning!
         span(data-translate-name=name)= text
@@ -19,10 +19,10 @@ mixin alert_danger(klass, name, text)
         span(data-translate-name=name)= text
 
 mixin settings_button(name, text)
-    p
-        button(type='button', data-loading-text='Storing...', class='btn btn-default btn-sm')&attributes(attributes).
-            Initializing...
-        span(data-translate-name='settings_' + name)= text
+    .checkbox
+        label
+            input(type="checkbox")&attributes(attributes)
+            span(data-translate-name='settings_' + name)= text
 
 doctype html
 html(data-translate-prefix='options')
@@ -56,11 +56,6 @@ html(data-translate-prefix='options')
                     help acquiring data to put in manifest files or source files.
             .row
                 .col-sm-8.col-sm-offset-2.col-md-6.col-md-offset-3
-                    if browser === 'firefox'
-                        .alert.alert-danger.alert-no-script
-                            strong(data-translate-name='error') Error!
-                            span(data-translate-name='no-script') Please close this tab and re-open it by clicking the action button.
-
                     +alert_success('reload-success', 'reload_success', 'The data was successfully reloaded.')
                     +alert_warning('reload-warning', 'reload_failed', 'Something went wrong when reloading the data.')
                     +alert_danger('reload-failed', 'reload_failed', 'Something went wrong when reloading the data.')
@@ -100,7 +95,7 @@ html(data-translate-prefix='options')
                                 .help-block
                                     p(data-translate-name='manifest_key_help').
                                         For more information about where to find the manifest key,
-                                        please take a look at <a target="_blank" href="help.html#key">the help page</a>.
+                                        please take a look at <a target="_blank" href="docs/options.html">the help page</a>.
                             .form-group
                                 label(for='name_input', data-translate-name='manifest_name_label') Manifest Name
                                 input#name_input(class='form-control', type='text')
@@ -123,20 +118,38 @@ html(data-translate-prefix='options')
                                     <a target="_blank" href="https://plus.google.com/110350977702120778591/posts/GH32VJw1fhA">
                                     this post by Klue/ADA</a>.
             +row
+                h2(data-translate-name='search_title') Search
+                p(data-translate-name='search_intro').
+                    The <a href="search.html">search page</a> allows you to query which people this extension has data on.
+                    It shows their name, nickname, level, the anomalies they went to and
+                    which source files list them.
+            +row.settings
                 h2(data-translate-name='settings_title') Settings
                 p(data-translate-name='settings_intro').
                     This section contains some settings for the extension.
                 div
-                    h3(data-translate-name='layout_options_title') Layout options
-                    p(data-translate-name='layout_options_intro') This subsection contains a couple of layout tweaks.
+                    h3(data-translate-name='matcher_options_title') Matcher Settings
+                    p(data-translate-name='matcher_options_intro') This subsection contains a couple of matcher tweaks.
                     div
-                        +settings_button('enable_anomalies', 'Show anomaly badges.')#enable_anomalies
                         +settings_button('match_popups', 'Match profile pop-ups.')(data-match="a.Ug[oid]")
                         +settings_button('match_authors', 'Match authors of posts and comments, event RSVP, event creator etc.')(data-match='a.ob.tv.Ub[oid]')
                         +settings_button('match_mentions', 'Match mentions in posts.')(data-match='a.proflink.aaTEdf[oid]')
                         +settings_button('match_people', "Match people in the 'In common with you', 'In his/her circles' or 'Have him/her in circles' sections.")(data-match='div.o0b[oid]')
-                        +settings_button('extra_event', 'Show links to the source spreadsheets linked to an event on the page of that event.')(data-match='extra-event')
-                        +settings_button('extra_community', 'Show links to the source spreadsheets linked to a community on the page of that community.')(data-match='extra-community')
+                        +settings_button('match_gapi_comments', 'Match Google API comments (e.g. YouTube).')(data-match='div.f5.wy > header > h3 > a[oid]')
+                        +settings_button('match_community_members', 'Match people on member pages of communities.')(data-match='div.xTc.X8c[oid]')
+                        +settings_button('match_hangouts', 'Match Hangouts.')(data-match='a > div.n291pb > img')
+                div
+                    h3(data-translate-name='display_options_title') Display Settings
+                    p(data-translate-name='display_options_intro') This subsection contains some display settings.
+                    div
+                        +settings_button('display_anomalies', 'Show anomaly badges.')(data-show='anomalies')
+                        +settings_button('display_export', 'Show export button in communities.')(data-show='export')
+                        +settings_button('display_sources', 'Show source files linked to communities and events.')(data-show='sources')
+                        +settings_button('display_hide_self', 'Hide own user data. Fill your OID in below:')(class='hide-self', data-show='hide-self')
+                        .form-group.own-oid
+                            input(class='form-control', type='text', disabled)
+                div
+                    button(class='btn btn-primary', type='button', data-translate-text='save', disabled) Save
             +row
                 h2(data-translate-name='about_title') About
                 p(data-translate-name='about_text').

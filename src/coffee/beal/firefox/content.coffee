@@ -44,9 +44,6 @@
     exports.browser = 'firefox'
 
     exports.init = ->
-        $ '.alert-no-script'
-            .addClass 'hide'
-
         addon.port.on 'iidentity-answer-from-background', (message) ->
                 callbackId = message.id
 

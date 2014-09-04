@@ -38,6 +38,12 @@
     content_resistance:
         message: 'Resistance'
         description: 'The name of the resistance faction'
+    content_unknown:
+        message: 'Unknown'
+        description: 'The name of the "unknown" faction'
+    content_error:
+        message: 'Error'
+        description: 'The name of the "error" faction'
     content_communities:
         message: 'Communities'
         description: 'The plural of community'
@@ -122,7 +128,7 @@
         message: 'Manifest Key'
         description: 'Label for the input for manifest keys.'
     options_manifest_key_help:
-        message: 'For more information about where to find the manifest key, please take a look at <a target="_blank" href="help.html#key">the help page</a>.'
+        message: 'For more information about where to find the manifest key, please take a look at <a target="_blank" href="docs/options.html">the help page</a>.'
         description: 'Help text for the input for manifest keys.'
     options_manifest_name_label:
         message: 'Manifest Name'
@@ -145,15 +151,12 @@
     options_settings_intro:
         message: 'This section contains some settings for the extension.'
         description: 'Intro text to the settings section.'
-    options_layout_options_title:
-        message: 'Layout Options'
-        description: 'Title of the layout settings subsection.'
-    options_layout_options_intro:
-        message: 'This subsection contains a couple of layout tweaks.'
-        description: 'Intro to the layout settings subsection.'
-    options_settings_enable_anomalies:
-        message: 'Show anomaly badges'
-        description: 'One of the settings.'
+    options_matcher_options_title:
+        message: 'Matcher Settings'
+        description: 'Title of the matcher settings subsection.'
+    options_matcher_options_intro:
+        message: 'This subsection contains a couple of matcher tweaks.'
+        description: 'Intro to the matcher settings subsection.'
     options_settings_match_popups:
         message: 'Match profile pop-ups.'
         description: 'One of the settings.'
@@ -166,12 +169,36 @@
     options_settings_match_people:
         message: 'Match people in the \'In common with you\', \'In his/her circles\' or \'Have him/her in circles\' sections.'
         description: 'One of the settings.'
-    options_settings_extra_event:
-        message: 'Show links to the source spreadsheets linked to an event on the page of that event.'
+    options_settings_match_gapi_comments:
+        message: 'Match Google API comments (e.g. YouTube).'
         description: 'One of the settings.'
-    options_settings_extra_community:
-        message: 'Show links to the source spreadsheets linked to a community on the page of that community.'
+    options_settings_match_community_members:
+        message: 'Match people on member lists in communities.'
         description: 'One of the settings.'
+    options_settings_match_hangouts:
+        message: 'Match Hangouts conversations and member lists.'
+        description: 'One of the settings.'
+    options_display_options_title:
+        message: 'Display Settings'
+        description: 'Title of the matcher settings subsection.'
+    options_display_options_intro:
+        message: 'This subsection contains some display settings.'
+        description: 'Intro to the matcher settings subsection.'
+    options_settings_display_anomalies:
+        message: 'Show anomaly badges.'
+        description: 'One of the settings.'
+    options_settings_display_export:
+        message: 'Show export button in communities.'
+        description: 'One of the settings.'
+    options_settings_display_sources:
+        message: 'Show source files linked to communities and events.'
+        description: 'One of the settings.'
+    options_settings_display_hide_self:
+        message: 'Hide own user data. Fill your OID in below:'
+        description: 'One of the settings.'
+    options_save:
+        message: 'Save'
+        description: 'Text on a button that saves stuff.'
     options_about_title:
         message: 'About'
         description: 'Title of the section containing info about the extension.'
@@ -208,6 +235,9 @@
     options_manifest_info:
         message: 'Faction: {faction}, {count} players, version {version}'
         description: 'Information shown about the manifests.'
+    options_view:
+        message: 'View'
+        description: 'Tooltip for the view button.'
     options_rename:
         message: 'Rename'
         description: 'Tooltip for the rename button.'
@@ -223,6 +253,12 @@
     options_no_script:
         message: 'Please close this tab and re-open it by clicking the action button.'
         description: 'Message shown in the options page if it needs to be re-opened in firefox.'
+    options_search_title:
+        message: 'Search'
+        description: 'The "Search" section'
+    options_search_intro:
+        message: 'The <a href="search.html">search page</a> allows you to query which people this extension has data on. It shows their name, nickname, level, the anomalies they went to and which source files list them.'
+        description: 'The intro for the "Search" section'
 
     # Export page
     export_title:
@@ -282,4 +318,50 @@
     export_warning_all_members:
         message: 'You haven\'t loaded all players in the community. This exporter can only export the members that are shown on the page. You\'ll have to scroll down completely before opening the exporter.'
         description: 'Warning shown when not all members have been loaded.'
+
+    search_title:
+        message: 'IngressIdentity Search'
+        description: 'The title of the search page'
+    search_intro:
+        message: 'This page allows you to query which people this extension has data on. It shows their name, nickname, level, the anomalies they went to and which source files list them.'
+        description: 'The intro of the search page'
+    search_name:
+        message: 'Name'
+        description: 'The label for the "Name" input'
+    search_nickname:
+        message: 'Agent Name'
+        description: 'The label for the "Agent Name" input'
+    search_faction:
+        message: 'Faction'
+        description: 'The label for the "Faction" input'
+    search_faction_all:
+        message: 'All'
+        description: 'The label for selecting all factions.'
+    search_faction_unknown:
+        message: 'Unknown'
+        description: 'The label for the "Unknown" faction.'
+    search_faction_enlightened:
+        message: 'Enlightened'
+        description: 'The label for the "Enlightened" faction.'
+    search_faction_resistance:
+        message: 'Resistance'
+        description: 'The label for the "Resistance" faction.'
+    search_faction_error:
+        message: 'Error'
+        description: 'The label for the "Error" faction.'
+    search_anomalies:
+        message: 'Anomalies'
+        description: 'The label for the "Anomalies" input'
+    search_search_button:
+        message: '<span class="glyphicon glyphicon-search"></span> Search'
+        description: 'The search button context.'
+    search_results:
+        message: 'Results'
+        description: 'The "Results" section'
+    search_levelValue:
+        message: 'L{value}'
+        description: 'How the level is shown (L1, L2, ... L16 in English)'
+    search_searching:
+        message: 'Searching...'
+        description: 'Title of the modal that shows the extension is searching.'
 }

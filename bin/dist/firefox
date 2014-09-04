@@ -37,7 +37,7 @@ log "Creating non-minified tarball"
 
 make firefox
 
-tar czf versions/firefox/v$buildversion-max.tar.gz -C build/firefox *
+tar czf versions/firefox/v$buildversion-max.tar.gz -C build/firefox .
 
 log "Creating source tarball"
 

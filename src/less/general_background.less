@@ -76,22 +76,26 @@ button {
 }
 
 .panel-heading {
+    display: -webkit-flex;
     display: flex;
     align-items: center;
+    -webkit-flex-direction: row;
     flex-direction: row;
 
     > .buttons {
         color: inherit;
+        -webkit-flex: none;
         flex: none;
         height: 23px;
         margin-left: 1em;
     }
 
     > .key-container {
+        -webkit-flex: 1 0 auto;
         flex: 1 0 auto;
     }
 
-    button {
+    button, a.link {
         font-size: 21px;
         font-weight: 700;
         line-height: 1;
@@ -103,4 +107,14 @@ button {
             opacity: 1;
         }
     }
+}
+
+// No more border-radius
+
+.btn,
+.panel,
+.form-control,
+.panel-heading,
+.panel>.list-group:last-child .list-group-item:last-child {
+    border-radius: 0px;
 }

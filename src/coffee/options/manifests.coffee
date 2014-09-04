@@ -1,48 +1,9 @@
-# The main script for the options page
+# Shows the manifests and allows manipulation.
 #
 # @author Bram Gotink (@bgotink)
 # @license MIT
 
 ((module, $) ->
-    comm =
-        getManifests: (callback) ->
-            module.comm.send { type: 'getManifests' }, (result) ->
-                callback result
-        getManifestErrors: (callback) ->
-            module.comm.send { type: 'getManifestErrors' }, (result) ->
-                callback result
-        addManifest: (key, name, callback) ->
-            module.comm.send { type: 'addManifest', key: key, name: (if Object.isString(name) then name else '') }, (result) ->
-                callback result.status
-        renameManifest: (key, oldName, newName, callback) ->
-            module.comm.send {type: 'renameManifest', key: key, oldName: oldName, newName: newName}, (result) ->
-                callback result.status
-        removeManifest: (key, callback) ->
-            module.comm.send { type: 'removeManifest', key: key }, (result) ->
-                callback result.status
-
-        changeManifestOrder: (oldOrder, newOrder, callback) ->
-            module.comm.send { type: 'changeManifestOrder', oldOrder: oldOrder, newOrder: newOrder }, (result) ->
-                callback result.status
-
-        reloadData: (callback) ->
-            module.comm.send { type: 'reloadData' }, (result) ->
-                callback result.status
-
-        setOption: (option, value, callback) ->
-            module.comm.send { type: 'setOption', option: option, value: value }, (result) ->
-                callback result.result
-        getOption: (option, defaultValue, callback) ->
-            module.comm.send { type: 'getOption', option: option, defaultValue: defaultValue }, (result) ->
-                callback result.value
-
-    showAlert = (id) ->
-        module.log.log 'showing alert %s', id
-        $ '.alert'
-            .addClass 'hide'
-        $ '.alert-' + id
-            .removeClass 'hide'
-
     lastOrderRecorded = []
     onOrderChanged = ->
         newOrder = $.makeArray $('#source_list > ul > li').map ->
@@ -61,8 +22,8 @@
                 break
 
         if updated
-            comm.changeManifestOrder lastOrderRecorded, newOrder, (status) ->
-                showAlert 'reorder-' + status
+            module.comm.changeManifestOrder lastOrderRecorded, newOrder, (status) ->
+                module.showAlert 'reorder-' + status
 
             lastOrderRecorded = newOrder
 
@@ -73,7 +34,7 @@
             .data 'errors-loaded', true
 
         module.log.log 'Reloading manifest errors...'
-        comm.getManifestErrors (result) ->
+        module.comm.getManifestErrors (result) ->
             module.log.log 'Got manifest errors: ', result
 
             reloadManifestErrors.helper result, $ '#source_list > ul'
@@ -90,11 +51,15 @@
                     $elem.append $('<p class="error">').text err
         else
             Object.each errors, (key, value) ->
+                if key is '__errors' and 0 is $elem.find('> .panel > .panel-body').length
+                    $ '<div class="panel-body" data-key="__errors">'
+                        .insertBefore $elem.find '> .panel > .list-group'
+
                 reloadManifestErrors.helper value, $elem.find '[data-key="' + key + '"]'
 
     reloadManifests = ->
         module.log.log 'Reloading manifests...'
-        comm.getManifests (result) ->
+        module.comm.getManifests (result) ->
             manifestList = []
 
             module.log.log 'Got manifest info: ', result
@@ -126,8 +91,14 @@
                 value.sources.each (source) ->
                     module.log.log '-- Source key %s', source.key
 
+                    # clean-up info to show, in case the manifest is faulty
+                    source.faction = 'unknown' unless source.faction?
+                    source.players = 0 unless Object.isNumber source.players
+                    source.tag = source.key if Object.has(source, 'key') and not Object.has(source, 'tag')
+                    source.version = 0 unless source.version?
+
                     sourceList.push($ '<li>'
-                        .addClass 'source faction-' + source.faction
+                        .addClass 'list-group-item source faction-' + source.faction
                         .attr 'data-key', source.key
                         .append if source.url
                                 $ '<a>'
@@ -152,20 +123,25 @@
                                 $ '<div class="panel-heading"></div>'
                                     .append(
                                         $ '<span class="key-container"></span>'
-                                            .append if value.url
-                                                    $ '<a>'
-                                                        .text if Object.isString(value.name) and not value.name.isBlank() then value.name else key
-                                                        .attr 'target', '_blank'
-                                                        .attr 'href', value.url
-                                                        .addClass 'manifest-key'
-                                                else
-                                                    $ '<span>'
-                                                        .text if Object.isString(value.name) and not value.name.isBlank() then value.name else key
-                                                        .addClass 'manifest-key'
+                                            .append(
+                                                $ '<span>'
+                                                    .text if Object.isString(value.name) and not value.name.isBlank() then value.name else key
+                                                    .addClass 'manifest-key'
+                                            )
                                     )
                                     .append(
                                         $ '<span>'
                                             .addClass 'buttons'
+                                            .append(
+                                                if not value.url? then null else ($ '<a>'
+                                                    .attr 'aria-hidden', 'true'
+                                                    .attr 'title', module._('view', 'View')
+                                                    .attr 'href', value.url
+                                                    .attr 'target', '_blank'
+                                                    .addClass 'link'
+                                                    .append $ '<span class="glyphicon glyphicon-link"></span>'
+                                                )
+                                            )
                                             .append(
                                                 $ '<button>'
                                                     .attr 'type', 'button'
@@ -185,17 +161,9 @@
                                     )
                             )
                             .append(
-                                $ '<div class="panel-body"></div>'
-                                    .append(
-                                        $ '<ul>'
-                                            .addClass 'errors list-unstyled'
-                                            .attr 'data-key', '__errors'
-                                    )
-                                    .append(
-                                        $ '<ul>'
-                                            .addClass 'list-unstyled'
-                                            .append sourceList
-                                    )
+                                $ '<ul>'
+                                    .addClass 'list-group'
+                                    .append sourceList
                             )
                     )
                 )
@@ -220,42 +188,20 @@
                 .sortable {
                     axis: 'y'
                     containment: 'parent'
+                    handle: '.panel-heading'
                     cursor: '-webkit-grabbing'
                     distance: 5
                     revert: true
                     stop: onOrderChanged
                 }
-            $ '#source_list > ul'
+            $ '#source_list .panel-heading'
                 .disableSelection()
 
-            reloadManifestErrors();
-
-    updateButtons = ->
-        comm.getOption 'show-anomalies', true, (state) ->
-            if state
-                $ '#enable_anomalies'
-                    .addClass 'active'
-                    .text module._('enabled', 'Enabled')
-            else
-                $ '#enable_anomalies'
-                    .removeClass 'active'
-                    .text module._('disabled', 'Disabled')
-
-        $ 'button[data-match]'
-            .each ->
-                $this = $ @
-
-                comm.getOption 'match-' + $this.attr('data-match'), true, (state) ->
-                    if state
-                        $this
-                            .addClass 'active'
-                            .text module._('enabled', 'Enabled')
-                    else
-                        $this
-                            .removeClass 'active'
-                            .text module._('disabled', 'Disabled')
+            reloadManifestErrors()
 
     addManifest = ->
+        return if '' is $('#manifest_input').val()
+
         module.log.log 'Adding manifest %s', $('#manifest_input').val()
 
         $ '#manifest_input'
@@ -265,7 +211,7 @@
         $ 'button.manifest_add'
             .button 'loading'
 
-        comm.addManifest $('#manifest_input').val(), $('#name_input').val(), (result) ->
+        module.comm.addManifest $('#manifest_input').val(), $('#name_input').val(), (result) ->
             if result isnt 'failed'
                 $ '#manifest_input'
                     .val ''
@@ -279,27 +225,11 @@
             $ 'button.manifest_add'
                 .button 'reset'
 
-            showAlert 'add-' + result
+            module.showAlert 'add-' + result
 
-    $ ->
-        module.extension.init() if module.extension.init?
+    module.reloadManifests = reloadManifests
 
-        $ '.alert .close'
-            .on 'click.ii.close', ->
-                $ @
-                    .parent()
-                    .addClass 'hide'
-
-        $ '#reload_sources'
-            .on 'click.ii.reload', ->
-                $this = $ @
-
-                $this.button 'loading'
-
-                comm.reloadData (result) ->
-                    showAlert 'reload-' + result
-                    $this.button 'reset'
-
+    module.initManifests = ->
         $ 'button.manifest_add'
             .on 'click.ii.add', addManifest
         $ 'form.manifest_add'
@@ -308,20 +238,10 @@
 
                 false
 
-        # make enter submit a form
-        $ 'input[type="text"]'
-            .on 'keypress', (e) ->
-                if e.which is 13
-                    $ @
-                        .closest 'form'
-                        .submit()
-
-                    false
-
         $ '#source_list'
             .on 'click.ii.remove', '.manifest .remove', ->
-                comm.removeManifest $(@).closest('.manifest').data('key'), (result) ->
-                        showAlert 'remove-' + result
+                module.comm.removeManifest $(@).closest('.manifest').data('key'), (result) ->
+                    module.showAlert 'remove-' + result
 
         $ '#source_list'
             .on 'click.ii.rename', '.manifest .rename', ->
@@ -361,8 +281,8 @@
 
                     module.log.log 'Renaming manifest %s from %s to %s', key, oldName, if newName != null then newName else ''
 
-                    comm.renameManifest key, oldName, newName, (status) ->
-                        showAlert 'rename-' + status
+                    module.comm.renameManifest key, oldName, newName, (status) ->
+                        module.showAlert 'rename-' + status
 
                 if Object.isString $this.data 'url'
                     $replacement = $ '<a target="_blank">'
@@ -378,73 +298,4 @@
                 false
 
         reloadManifests()
-
-        $ '#enable_anomalies'
-            .on 'click.set-option', ->
-                $this = $ @
-                $this
-                    .button 'loading'
-                    .addClass 'disable-hover'
-
-                comm.setOption 'show-anomalies', !$this.hasClass('active'), (state) ->
-                    if state
-                        $this
-                            .addClass 'active'
-                            .text module._('enabled', 'Enabled')
-                    else
-                        $this
-                            .removeClass 'active'
-                            .text module._('disabled', 'Disabled')
-
-                    $this
-                        .button 'reset'
-                        .removeClass 'disable-hover'
-
-        $ 'button[data-match]'
-            .on 'click.set-option', ->
-                $this = $ @
-                $this
-                    .button 'loading'
-                    .addClass 'disable-hover'
-
-                comm.setOption 'match-' + $this.attr('data-match'), !$this.hasClass('active'), (state) ->
-                    if state
-                        $this
-                            .addClass 'active'
-                            .text module._('enabled', 'Enabled')
-                    else
-                        $this
-                            .removeClass 'active'
-                            .text module._('disabled', 'Disabled')
-
-                    $this
-                        .button 'reset'
-                        .removeClass 'disable-hover'
-
-        [ $('#enable_anomalies'), $('button[data-match]') ].each ($buttons) ->
-            $buttons
-                .on 'mouseenter', () ->
-                    $this = $ @
-
-                    return if $this.hasClass 'disable-hover'
-
-                    if $this.hasClass 'active'
-                        $this.text module._('disabled', 'Disabled')
-                    else
-                        $this.text module._('enabled', 'Enabled')
-                .on 'mouseleave', () ->
-                    $this = $ @
-
-                    return if $this.hasClass 'disable-hover'
-
-                    if $this.hasClass 'active'
-                        $this.text module._('enabled', 'Enabled')
-                    else
-                        $this.text module._('disabled', 'Disabled')
-
-        updateButtons()
-
-        module.comm.setOnUpdate ->
-            reloadManifests()
-            updateButtons()
 )(iidentity or (iidentity = window.iidentity = {}), window.jQuery)

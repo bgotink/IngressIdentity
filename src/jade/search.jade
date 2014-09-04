@@ -1,0 +1,72 @@
+include ./_mixins
+
+doctype html
+html(data-translate-prefix='search')
+    head
+        title(data-translate-name='title') IngressIdentity Search
+
+        // Bootstrap CSS
+        +css_lib('bootstrap')
+
+        // Our CSS
+        +css('search')
+
+        unless browser === 'firefox'
+            // jQuery, Sugar and Bootstrap JS
+            +js_lib('jquery')
+            +js_lib('jquery-ui')
+            +js_lib('sugar')
+            +js_lib('bootstrap')
+
+            // Our JS
+            +js('search')
+
+    body
+        +ingress_background
+            +row
+                h1(data-translate-name='title') IngressIdentity Search
+                p(data-translate-name='intro').
+                    This page allows you to query which people this extension has data on.
+                    It shows their name, nickname, level, the anomalies they went to and
+                    which source files list them.
+            +row.search
+                h2 Search
+                div
+                    form.search(role='form', action='#')
+                        .form-group
+                            label(for='search_name', data-translate-name='name') Name
+                            input#search_name(class='form-control', type='text')
+                        .form-group
+                            label(for='search_nickname', data-translate-name='nickname') Agent Name
+                            input#search_nickname(class='form-control', type='text')
+                        .form-group
+                            label(for='search_faction', data-translate-name='faction') Faction
+                            select#search_faction(class='form-control')
+                                option(value='', selected, data-translate-name='faction_all') All
+                                option(value='unknown', data-translate-name='faction_unknown') Unknown
+                                option(value='enlightened', data-translate-name='faction_enlightened') Enlightened
+                                option(value='resistance', data-translate-name='faction_resistance') Resistance
+                                option(value='error', data-translate-name='faction_error') Error
+                        .form-group
+                            label(for='search_anomalies', data-translate-name='anomalies') Anomalies
+                            select#search_anomalies(class='form-control', multiple)
+                                option(value='13magnus') 13Magnus
+                                option(value='recursion') Recursion
+                                option(value='interitus') Interitus
+                                option(value='initio') Initio
+                                option(value='helios') Helios
+                        .form-group
+                            button.search(type='button', class='btn btn-primary' data-translate-name='search_button')
+                                span.glyphicon.glyphicon-search
+                                | Search
+            +row
+                h2(data-translate-name='results') Results
+                .results
+        .modal.fade(data-backdrop='static', data-keyboard='false', data-show='false')
+            .modal-dialog
+                .modal-content
+                    .modal-header
+                        h4.modal-title(data-translate-name='searching') Searching...
+                    .modal-body
+                        .progress
+                            .progress-bar.progress-bar-striped.active(style='width: 100%')

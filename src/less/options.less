@@ -1,11 +1,22 @@
 @import 'general_background.less';
 
 p.error {
-    color: red;
+    color: @c_error;
 }
 
-.manifest .remove {
-    margin-left: .2em;
+.panel p:last-child {
+    margin-bottom: 0;
+}
+
+.manifest .buttons {
+    > .remove,
+    > .rename {
+        margin-left: .2em;
+    }
+}
+
+div.own-oid {
+    padding-left: 20px;
 }
 
 // drag and drop
@@ -22,4 +33,28 @@ button + span,
 .glyphicon + span,
 .alert > strong + span {
     margin-left: 1ex;
+}
+
+// Source colors
+
+.source {
+    &.faction-resistance {
+        background-color: @c_background_resistance;
+        color: @c_resistance;
+    }
+
+    &.faction-enlightened {
+        background-color: @c_background_enlightened;
+        color: @c_enlightened;
+    }
+
+    &.faction-unknown {
+        background-color: @c_background_unknown;
+        color: @c_unknown;
+    }
+
+    &.faction-error {
+        background-color: @c_background_error;
+        color: @c_error;
+    }
 }

@@ -17,7 +17,7 @@
             if not Object.isString(parentData.key) or parentData.key.isBlank()
                 if err?
                     err.push 'Cannot resolve key ' + key
-                return false
+                return ''
 
             data.key = exports.spreadsheets.parseKey(parent).key
 
@@ -41,6 +41,7 @@
         setPlayers: (players) ->
             @players = {}
             newPlayers = @players
+
             players.each (player) ->
                 if not (Object.isNumber(player.oid) or Object.isString(player.oid)) or ('' + player.oid).match(/^9*$/)
                     return
@@ -51,7 +52,12 @@
         getPlayer: (oid) ->
             return null unless @hasPlayer oid
 
-            exports.interpreter.interpretSourceEntry @data, @players[oid]
+            player = exports.interpreter.interpretSourceEntry @data, @players[oid]
+            player.source =
+                url: @getUrl()
+                tag: @getTag()
+
+            player
 
         getNbPlayers: -> Object.size @players
 
@@ -86,8 +92,8 @@
 
                     callback false
 
-        hasErrors: -> @err? and @err.length > 0
-        getErrors: -> $.extend {}, @err, @loadingErrors
+        hasErrors: -> @loadingErrors?.length > 0 or @err?.length > 0
+        getErrors: -> if @loadingErrors? then @loadingErrors.union @err else @err
 
         hasLoadingErrors: -> !!@loadingErrors
         setLoadingErrors: (err) ->
@@ -100,6 +106,15 @@
 
         hasExtra: (tag, oid) -> @data.hasExtra tag, oid
 
+        find: (pattern) ->
+            oids = []
+
+            Object.each Object.findAll(@players, pattern), (oid) ->
+                    oids.push oid
+
+            oids
+
+
     class ErroredPlayerSource
         constructor: (key, err, data) ->
             @key = key
@@ -110,6 +125,9 @@
         getTag: -> @data and @data.getTag()
         getVersion: -> @data and @data.getVersion()
         getFaction: -> @data and @data.getFaction()
+
+        hasPlayer: -> false
+        getPlayer: -> null
 
         getNbPlayers: -> 0
 
@@ -133,6 +151,8 @@
         shouldUpdate: -> false
         setUpdated: ->
         update: (callback) -> callback false
+
+        find: -> []
 
     class CombinedPlayerSource
         constructor: (sources, key, spreadsheet) ->
@@ -323,9 +343,27 @@
                         key: source.getTag()
                     }]
 
-            result.reduce (res, elem) ->
-                res.concat elem
-            , []
+            result.flatten()
+
+        find: (pattern) ->
+            if @topLevel
+                stdPattern = module.data.createStandardPlayerFinder pattern
+                pattern = module.data.createPlayerFinder pattern
+                result = []
+
+                @getSources().each (source) ->
+                    result = result.union source.find stdPattern
+
+                return result.map (oid) =>
+                        @getPlayer oid
+                    .findAll pattern
+            else # not @topLevel
+                result = []
+
+                @getSources().each (source) ->
+                    result = result.union source.find pattern
+
+                result
 
     loadSource = (data, parentKey, callback) ->
         err = []
@@ -389,7 +427,13 @@
                 callback (if Object.size(err) > 0 then err else null), (if sources.length > 0 then (new CombinedPlayerSource(sources)).setTopLevel() else null)
                 return
 
-            key = resolveKey keys[i], '', err
+            tmpErr = []
+            key = resolveKey keys[i], '', tmpErr
+
+            if key is ''
+                err[keys[i]] = tmpErr
+                step i + 1
+                return
 
             loadManifest key, (err2, manifest) ->
                 if err2?
