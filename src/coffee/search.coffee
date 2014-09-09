@@ -142,6 +142,13 @@
 
                     false
 
+        # make the reset button for anomalies work
+        $ 'button.reset-anomalies'
+            .on 'click', ->
+                $ '#search_anomalies > option'
+                    .prop 'selected', false
+
+        # make the search form work
         $ 'button.search'
             .on 'click', search
         $ 'form.search'

@@ -352,6 +352,9 @@
     search_anomalies:
         message: 'Anomalies'
         description: 'The label for the "Anomalies" input'
+    search_anomalies_reset:
+        message: 'Clear selection'
+        description: 'The label for the button that clears the anomaly selection'
     search_search_button:
         message: '<span class="glyphicon glyphicon-search"></span> Search'
         description: 'The search button context.'

@@ -48,7 +48,9 @@ html(data-translate-prefix='search')
                                 option(value='resistance', data-translate-name='faction_resistance') Resistance
                                 option(value='error', data-translate-name='faction_error') Error
                         .form-group
-                            label(for='search_anomalies', data-translate-name='anomalies') Anomalies
+                            label(for='search_anomalies')
+                                span(data-translate-name='anomalies') Anomalies
+                                button.reset-anomalies(type='button', class='btn btn-xs btn-default', data-translate-name='anomalies_reset') Clear selection
                             select#search_anomalies(class='form-control', multiple)
                                 option(value='13magnus') 13Magnus
                                 option(value='recursion') Recursion
