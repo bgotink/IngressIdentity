@@ -1,5 +1,13 @@
 #!/bin/bash
 
+pushd () {
+    command pushd "$@" > /dev/null
+}
+
+popd () {
+    command popd "$@" > /dev/null
+}
+
 # abort on error
 set -e
 
@@ -11,11 +19,13 @@ log() {
 }
 
 install_file() {
-    dest='../../src/vendor/'"$1"
+    dest='../../'"$1"
     src='bower_components/'"$2"
 
-    if ! diff -q "$dest" "$src"; then
+    if grep -q 'sourceMappingURL' "$src"; then
         grep -v 'sourceMappingURL' "$src" > "$dest"
+    else
+        cp "$src" "$dest"
     fi
 }
 
@@ -24,15 +34,18 @@ install() {
 
     log 'Installing files'
 
-    install_file 'css/bootstrap.min.css'                    'bootstrap/dist/css/bootstrap.min.css'
+    install_file 'src/vendor/css/bootstrap.min.css'                         'bootstrap/dist/css/bootstrap.min.css'
 
-    install_file 'fonts/glyphicons-halflings-regular.eot'   'bootstrap/dist/fonts/glyphicons-halflings-regular.eot'
-    install_file 'fonts/glyphicons-halflings-regular.svg'   'bootstrap/dist/fonts/glyphicons-halflings-regular.svg'
-    install_file 'fonts/glyphicons-halflings-regular.ttf'   'bootstrap/dist/fonts/glyphicons-halflings-regular.ttf'
-    install_file 'fonts/glyphicons-halflings-regular.woff'  'bootstrap/dist/fonts/glyphicons-halflings-regular.woff'
+    install_file 'src/vendor/fonts/glyphicons-halflings-regular.eot'        'bootstrap/dist/fonts/glyphicons-halflings-regular.eot'
+    install_file 'src/vendor/fonts/glyphicons-halflings-regular.svg'        'bootstrap/dist/fonts/glyphicons-halflings-regular.svg'
+    install_file 'src/vendor/fonts/glyphicons-halflings-regular.ttf'        'bootstrap/dist/fonts/glyphicons-halflings-regular.ttf'
+    install_file 'src/vendor/fonts/glyphicons-halflings-regular.woff'       'bootstrap/dist/fonts/glyphicons-halflings-regular.woff'
 
-    install_file 'js/jquery.min.js'                         'jquery/dist/jquery.min.js'
-    install_file 'js/bootstrap.min.js'                      'bootstrap/dist/js/bootstrap.min.js'
+    install_file 'src/vendor/js/jquery.min.js'                              'jquery/dist/jquery.min.js'
+    install_file 'src/vendor/js/bootstrap.min.js'                           'bootstrap/dist/js/bootstrap.min.js'
+
+    install_file 'template/firefox/data/vendor/js/jquery-ui.min.js'         'jquery-ui/jquery-ui.min.js'
+    install_file 'template/firefox-release/data/vendor/js/jquery-ui.min.js' 'jquery-ui/jquery-ui.min.js'
 }
 
 install_sugar() {
@@ -44,7 +57,7 @@ install_sugar() {
 
 init() {
     make tools/bower;
-    cd tools/bower
+    pushd tools/bower
 
     log 'Creating bower.json'
     cat <<EOF > bower.json
@@ -59,7 +72,8 @@ init() {
     "private": true,
 
     "dependencies": {
-        "bootstrap": "latest"
+        "bootstrap": "latest",
+        "jquery.ui": "~1.11.1"
     }
 }
 EOF
@@ -69,27 +83,31 @@ EOF
 
     install
 
-    cd - >/dev/null
+    popd
 
     make tools/Sugar
-    cd tools/Sugar
+    pushd tools/Sugar
 
     install_sugar
+
+    popd
 }
 
 update() {
-    cd tools/bower
+    pushd tools/bower
 
     log 'Updating bower libraries'
     bower update
 
     install
 
-    cd - >/dev/null
+    popd
 
-    cd tools/Sugar
+    pushd tools/Sugar
 
     install_sugar
+
+    popd
 }
 
 case "$1" in

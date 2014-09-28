@@ -458,10 +458,22 @@ build/firefox/data/js/help.js: $(JS_HELP_DEPS)
 build/firefox-release/data/js/help.js: $(JS_HELP_DEPS)
 	$(coffee_release)
 
+build/%/data/vendor/js/jquery-ui.min.js: template/%/data/vendor/js/jquery-ui.min.js
+	$(copy)
+
 build/firefox/data/vendor/%: src/vendor/%
 	$(copy)
 
 build/firefox-release/data/vendor/%: src/vendor/%
+	$(copy)
+
+build/%/data/vendor/css: src/vendor/css
+	$(copy)
+
+build/firefox/data/vendor/js/%: src/vendor/js/%
+	$(copy)
+
+build/firefox-release/data/vendor/js/%: src/vendor/js/%
 	$(copy)
 
 build/%/icon.png: src/img/logo.svg
