@@ -462,7 +462,7 @@
 
             if not Object.has(request, 'extra') or not Object.has(request.extra, 'match')
                 checkForSelf()
-                return
+                return true
 
             getStoredData 'option-match-' + request.extra.match, true, (doMatch) ->
                 unless doMatch
