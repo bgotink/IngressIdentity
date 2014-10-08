@@ -8,7 +8,7 @@
 
     # variables
 
-    anomalies = [ '13magnus', 'recursion', 'interitus', 'initio', 'helios' ]
+    anomalies = [ '13magnus', 'recursion', 'interitus', 'initio', 'helios', 'darsana' ]
     validFactions = [ 'enlightened', 'resistance', 'unknown', 'error' ]
 
     # general helpers
