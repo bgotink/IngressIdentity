@@ -299,11 +299,19 @@
         },
         {
             matches: [
-                'div.xTc.X8c[oid]', # members page of groups
+                'div.xTc.X8c', # members page of groups
             ],
             handler: (elem, match) ->
                 $elem = $ elem
-                oid = $elem.attr 'oid'
+
+                if $elem.is '[oid]'
+                   oid = $elem.attr 'oid'
+                else
+                   $oidCarrier = $elem.find '[oid]'
+
+                   return unless $oidCarrier.length > 0
+
+                   oid = $oidCarrier.first().attr 'oid'
 
                 createConciseInlineElement oid, match, (err, $infoElem) ->
                     if err?

@@ -41,8 +41,18 @@
                     $ 'div.X8c.xTc'
                         .each ->
                             $this = $ @
+
+                            if $this.is '[oid]'
+                                oid = $this.attr 'oid'
+                            else
+                                $oidCarrier = $this.find '[oid]'
+
+                                return unless $oidCarrier.length > 0
+
+                                oid = $oidCarrier.first().attr 'oid'
+
                             data.entries.push
-                                oid: $this.attr 'oid'
+                                oid: oid
                                 name: $this.find('.l0d > .n0d .VCc').text()
 
                     module.comm.send
