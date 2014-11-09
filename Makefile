@@ -95,7 +95,7 @@ touch:
 tools: ; $(mkdir)
 
 tools/gray2transparent:
-	@if [ ! -d tools ]; then make tools fi
+	@if [ ! -d tools ]; then make tools; fi
 	@if [ -d $@ ]; then cd $@ && git pull; else git clone https://gist.github.com/635bca8e2a3d47bf6a5f.git $@; fi
 
 tools/gray2transparent/gray2transparent: tools/gray2transparent $(addprefix tools/gray2transparent/, gray2transparent.cpp exr_io.h exr_io.cpp)
