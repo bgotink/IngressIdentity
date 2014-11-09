@@ -215,7 +215,7 @@
 
             if storageCache.has 'manifests'
                 module.log.log 'Requesting manifests, loaded from cache'
-                sendResponse storageCache.get manifests
+                sendResponse storageCache.get 'manifests'
 
                 return false
 
