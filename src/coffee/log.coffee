@@ -6,22 +6,24 @@
 ((module, window) ->
     exports = module.log = {}
 
+    console = window.console
+
     noProxy = ->
     proxy = (func) ->
         ->
-            func.apply window.console, arguments
+            console[func].apply console, arguments
 
-    exports.warn  = proxy window.console.warn
-    exports.error = proxy window.console.error
+    exports.warn  = proxy 'warn'
+    exports.error = proxy 'error'
 
     exports.setLoggingEnabled = (enable) ->
         if enable
-            exports.assert = proxy window.console.assert
+            exports.assert = proxy 'assert'
 
-            exports.trace  = proxy window.console.trace
-            exports.log    = proxy window.console.log
-            exports.debug  = proxy window.console.debug
-            exports.info   = proxy window.console.info
+            exports.trace  = proxy 'trace'
+            exports.log    = proxy 'log'
+            exports.debug  = proxy 'debug'
+            exports.info   = proxy 'info'
         else
             exports.assert = noProxy
 

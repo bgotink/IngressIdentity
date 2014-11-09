@@ -8,7 +8,7 @@
     storage = module.extension.storage
     data = null
     exportData = $.Deferred()
-    storageCache = {}
+    storageCache = null
 
     isOptionsPage = module.extension.isOptionsPage
 
@@ -26,8 +26,8 @@
 
         module.log.log 'Settings updated:'
         changes.each (key) ->
-            if Object.has storageCache, key
-                delete storageCache[key]
+            if storageCache.has key
+                storageCache.remove key
 
             module.log.log '- %s', key
 
@@ -55,16 +55,16 @@
         request = {}
         request[key] = defaultValue
 
-        if Object.has(storageCache, key) and storageCache[key].expires > (+new Date)
-            module.log.log 'Got storage { key: %s, value: %s } from storage cache', key, '' + storageCache[key].result
-            callback storageCache[key].result
+        if storageCache.has key
+            result = storageCache.get key
+
+            module.log.log 'Got storage { key: %s, value: %s } from storage cache', key, '' + result
+            callback result
         else
             storage.get request, (result) ->
                 module.log.log 'Got storage { key: %s, value: %s } from storage', key, '' + result[key]
 
-                storageCache[key] =
-                    result: result[key]
-                    expires: (+new Date()) + 60 * 1000
+                storageCache.set key, result[key]
                 callback result[key]
 
     setStoredData = (key, value, callback) ->
@@ -73,8 +73,7 @@
 
         module.log.log 'Setting storage key %s to %s', key, '' + value
         storage.set request, ->
-            if Object.has storageCache, key
-                delete storageCache[key]
+            storageCache.remove key
 
             callback()
 
@@ -82,8 +81,7 @@
         module.log.log 'Settings multiple storage values:', data
         storage.set data, ->
             Object.each data, (key) ->
-                if Object.has storageCache, key
-                    delete storageCache[key]
+                storageCache.remove key
 
             callback()
 
@@ -156,8 +154,7 @@
                 delete names[key]
 
             setStoredData 'manifest_names', names, ->
-                if Object.has storageCache, 'manifests'
-                    delete storageCache.manifests
+                storageCache.remove 'manifests'
 
                 callback true
 
@@ -195,8 +192,7 @@
                     data = newData
                     data.setLoadingErrors err
 
-                    if Object.has storageCache, 'manifests'
-                        delete storageCache.manifests
+                    storageCache.remove 'manifests'
 
                     updateTabs()
                     callback null, (if data.hasLoadingErrors() then 'warning' else 'success')
@@ -217,9 +213,9 @@
                 # silently die by not sending a response
                 return false
 
-            if Object.has storageCache, 'manifests'
+            if storageCache.has 'manifests'
                 module.log.log 'Requesting manifests, loaded from cache'
-                sendResponse storageCache.manifests
+                sendResponse storageCache.get 'manifests'
 
                 return false
 
@@ -264,7 +260,7 @@
                             sources: manifestData
                             url : if manifest then manifest.getUrl() else null
 
-                    storageCache.manifests = result;
+                    storageCache.set 'manifests', result
 
                     module.log.log 'Sending result to getManifests: ', result
                     sendResponse result
@@ -462,7 +458,7 @@
 
             if not Object.has(request, 'extra') or not Object.has(request.extra, 'match')
                 checkForSelf()
-                return
+                return true
 
             getStoredData 'option-match-' + request.extra.match, true, (doMatch) ->
                 unless doMatch
@@ -586,8 +582,7 @@
                                 if updated
                                     data.invalidateCache()
 
-                                    if Object.has storageCache, 'manifests'
-                                        delete storageCache.manifests
+                                    storageCache.remove 'manifests'
 
                                     updateTabs()
                         , 60 * 60 * 1000
@@ -595,6 +590,8 @@
 
     $ ->
         module.extension.init() if module.extension.init?
+
+        storageCache = new module.Cache()
 
         initGoogle()
 

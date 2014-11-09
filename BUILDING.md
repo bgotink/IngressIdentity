@@ -65,9 +65,21 @@ it using `npm install -g less`. Please ensure that the `lessc` program is in the
 ### cson2json
 
 The cson2json program is needed to compile the CSON files into JSON. Install it
-by running `npm install -g cson`.
+by running `npm install -g cson`. Please ensure that the `cson2json` program is in the `$PATH`.
 
 ### bower
 
 We use bower to update the vendor libraries (except jquery-ui and sugar). Install
-it using `npm install -g bower` and run it using `make vendor-update`.
+it using `npm install -g bower` and run it using `make vendor-update`. Please ensure
+that the `bower` program is in the `$PATH`.
+
+### uglifyjs
+
+We use uglifyjs to minify the source before distribution. Install this dependency
+using `npm install -g uglify-js`. Note that `uglifyjs` is also an NPM package, but
+we require `uglify-js`! Please ensure that the `uglifyjs` program is in the `$PATH`.
+
+### jade
+
+Instead of writing HTML, we use the Jade templating engine. Install it using
+`npm install -g jade`. Please ensure that the `jade` program is in the `$PATH`.

@@ -9,7 +9,7 @@ LIBs = $(addprefix vendor/,css/bootstrap.min.css $(addprefix fonts/glyphicons-ha
 JS_CONTENT_DEPS = $(addprefix src/coffee/,$(addsuffix .coffee,communication log $(addprefix content/,doOnce main mentions profile source popup export i18n)))
 JS_CONTENT_TALK_DEPS = $(addprefix src/coffee/,$(addsuffix .coffee,communication log $(addprefix content/,doOnce mentions main-talk)))
 JS_OPTIONS_DEPS = $(addprefix src/coffee/,$(addsuffix .coffee,communication log auto-translate $(addprefix options/,alerts communication main manifests settings)))
-JS_BACKGROUND_DEPS = $(addprefix src/coffee/,$(addsuffix .coffee,log $(addprefix data/,spreadsheets interpreter merger finder data) background/i18n background))
+JS_BACKGROUND_DEPS = $(addprefix src/coffee/,$(addsuffix .coffee,log $(addprefix data/,spreadsheets interpreter merger finder data) $(addprefix background/,i18n cache) background))
 JS_HELP_DEPS = src/coffee/help.coffee
 JS_EXPORT_DEPS = $(addprefix src/coffee/,$(addsuffix .coffee,communication log export auto-translate))
 JS_SEARCH_DEPS = $(addprefix src/coffee/,$(addsuffix .coffee,communication log search auto-translate))
@@ -95,7 +95,7 @@ touch:
 tools: ; $(mkdir)
 
 tools/gray2transparent:
-	@if [ ! -d tools ]; then make tools fi
+	@if [ ! -d tools ]; then make tools; fi
 	@if [ -d $@ ]; then cd $@ && git pull; else git clone https://gist.github.com/635bca8e2a3d47bf6a5f.git $@; fi
 
 tools/gray2transparent/gray2transparent: tools/gray2transparent $(addprefix tools/gray2transparent/, gray2transparent.cpp exr_io.h exr_io.cpp)

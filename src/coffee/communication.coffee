@@ -17,7 +17,8 @@
         try
             module.extension.sendMessage request, (reply) ->
                     if not reply?
-                        module.log.error module.extension.getLastError() if module.extension.getLastError
+                        module.log.error 'Got empty response to', request
+                        module.log.error module.extension.getLastError() if module.extension.getLastError?()?
                         return
 
                     callback reply.reply if callback?
