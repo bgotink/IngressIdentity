@@ -8,7 +8,15 @@
 
     # variables
 
-    anomalies = [ '13magnus', 'recursion', 'interitus', 'initio', 'helios', 'darsana' ]
+    anomalies = [
+        '13magnus'
+        'recursion'
+        'interitus'
+        'initio'
+        'helios'
+        'darsana'
+        'shonin'
+    ]
     validFactions = [ 'enlightened', 'resistance', 'unknown', 'error' ]
 
     # general helpers
@@ -178,6 +186,14 @@
         helpers.validate.checkExists object, 'nickname', err
         helpers.validate.checkExists object, 'oid', err
 
+    # sort anomalies
+
+    sort_anomalies = (object) ->
+        return unless object.extra?.anomaly? and Array.isArray object.extra.anomaly
+
+        object.extra.anomaly = anomalies.filter (el) ->
+            (object.extra.anomaly.indexOf el) isnt -1
+
     merge = ->
         if arguments.length is 0
             return false
@@ -207,7 +223,12 @@
 
     exports.merge = (arr, err) ->
         pre_validate arr, err
-        merge.apply null, arr
+
+        merged = merge.apply null, arr
+
+        sort_anomalies merged
+
+        merged
 
     exports.merge.validate = (obj, err) ->
         post_validate obj, err
