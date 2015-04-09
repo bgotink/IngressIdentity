@@ -8,6 +8,7 @@
 
     # variables
 
+    # chronological list of anomalies
     anomalies = [
         '13magnus'
         'recursion'
@@ -18,6 +19,8 @@
         'shonin'
         'persepolis'
     ]
+
+    # all possible values for the faction field
     validFactions = [ 'enlightened', 'resistance', 'unknown', 'error' ]
 
     # general helpers
