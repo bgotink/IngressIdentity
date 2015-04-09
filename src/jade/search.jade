@@ -3,6 +3,8 @@ include ./_mixins
 doctype html
 html(data-translate-prefix='search')
     head
+        meta(charset='UTF-8')
+
         title(data-translate-name='title') IngressIdentity Search
 
         // Bootstrap CSS
@@ -59,6 +61,7 @@ html(data-translate-prefix='search')
                                 option(value='helios') Helios
                                 option(value='darsana') Darsana
                                 option(value='shonin') Shōnin
+                                option(value='persepolis') Persepolis
                         .form-group
                             button.search(type='button', class='btn btn-primary' data-translate-name='search_button')
                                 span.glyphicon.glyphicon-search
