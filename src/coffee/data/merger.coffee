@@ -16,6 +16,7 @@
         'helios'
         'darsana'
         'shonin'
+        'persepolis'
     ]
     validFactions = [ 'enlightened', 'resistance', 'unknown', 'error' ]
 
