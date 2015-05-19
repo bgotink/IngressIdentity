@@ -183,7 +183,7 @@
             unless Array.isArray player.extra.event
                 player.extra.event = [ player.extra.event ]
 
-            $profile.append helper.createLinkedSubtitle module.i18n.getMessage('events'), player.extra.event, 'https://plus.google.com/event/'
+            $profile.append helper.createLinkedSubtitle module.i18n.getMessage('events'), player.extra.event, 'https://plus.google.com/events/'
 
         if Object.has(player, 'err') and not (Array.isArray(player.err) and player.err.length is 0)
             unless Array.isArray player.err
