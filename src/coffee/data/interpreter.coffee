@@ -76,11 +76,10 @@
         hasExtra: (tag, oid) ->
             extra = @getData().extra
 
-            if not Object.has(extra, tag) or not Object.isString(extra[tag])
+            if not Object.has(extra, tag)
                 return false
 
-            i = extra[tag].indexOf ':'
-            (i isnt -1) and (oid is extra[tag].to(i).compact());
+            oid is extra[tag][0].oid.compact()
 
         getErr: -> if @err.length > 0 then @err else null
 

@@ -39,13 +39,11 @@
 
     # validation & merging helpers
 
-    getExtraDataValueName = (str) ->
-        i = str.indexOf ':'
-
-        if i is -1
-            str.compact().toLowerCase()
+    getExtraDataValueName = (obj) ->
+        if Object.has obj, 'oid'
+            obj.oid.compact().toLowerCase()
         else
-            str.to(i).compact().toLowerCase()
+            obj.compact().toLowerCase()
 
     addToArray = (src, dst) ->
         if not Array.isArray src
@@ -70,7 +68,10 @@
                     err.push 'Expected key "' + key + '" to exist.'
             checkValidPage: (obj, key, err) ->
                 doEach obj, key, (value) ->
-                    if not Object.isString(value) or value.indexOf(':') is -1
+                    if Object.isString(value)
+                        return
+
+                    if (not Object.isObject value) or not Object.has value, 'oid'
                         err.push 'Invalid ' + key + ': "' + value + '"'
                         false
             checkValidAnomaly: (obj, key, err) ->
@@ -108,6 +109,18 @@
                 if -1 is validFactions.indexOf object.faction
                     err.push 'Invalid faction: "' + object.faction + '"'
                     delete object.faction
+            checkValidUrl: (object, key, err) ->
+                if not Object.has object, key
+                    return
+
+                url = object[key]
+
+                if not Object.isString url
+                    err.push 'Invalid URL: "' + url + '"'
+                    delete object[key]
+                else if not url.compact().match /^https?:\/\//i
+                    err.push 'A URL must start with http:// or https://, invalid URL: "' + url + '"'
+                    delete object[key]
 
         merge:
             # default merge function
@@ -173,7 +186,9 @@
         arr.each (object) ->
             if Object.has object, 'extra'
                 helpers.validate.checkValidPage object.extra, 'event', err
+                helpers.validate.checkValidUrl object.extra, 'event_image', err
                 helpers.validate.checkValidPage object.extra, 'community', err
+                helpers.validate.checkValidUrl object.extra, 'community_image', err
 
                 helpers.validate.checkValidAnomaly object.extra, 'anomaly', err
 
@@ -181,6 +196,36 @@
             helpers.validate.checkValidFaction object, err
 
         helpers.validate.checkFactions arr, err
+
+    # extract community/event OIDs
+
+    extract_pages = (arr, err) ->
+        arr.each (object) ->
+            return unless Object.has object, 'extra'
+
+            [ 'community', 'event' ].forEach (type) ->
+                return unless (Object.has object.extra, type) and Object.isString object.extra[type]
+
+                idx = (object.extra[type].indexOf ':')
+
+                if idx isnt -1
+                    name = (object.extra[type].from idx + 1).compact()
+                    object.extra[type] = (object.extra[type].to idx).compact()
+
+                if Object.has object.extra, type + '_name'
+                    name = object.extra[type + '_name']
+                    delete object.extra[type + '_name']
+                else if not name?
+                    name = object.extra[type]
+
+                if Object.has object.extra, type + '_image'
+                    image = object.extra[type + '_image']
+                    delete object.extra[type + '_image']
+
+                oid = object.extra[type]
+
+                object.extra[type] = [{ oid, name, image }]
+
 
     # post-merge validation
 
@@ -227,6 +272,7 @@
 
     exports.merge = (arr, err) ->
         pre_validate arr, err
+        extract_pages arr
 
         merged = merge.apply null, arr
 
