@@ -53,7 +53,7 @@ block content
                     | optional, and will be seen as extratags. If the column name is also added
                     | in extratags, the data in extratags is overwritten.
                 dl.dl-horizontal
-                    dt anomaly</dt>
+                    dt anomaly
                     dd
                         p.
                             One of '13magnus', 'recursion', 'interitus' or 'helios'.
@@ -61,6 +61,34 @@ block content
                             be added for future anomalies.
                     dt community<br>event
                     dd
+                        p.
+                            To add community or event data, you need to add two
+                            required columns: a column to contain the OID (see
+                            <a href="./tools.html#oid">the tools page</a> for more
+                            information) and a column to contain the name of the
+                            community/event. These columns are:
+                        blockquote
+                            | community
+                            br
+                            | community_name
+                            br
+                            | event
+                            br
+                            | event_name
+                        p.
+                            You can add an optional extra column to add a community/event
+                            image:
+                        blockquote
+                            | community_image
+                            br
+                            | event_image
+                        p.
+                            This column should contain the URL of the image. This
+                            URL should start with http:// or https://!
+                    dt community<br>event<br><em>old notation</em>
+                    dd
+                        p
+                            em This notation is deprecated, do not use it anymore!
                         p A value of type
                         blockquote OID: name
                         p.
