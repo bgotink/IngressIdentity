@@ -89,26 +89,35 @@
                         .append(
                             $ '<ul class="Kla yVa">'
                                 .append(
-                                    $ items.map ->
-                                            $ '<li>'
-                                                .append(@)[0]
+                                    $ items
                                 )
                         )
                 )
         createLinkedSubtitle: (subtitle, links, baseUrl) ->
             helper.createSubtitle subtitle, $ links.map (link) ->
-                i = link.indexOf ':'
-                return null if i is -1
+                url = baseUrl + link.oid.compact()
+                title = link.name.compact()
 
-                url = baseUrl + link.to(i).compact()
-                title = link.from(i + 1).compact()
-
-                $ '<div class="fIa s"></div>'
+                $ '<li>'
                     .append(
-                        $ '<a class="OLa url Xvc"></a>'
-                            .text title
-                            .attr 'title', title
-                            .attr 'href', url
+                        if Object.has link, 'image'
+                            $ '<img>'
+                                .addClass 'xfa'
+                                .attr 'src', link.image
+                                .attr 'title', title
+                                .attr 'alt', ''
+                        else
+                            $ '<div>'
+                                .addClass 'xfa'
+                    )
+                    .append(
+                        $ '<div class="fIa s"></div>'
+                            .append(
+                                $ '<a class="OLa url Xvc"></a>'
+                                    .text title
+                                    .attr 'title', title
+                                    .attr 'href', url
+                            )
                     )[0]
 
     create = (player, wrapper) ->
@@ -183,7 +192,7 @@
             unless Array.isArray player.extra.event
                 player.extra.event = [ player.extra.event ]
 
-            $profile.append helper.createLinkedSubtitle module.i18n.getMessage('events'), player.extra.event, 'https://plus.google.com/event/'
+            $profile.append helper.createLinkedSubtitle module.i18n.getMessage('events'), player.extra.event, 'https://plus.google.com/events/'
 
         if Object.has(player, 'err') and not (Array.isArray(player.err) and player.err.length is 0)
             unless Array.isArray player.err

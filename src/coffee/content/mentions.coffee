@@ -69,8 +69,6 @@
                     )
 
             doForEach player, true, 'community', (community, i) ->
-                seperatorposition = community.indexOf ':'
-
                 if i > 3
                     return false
                 if i is 3
@@ -80,21 +78,16 @@
                     )
                     return false
 
-                if seperatorposition is -1
-                    return
-
                 $groupInfo.append(
                     $ '<div>'
                         .append(
                             $ '<a>'
-                                .attr 'href', 'https://plus.google.com/communities/' + community.to(seperatorposition).compact()
-                                .text community.from(seperatorposition + 1).compact()
+                                .attr 'href', 'https://plus.google.com/communities/' + community.oid.compact()
+                                .text community.name.compact()
                         )
                 )
 
             doForEach player, true, 'event', (event, i) ->
-                seperatorposition = event.indexOf ':'
-
                 if i > 3
                     return false
                 if i is 3
@@ -104,15 +97,12 @@
                     )
                     return false
 
-                if seperatorposition is -1
-                    return
-
                 $groupInfo.append(
                     $ '<div>'
                         .append(
                             $ '<a>'
-                                .attr 'href', 'https://plus.google.com/events/' + event.to(seperatorposition).compact()
-                                .text event.from(seperatorposition + 1).compact()
+                                .attr 'href', 'https://plus.google.com/events/' + event.oid.compact()
+                                .text event.name.compact()
                         )
                 )
 
