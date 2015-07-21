@@ -121,7 +121,7 @@
 
                         found = false
                         communities.each (community) ->
-                            if rawData.oid is community.to(community.indexOf ':').compact()
+                            if rawData.oid is community?.oid
                                 found = true
                                 false
 
