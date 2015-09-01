@@ -10,7 +10,7 @@
                 .remove()
             return
 
-        oid = match[2]
+        communityOid = match[2]
 
         module.comm.shouldShowExport (show) ->
             if not show
@@ -34,7 +34,7 @@
                     $loadMore = $ 'span.L5'
 
                     data =
-                        oid: oid
+                        oid: communityOid
                         showWarning: $loadMore.length isnt 0 and 'none' isnt $loadMore.css 'display'
                         entries: []
 
