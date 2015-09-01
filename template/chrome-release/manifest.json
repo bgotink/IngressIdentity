@@ -49,6 +49,8 @@
 
     "web_accessible_resources": [
         "img/anomalies/*.png",
-        "export.html"
+        "img/logo/*.png",
+        "export.html",
+        "export-single.html"
     ]
 }

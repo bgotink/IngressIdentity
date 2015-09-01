@@ -211,21 +211,7 @@
                     $ '<div class="fIa s"></div>'
                         .text(value)[0]
 
-    module.checkProfile = ->
-        $tabs = $ '#contentPane div[role="tabpanel"]'
-        dot = module.doOnce.timestamp()
-
-        if $tabs.length is 0
-            # not a profile!
-            return
-
-        oid = $tabs.first().attr 'id'
-        oid = oid.to oid.indexOf '-'
-
-        if oid.length isnt 21
-            module.log.error 'Invalid oid: %s', oid
-            return
-
+    processAboutTab = (oid) ->
         # we use $root as timestamp if the user doesn't exist,
         # and $elem if he does
 
@@ -285,4 +271,46 @@
             $root.attr 'data-iidentity', null
 
             create player, $elem
+
+    processProfileHeader = (oid) ->
+        module.doOnce ($ '.ckb.b4a'), ($headerButtons) ->
+            $headerButtons.find '.iidentity-profile-badge'
+                .remove()
+
+            badgeUrl = module.extension.getURL 'img/logo/profile-badge.png'
+
+            $ """
+                <div class="bZa Mrc iidentity-profile-badge">
+                    <img class="b-c" src="#{badgeUrl}" role="button" aria-label="IngressIdentity"></div>
+                </div>
+              """
+            .on 'click', ->
+                player =
+                    oid: oid
+                    name: ($ '[guidedhelpid="profile_name"]').text()
+
+                module.comm.send
+                    type: 'setExportData'
+                    data: player
+
+                module.showPopup 'Save Player', 'gray', module.extension.getURL 'export-single.html'
+            .appendTo $headerButtons
+
+    module.checkProfile = ->
+        $tabs = $ '#contentPane div[role="tabpanel"]'
+        dot = module.doOnce.timestamp()
+
+        if $tabs.length is 0
+            # not a profile!
+            return
+
+        oid = $tabs.first().attr 'id'
+        oid = oid.to oid.indexOf '-'
+
+        if oid.length isnt 21
+            module.log.error 'Invalid oid: %s', oid
+            return
+
+        processProfileHeader oid
+        processAboutTab oid
 )(iidentity or (iidentity = window.iidentity = {}), window.jQuery)

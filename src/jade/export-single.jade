@@ -1,0 +1,39 @@
+include ./_mixins
+
+doctype html
+html(data-translate-prefix="export")
+    head
+        title(data-translate-name="single_title") IngressIdentity Player Exporter
+
+        // Bootstrap CSS
+        +css_lib('bootstrap')
+
+        // Our CSS
+        +css('export')
+
+        unless browser === 'firefox'
+            // jQuery, Sugar and Bootstrap JS
+            +js_lib('jquery')
+            +js_lib('sugar')
+            +js_lib('bootstrap')
+
+            // Our JS
+            +js('export-single')
+
+    body
+        +ingress_background
+            +row
+                h1(data-translate-name="single_title") IngressIdentity Player Exporter
+                p(data-translate-name="single_intro").
+                    You can use the data below in a data sheet to store the current
+                    Google+ user.
+            +row
+                p
+                    button#copy(type="button", class="btn btn-default btn-sm", data-translate-name="copy_button").
+                        Copy
+                    span(data-translate-name="copy_text")
+                        | Press this button to copy the data to the clipboard, then paste it in a Google Drive Spreadsheet.
+                .result-container
+                    textarea.result(contenteditable, class="export", rows="20")
+                .table-responsive
+                    table.result(class="table table-striped table-condensed table-bordered")

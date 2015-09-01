@@ -315,7 +315,14 @@
     export_warning_all_members:
         message: 'Niet alle spelers in de community zijn ingeladen. Deze exporteur kan enkel de leden exporteren die getoond worden op de pagina. Gelieve eerst volledig naar beneden te scrollen vooraleer je op de export-knop duwt.'
         description: 'Warning shown when not all members have been loaded.'
+    export_single_title:
+        message: 'IngressIdentity Speler Exporteur'
+        description: 'Title of the single player export page'
+    export_single_intro:
+        message: 'Je kan de data op deze pagina gebruiken om de huidige Google+ op te slaan in een data sheet.'
+        description: 'The intro of the single player export page'
 
+    # search page
     search_title:
         message: 'IngressIdentiteit Zoeken'
         description: 'The title of the search page'

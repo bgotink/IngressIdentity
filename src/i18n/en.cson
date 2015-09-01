@@ -318,7 +318,14 @@
     export_warning_all_members:
         message: 'You haven\'t loaded all players in the community. This exporter can only export the members that are shown on the page. You\'ll have to scroll down completely before opening the exporter.'
         description: 'Warning shown when not all members have been loaded.'
+    export_single_title:
+        message: 'IngressIdentity Player Exporter'
+        description: 'Title of the single player export page'
+    export_single_intro:
+        message: 'You can use the data below in a data sheet to store the current Google+ user.'
+        description: 'The intro of the single player export page'
 
+    # search page
     search_title:
         message: 'IngressIdentity Search'
         description: 'The title of the search page'
