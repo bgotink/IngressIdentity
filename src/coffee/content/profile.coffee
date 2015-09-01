@@ -235,6 +235,10 @@
         if $root.length is 0
             $root = $ '#' + oid + '-co-about-page'
 
+        if $root.length is 0 or $root.is '.o-xc-Bd'
+            # profile tab isn't shown
+            return
+
         $elem = $root.find 'div.iidentity-profile-wrapper'
 
         if dot is $root.attr 'data-iidentity'
