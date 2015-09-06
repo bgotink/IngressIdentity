@@ -34,7 +34,7 @@
                 else
                     nameRegexes.each (re) ->
                         matches = false
-                        if matches = entry.name.match re
+                        if matches = data.name.match re
                             data.nickname = matches[1].compact()
                             data.name = data.name.remove(re).compact()
 
