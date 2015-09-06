@@ -11,7 +11,7 @@
 
     "license": "MIT",
 
-    "version": "0.8.7",
+    "version": "0.8.8",
     "engines": {
         "firefox": ">=30.0 <=33.0"
     }
