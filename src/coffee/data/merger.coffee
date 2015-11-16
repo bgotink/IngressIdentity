@@ -18,7 +18,7 @@
         'darsana'
         'shonin'
         'persepolis'
-        'anomaly'
+        'abaddon'
     ]
 
     # all possible values for the faction field
