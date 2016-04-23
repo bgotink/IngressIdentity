@@ -58,7 +58,7 @@
                             $ '<ul class="Kla yVa">'
                                 .append(
                                     $ anomalies.map (anomaly) ->
-                                        nice = anomaly.capitalize true
+                                        nice = anomaly.replace(/_/g, ' ').capitalize true
 
                                         $ '<li>'
                                             .append(
