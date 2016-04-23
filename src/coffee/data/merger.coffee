@@ -19,6 +19,8 @@
         'shonin'
         'persepolis'
         'abaddon'
+        'obsidian'
+        'aegis nova'
     ]
 
     # all possible values for the faction field
