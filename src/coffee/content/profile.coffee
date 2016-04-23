@@ -216,6 +216,7 @@
         # and $elem if he does
 
         $root = $ '#' + oid + '-about-page'
+        dot = module.doOnce.timestamp()
 
         # own profile page uses slightly different IDs
         if $root.length is 0
@@ -298,7 +299,6 @@
 
     module.checkProfile = ->
         $tabs = $ '#contentPane div[role="tabpanel"]'
-        dot = module.doOnce.timestamp()
 
         if $tabs.length is 0
             # not a profile!
