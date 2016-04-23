@@ -20,13 +20,16 @@
         'persepolis'
         'abaddon'
         'obsidian'
-        'aegis nova'
+        'aegis_nova'
     ]
 
     # all possible values for the faction field
     validFactions = [ 'enlightened', 'resistance', 'unknown', 'error' ]
 
     # general helpers
+
+    normalizeAnomalyName = (name) ->
+        name.compact().toLowerCase().replace /\s/g, '_'
 
     doEach = (obj, key, func) ->
         if not Object.has obj, key
@@ -79,7 +82,7 @@
                         false
             checkValidAnomaly: (obj, key, err) ->
                 doEach obj, key, (value) ->
-                    if not Object.isString(value) or anomalies.indexOf(value.compact().toLowerCase()) is -1
+                    if not Object.isString(value) or anomalies.indexOf(normalizeAnomalyName value) is -1
                         err.push 'Invalid anomaly: "' + value + '"'
                         false
             checkFactions: (arr, err) ->
@@ -243,8 +246,10 @@
     sort_anomalies = (object) ->
         return unless object.extra?.anomaly? and Array.isArray object.extra.anomaly
 
+        normalizedAnomalies = object.extra.anomaly.map normalizeAnomalyName
+
         object.extra.anomaly = anomalies.filter (el) ->
-            (object.extra.anomaly.indexOf el) isnt -1
+            (normalizedAnomalies.indexOf el) isnt -1
 
     merge = ->
         if arguments.length is 0

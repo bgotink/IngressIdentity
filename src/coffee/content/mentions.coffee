@@ -58,8 +58,8 @@
             doForEach player, true, 'anomaly', (anomaly) ->
                     $ '<img>'
                         .attr 'src', module.extension.getURL 'img/anomalies/' + anomaly + '.png'
-                        .attr 'alt', anomaly
-                        .attr 'title', anomaly.capitalize true
+                        .attr 'alt', anomaly.replace(/_/g, ' ').capitalize true
+                        .attr 'title', anomaly.replace(/_/g, ' ').capitalize true
                         .addClass 'iidentity-anomaly'
                 , (anomalyList) ->
                     $name.append(
@@ -174,8 +174,8 @@
             doForEach player, true, 'anomaly', (anomaly) ->
                     $ '<img>'
                         .attr 'src', module.extension.getURL 'img/anomalies/' + anomaly + '.png'
-                        .attr 'alt', anomaly
-                        .attr 'title', anomaly.capitalize true
+                        .attr 'alt', anomaly.replace(/_/g, ' ').capitalize true
+                        .attr 'title', anomaly.replace(/_/g, ' ').capitalize true
                         .addClass 'iidentity-anomaly'
                 , (anomalyList) ->
                     $wrapper.append(
