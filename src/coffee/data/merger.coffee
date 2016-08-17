@@ -21,6 +21,7 @@
         'abaddon'
         'obsidian'
         'aegis_nova'
+        'Via_Lux'
     ]
 
     # all possible values for the faction field
