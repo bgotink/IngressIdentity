@@ -589,12 +589,15 @@
 
 
     $ ->
-        module.extension.init() if module.extension.init?
+        chrome.identity.getAuthToken { 'interactive': true }, (token) ->
+            module.data.spreadsheets.setToken encodeURIComponent token
 
-        storageCache = new module.Cache()
+            module.extension.init() if module.extension.init?
 
-        initGoogle()
+            storageCache = new module.Cache()
 
-        module.extension.addDataChangedListener onDataUpdated
+            initGoogle()
+
+            module.extension.addDataChangedListener onDataUpdated
 
 )(iidentity or (iidentity = window.iidentity = {}), window.jQuery, window)

@@ -14,8 +14,8 @@
         newSheet: 'https://docs.google.com/spreadsheets/d/{key}'
 
     baseQueryUrl =
-        oldSheet: 'https://docs.google.com/spreadsheet/ccc?key={key}&gid={gid}'
-        newSheet: 'https://docs.google.com/spreadsheets/d/{key}/gviz/tq?gid={gid}'
+        oldSheet: 'https://docs.google.com/spreadsheet/ccc?key={key}&gid={gid}&access_token={token}'
+        newSheet: 'https://docs.google.com/spreadsheets/d/{key}/gviz/tq?gid={gid}&access_token={token}'
 
     # unexported helper functions and classes
 
@@ -29,10 +29,11 @@
         if (matches = key.match /(.*)[#&?]gid=(.*)/)
             {
                 key: matches[1],
-                gid: matches[2]
+                gid: matches[2],
+                token
             }
         else
-            { key: key }
+            { key: key, token }
 
     keyToUrl = (key) ->
         if not Object.isObject key
@@ -47,6 +48,13 @@
             url + '#gid=' + key.gid
         else
             url
+
+    # OAuth token
+
+    token = undefined
+
+    exports.setToken = (t) ->
+        token = t
 
     # This class loads google drive documents.
     #

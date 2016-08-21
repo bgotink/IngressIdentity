@@ -12,7 +12,7 @@
 
     "default_locale": "en",
 
-    "permissions": [ "storage" ],
+    "permissions": [ "storage", "identity" ],
     "optional_permissions": [ "https://*.google.com/*" ],
 
     "background": {
@@ -21,7 +21,7 @@
 
     "options_page": "options.html",
 
-    "content_security_policy": "default-src 'none'; script-src 'self' https://www.google.com https://spreadsheets.google.com https://docs.google.com; object-src 'self'; img-src 'self'; style-src 'self' 'unsafe-inline'",
+    "content_security_policy": "default-src 'none'; script-src 'self' https://www.google.com https://spreadsheets.google.com https://docs.google.com; object-src 'self'; img-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://spreadsheets.google.com https://docs.google.com https://sheets.googleapis.com",
     "content_scripts": [
         {
             "matches": [ "https://plus.google.com/*", "https://apis.google.com/*" ],
@@ -52,5 +52,12 @@
         "img/logo/*.png",
         "export.html",
         "export-single.html"
-    ]
+    ],
+
+    "oauth2": {
+      "client_id": "240336793062-q47gi7j5rvtsloqkjgqe5lnvli6cjvld.apps.googleusercontent.com",
+      "scopes": [
+        "https://www.googleapis.com/auth/spreadsheets.readonly"
+      ]
+    }
 }

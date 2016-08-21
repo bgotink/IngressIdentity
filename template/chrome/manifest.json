@@ -12,7 +12,7 @@
 
     "default_locale": "en",
 
-    "permissions": [ "storage" ],
+    "permissions": [ "storage", "identity" ],
     "optional_permissions": [ "https://*.google.com/*" ],
 
     "background": {
@@ -52,5 +52,12 @@
         "img/logo/*.png",
         "export.html",
         "export-single.html"
-    ]
+    ],
+
+    "oauth2": {
+      "client_id": "240336793062-q47gi7j5rvtsloqkjgqe5lnvli6cjvld.apps.googleusercontent.com",
+      "scopes": [
+        "https://www.googleapis.com/auth/spreadsheets.readonly	"
+      ]
+    }
 }
