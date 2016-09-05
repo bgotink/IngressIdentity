@@ -7,6 +7,8 @@
 
 import { Player, CommunityOrEvent, AnomalyName } from 'ingress-identity';
 import _ from 'lodash';
+import { anomalies as allAnomalies } from './util';
+import * as log from '../log';
 
 function mergeFaction(destination: Player, source: Player) {
   if (destination.faction === source.faction || source.faction === 'unknown') {
@@ -124,7 +126,14 @@ export default function (...players: Player[]): Player {
     return players[0];
   }
 
-  const player = _.cloneDeep(players.shift());
+  log.log('Merging players', players);
 
-  return mergePlayers(player, ...players);
+  const player = _.cloneDeep(players[0]);
+  const merged = mergePlayers(player, ...players.slice(1));
+
+  merged.anomaly = allAnomalies.filter(anomaly => merged.anomaly.includes(anomaly));
+
+  log.log('Got merge result', merged);
+
+  return merged;
 }
