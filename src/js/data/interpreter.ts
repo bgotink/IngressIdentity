@@ -121,5 +121,5 @@ export default function createPlayer(manifestEntry: ManifestEntry, sourceEntry: 
     player.extra = mapExtra(extra);
   }
   
-  return null;
+  return player;
 }
