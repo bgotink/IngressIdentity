@@ -60,9 +60,7 @@ function removeEmptyProperties<T extends StringData|NestedStringData>(data: T): 
  * Before using this class, the google visualization library has to be loaded.
  */
 export class File {
-  private data: Promise<{
-    properties: FileData;
-  }[]>;
+  private data: Promise<FileData[]>;
   // The constructor. The only parameter is the key/id of the spreadsheet.
   constructor(private tokenBearer: TokenBearer, private key: string) {
     this.reload();
@@ -91,12 +89,14 @@ export class File {
       `https://sheets.googleapis.com/v4/spreadsheets/${this.key}`
     )
     .then(response => response.json())
-    .then(response => response.sheets);
+    .then(response => response.sheets.map(
+      ({ properties }: { properties: FileData; }) => properties
+    ));
   }
 
   public getData(oid: number): Promise<FileData|null> {
     return this.data.then(dataList => {
-      return dataList.find(({ properties }) => properties.sheetId === oid);
+      return dataList.find(({ sheetId }) => sheetId === oid);
     });
   }
 
