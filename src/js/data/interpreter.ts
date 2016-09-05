@@ -28,7 +28,7 @@ function extractCommunityOrEvent(key: 'community' | 'event', data: ExtraData): C
     if (idx === -1) {
       name = oid;
     } else {
-      name = oid.slice(idx).trim();
+      name = oid.slice(idx + 1).trim();
       oid = oid.slice(0, idx).trim();
     }
   }
