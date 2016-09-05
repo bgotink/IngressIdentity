@@ -105,7 +105,7 @@ class PlayerSource implements HasPlayers {
       key: this.spreadsheet.getKey(),
       count: (await this.spreadsheet.getNumberOfRows()),
       tag: this.metadata.tag,
-      version: this.metadata.lastUpdated,
+      version: this.metadata.lastupdated,
       faction: this.metadata.faction,
     };
   }

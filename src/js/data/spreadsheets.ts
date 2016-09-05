@@ -133,7 +133,7 @@ export abstract class Spreadsheet<T> {
   }
 
   private parseData(rawData: RawSpreadsheetData): SpreadSheetEntry[] {
-    const header = rawData.values.splice(0, 1)[0];
+    const header = rawData.values.splice(0, 1)[0].map(str => str.toLowerCase());
 
     return rawData.values.map(entry => {
       let obj: SpreadSheetEntry = {};
@@ -215,18 +215,18 @@ export interface ManifestEntry {
 
   tag: string;
   faction: Faction;
-  lastUpdated: string;
+  lastupdated: string;
 
   extraData?: ExtraData;
 
   errors: string[];
 }
 
-type RegularManifestKey = 'key' | 'refresh' | 'tag' | 'faction' | 'lastUpdated';
+type RegularManifestKey = 'key' | 'refresh' | 'tag' | 'faction' | 'lastupdated';
 export class ManifestSpreadsheet extends Spreadsheet<ManifestEntry> {
   protected validate(data: SpreadSheetEntry, i: number): ManifestEntry | null {
     let {
-      key, refresh, tag, faction, lastUpdated
+      key, refresh, tag, faction, lastupdated
     } = data;
 
     if (_.isEmpty(key)) {
@@ -241,8 +241,8 @@ export class ManifestSpreadsheet extends Spreadsheet<ManifestEntry> {
 
     const errors: string[] = [];
 
-    if (_.isEmpty(lastUpdated)) {
-      errors.push(`No "lastUpdated" on line ${i}, skipping line`);
+    if (_.isEmpty(lastupdated)) {
+      errors.push(`No "lastupdated" on line ${i}, skipping line`);
       return null;
     }
 
@@ -261,13 +261,13 @@ export class ManifestSpreadsheet extends Spreadsheet<ManifestEntry> {
     }
 
     const result: ManifestEntry = {
-      key, lastUpdated, tag,
+      key, lastupdated, tag,
       refresh: +refresh,
       faction: parseFaction(faction),
       errors
     };
 
-    let extra = _.omit<ExtraData, SpreadSheetEntry>(data, 'key', 'refresh', 'tag', 'faction', 'lastUpdated', 'extratags')
+    let extra = _.omit<ExtraData, SpreadSheetEntry>(data, 'key', 'refresh', 'tag', 'faction', 'lastupdated', 'extratags')
 
     if (_.has(data, 'extratags')) {
       if (!_.isEmpty(extra)) {
