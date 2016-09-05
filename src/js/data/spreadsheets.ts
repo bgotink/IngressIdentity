@@ -152,33 +152,40 @@ export abstract class Spreadsheet<T> {
     return `${this.file.getKey()}#gid=${this.fileData.sheetId}`;
   }
 
-  private getNewFileData() {
-    return this.file.getData(this.fileData.sheetId);
+  private async getNewFileData() {
+    return await this.file.getData(this.fileData.sheetId);
   }
 
   protected abstract validate(data: SpreadSheetEntry, i: number): T|null;
 
-  public reload(): Promise<T[]> {
+  public async reload(): Promise<T[]> {
+    return await (this.data = this.doReload());
+  }
+
+  private async doReload(): Promise<T[]> {
     this.err = [];
-    return this.getNewFileData()
-      .then(fileData => {
-        const fileKey = this.file.getKey();
-        if (fileData == null) {
-          return Promise.reject(`No sheet with id "${this.fileData.sheetId}" found in "${fileKey}"`);
-        }
+    const fileData = await this.getNewFileData();
+    const fileKey = this.file.getKey();
 
-        this.fileData = fileData;
+    if (fileData == null) {
+      return Promise.reject(`No sheet with id "${this.fileData.sheetId}" found in "${fileKey}"`);
+    }
 
-        return this.tokenBearer.fetchAuthenticated(
-          `https://sheets.googleapis.com/v4/spreadsheets/${fileKey}/values/A1:${numberToColumnId(fileData.gridProperties.columnCount)}${fileData.gridProperties.rowCount}?majorDimension=rows`
-        )
-        .then(response => response.json())
-        .then((response: RawSpreadsheetData) => this.parseData(response))
-        .then(response => (
-          response.map((entry, i) => this.validate(entry, i))
-            .filter(entry => !!entry)
-        ));
-      });
+    this.fileData = fileData;
+
+    return this.tokenBearer.fetchAuthenticated(
+      `https://sheets.googleapis.com/v4/spreadsheets/${fileKey}/values/${this.fileData.title}!A1:${numberToColumnId(fileData.gridProperties.columnCount)}${fileData.gridProperties.rowCount}?majorDimension=rows`
+    )
+    .then(response => response.json())
+    .then((response: RawSpreadsheetData) => this.parseData(response))
+    .then(response => (
+      response.map((entry, i) => this.validate(entry, i))
+        .filter(entry => !!entry)
+    ));
+  }
+
+  public async ready() {
+    await this.getData();
   }
 
   public getData() {
