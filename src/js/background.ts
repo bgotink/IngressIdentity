@@ -14,6 +14,7 @@ import { getPrefixedMessages } from './background/i18n';
 import DataManager from './data/index';
 import TokenBearer from './data/token';
 
+const optionsPage = `chrome-extension://${chrome.runtime.id}/options.html`;
 const optionsPageRegexp = new RegExp(`chrome-extension://${chrome.runtime.id}/options.html`);
 
 const tokenBearer = new TokenBearer();
@@ -665,4 +666,12 @@ chrome.runtime.onMessage.addListener((request: Request<{ type: string; }>, sende
   });
 
   return shouldWait === MessageListenerReply.WAIT_ON_ASYNC;
+});
+
+chrome.browserAction.onClicked.addListener(tab => {
+  chrome.tabs.create({
+      url: optionsPage,
+      active: true,
+      openerTabId: tab.id,
+  });
 });
