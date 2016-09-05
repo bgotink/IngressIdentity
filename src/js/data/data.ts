@@ -93,7 +93,7 @@ class PlayerSource implements HasPlayers {
   }
 
   public async ready(): Promise<void> {
-    await this.players;
+    await Promise.all([ this.spreadsheet.ready(), this.players ]);
   }
 
   public getErrors() {
