@@ -126,7 +126,7 @@ function mergePlayers(destination: Player, ...players: Player[]): Player {
 }
 
 export default function (...players: Player[]): Player {
-  if (players.length < 1) {
+  if (players.length < 2) {
     return players[0];
   }
 
