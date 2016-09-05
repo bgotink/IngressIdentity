@@ -56,7 +56,11 @@ function mergeAnomaly(destination: AnomalyName[], source: AnomalyName[]) {
 }
 
 function mergeCommunityOrEvent(destination: CommunityOrEvent[], source: CommunityOrEvent[]) {
-  source.push(...source); 
+  source.forEach(entry => {
+    if (!destination.some(({ oid }) => entry.oid === oid)) {
+      destination.push(entry);
+    }
+  });
 }
 
 function mergeExtra(destination: Player, source: Player) {
