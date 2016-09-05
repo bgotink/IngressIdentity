@@ -18,7 +18,7 @@ const optionsPage = `chrome-extension://${chrome.runtime.id}/options.html`;
 const optionsPageRegexp = new RegExp(`chrome-extension://${chrome.runtime.id}/options.html`);
 
 const tokenBearer = new TokenBearer();
-let data: DataManager;
+let data = new DataManager(tokenBearer, []);
 
 /*
  * Storage functions
@@ -675,3 +675,6 @@ chrome.browserAction.onClicked.addListener(tab => {
       openerTabId: tab.id,
   });
 });
+
+// Load the data!
+reloadData();
