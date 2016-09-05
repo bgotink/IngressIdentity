@@ -24,13 +24,13 @@ export const anomalies = Object.freeze([
 ]);
 
 export function isValidAnomaly(str: string|AnomalyName): boolean {
-    return parseAnomaly(str) == null;
+    return parseAnomaly(str) !== null;
 }
 
 export function parseAnomaly(str: string|AnomalyName): AnomalyName|null {
-    const anomaly = _.snakeCase(str) as AnomalyName;
+    const anomaly = str.toLowerCase().replace(/\s+/g, '_') as AnomalyName;
 
-    if (anomalies.includes(anomaly)) {
+    if (!anomalies.includes(anomaly)) {
         return null;
     }
 
