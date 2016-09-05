@@ -5,6 +5,8 @@
  * @license MIT
  */
 
+import * as log from '../log';
+
 export default class TokenBearer {
   private token: Promise<string>;
 
@@ -68,11 +70,14 @@ export default class TokenBearer {
             });
         }
 
-        if (response.status !== 200) {
+        if (!response.ok) {
           throw new Error(`Got HTTP error ${response.status}`);
         }
 
         return response;
+      }, (error: Error) => {
+        log.error('Got an error:', error);
+        throw error;
       });
     });
   }
