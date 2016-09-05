@@ -49,7 +49,7 @@ function mergeName(destination: Player, source: Player) {
 
 function mergeAnomaly(destination: AnomalyName[], source: AnomalyName[]) {
   source.forEach(entry => {
-    if (destination.indexOf(entry) === -1) {
+    if (!destination.includes(entry)) {
       destination.push(entry);
     }
   });
