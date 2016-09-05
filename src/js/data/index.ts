@@ -62,10 +62,10 @@ export default class DataManager {
     this.registeredManifests = new Map();
 
     this.playerSource = Promise.all(keys.map(key => this.createManifest(key)))
-      .then(manifests => {
+      .then(async manifests => {
         keys.forEach(key => this.registeredManifests.set(key));
 
-        return new RootSource(
+        const rootSource =  new RootSource(
           manifests,
           async (manifest: ManifestSpreadsheet, manifestEntry: ManifestEntry) => {
             return await this.createSource(
@@ -73,7 +73,11 @@ export default class DataManager {
               parseKey(manifestEntry.key).gid || 0
             )
           }
-        )
+        );
+
+        await rootSource.ready();
+
+        return rootSource;
       });
   }
 
@@ -146,7 +150,7 @@ export default class DataManager {
   }
 
   public async ready() {
-    await (await this.playerSource).ready();
+    await this.playerSource;
   }
 
   public async reload() {
