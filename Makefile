@@ -6,14 +6,14 @@ HTMLs = options.html background.html export.html export-single.html search.html
 DOCs = $(addprefix docs/,$(addsuffix .html,index options tools files sources manifests export compatibility))
 LIBs = $(addprefix vendor/,css/bootstrap.min.css $(addprefix fonts/glyphicons-halflings-regular.,eot svg ttf woff) js/jquery.min.js js/jquery-ui.min.js js/sugar.min.js js/bootstrap.min.js)
 
-JS_CONTENT_DEPS = $(addprefix src/coffee/,$(addsuffix .coffee,communication log $(addprefix content/,doOnce main mentions profile source popup export i18n)))
-JS_CONTENT_TALK_DEPS = $(addprefix src/coffee/,$(addsuffix .coffee,communication log $(addprefix content/,doOnce mentions main-talk)))
-JS_OPTIONS_DEPS = $(addprefix src/coffee/,$(addsuffix .coffee,communication log auto-translate $(addprefix options/,alerts communication main manifests settings)))
-JS_BACKGROUND_DEPS = $(addprefix src/coffee/,$(addsuffix .coffee,log $(addprefix data/,spreadsheets interpreter merger finder data) $(addprefix background/,i18n cache) background))
-JS_HELP_DEPS = src/coffee/help.coffee
-JS_EXPORT_DEPS = $(addprefix src/coffee/,$(addsuffix .coffee,communication log export auto-translate))
-JS_EXPORT_SINGLE_DEPS = $(addprefix src/coffee/, $(addsuffix .coffee,communication log export-single auto-translate))
-JS_SEARCH_DEPS = $(addprefix src/coffee/,$(addsuffix .coffee,communication log search auto-translate))
+JS_CONTENT_DEPS = $(addprefix src/js/,$(addsuffix .ts,content/main communication log $(addprefix content/,doOnce mentions profile source popup export i18n)))
+JS_CONTENT_TALK_DEPS = $(addprefix src/js/,$(addsuffix .ts,content/main-talk communication log $(addprefix content/,doOnce mentions)))
+JS_OPTIONS_DEPS = $(addprefix src/js/,$(addsuffix .ts,options/main communication log auto-translate $(addprefix options/,alerts communication manifests settings)))
+JS_BACKGROUND_DEPS = $(addprefix src/js/,$(addsuffix .ts,background log $(addprefix data/,spreadsheets interpreter merger finder data) $(addprefix background/,i18n cache)))
+JS_HELP_DEPS = src/js/help.ts
+JS_EXPORT_DEPS = $(addprefix src/js/,$(addsuffix .ts,export communication log auto-translate))
+JS_EXPORT_SINGLE_DEPS = $(addprefix src/js/, $(addsuffix .ts,export-single communication log auto-translate))
+JS_SEARCH_DEPS = $(addprefix src/js/,$(addsuffix .ts,search communication log auto-translate))
 
 LANGUAGES=en nl
 
@@ -40,14 +40,14 @@ define less_release
 lessc -x $< $@
 endef
 
-define coffee
+define rollup
 @mkdir -p $(dir $@)
-@bin/coffee $@ $^
+@node_modules/.bin/rollup -c -i $< > $@
 endef
 
-define coffee_release
+define rollup_release
 @mkdir -p $(dir $@)
-@bin/coffee --minify $@ src/coffee/release-header.coffee $^
+@node_modules/.bin/rollup -c -i $< > $@
 endef
 
 define jade
@@ -211,53 +211,53 @@ build/%/img/logo/38.png: src/img/logo.svg
 	$(ensure_exists)
 	convert -background none $< -resize 38 $@
 
-build/chrome/js/content.js: src/coffee/beal/chrome/content.coffee $(JS_CONTENT_DEPS)
-	$(coffee)
+build/chrome/js/content.js: $(JS_CONTENT_DEPS)
+	$(rollup)
 
-build/chrome-release/js/content.js: src/coffee/beal/chrome/content.coffee $(JS_CONTENT_DEPS)
-	$(coffee_release)
+build/chrome-release/js/content.js: $(JS_CONTENT_DEPS)
+	$(rollup_release)
 
-build/chrome/js/content-talk.js: src/coffee/beal/chrome/content.coffee $(JS_CONTENT_TALK_DEPS)
-	$(coffee)
+build/chrome/js/content-talk.js: $(JS_CONTENT_TALK_DEPS)
+	$(rollup)
 
-build/chrome-release/js/content-talk.js: src/coffee/beal/chrome/content.coffee $(JS_CONTENT_TALK_DEPS)
-	$(coffee_release)
+build/chrome-release/js/content-talk.js: $(JS_CONTENT_TALK_DEPS)
+	$(rollup_release)
 
-build/chrome/js/background.js: src/coffee/beal/chrome/background.coffee $(JS_BACKGROUND_DEPS)
-	$(coffee)
+build/chrome/js/background.js: $(JS_BACKGROUND_DEPS)
+	$(rollup)
 
-build/chrome-release/js/background.js: src/coffee/beal/chrome/background.coffee $(JS_BACKGROUND_DEPS)
-	$(coffee_release)
+build/chrome-release/js/background.js: $(JS_BACKGROUND_DEPS)
+	$(rollup_release)
 
-build/chrome/js/options.js: src/coffee/beal/chrome/content.coffee $(JS_OPTIONS_DEPS)
-	$(coffee)
+build/chrome/js/options.js: $(JS_OPTIONS_DEPS)
+	$(rollup)
 
-build/chrome-release/js/options.js: src/coffee/beal/chrome/content.coffee $(JS_OPTIONS_DEPS)
-	$(coffee_release)
+build/chrome-release/js/options.js: $(JS_OPTIONS_DEPS)
+	$(rollup_release)
 
-build/chrome/js/export.js: src/coffee/beal/chrome/content.coffee $(JS_EXPORT_DEPS)
-	$(coffee)
+build/chrome/js/export.js: $(JS_EXPORT_DEPS)
+	$(rollup)
 
-build/chrome-release/js/export.js: src/coffee/beal/chrome/content.coffee $(JS_EXPORT_DEPS)
-	$(coffee_release)
+build/chrome-release/js/export.js: $(JS_EXPORT_DEPS)
+	$(rollup_release)
 
-build/chrome/js/export-single.js: src/coffee/beal/chrome/content.coffee $(JS_EXPORT_SINGLE_DEPS)
-	$(coffee)
+build/chrome/js/export-single.js: $(JS_EXPORT_SINGLE_DEPS)
+	$(rollup)
 
-build/chrome-release/js/export-single.js: src/coffee/beal/chrome/content.coffee $(JS_EXPORT_SINGLE_DEPS)
-	$(coffee_release)
+build/chrome-release/js/export-single.js: $(JS_EXPORT_SINGLE_DEPS)
+	$(rollup_release)
 
-build/chrome/js/search.js: src/coffee/beal/chrome/content.coffee $(JS_SEARCH_DEPS)
-	$(coffee)
+build/chrome/js/search.js: $(JS_SEARCH_DEPS)
+	$(rollup)
 
-build/chrome-release/js/search.js: src/coffee/beal/chrome/content.coffee $(JS_SEARCH_DEPS)
-	$(coffee_release)
+build/chrome-release/js/search.js: $(JS_SEARCH_DEPS)
+	$(rollup_release)
 
 build/chrome/js/help.js: $(JS_HELP_DEPS)
-	$(coffee)
+	$(rollup)
 
 build/chrome-release/js/help.js: $(JS_HELP_DEPS)
-	$(coffee_release)
+	$(rollup_release)
 
 build/chrome/css/%: build/common/css/%
 	$(copy)
@@ -308,47 +308,47 @@ chrome-dist: chrome-release
 build/%.safariextension/Info.plist: template/%.safariextension/Info.plist
 	$(copy)
 
-build/IngressIdentity.safariextension/js/content.js: src/coffee/beal/safari/content.coffee $(JS_CONTENT_DEPS)
-	$(coffee)
+build/IngressIdentity.safariextension/js/content.js: $(JS_CONTENT_DEPS)
+	$(rollup)
 
-build/IngressIdentity-release.safariextension/js/content.js: src/coffee/beal/safari/content.coffee $(JS_CONTENT_DEPS)
-	$(coffee_release)
+build/IngressIdentity-release.safariextension/js/content.js: $(JS_CONTENT_DEPS)
+	$(rollup_release)
 
-build/IngressIdentity.safariextension/js/background.js: src/coffee/beal/safari/background.coffee $(JS_BACKGROUND_DEPS)
-	$(coffee)
+build/IngressIdentity.safariextension/js/background.js: $(JS_BACKGROUND_DEPS)
+	$(rollup)
 
-build/IngressIdentity-release.safariextension/js/background.js: src/coffee/beal/safari/background.coffee $(JS_BACKGROUND_DEPS)
-	$(coffee_release)
+build/IngressIdentity-release.safariextension/js/background.js: $(JS_BACKGROUND_DEPS)
+	$(rollup_release)
 
-build/IngressIdentity.safariextension/js/options.js: src/coffee/beal/safari/content.coffee $(JS_OPTIONS_DEPS)
-	$(coffee)
+build/IngressIdentity.safariextension/js/options.js: $(JS_OPTIONS_DEPS)
+	$(rollup)
 
-build/IngressIdentity-release.safariextension/js/options.js: src/coffee/beal/safari/content.coffee $(JS_OPTIONS_DEPS)
-	$(coffee_release)
+build/IngressIdentity-release.safariextension/js/options.js: $(JS_OPTIONS_DEPS)
+	$(rollup_release)
 
-build/IngressIdentity.safariextension/js/export.js: src/coffee/beal/safari/content.coffee $(JS_EXPORT_DEPS)
-	$(coffee)
+build/IngressIdentity.safariextension/js/export.js: $(JS_EXPORT_DEPS)
+	$(rollup)
 
-build/IngressIdentity-release.safariextension/js/export.js: src/coffee/beal/safari/content.coffee $(JS_EXPORT_DEPS)
-	$(coffee_release)
+build/IngressIdentity-release.safariextension/js/export.js: $(JS_EXPORT_DEPS)
+	$(rollup_release)
 
-build/IngressIdentity.safariextension/js/export-single.js: src/coffee/beal/safari/content.coffee $(JS_EXPORT_SINGLE_DEPS)
-	$(coffee)
+build/IngressIdentity.safariextension/js/export-single.js: $(JS_EXPORT_SINGLE_DEPS)
+	$(rollup)
 
-build/IngressIdentity-release.safariextension/js/export-single.js: src/coffee/beal/safari/content.coffee $(JS_EXPORT_SINGLE_DEPS)
-	$(coffee_release)
+build/IngressIdentity-release.safariextension/js/export-single.js: $(JS_EXPORT_SINGLE_DEPS)
+	$(rollup_release)
 
-build/IngressIdentity.safariextension/js/search.js: src/coffee/beal/safari/content.coffee $(JS_SEARCH_DEPS)
-	$(coffee)
+build/IngressIdentity.safariextension/js/search.js: $(JS_SEARCH_DEPS)
+	$(rollup)
 
-build/IngressIdentity-release.safariextension/js/search.js: src/coffee/beal/safari/content.coffee $(JS_SEARCH_DEPS)
-	$(coffee_release)
+build/IngressIdentity-release.safariextension/js/search.js: $(JS_SEARCH_DEPS)
+	$(rollup_release)
 
 build/IngressIdentity.safariextension/js/help.js: $(JS_HELP_DEPS)
-	$(coffee)
+	$(rollup)
 
 build/IngressIdentity-release.safariextension/js/help.js: $(JS_HELP_DEPS)
-	$(coffee_release)
+	$(rollup_release)
 
 build/IngressIdentity.safariextension/css/%: build/common/css/%
 	$(copy)
@@ -445,10 +445,10 @@ build/%/package.json: template/%/package.json
 	$(copy)
 
 build/firefox/lib/bootstrap.js: template/firefox/lib/bootstrap.coffee
-	$(coffee)
+	$(rollup)
 
 build/firefox-release/lib/bootstrap.js: template/firefox-release/lib/bootstrap.coffee
-	$(coffee_release)
+	$(rollup_release)
 
 build/firefox/lib/resources.js: template/firefox/lib/resources.js
 	$(copy)
@@ -456,47 +456,47 @@ build/firefox/lib/resources.js: template/firefox/lib/resources.js
 build/firefox-release/lib/resources.js: template/firefox-release/lib/resources.js
 	$(copy)
 
-build/firefox/data/js/content.js: src/coffee/beal/firefox/content.coffee $(JS_CONTENT_DEPS)
-	$(coffee)
+build/firefox/data/js/content.js: $(JS_CONTENT_DEPS)
+	$(rollup)
 
-build/firefox-release/data/js/content.js: src/coffee/beal/firefox/content.coffee $(JS_CONTENT_DEPS)
-	$(coffee_release)
+build/firefox-release/data/js/content.js: $(JS_CONTENT_DEPS)
+	$(rollup_release)
 
-build/firefox/data/js/background.js: src/coffee/beal/firefox/background.coffee $(JS_BACKGROUND_DEPS)
-	$(coffee)
+build/firefox/data/js/background.js: $(JS_BACKGROUND_DEPS)
+	$(rollup)
 
-build/firefox-release/data/js/background.js: src/coffee/beal/firefox/background.coffee $(JS_BACKGROUND_DEPS)
-	$(coffee_release)
+build/firefox-release/data/js/background.js: $(JS_BACKGROUND_DEPS)
+	$(rollup_release)
 
-build/firefox/data/js/options.js: src/coffee/beal/firefox/content.coffee $(JS_OPTIONS_DEPS)
-	$(coffee)
+build/firefox/data/js/options.js: $(JS_OPTIONS_DEPS)
+	$(rollup)
 
-build/firefox-release/data/js/options.js: src/coffee/beal/firefox/content.coffee $(JS_OPTIONS_DEPS)
-	$(coffee_release)
+build/firefox-release/data/js/options.js: $(JS_OPTIONS_DEPS)
+	$(rollup_release)
 
-build/firefox/data/js/export.js: src/coffee/beal/firefox/content.coffee $(JS_EXPORT_DEPS)
-	$(coffee)
+build/firefox/data/js/export.js: $(JS_EXPORT_DEPS)
+	$(rollup)
 
-build/firefox-release/data/js/export.js: src/coffee/beal/firefox/content.coffee $(JS_EXPORT_DEPS)
-	$(coffee_release)
+build/firefox-release/data/js/export.js: $(JS_EXPORT_DEPS)
+	$(rollup_release)
 
-build/firefox/data/js/export-single.js: src/coffee/beal/firefox/content.coffee $(JS_EXPORT_SINGLE_DEPS)
-	$(coffee)
+build/firefox/data/js/export-single.js: $(JS_EXPORT_SINGLE_DEPS)
+	$(rollup)
 
-build/firefox-release/data/js/export-single.js: src/coffee/beal/firefox/content.coffee $(JS_EXPORT_SINGLE_DEPS)
-	$(coffee_release)
+build/firefox-release/data/js/export-single.js: $(JS_EXPORT_SINGLE_DEPS)
+	$(rollup_release)
 
-build/firefox/data/js/search.js: src/coffee/beal/firefox/content.coffee $(JS_SEARCH_DEPS)
-	$(coffee)
+build/firefox/data/js/search.js: $(JS_SEARCH_DEPS)
+	$(rollup)
 
-build/firefox-release/data/js/search.js: src/coffee/beal/firefox/content.coffee $(JS_SEARCH_DEPS)
-	$(coffee_release)
+build/firefox-release/data/js/search.js: $(JS_SEARCH_DEPS)
+	$(rollup_release)
 
 build/firefox/data/js/help.js: $(JS_HELP_DEPS)
-	$(coffee)
+	$(rollup)
 
 build/firefox-release/data/js/help.js: $(JS_HELP_DEPS)
-	$(coffee_release)
+	$(rollup_release)
 
 build/%/data/vendor/js/jquery-ui.min.js: template/%/data/vendor/js/jquery-ui.min.js
 	$(copy)
