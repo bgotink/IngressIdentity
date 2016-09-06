@@ -17,7 +17,7 @@ export default function translate(name: string, placeholders?: { [s: string]: an
     return message;
   }
 
-  return message.replace(/\{[^}]+\}/g, (match: string, placeholderName: string): string => {
+  return message.replace(/\{\s*([^}]+\s*)\}/g, (match: string, placeholderName: string): string => {
     return placeholders[placeholderName] || match;
   });
 }
