@@ -5,7 +5,6 @@
  * @license MIT
  */
 
-import $ from 'jquery';
 import { log } from '../log';
 
 export default function showAlert(id: string): void {

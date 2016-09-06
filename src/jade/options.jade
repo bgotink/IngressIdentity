@@ -36,6 +36,9 @@ html(data-translate-prefix='options')
         +css('options')
 
         unless browser === 'firefox'
+            +js_lib('jquery')
+            +js_lib('jquery-ui')
+            +js_lib('bootstrap')
             // Our JS
             +js('options')
     body

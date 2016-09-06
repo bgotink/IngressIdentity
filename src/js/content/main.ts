@@ -23,8 +23,6 @@
  * })();
  */
 
-import $ from 'jquery';
-
 import * as log from '../log';
 import { setOnUpdate } from '../communication';
 

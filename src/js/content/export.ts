@@ -6,7 +6,6 @@
  */
 
 import { ExportData } from 'ingress-identity';
-import $ from 'jquery';
 
 import * as comm from '../communication';
 import showPopup from './popup';

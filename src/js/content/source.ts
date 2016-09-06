@@ -6,7 +6,6 @@
  */
 
 import { SourceMetaData } from 'ingress-identity';
-import $ from 'jquery';
 
 import doOnce from './doOnce';
 import * as comm from '../communication';

@@ -6,8 +6,6 @@
  */
 
 import { ManifestMetaData } from 'ingress-identity';
-import $ from 'jquery';
-import 'jquery-ui';
 
 import _ from 'lodash';
 

@@ -5,8 +5,6 @@
  * @license MIT
  */
 
-import $ from 'jquery';
-import 'bootstrap';
 import _ from 'lodash';
 
 $($ => {

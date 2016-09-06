@@ -6,7 +6,6 @@
  * @license MIT
  */
 
-import $ from 'jquery';
 import _ from 'lodash';
 
 import { error as logError } from '../log';

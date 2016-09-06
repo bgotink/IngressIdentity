@@ -5,7 +5,6 @@
  * @license MIT
  */
 
-import $ from 'jquery';
 import _ from 'lodash';
 import { Settings } from 'ingress-identity';
 

@@ -4,7 +4,6 @@
  * @license MIT
  */
 
-import $ from 'jquery';
 import { ExportData, ExportDataEntry } from 'ingress-identity';
 
 import './auto-translate';

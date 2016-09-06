@@ -6,7 +6,6 @@
  */
 
 import { Player, CommunityOrEvent } from 'ingress-identity';
-import $ from 'jquery';
 import _ from 'lodash';
 
 import capitalize from 'sugar/string/capitalize';

@@ -5,8 +5,6 @@
  * @license MIT
  */
 
-import $ from 'jquery';
-
 let timestamp = '0';
 
 export default function doOnce(elem: HTMLElement|JQuery, callback: (elem: JQuery, ...args: any[]) => void, ...args: any[]) {

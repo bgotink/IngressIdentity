@@ -6,7 +6,6 @@
  */
 
 import { Player, CommunityOrEvent } from 'ingress-identity';
-import $ from 'jquery';
 import translate from './i18n';
 import _ from 'lodash';
 

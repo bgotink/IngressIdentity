@@ -5,8 +5,6 @@
  * @license MIT
  */
 
-import $ from 'jquery';
-
 import { getTranslationsWithPrefix } from '../communication';
 
 // we can cache this, as a change in the language is only effective

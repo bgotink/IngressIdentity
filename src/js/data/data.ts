@@ -7,8 +7,6 @@
 
 import { Player, SearchPattern, ManifestInformationEntry, ManifestInformation, ManifestErrors, SourceInformation } from 'ingress-identity';
 
-import $ from 'jquery';
-
 import { File, ManifestSpreadsheet, ManifestEntry, SourceSpreadsheet, SourceEntry } from './spreadsheets';
 import createPlayer from './interpreter';
 import mergePlayers from './merger';

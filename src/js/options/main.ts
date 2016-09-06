@@ -5,8 +5,6 @@
  * @license MIT
  */
 
-import $ from 'jquery';
-
 import showAlert from './alerts';
 import * as comm from './communication';
 import { initManifests, reloadManifests } from './manifests';

@@ -5,8 +5,6 @@
  * @license MIT
  */
 
-import $ from 'jquery';
-
 const colorMap = Object.freeze({
   yellow: 'irc',
   cyan: 'QMd',
