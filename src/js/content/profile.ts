@@ -178,7 +178,7 @@ function create(player: Player, wrapper: JQuery) {
           helper.createRow(translate('level'), translate('levelValue', { value: (level === '0' ? '?' : level) })),
           helper.createRow(translate('faction'), translate(player.faction))
         ].concat(
-          Object.keys(player.extra)
+          ! player.extra ? [] : Object.keys(player.extra)
             .filter(key => {
               let value = player.extra[key];
 
