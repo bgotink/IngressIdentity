@@ -63,15 +63,16 @@ chrome.storage.onChanged.addListener(function onDataUpdated(changes) {
 async function getStoredData<T>(key: string, defaultValue: T): Promise<T> {
   if (storageCache.has(key)) {
     const result = await storageCache.get(key) as Promise<T>;
-    log.log('Got storage { key: %s, value: %s } from storage cache', key, '' + result);
+    log.log('Got data { key: %s, value: %s } from storage cache', key, `${result}`);
     return result;
   }
 
   const result = new Promise<T>((resolve, reject) => {
-    storage.get(key, (result) => {
+    storage.get({ [key]: defaultValue }, (result) => {
       if (chrome.runtime.lastError) {
         return reject(chrome.runtime.lastError);
       }
+      log.log('Got data { key: %s, value: %s } from storage', key, `${result[key]}`);
       resolve(result[key] as T);
     });
   });
