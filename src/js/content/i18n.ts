@@ -24,7 +24,7 @@ export default function getMessage(name: string, placeholders?: { [s: string]: s
   const message = messages[name] || name;
 
   if (placeholders) {
-    return message.replace(/\{[^}]+\}/g, (match: string, placeholderName: string) => {
+    return message.replace(/\{\s*([^}]+)\s*\}/g, (match: string, placeholderName: string) => {
       return placeholders[placeholderName] || match;
     });
   } else {
