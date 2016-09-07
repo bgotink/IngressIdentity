@@ -610,6 +610,8 @@ const messageListeners = Object.freeze({
   setExportData(request: SetExportDataRequest, sender: Sender, sendResponse: SendResponse<SetExportDataReply>): MessageListenerReply {
     exportData = request.data;
 
+    sendResponse({});
+
     return MessageListenerReply.DO_NOT_WAIT;
   },
 
