@@ -237,6 +237,35 @@ const handlers = Object.freeze([{
       $elem.after($infoElem);
     });
   }
+},
+{
+  matches: [
+    // New Google+
+    'c-wiz > .utPnCc' // profile pop-up
+  ],
+  handler($elem: JQuery, match: string) {
+    const oid = $elem.find('[data-profileid]').eq(0).attr('profile-id');
+
+    createBlockElement(oid, match, (err, $infoElem) => {
+      if (err) {
+        if (err === 'not-found') {
+          $elem
+            .find(`.iidentity-wrapper[data-oid=${oid}]`)
+            .remove();
+          return;
+        }
+
+        log.error(err);
+        return;
+      }
+
+      $elem
+        .find(`.iidentity-wrapper[data-oid=${oid}]`)
+        .remove();
+
+      $elem.find('.Y7OA7b').after($infoElem);
+    });
+  }
 }, {
   matches: [
     // 'a.ob.tv.Ub.Hf[oid]',            // post author, also on Google API
@@ -245,9 +274,14 @@ const handlers = Object.freeze([{
     'a.ob.tv.Ub[oid]',                  // event rsvp; also matches all previous entries
     'div.o0b[oid]',                     // friend lists on profile page
     'div.f5.wy > header > h3 > a[oid]', // comments in Google API
+
+    // New Google+
+
+    '.m3JvWd[data-profileid]',          // post author
+    '.vGowKb[data-profileid]',          // comment author
   ],
   handler($elem: JQuery, match: string) {
-    const oid = $elem.attr('oid');
+    const oid = $elem.attr('oid') || $elem.attr('data-profileid');
 
     createInlineElement(oid, match, (err, $infoElem) => {
       if (err) {
@@ -271,7 +305,7 @@ const handlers = Object.freeze([{
   }
 }, {
   matches: [
-    'a.proflink.aaTEdf[oid]', // mentions
+    'a.proflink.aaTEdf[oid]', // mentions (also on new Google+)
   ],
   handler($elem: JQuery, match: string) {
     const oid = $elem.attr('oid');
@@ -296,7 +330,7 @@ const handlers = Object.freeze([{
   }
 }, {
   matches: [
-    'div.xTc.X8c' // members page of groups
+    'div.xTc.X8c', // members page of groups
   ],
   handler($elem: JQuery, match: string) {
     let oid: string;
@@ -326,6 +360,31 @@ const handlers = Object.freeze([{
       $elem.find(`.iidentity-ciwrapper[data-oid=${oid}]`).remove();
 
       $elem.find('.l0d > .n0d').append($infoElem);
+    });
+  }
+},
+{
+  matches: [
+    // New Google+
+    '.czUUib[data-memberid]' // members page of communities
+  ],
+  handler($elem: JQuery, match: string) {
+    const oid = $elem.attr('data-memberid');
+
+    createConciseInlineElement(oid, match, (err, $infoElem) => {
+      if (err) {
+        if (err === 'not-found') {
+          $elem.find(`.iidentity-ciwrapper[data-oid=${oid}]`).remove();
+          return;
+        }
+
+        log.error(err);
+        return;
+      }
+
+      $elem.find(`.iidentity-ciwrapper[data-oid=${oid}]`).remove();
+
+      $elem.find('.dw7uce').append($infoElem);
     });
   }
 }, {
