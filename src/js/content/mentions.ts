@@ -62,15 +62,10 @@ function createBlockElement(oid: string, match: string, callback: CreateCallback
         $groupInfo = $('<div>').addClass('iidentity-group')
       );
 
-    let level = '0';
-    if (typeof player.level === 'number') {
-      level = `${_.clamp(player.level, 0, 16)}`;
-    }
-
     $extraInfo.append(
       $('<span>')
-        .addClass(`iidentity-level iidentity-level${level}`)
-        .text('L' + (level === '0' ? '?' : level))
+        .addClass(`iidentity-level iidentity-level${player.level}`)
+        .text('L' + (player.level === 0 ? '?' : `${player.level}`))
     );
 
     doForEach(player, true, 'anomaly', (anomaly: string) => {
@@ -165,11 +160,6 @@ function createInlineElement(oid: string, match: string, callback: CreateCallbac
       return callback(err, null);
     }
 
-    let level = '0';
-    if (typeof player.level === 'number') {
-      level = `${_.clamp(player.level, 0, 16)}`;
-    }
-
     const $wrapper = $('<span>')
       .addClass('iidentity-iwrapper')
       .attr('data-oid', oid)
@@ -181,8 +171,8 @@ function createInlineElement(oid: string, match: string, callback: CreateCallbac
       )
       .append(
         $('<span>')
-          .addClass(`iidentity-level iidentity-level${level}`)
-          .text('L' + (level === '0' ? '?' : level))
+          .addClass(`iidentity-level iidentity-level${player.level}`)
+          .text('L' + (player.level === 0 ? '?' : `${player.level}`))
       );
 
     doForEach(player, true, 'anomaly', (anomaly: string) => {

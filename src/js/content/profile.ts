@@ -164,18 +164,13 @@ function create(player: Player, wrapper: JQuery) {
     .removeClass('iidentity-faction-enlightened iidentity-faction-resistance iidentity-faction-error iidentity-faction-unknown')
     .addClass(`iidentity-faction-${player.faction}`);
 
-  let level = '0';
-  if (typeof player.level === 'number') {
-    level = `${_.clamp(player.level, 0, 16)}`;
-  }
-
   $profile
     .html('')
     .append(
       helper.createTable(
         [
           helper.createRow(translate('agentName'), player.nickname),
-          helper.createRow(translate('level'), translate('levelValue', { value: (level === '0' ? '?' : level) })),
+          helper.createRow(translate('level'), translate('levelValue', { value: (player.level === 0 ? '?' : `${player.level}`) })),
           helper.createRow(translate('faction'), translate(player.faction))
         ].concat(
           ! player.extra ? [] : Object.keys(player.extra)
