@@ -148,7 +148,7 @@ const helper = Object.freeze({
   }
 });
 
-function create(player: Player, wrapper: JQuery) {
+function createOld(player: Player, wrapper: JQuery) {
   const $wrapper = $(wrapper);
   const $profile = $wrapper.find('.iidentity-profile');
 
@@ -254,7 +254,7 @@ function create(player: Player, wrapper: JQuery) {
       });
 }
 
-function processAboutTab(oid: string) {
+function processAboutTabOld(oid: string) {
   // we use $root as timestamp if the user doesn't exist,
   // and $elem if he does
 
@@ -321,11 +321,11 @@ function processAboutTab(oid: string) {
     $elem.attr('data-iidentity', dot);
     $root.attr('data-iidentity', null);
 
-    create(player, $elem)
+    createOld(player, $elem)
   });
 }
 
-function processProfileHeader(oid: string) {
+function processProfileHeaderOld(oid: string) {
   doOnce($('.ckb.b4a'), $headerButtons => {
     $headerButtons.find('.iidentity-profile-badge').remove();
 
@@ -348,7 +348,7 @@ function processProfileHeader(oid: string) {
   });
 }
 
-export default function checkProfile() {
+function checkProfileOld() {
   const $tabs = $('#contentPane div[role="tabpanel"]');
 
   if ($tabs.length === 0) {
@@ -364,6 +364,190 @@ export default function checkProfile() {
     return;
   }
 
-  processProfileHeader(oid);
-  processAboutTab(oid);
+  processProfileHeaderOld(oid);
+  processAboutTabOld(oid);
+}
+
+function addExportButton($container: JQuery, oid: string, name: string) {
+  doOnce($container, $headerButtons => {
+    $headerButtons.find('.iidentity-profile-badge').remove();
+
+    const badgeUrl = chrome.extension.getURL('img/logo/profile-badge.png');
+
+    $(`
+      <div role="button" class="iidentity-profile-badge O0WRkf oG5Srb HQ8yf C0oVfc FjQgmf M9Bg4d j7nIZb" tabindex="0" aria-label="Export to IngressIdentity">
+        <span class="RveJvd">
+          <img class="b-c iidentity-profile-badge__image" src="${badgeUrl}" role="button"></img>
+          <span class="iidentity-profile-badge__text">Export</span>
+        </span>
+      </div>
+    `)
+      .on('click', function () {
+        comm.send({ type: 'setExportData', data: { oid, name } }, () => {
+          showPopup('Save Player', 'gray', chrome.extension.getURL('export-single.html'));
+        });
+      })
+      .appendTo($headerButtons);
+  });
+}
+
+const popupHelpers = Object.freeze({
+  createItem(): JQuery {
+    return $('<div class="FPE87d"></div>');
+  },
+
+  createSpacer(): JQuery {
+    return $('<div class="pOau1d"></div>');
+  },
+
+  createGeneralInformation(title: string, value: string): JQuery {
+    return $(`
+    <div class="uqKsgd iidentity-popup__geninfo-entry" role="list">
+      <div role="heading" aria-level="2" class="zqU9Fe">
+        ${title}
+      </div>
+      <div role="listitem" class="BgK4Ef ">
+        <div class="mGa2db">
+          <div class="DOdATc">
+            ${value}
+          </div>
+        </div>
+      </div>
+    </div>
+    `);
+  },
+});
+
+function createPopupEntry(player: Player): JQuery {
+  const $elem = $(`
+  <div class="jmOUCb iidentity-popup-entry" role="region" aria-label="Ingress" style="opacity: 1; transform: translateY(0);">
+    <div role="heading" aria-level="1" class="o30VSc">Ingress</div>
+  </div>
+  `);
+
+  const $generalInfo = popupHelpers.createItem().addClass('iidentity-popup__geninfo');
+
+  $generalInfo.append(
+    popupHelpers.createGeneralInformation(translate('agentName'), player.nickname),
+    popupHelpers.createGeneralInformation(translate('level'), translate('levelValue', { value: (player.level === 0 ? '?' : `${player.level}`) })),
+    popupHelpers.createGeneralInformation(translate('faction'), translate(player.faction))
+  );
+
+  if (!_.isEmpty(player.extra)) {
+    $generalInfo.append.apply($generalInfo,
+      Object.keys(player.extra)
+        .filter(key => {
+          let value = player.extra[key];
+
+          if (Array.isArray(value)) {
+            if (value.length !== 1) {
+              return false;
+            }
+
+            return typeof value[0] === 'string';
+          }
+
+          return typeof value === 'string';
+        })
+        .map(key => {
+          const value = player.extra[key] as string[];
+
+          return popupHelpers.createGeneralInformation(
+            humanize(key),
+            _.capitalize((Array.isArray(value) ? value[0] : value).trim())
+          );
+        })
+    );
+  }
+
+  $elem.append($generalInfo);
+
+  // .append(popupHelpers.createSpacer())
+
+  return $elem;
+}
+
+function processAboutPopup($header: JQuery, $popup: JQuery, oid: string) {
+  // we use $header as timestamp if the user doesn't exist,
+  // and $popup if he does
+
+  let dot = timestamp();
+
+  // own profile page uses slightly different IDs
+  // if ($root.length === 0) {
+  //   $root = $(`#${oid}-co-about-page`);
+  // }
+
+  if ($header.attr('data-iidentity') === dot) {
+    // already checked, user is not a player...
+    return;
+  }
+
+  if ($popup.attr('data-iidentity') === dot) {
+    // already checked, user is a player
+    return;
+  }
+
+  // set on $header to stop duplicate calls
+  $header.attr('data-iidentity', dot);
+
+  log.log('Checking if player with oid %s exists', oid);
+  comm.getPlayer(oid, (err, player) => {
+    if ($header.attr('data-iidentity') !== dot) {
+      // we got an update!
+      // abort, we don't want to get in its way
+      return;
+    }
+
+    if (err) {
+      // leave the timestamp on $root
+
+      if (err === 'not-found') {
+        log.log('No such player found');
+        return;
+      }
+
+      log.error(err);
+      return;
+    }
+
+    log.log('Player found:', player);
+
+    // switch to $elem for timestamping
+    $popup.attr('data-iidentity', dot);
+    $header.attr('data-iidentity', null);
+
+    $header.find('.iidentity-popup-entry').remove();
+
+    $popup.find('.Rgr1Jc').after(createPopupEntry(player));
+  });
+}
+
+export default function checkProfile() {
+  if ($('#contentPane div[role="tabpanel"]').length) {
+    checkProfileOld();
+    return;
+  }
+
+  const $header = $('.aPExg .t1KkGe.hKA5zb .gBPe9b');
+  const $oid = $header.find('.IGqcid [data-oid]');
+  const $name = $header.find('.toHbGf');
+  const $buttons = $header.find('.qUtIfb > .DZ7mXe');
+
+  if (!$oid.length || !$buttons.length || !$name.length) {
+    // profile not active
+    return;
+  }
+
+  const oid = $oid.attr('data-oid');
+
+  addExportButton($buttons, oid, $name.text());
+
+  const $popup = $('c-wiz.HqF2de.eejsDc');
+  if (!$popup.length) {
+    // profile pop-up is not active
+    return;
+  }
+
+  processAboutPopup($header, $popup, oid);
 }
