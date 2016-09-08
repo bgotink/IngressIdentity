@@ -36,13 +36,13 @@ function mergeLevel(destination: Player, source: Player) {
 }
 
 function mergeNickname(destination: Player, source: Player) {
-  if (_.has(source, 'nickname')) {
+  if (!_.isEmpty(source.nickname)) {
     destination.nickname = source.nickname;
   }
 }
 
 function mergeName(destination: Player, source: Player) {
-  if (_.has(source, 'name')) {
+  if (!_.isEmpty(source.name)) {
     destination.name = source.name;
   }
 }
