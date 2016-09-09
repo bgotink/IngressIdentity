@@ -130,3 +130,16 @@ export interface GetOptionReply<T extends string|number|boolean> {
 export function getOption<T extends string|number|boolean>(option: string, defaultValue: T, callback: Callback<T>) {
   send<GetOptionRequest<T>, GetOptionReply<T>>({ type: 'getOption', option, defaultValue }, ({ value }) => callback(value));
 }
+
+export interface VerifyTokenRequest {
+  type: 'verifyToken';
+  refresh: boolean;
+}
+
+export interface VerifyTokenReply {
+  valid: boolean;
+}
+
+export function verifyToken(refresh: boolean, callback: Callback<boolean>) {
+  send<VerifyTokenRequest, VerifyTokenReply>({ type: 'verifyToken', refresh }, ({ valid }) => callback(valid));
+}

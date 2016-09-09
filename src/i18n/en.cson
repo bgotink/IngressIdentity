@@ -76,6 +76,15 @@
     options_error:
         message: 'Error!'
         description: 'Message to show when something went horribly wrong'
+    options_error_unauthorized:
+        message: 'Error: unauthorized!'
+        description: 'Title of the message to show when the OAuth2 token is invalid'
+    options_error_unauthorized_description:
+        message: 'You need to authorize IngressIdentity to access your spreadsheets.'
+        description: 'Message to show when the OAuth2 token is invalid'
+    options_error_unauthorized_link:
+        message: 'Click here to grant IngressIdentity access.'
+        description: 'Text on the button to show when the OAuth2 token is invalid'
     options_reload_success:
         message: 'The data was successfully reloaded.'
         description: ''

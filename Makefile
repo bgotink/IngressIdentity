@@ -8,7 +8,7 @@ LIBs = $(addprefix vendor/,css/bootstrap.min.css $(addprefix fonts/glyphicons-ha
 
 JS_CONTENT_DEPS = $(addprefix src/js/,$(addsuffix .ts,content/main communication log $(addprefix content/,doOnce mentions profile source popup export i18n)))
 JS_CONTENT_TALK_DEPS = $(addprefix src/js/,$(addsuffix .ts,content/main-talk communication log $(addprefix content/,doOnce mentions)))
-JS_OPTIONS_DEPS = $(addprefix src/js/,$(addsuffix .ts,options/main communication log auto-translate $(addprefix options/,alerts communication manifests settings)))
+JS_OPTIONS_DEPS = $(addprefix src/js/,$(addsuffix .ts,options/main communication log auto-translate $(addprefix options/,alerts authorization communication manifests settings)))
 JS_BACKGROUND_DEPS = $(addprefix src/js/,$(addsuffix .ts,background log $(addprefix data/,token util spreadsheets interpreter merger finder data) $(addprefix background/,i18n cache)))
 JS_HELP_DEPS = src/js/help.ts
 JS_EXPORT_DEPS = $(addprefix src/js/,$(addsuffix .ts,export communication log auto-translate))

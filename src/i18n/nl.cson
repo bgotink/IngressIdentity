@@ -79,6 +79,15 @@
     options_error:
         message: 'Fout!'
         description: 'Message to show when something went horribly wrong'
+    options_error_unauthorized:
+        message: 'Fout: geen toegang!'
+        description: 'Title of the message to show when the OAuth2 token is invalid'
+    options_error_unauthorized_description:
+        message: 'Je moet IngressIdentity toegang geven tot je Google Spreadsheets.'
+        description: 'Message to show when the OAuth2 token is invalid'
+    options_error_unauthorized_link:
+        message: 'Klik hier om IngressIdentity toegang te verlenen.'
+        description: 'Text on the button to show when the OAuth2 token is invalid'
     options_reload_success:
         message: 'De data werd succesvol herladen.'
         description: ''

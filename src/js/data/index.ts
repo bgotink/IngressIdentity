@@ -5,6 +5,7 @@
  * @license MIT
  */
 
+import _ from 'lodash';
 import { Player, SearchPattern, ManifestErrors, SourceInformation } from 'ingress-identity';
 import { ManifestSpreadsheet, SourceSpreadsheet, File, ManifestEntry } from './spreadsheets';
 import { RootSource } from './data';
@@ -159,6 +160,14 @@ export default class DataManager {
 
   public async getErrors(): Promise<{ [s: string]: ManifestErrors }> {
     return (await this.playerSource).getErrors();
+  }
+
+  public async hasErrors(): Promise<boolean> {
+    const errors = await this.getErrors();
+
+    return _.some(errors, manifestErrors => {
+      return _.some(manifestErrors, err => err.length > 0);
+    });
   }
 
   public async getInformation() {

@@ -52,6 +52,7 @@
         "src/js/help.ts",
         "src/js/log.ts",
         "src/js/options/alerts.ts",
+        "src/js/options/authorization.ts",
         "src/js/options/communication.ts",
         "src/js/options/main.ts",
         "src/js/options/manifests.ts",

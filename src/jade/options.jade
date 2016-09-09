@@ -72,6 +72,13 @@ html(data-translate-prefix='options')
 
                     +alert_success('rename-success', 'rename_success', 'The manifest was successfully renamed.')
                     +alert_danger('rename-failed', 'rename_failed', 'Something went wrong when renaming the manifest.')
+
+                    #alert-unauthorized.hide.alert.alert-danger
+                        strong(data-translate-name='error_unauthorized') Error: unauthorized!
+                        span(data-translate-name='error_unauthorized_description') You need to authorize IngressIdentity to access your spreadsheets.
+                        | &nbsp;
+                        a#authorize.alert-link(href="#" data-translate-name='error_unauthorized_link') Click here to grant IngressIdentity access.
+
             +row
                 h2
                     span(data-translate-name='data_sources') Data Sources

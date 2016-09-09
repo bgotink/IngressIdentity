@@ -9,6 +9,7 @@ import showAlert from './alerts';
 import * as comm from './communication';
 import { initManifests, reloadManifests } from './manifests';
 import { initSettings, updateSettings } from './settings';
+import initAuthorization from './authorization';
 
 $($ => {
   // make enter submit a form
@@ -33,6 +34,7 @@ $($ => {
 
   initManifests();
   initSettings();
+  initAuthorization();
 
   comm.setOnUpdate(() => {
     reloadManifests();

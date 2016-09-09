@@ -248,7 +248,7 @@ async function reloadData(): Promise<Status> {
   data = newData;
 
   updateTabs();
-  return _.isEmpty(await data.getErrors()) ? 'success' : 'warning';
+  return (await data.hasErrors()) ? 'success' : 'warning';
 }
 
 /*
@@ -304,6 +304,7 @@ import {
   ReloadDataRequest, ReloadDataReply,
   SetOptionsRequest, SetOptionsReply,
   GetOptionRequest, GetOptionReply,
+  VerifyTokenRequest, VerifyTokenReply,
 } from './options/communication';
 import {
   HasPlayerRequest, HasPlayerReply,
@@ -460,9 +461,16 @@ const messageListeners = Object.freeze({
       return MessageListenerReply.DO_NOT_WAIT;
     }
 
-    reloadData().then(status => {
-      sendResponse({ status });
-    }).catch((error: Catchable) => sendResponse({ status: 'failed', error: catchableToString(error) }));
+    (async () => {
+      try {
+        const status = await reloadData();
+        storageCache.remove('manifests');
+        sendResponse({ status });
+      } catch (e) {
+        log.error(e);
+        sendResponse({ status: 'failed', error: catchableToString(e) })
+      }
+    })();
 
     return MessageListenerReply.WAIT_ON_ASYNC;
   },
@@ -505,6 +513,36 @@ const messageListeners = Object.freeze({
     getStoredData<T>(`option-${request.option}`, request.defaultValue).then(result => {
       sendResponse({ value: result });
     });
+
+    return MessageListenerReply.WAIT_ON_ASYNC;
+  },
+
+  verifyToken(request: VerifyTokenRequest, sender: Sender, sendResponse: SendResponse<VerifyTokenReply>): MessageListenerReply {
+    if (!isOptionsPage(sender, 'verifyToken')) {
+      // silently die by not sending a response
+      return MessageListenerReply.DO_NOT_WAIT;
+    }
+
+    (async () => {
+      if (!request.refresh) {
+        sendResponse({ valid: await tokenBearer.isAuthorized() });
+        return;
+      }
+
+      try {
+        log.log('Starting OAuth2 flow...');
+        await tokenBearer.authorize();
+        log.log('OAuth2 flow Finished');
+
+        storageCache.remove('manifests');
+        chrome.browserAction.setBadgeText({ text: '' });
+
+        sendResponse({ valid: true });
+      } catch (e) {
+        log.error(e);
+        sendResponse({ valid: false });
+      }
+    })();
 
     return MessageListenerReply.WAIT_ON_ASYNC;
   },
@@ -679,5 +717,21 @@ chrome.browserAction.onClicked.addListener(tab => {
   });
 });
 
+function onUnauthorized() {
+  storageCache.remove('manifests');
+
+  chrome.browserAction.setBadgeBackgroundColor({ color: '#FF0000' });
+  chrome.browserAction.setBadgeText({ text: '!' });
+}
+
+tokenBearer.onInvalidToken(onUnauthorized);
+
 // Load the data!
-reloadData();
+tokenBearer.isAuthorized().then(authorized => {
+  if (!authorized) {
+    onUnauthorized();
+    return;
+  }
+
+  reloadData();
+});
