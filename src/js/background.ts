@@ -263,7 +263,7 @@ function updateTabs() {
         log.log('-- tab ', tab);
         chrome.tabs.sendMessage(tab.id, { type: 'update' });
     });
-  })
+  });
 }
 
 type SendResponse<T> = (response: T) => void;
@@ -722,6 +722,15 @@ function onUnauthorized() {
 
   chrome.browserAction.setBadgeBackgroundColor({ color: '#FF0000' });
   chrome.browserAction.setBadgeText({ text: '!' });
+
+  chrome.tabs.query({}, tabs => {
+    log.log('Sending "unauthorized" message to %d tabs', tabs.length);
+
+    tabs.forEach(tab => {
+        log.log('-- tab ', tab);
+        chrome.tabs.sendMessage(tab.id, { type: 'unauthorized' });
+    });
+  });
 }
 
 tokenBearer.onInvalidToken(onUnauthorized);

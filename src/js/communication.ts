@@ -68,7 +68,19 @@ export function send<RequestType extends { type: string; }, ReplyType>(req: Requ
 }
 
 interface ReceivedRequest {
-  type?: 'update';
+  type: string;
+}
+
+type MessageHandler = (request: any) => boolean;
+
+const messageHandlers = {} as { [s: string]: MessageHandler };
+
+export function addMessageListener(messageType: string, handler: MessageHandler) {
+  if (messageHandlers[messageType]) {
+    throw new Error(`Message handler ${messageType} already registered`);
+  }
+
+  messageHandlers[messageType] = handler;
 }
 
 chrome.runtime.onMessage.addListener((request?: ReceivedRequest) => {
@@ -77,16 +89,22 @@ chrome.runtime.onMessage.addListener((request?: ReceivedRequest) => {
     return undefined;
   }
 
-  if (request.type === 'update') {
-    lastUpdate = Date.now();
-
-    if (onUpdate) {
-      onUpdate();
-    }
+  if (request.type && messageHandlers[request.type]) {
+    return messageHandlers[request.type](request);
   }
 
   // ignore: the options page gets all the messages meant for the background
   // page as well... logging/throwing here would fill the console with junk
+
+  return false;
+});
+
+addMessageListener('update', () => {
+  lastUpdate = Date.now();
+
+  if (onUpdate) {
+    onUpdate();
+  }
 
   return false;
 });
