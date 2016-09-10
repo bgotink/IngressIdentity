@@ -150,17 +150,6 @@ function getFallbackLocales(locale: string) {
   return locales;
 }
 
-export function getMessage(locale: string, name: string, placeholders: Placeholders, callback: (found: boolean, message: string) => void) {
-  localeHelper.getMessageWithFallbacks(getFallbackLocales(locale), name, (found, message) => {
-    if (!found) {
-      return callback(false, name);
-    }
-
-    // TODO do the placeholder stuff
-    callback(true, message.message);
-  });
-}
-
 export function getPrefixedMessages(locale: string, prefix: string, callback: (messages: ExtractedMessageHash) => void) {
   localeHelper.getPrefixedMessagesWithFallbacks(getFallbackLocales(locale), prefix, callback);
 }
