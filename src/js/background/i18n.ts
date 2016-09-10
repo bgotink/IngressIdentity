@@ -35,7 +35,7 @@ const localeHelper = {
   },
 
   load(locale: string, callback: () => void) {
-    if (this.isLoaded(locale)) {
+    if (localeHelper.isLoaded(locale)) {
       return callback();
     }
 
@@ -85,7 +85,7 @@ const localeHelper = {
   // simply get the message, calling callback(true, message) or callback(false)
   // depending on whether the message was found
   getMessage(locale: string, name: string, callback: (found: boolean, message?: Message) => void) {
-    this.load(locale, () => {
+    localeHelper.load(locale, () => {
       if (loadedLocales[locale].data[name]) {
         callback(true, loadedLocales[locale].data[name]);
       } else {
@@ -96,7 +96,7 @@ const localeHelper = {
 
   // get all messages with a given prefix in a given loale
   getPrefixedMessages(locale: string, prefix: string, callback: (messages: ExtractedMessageHash) => void) {
-    this.load(locale, () => {
+    localeHelper.load(locale, () => {
       const prefixRe = new RegExp(`^${prefix}_`);
       const data = <MessageHash> _.pickBy(loadedLocales[locale].data, (value, key) => prefixRe.test(key));
       const offset = prefix.length + 1;
@@ -116,12 +116,12 @@ const localeHelper = {
       return callback(false);
     }
 
-    this.getMessage(_.first(locales), name, (found, message) => {
+    localeHelper.getMessage(_.first(locales), name, (found, message) => {
       if (found) {
         return callback(true, message);
       }
 
-      this.getMessageWithFallbacks(locales.slice(1), name, callback);
+      localeHelper.getMessageWithFallbacks(locales.slice(1), name, callback);
     });
   },
 
@@ -131,9 +131,9 @@ const localeHelper = {
       return callback(state);
     }
 
-    this.getPrefixedMessages(_.first(locales), prefix, messages => {
+    localeHelper.getPrefixedMessages(_.first(locales), prefix, messages => {
       const newState = <ExtractedMessageHash> _.assign({}, state, messages);
-      this.getPrefixedMessagesWithFallbacks(locales.slice(1), prefix, callback, newState);
+      localeHelper.getPrefixedMessagesWithFallbacks(locales.slice(1), prefix, callback, newState);
     });
   }
 };
