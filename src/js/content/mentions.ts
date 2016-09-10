@@ -15,8 +15,8 @@ import doOnce from './doOnce';
 import * as comm from '../communication';
 import * as log from '../log';
 
-function doForEach<T, S>(player: Player, isExtra: boolean, key: string, each: (entry: T, i: number) => S|void, done: (result: S[]) => void) {
-  const obj = (isExtra ? player.extra : player) as { [s: string]: any };
+function doForEach<T, S>(player: Player, key: string, each: (entry: T, i: number) => S|void, done: (result: S[]) => void) {
+  const obj = player as { [s: string]: any };
   const results: S[] = [];
 
   if (_.has(obj, key)) {
@@ -68,7 +68,7 @@ function createBlockElement(oid: string, match: string, callback: CreateCallback
         .text('L' + (player.level === 0 ? '?' : `${player.level}`))
     );
 
-    doForEach(player, true, 'anomaly', (anomaly: string) => {
+    doForEach(player, 'anomaly', (anomaly: string) => {
       return $('<img>')
         .attr('src', chrome.extension.getURL(`img/anomalies/${anomaly}.png`))
         .attr('alt', capitalize(anomaly.replace(/_/g, ' '), true))
@@ -82,7 +82,7 @@ function createBlockElement(oid: string, match: string, callback: CreateCallback
       );
     });
 
-    doForEach(player, true, 'community', (community: CommunityOrEvent, i: number) => {
+    doForEach(player, 'community', (community: CommunityOrEvent, i: number) => {
       if (i > 3) {
         return false;
       }
@@ -100,7 +100,7 @@ function createBlockElement(oid: string, match: string, callback: CreateCallback
       $groupInfo.append(communityList);
     });
 
-    doForEach(player, true, 'event', (event: CommunityOrEvent, i: number) => {
+    doForEach(player, 'event', (event: CommunityOrEvent, i: number) => {
       if (i > 3) {
         return false;
       }
@@ -120,21 +120,19 @@ function createBlockElement(oid: string, match: string, callback: CreateCallback
 
     _.forEach(
       _.omit(player.extra, 'anomaly', 'community', 'event'),
-      (value: any[], name: string) => {
-        if (!Array.isArray(value)) {
-          value = [ value ];
-        }
-
+      (value: string[] | boolean, name: string) => {
         // allow two kinds of custom extra tags:
         // boolean & string
         // boolean: if array contains a true value, show name
         //          in $extraInfo
         // otherwise: show extra div etc.
 
-        if (value.some(e => e === true)) {
-          $extraInfo.append(
-            $('<span>').text(humanize(name))
-          );
+        if (typeof value === 'boolean') {
+          if (value) {
+            $extraInfo.append(
+              $('<span>').text(humanize(name))
+            );
+          }
           return;
         }
 
@@ -145,7 +143,7 @@ function createBlockElement(oid: string, match: string, callback: CreateCallback
               $('<b>').text(`${humanize(name)}:`)
             )
             .append(value.map(e => (
-              $('<span>').text(e.compact().capitalize())[0]
+              $('<span>').text(_.capitalize(e.trim()))[0]
             )))
         )
       });
@@ -175,7 +173,7 @@ function createInlineElement(oid: string, match: string, callback: CreateCallbac
           .text('L' + (player.level === 0 ? '?' : `${player.level}`))
       );
 
-    doForEach(player, true, 'anomaly', (anomaly: string) => {
+    doForEach(player, 'anomaly', (anomaly: string) => {
       return $('<img>')
         .attr('src', chrome.extension.getURL(`img/anomalies/${anomaly}.png`))
         .attr('alt', capitalize(anomaly.replace(/_/g, ' '), true))
@@ -244,7 +242,7 @@ const handlers = Object.freeze([{
     'c-wiz > .utPnCc' // profile pop-up
   ],
   handler($elem: JQuery, match: string) {
-    const oid = $elem.find('[data-profileid]').eq(0).attr('profile-id');
+    const oid = $elem.find('[data-profileid]').eq(0).attr('data-profileid');
 
     createBlockElement(oid, match, (err, $infoElem) => {
       if (err) {
