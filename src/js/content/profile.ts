@@ -467,59 +467,90 @@ function createPopupEntry(player: Player): JQuery {
   return $elem;
 }
 
-function processAboutPopup($header: JQuery, $popup: JQuery, oid: string) {
-  // we use $header as timestamp if the user doesn't exist,
-  // and $popup if he does
+function processAboutPopup($popup: JQuery, oid: string) {
+  // The popup stays open if we click on other users
+  // So we need to "doOnce" twice: once to set everything up
+  // and once per user (e.g. if we're clicking through to people in common)
+  // -> use $popup for the setup doOnce & the name element for the other
+  const dot = timestamp();
 
-  let dot = timestamp();
+  doOnce($popup, $container => {
+    function verifyActive() {
+      const foundDot = $container.attr('data-iidentity');
 
-  // own profile page uses slightly different IDs
-  // if ($root.length === 0) {
-  //   $root = $(`#${oid}-co-about-page`);
-  // }
+      if (foundDot === dot) {
+        return true;
+      }
 
-  if ($header.attr('data-iidentity') === dot) {
-    // already checked, user is not a player...
-    return;
-  }
+      $container.off(`.iidentity-${dot}`);
 
-  if ($popup.attr('data-iidentity') === dot) {
-    // already checked, user is a player
-    return;
-  }
-
-  // set on $header to stop duplicate calls
-  $header.attr('data-iidentity', dot);
-
-  log.log('Checking if player with oid %s exists', oid);
-  comm.getPlayer(oid, (err, player) => {
-    if ($header.attr('data-iidentity') !== dot) {
-      // we got an update!
-      // abort, we don't want to get in its way
-      return;
+      return false;
     }
 
-    if (err) {
-      // leave the timestamp on $root
+    let previousOid: string = '';
 
-      if (err === 'not-found') {
-        log.log('No such player found');
+    function addPlayerAbout(oid: string, repeatCount = 0) {
+      // First verify that the timestamp on the popup hasn't changed
+      if (!verifyActive()) {
+        // we got an update!
+        // abort, we don't want to get in its way
         return;
       }
 
-      log.error(err);
-      return;
+      log.log('Creating player about section for', oid);
+
+      const $dotRoot = $container.find('.qsScTb');
+
+      if (!$dotRoot.length || $dotRoot.attr('data-oid') === previousOid || !$container.find('.Rgr1Jc').length) {
+        // not ready yet
+        log.log('Not ready yet...');
+        if (repeatCount < 600) { // should be plenty of time while being reasonable on the processor
+          log.log('Retrying in setTimeout');
+          requestAnimationFrame(() => addPlayerAbout(oid, repeatCount + 1));
+        }
+        return;
+      }
+
+      if ($dotRoot.attr('data-iidentity') === dot) {
+        // already processed
+        return;
+      }
+      $dotRoot.attr('data-iidentity', dot).attr('data-oid', oid);
+      previousOid = oid;
+
+      log.log('Checking if player with oid %s exists', oid);
+      comm.getPlayer(oid, (err, player) => {
+        if (!verifyActive()) {
+          // we got an update!
+          // abort, we don't want to get in its way
+          return;
+        }
+
+        if (err) {
+          // leave the timestamp
+
+          if (err === 'not-found') {
+            log.log('No such player found');
+            return;
+          }
+
+          log.error(err);
+          return;
+        }
+
+        log.log('Player found:', player);
+
+        $container.find('.iidentity-popup-entry').remove();
+        $container.find('.Rgr1Jc').after(createPopupEntry(player));
+      });
     }
 
-    log.log('Player found:', player);
+    $container.on(`click.iidentity-${dot}`, '[data-id]', function () {
+      const oid = $(this).attr('data-id');
+      requestAnimationFrame(() => addPlayerAbout(oid));
+    });
 
-    // switch to $elem for timestamping
-    $popup.attr('data-iidentity', dot);
-    $header.attr('data-iidentity', null);
-
-    $header.find('.iidentity-popup-entry').remove();
-
-    $popup.find('.Rgr1Jc').after(createPopupEntry(player));
+    addPlayerAbout(oid);
   });
 }
 
@@ -549,5 +580,5 @@ export default function checkProfile() {
     return;
   }
 
-  processAboutPopup($header, $popup, oid);
+  processAboutPopup($popup, oid);
 }
