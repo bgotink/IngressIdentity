@@ -16,7 +16,7 @@ import humanize from 'sugar-inflections/string/humanize';
 import doOnce, { timestamp } from './doOnce';
 import * as log from '../log';
 import * as comm from '../communication';
-import showPopup from './popup';
+import showPopup, { showOldPopup } from './popup';
 
 function ensureArray<T>(value: T|T[]): T[] {
   return Array.isArray(value) ? value : [ value ];
@@ -342,7 +342,7 @@ function processProfileHeaderOld(oid: string) {
         };
 
         comm.send({ type: 'setExportData', data });
-        showPopup('Save Player', 'gray', chrome.extension.getURL('export-single.html'));
+        showOldPopup('Save Player', 'gray', chrome.extension.getURL('export-single.html'));
       })
       .appendTo($headerButtons);
   });
@@ -383,8 +383,8 @@ function addExportButton($container: JQuery, oid: string, name: string) {
       </div>
     `)
       .on('click', function () {
-        comm.send({ type: 'setExportData', data: { oid, name } }, () => {
-          showPopup('Save Player', 'gray', chrome.extension.getURL('export-single.html'));
+        comm.setExportData({ entries: [{ oid, name }] }, () => {
+          showPopup(chrome.extension.getURL('export-single.html'));
         });
       })
       .appendTo($headerButtons);

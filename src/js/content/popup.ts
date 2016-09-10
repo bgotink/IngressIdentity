@@ -16,13 +16,13 @@ const colorMap = Object.freeze({
   blue: 'NMd',
 } as { gray: string;  [s: string]: string; });
 
-function closePopup() {
+function closeOldPopup() {
   $('.iidentity-backdrop, .iidentity-popup').remove();
 }
 
-export default function showPopup(title: string, color: string, url: string) {
+export function showOldPopup(title: string, color: string, url: string) {
   // remove existing pop-up, if any
-  closePopup();
+  closeOldPopup();
 
   const $document = $(document);
 
@@ -63,5 +63,17 @@ export default function showPopup(title: string, color: string, url: string) {
       </div>
     `));
 
-  $('.iidentity-popup .G-q-O.G-q-O-Ip, .iidentity-popup .BAd.jSd').on('click', closePopup);
+  $('.iidentity-popup .G-q-O.G-q-O-Ip, .iidentity-popup .BAd.jSd').on('click', closeOldPopup);
+}
+
+let popup: Window = null;
+
+export default function showPopup(url: string) {
+    if (popup != null && !popup.closed) {
+        popup.document.location.href = url;
+        popup.focus();
+        return;
+    }
+
+    popup = window.open(url, 'iidentity-popup', 'menubar=no,location=no,resizable=yes,scrollbars=yes,status=no');
 }

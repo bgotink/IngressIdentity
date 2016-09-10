@@ -93,7 +93,8 @@ declare module 'ingress-identity' {
       nickname?: string;
   }
 
-  interface ExportData extends HasOid {
+  interface ExportData {
+    oid?: string;
     showWarning?: boolean;
 
     name?: string;

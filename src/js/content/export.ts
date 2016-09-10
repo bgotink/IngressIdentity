@@ -8,7 +8,7 @@
 import { ExportData } from 'ingress-identity';
 
 import * as comm from '../communication';
-import showPopup from './popup';
+import showPopup, { showOldPopup } from './popup';
 
 export default function addExport() {
   if (document.location.pathname.match(/(^|\/)communities\/([a-zA-Z0-9]+)\/members($|\/)/)) {
@@ -67,7 +67,7 @@ export default function addExport() {
       });
 
       comm.setExportData(data, () => {
-        showPopup('Export Community', 'gray', chrome.extension.getURL('export.html'));
+        showPopup(chrome.extension.getURL('export.html'));
       });
 
       return false;
@@ -130,7 +130,7 @@ function addExportOld() {
       });
 
       comm.setExportData(data, () => {
-        showPopup('Export Community', 'gray', chrome.extension.getURL('export.html'));
+        showOldPopup('Export Community', 'gray', chrome.extension.getURL('export.html'));
       });
 
       return false;

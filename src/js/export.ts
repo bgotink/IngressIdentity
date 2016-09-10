@@ -146,7 +146,7 @@ function parseHelper(i: number, l: number, extractName: boolean, removeExisting:
     }
 
     comm.getPlayer(entry.oid, (status, player) => {
-        if (player.community.some(community => community.oid === rawData.oid)) {
+        if (player && player.community.some(community => community.oid === rawData.oid)) {
             nextStep();
             return;
         }
