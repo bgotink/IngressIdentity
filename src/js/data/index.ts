@@ -56,13 +56,15 @@ function resolveKey(key: string, parent: ParsedKey, err?: string[]): ParsedKey|n
 export default class DataManager {
   private files: Map<string, File>;
   private registeredManifests: Map<string, ManifestSpreadsheet|null>;
-  private playerSource: Promise<RootSource>;
+  private playerSourcePromise: Promise<RootSource>;
+
+  private playerSource: RootSource;
 
   constructor(private tokenBearer: TokenBearer, keys: string[]) {
     this.files = new Map();
     this.registeredManifests = new Map();
 
-    this.playerSource = Promise.all(keys.map(key => this.createManifest(key)))
+    this.playerSourcePromise = Promise.all(keys.map(key => this.createManifest(key)))
       .then(async manifests => {
         keys.forEach(key => this.registeredManifests.set(key));
 
@@ -80,6 +82,8 @@ export default class DataManager {
 
         return rootSource;
       });
+
+    this.playerSourcePromise.then(playerSource => this.playerSource = playerSource);
   }
 
   private async createManifest(key: string): Promise<ManifestSpreadsheet> {
@@ -113,57 +117,53 @@ export default class DataManager {
     }
     this.registeredManifests.set(key, null);
 
-    return this.playerSource.then(playerSource => {
-      return this.createManifest(key)
-        .then(manifest => {
-          if (!this.registeredManifests.has(key)) {
-            // has been removed while loading
-            return;
-          }
+    return this.createManifest(key)
+      .then(manifest => {
+        if (!this.registeredManifests.has(key)) {
+          // has been removed while loading
+          return;
+        }
 
-          this.registeredManifests.set(key, manifest);
-          playerSource.addManifest(manifest);
-        });
-    })
-    .catch(err => {
-      this.registeredManifests.delete(key);
+        this.registeredManifests.set(key, manifest);
+        this.playerSource.addManifest(manifest);
+      })
+      .catch(err => {
+        this.registeredManifests.delete(key);
 
-      return Promise.reject(err);
-    });
+        return Promise.reject(err);
+      });
   }
 
-  public async removeManifest(key: string) {
+  public removeManifest(key: string) {
     if (!this.registeredManifests.has(key)) {
       // Not present
-      return Promise.resolve();
+      return;
     }
     const manifest = this.registeredManifests.get(key);
     this.registeredManifests.delete(key);
 
     if (manifest == null) {
       // Manifest was being added, so nothing more to do
-      return Promise.resolve();
+      return;
     }
 
-    return this.playerSource.then(playerSource => {
-      playerSource.removeManifest(manifest);
-    });
+    this.playerSource.removeManifest(manifest);
   }
 
   public async ready() {
-    await this.playerSource;
+    await this.playerSourcePromise;
   }
 
   public async reload() {
-    await (await this.playerSource).reload();
+    await this.playerSource.reload();
   }
 
-  public async getErrors(): Promise<{ [s: string]: ManifestErrors }> {
-    return (await this.playerSource).getErrors();
+  public getErrors(): { [s: string]: ManifestErrors } {
+    return this.playerSource.getErrors();
   }
 
-  public async hasErrors(): Promise<boolean> {
-    const errors = await this.getErrors();
+  public hasErrors(): boolean {
+    const errors = this.getErrors();
 
     return _.some(errors, manifestErrors => {
       return _.some(manifestErrors, err => err.length > 0);
@@ -171,26 +171,30 @@ export default class DataManager {
   }
 
   public async getInformation() {
-    return await (await this.playerSource).getInformation();
+    return await this.playerSource.getInformation();
   }
 
-  public async clearCache() {
-    return (await this.playerSource).clearCache();
+  public clearCache() {
+    this.playerSource.clearCache();
   }
 
   public async getPlayer(oid: string): Promise<Player> {
-    return (await this.playerSource).getPlayer(oid);
+    return this.playerSource.getPlayer(oid);
   }
 
   public async hasPlayer(oid: string): Promise<boolean> {
-    return (await this.playerSource).hasPlayer(oid);
+    return this.playerSource.hasPlayer(oid);
   }
 
   public async findPlayers(pattern: SearchPattern): Promise<Player[]> {
-    return (await this.playerSource).find(pattern);
+    return this.playerSource.find(pattern);
   }
 
   public async getSourcesForExtra(type: string, oid: string): Promise<SourceInformation[]> {
-    return (await this.playerSource).getSourcesForExtra(type, oid);
+    return this.playerSource.getSourcesForExtra(type, oid);
+  }
+
+  public async update(): Promise<boolean> {
+    return this.playerSource.update();
   }
 }

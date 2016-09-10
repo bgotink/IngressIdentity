@@ -30,7 +30,7 @@ class PlayerSource implements HasPlayers {
 
   constructor(private metadata: ManifestEntry, private spreadsheet: SourceSpreadsheet) {
     this.err = spreadsheet.getErrors();
-    this.timestamp = Date.now();
+    this.markUpdated();
 
     this.players = this.parsePlayers();
   }
@@ -52,6 +52,14 @@ class PlayerSource implements HasPlayers {
 
     await this.spreadsheet.reload();
     this.players = this.parsePlayers();
+  }
+
+  public shouldUpdate(): boolean {
+    return Date.now() > this.timestamp + (this.metadata.refresh * 60 * 60 * 1000);
+  }
+
+  public markUpdated() {
+    this.timestamp = Date.now();
   }
 
   private async parsePlayers() {
@@ -247,6 +255,49 @@ class ManifestSource extends CombinedPlayerSource<PlayerSource> {
     this.clearCache();
   }
 
+  public async update(): Promise<boolean> {
+    let updated = false;
+
+    const manifestData = await this.spreadsheet.reload();
+    const removedKeys = new Set(this.sources.keys());
+
+    const promises = manifestData.map(async (manifestEntry) => {
+        if (this.sources.has(manifestEntry.key)) {
+          removedKeys.delete(manifestEntry.key);
+
+          const source = this.sources.get(manifestEntry.key);
+          if (source.shouldUpdate()) { 
+            await source.reload(manifestEntry);
+            source.markUpdated();
+            updated = true;
+          }
+          return;
+        }
+
+        const newSource = await this.sourceFactory(manifestEntry);
+        this.sources.set(manifestEntry.key, newSource);
+
+        await newSource.ready();
+        updated = true;
+    });
+
+    await Promise.all(promises);
+
+    if (removedKeys.size) {
+      for (let key in removedKeys) {
+        this.sources.delete(key);
+      }
+      updated = true;
+    }
+
+    if (!updated) {
+      return false;
+    }
+
+    this.clearCache();
+    return true;
+  }
+
   public getErrors(): ManifestErrors {
     const result: ManifestErrors = {
       '.manifest': this.spreadsheet.getErrors()
@@ -314,6 +365,19 @@ export class RootSource extends CombinedPlayerSource<ManifestSource> {
     this.clearCache();
   }
 
+  public async update(): Promise<boolean> {
+    const updated = await Promise.all(
+      [...this.sources.values()].map(source => source.update())
+    );
+
+    if (updated.every(u => !u)) {
+      return false;
+    }
+
+    this.clearCache();
+    return true;
+  }
+
   public getErrors(): { [s: string]: ManifestErrors } {
     const result: { [s: string]: ManifestErrors } = {};
 
@@ -329,7 +393,7 @@ export class RootSource extends CombinedPlayerSource<ManifestSource> {
 
     if (this.sources.has(uid)) {
       // Already registered
-      return;
+      return false;
     }
 
     this.sources.set(
@@ -339,12 +403,13 @@ export class RootSource extends CombinedPlayerSource<ManifestSource> {
           .then(sourceSheet => new PlayerSource(manifestEntry, sourceSheet))
       })
     );
+    return true;
   }
 
   public addManifest(manifest: ManifestSpreadsheet) {
-    this.doAddManifest(manifest);
-
-    this.clearCache();
+    if (this.doAddManifest(manifest)) {
+      this.clearCache();
+    }
   }
 
   public removeManifest(manifest: ManifestSpreadsheet) {

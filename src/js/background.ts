@@ -744,3 +744,12 @@ tokenBearer.isAuthorized().then(authorized => {
 
   reloadData();
 });
+
+setInterval(async () => {
+  const updated = await data.update();
+
+  if (updated) {
+    storageCache.remove('manifests');
+    updateTabs();
+  }
+}, 60 * 60 * 1000 /* one hour */);
