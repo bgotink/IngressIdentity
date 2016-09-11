@@ -5,7 +5,7 @@ a player's Google+ profile. It currently only supports Google Chrome.
 
 ## License
 
-This code is &copy; 2014 [Bram Gotink et al.](https://github.com/bgotink/IngressIdentity/graphs/contributors), licensed
+This code is &copy; 2014-2016 [Bram Gotink et al.](https://github.com/bgotink/IngressIdentity/graphs/contributors), licensed
 under the MIT license. For more information, see `LICENSE.md`.  
 
 ## Notice
