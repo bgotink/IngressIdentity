@@ -702,7 +702,7 @@ chrome.runtime.onMessage.addListener((request: Request<{ type: string; }>, sende
   const shouldWait = messageListeners[request.request.type](request.request, sender, (reply) => {
     sendResponse({
       reply,
-      shouldUpdate: false//TODO data.shouldUpdateRemote(request.lastUpdate),
+      shouldUpdate: data.shouldUpdateRemote(request.lastUpdate),
     });
   });
 

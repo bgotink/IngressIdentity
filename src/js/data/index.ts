@@ -197,4 +197,8 @@ export default class DataManager {
   public async update(): Promise<boolean> {
     return this.playerSource.update();
   }
+
+  public shouldUpdateRemote(remoteTimestamp: number): boolean {
+    return this.playerSource.shouldUpdateRemote(remoteTimestamp);
+  }
 }

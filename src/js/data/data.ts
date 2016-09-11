@@ -21,6 +21,7 @@ interface HasPlayers {
   getPlayer(oid: string): Promise<Player|null>;
   hasPlayer(oid: string): Promise<boolean>;
   findOids(pattern: FindFunction): Promise<string[]>;
+  shouldUpdateRemote(remoteTimestamp: number): boolean;
 };
 
 class PlayerSource implements HasPlayers {
@@ -56,6 +57,10 @@ class PlayerSource implements HasPlayers {
 
   public shouldUpdate(): boolean {
     return Date.now() > this.timestamp + (this.metadata.refresh * 60 * 60 * 1000);
+  }
+
+  public shouldUpdateRemote(remoteTimestamp: number): boolean {
+    return remoteTimestamp < this.timestamp;
   }
 
   public markUpdated() {
@@ -200,6 +205,16 @@ abstract class CombinedPlayerSource<T extends HasPlayers> implements HasPlayers 
 
   public clearCache() {
     this.playerCache.clear();
+  }
+
+  public shouldUpdateRemote(remoteTimestamp: number): boolean {
+    for (let source of this.sources.values()) {
+      if (source.shouldUpdateRemote(remoteTimestamp)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 }
 
