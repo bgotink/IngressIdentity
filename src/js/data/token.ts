@@ -7,16 +7,27 @@
 
 import * as log from '../log';
 
+function wrapError(e: any): Error {
+  return e instanceof Error ? e : new Error(e);
+}
+
 export default class TokenBearer {
-  private token: Promise<string>;
+  private token: string | null;
+  private tokenError: Error | null;
+  private readyPromise: Promise<void>;
   private _onInvalidToken: () => void;
 
   constructor() {
-    this.token = this.tryGetIdentity();
+    const tokenPromise = this.tryGetIdentity();
+    this.readyPromise = tokenPromise.then(
+      token => this.token = token,
+      e => this.tokenError = wrapError(e)
+    );
+
     this._onInvalidToken = () => {};
   }
 
-  private tryGetIdentity() {
+  private async tryGetIdentity(): Promise<string> {
     return new Promise<string>((resolve, reject) => {
       chrome.identity.getAuthToken({ interactive: false }, (token) => {
         if (!token) {
@@ -27,7 +38,7 @@ export default class TokenBearer {
     });
   }
 
-  private getIdentity() {
+  private async getIdentity(): Promise<string> {
     return new Promise<string>((resolve, reject) => {
       chrome.identity.getAuthToken({ interactive: true }, (token) => {
         if (!token) {
@@ -38,68 +49,117 @@ export default class TokenBearer {
     });
   }
 
-  public isAuthorized() {
-    return this.token.then(() => true, () => false);
+  public async ready() {
+    await this.readyPromise;
   }
 
-  public authorize() {
-    return this.token = this.tryGetIdentity()
-      .catch(() => {
-        return this.getIdentity();
-      });
+  public isAuthorized() {
+    return typeof this.token === 'string';
+  }
+
+  private async doAuthorize() {
+    try {
+      await this.clearToken();
+    } catch (e) {
+      log.warn('Got error %s while clearing token, ignoring...', e);
+    }
+
+    try {
+      this.token = await this.tryGetIdentity();
+      this.tokenError = null;
+    } catch (_) {
+      try {
+        this.token = await this.getIdentity();
+        this.tokenError = null;
+      } catch (e) {
+        this.tokenError = wrapError(e);
+        throw e;
+      }
+    }
+  }
+
+  public async authorize() {
+    const authorization = this.doAuthorize();
+
+    this.readyPromise = authorization.then(() => {}, () => {});
+
+    await authorization;
   }
 
   public onInvalidToken(fn: () => void) {
     this._onInvalidToken = fn;
   }
 
-  public fetchAuthenticated(url: string, retry: boolean = true): Promise<Response> {
-    return this.token.then(token => {
-      return fetch(
-        url,
-        { headers: { 'Authorization': `Bearer ${token}` } }
-      )
-      .then(response => {
-        if (response.status === 401) {
-          log.log('[TokenBearer] Got 401, removing cached authentication token');
-          return new Promise((resolve) => {
-              chrome.identity.removeCachedAuthToken({ token }, resolve);
-            })
-            .then(() => {
-              if (retry) {
-                return this.tryGetIdentity()
-                  .then(
-                    () => this.fetchAuthenticated(url, false),
-                    () => rejectUnauthorized.call(this)
-                  );
-              } else {
-                return rejectUnauthorized.call(this);
-              }
+  private async clearToken() {
+    if (!this.token) {
+      return;
+    }
 
-              function rejectUnauthorized() {
-                const rejected = Promise.reject('Unauthorized: token invalid');
-                this.token = rejected;
-                
-                try {
-                  this._onInvalidToken();
-                } catch (e) {
-                  log.error(e);
-                }
-                
-                return rejected;
-              }
-            });
+    await new Promise((resolve, reject) => {
+      chrome.identity.removeCachedAuthToken({ token: this.token }, () => {
+        if (chrome.runtime.lastError) {
+          reject(chrome.runtime.lastError.message);
+          return;
         }
 
-        if (!response.ok) {
-          throw new Error(`Got HTTP error ${response.status}`);
-        }
-
-        return response;
-      }, (error: Error) => {
-        log.error('Got an error:', error);
-        throw error;
+        resolve();
       });
     });
+    this.token = null;
+  }
+
+  public async fetchAuthenticated(url: string, retry: boolean = true): Promise<Response> {
+    let token: string;
+
+    function _throwUnauthorized(e: any) {
+      this.tokenError = wrapError(e);
+
+      try {
+        this._onInvalidToken();
+      } catch (e) {
+        log.error(e);
+      }
+
+      throw e;
+    }
+
+    if (this.token && !this.tokenError) {
+      token = this.token;
+    } else {
+      try {
+        token = await (this.readyPromise = this.tryGetIdentity());
+        this.token = token;
+        this.tokenError = null;
+      } catch (e) {
+        _throwUnauthorized(e);
+      }
+    }
+
+    let response: Response;
+    try {
+      response = await fetch(url, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+    } catch (e) {
+      // Something went wrong...
+      log.error(e);
+      throw e;
+    }
+
+    if (response.status === 401) {
+      await this.clearToken();
+
+      if (retry) {
+        return this.fetchAuthenticated(url, false);
+      }
+
+      _throwUnauthorized(new Error('Unauthorized: token invalid'));
+    }
+
+    if (!response.ok) {
+      throw new Error(`Got HTTP error ${response.status}`);
+    }
+
+    return response;
   }
 }

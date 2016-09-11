@@ -736,8 +736,8 @@ function onUnauthorized() {
 tokenBearer.onInvalidToken(onUnauthorized);
 
 // Load the data!
-tokenBearer.isAuthorized().then(authorized => {
-  if (!authorized) {
+tokenBearer.ready().then(() => {
+  if (!tokenBearer.isAuthorized()) {
     onUnauthorized();
     return;
   }
