@@ -17,19 +17,20 @@
   },
   "homepage": "https://github.com/bgotink/IngressIdentity#readme",
   "devDependencies": {
+    "cson": "^3.0.2",
+    "jade": "^1.11.0",
+    "less": "^2.7.1",
     "rollup": "^0.34.10",
     "rollup-plugin-commonjs": "^3.3.1",
     "rollup-plugin-node-resolve": "^2.0.0",
     "rollup-plugin-typescript": "^0.8.1",
-    "typescript": "^1.8.10"
+    "rollup-plugin-uglify": "^1.0.1",
+    "typescript": "^2.0.2",
+    "uglify-js": "mishoo/UglifyJS2#1db50c3b169ee4195e1935013d6721628eb5b4bd"
   },
   "dependencies": {
-    "bootstrap": "^3.3.7",
-    "jquery": "^2.2.4",
-    "jquery-ui": "^1.12.0",
     "lodash": "^4.15.0",
     "sugar": "^2.0.1",
-    "sugar-inflections": "^2.0.0",
-    "typescript": "^2.0.2"
+    "sugar-inflections": "^2.0.0"
   }
 }

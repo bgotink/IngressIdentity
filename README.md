@@ -1,8 +1,7 @@
 # Ingress Identity
 
 This project contains a browser extension to show ingress account information on
-a player's Google+ profile. It currently supports Google Chrome and Safari and
-Firefox.
+a player's Google+ profile. It currently only supports Google Chrome.
 
 ## License
 
