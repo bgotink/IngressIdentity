@@ -247,7 +247,8 @@ async function reloadData(): Promise<Status> {
 
   data = newData;
 
-  updateTabs();
+  storageCache.remove('manifests');
+  await updateTabs();
   return data.hasErrors() ? 'warning' : 'success';
 }
 
@@ -255,13 +256,17 @@ async function reloadData(): Promise<Status> {
  * Communication functions
  */
 
-function updateTabs() {
-  chrome.tabs.query({}, (tabs) => {
-    log.log('Sending update message to %d tabs', tabs.length);
+async function updateTabs() {
+  return new Promise<void>(resolve => {
+    chrome.tabs.query({}, (tabs) => {
+      log.log('Sending update message to %d tabs', tabs.length);
 
-    tabs.forEach(tab => {
-        log.log('-- tab ', tab);
-        chrome.tabs.sendMessage(tab.id, { type: 'update' });
+      tabs.forEach(tab => {
+          log.log('-- tab ', tab);
+          chrome.tabs.sendMessage(tab.id, { type: 'update' });
+      });
+
+      resolve();
     });
   });
 }
@@ -381,15 +386,18 @@ const messageListeners = Object.freeze({
 
     disableUpdateListener = true;
     addManifestKey(request.key, request.name).then(async added => {
+      disableUpdateListener = false;
       if (!added) {
-        disableUpdateListener = false;
         sendResponse({ status: 'duplicate' });
         return;
       }
 
-      const status = await reloadData();
-      disableUpdateListener = false;
-      sendResponse({ status });
+      await data.addManifest(request.key);
+
+      storageCache.remove('manifests');
+      await updateTabs();
+
+      sendResponse({ status: 'success' });
     })
     .catch((error: Catchable) => {
       sendResponse({ status: 'failed', error: catchableToString(error) });
@@ -406,15 +414,18 @@ const messageListeners = Object.freeze({
 
     disableUpdateListener = true;
     removeManifestKey(request.key).then(async removed => {
+      disableUpdateListener = false;
       if (!removed) {
-        disableUpdateListener = false;
         sendResponse({ status: 'nonexistent' });
         return;
       }
 
-      const status = await reloadData();
-      disableUpdateListener = false;
-      sendResponse({ status });
+      data.removeManifest(request.key);
+
+      storageCache.remove('manifests');
+      await updateTabs();
+
+      sendResponse({ status: 'success' });
     })
     .catch((error: Catchable) => {
       sendResponse({ status: 'failed', error: catchableToString(error) });
@@ -432,7 +443,13 @@ const messageListeners = Object.freeze({
     disableUpdateListener = true;
     renameManifest(request.key, request.oldName, request.newName).then(success => {
       disableUpdateListener = false;
-      sendResponse({ status: success ? 'success' : 'failed' });
+      if (success) {
+        storageCache.remove('manifest_names');
+        storageCache.remove('manifests');
+        sendResponse({ status: 'success' });
+      } else {
+        sendResponse({ status: 'failed' });
+      }
     })
     .catch((error: Catchable) => {
       sendResponse({ status: 'failed', error: catchableToString(error) });
@@ -448,9 +465,21 @@ const messageListeners = Object.freeze({
     }
 
     log.log('Requesting to change order from %s to %s', request.oldOrder, request.newOrder);
-    changeManifestOrder(request.oldOrder, request.newOrder).then(status =>
-      sendResponse({ status })
-    ).catch(() => sendResponse({ status: 'failed' }));
+    changeManifestOrder(request.oldOrder, request.newOrder).then(async status => {
+      if (status === 'success' || status === 'warning') {
+        const status2 = await reloadData();
+
+        if (status2 !== 'success') {
+          sendResponse({ status: status2 });
+        } else {
+          sendResponse({ status });
+        }
+
+        return;
+      }
+
+      sendResponse({ status });
+    }).catch(() => sendResponse({ status: 'failed' }));
 
     return MessageListenerReply.WAIT_ON_ASYNC;
   },
@@ -464,7 +493,6 @@ const messageListeners = Object.freeze({
     (async () => {
       try {
         const status = await reloadData();
-        storageCache.remove('manifests');
         sendResponse({ status });
       } catch (e) {
         log.error(e);
@@ -500,9 +528,9 @@ const messageListeners = Object.freeze({
       options['option-own-oid'] = sentOptions['own-oid'];
     }
 
-    setStoredDatas(options).then(() => {
+    setStoredDatas(options).then(async () => {
       data.clearCache();
-      updateTabs();
+      await updateTabs();
       sendResponse({});
     });
 
@@ -750,6 +778,6 @@ setInterval(async () => {
 
   if (updated) {
     storageCache.remove('manifests');
-    updateTabs();
+    await updateTabs();
   }
 }, 60 * 60 * 1000 /* one hour */);

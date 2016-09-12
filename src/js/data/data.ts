@@ -404,7 +404,7 @@ export class RootSource extends CombinedPlayerSource<ManifestSource> {
     return result;
   }
 
-  private doAddManifest(manifest: ManifestSpreadsheet) {
+  private async doAddManifest(manifest: ManifestSpreadsheet) {
     const uid = manifest.getUid();
 
     if (this.sources.has(uid)) {
@@ -412,18 +412,19 @@ export class RootSource extends CombinedPlayerSource<ManifestSource> {
       return false;
     }
 
-    this.sources.set(
-      manifest.getUid(),
-      new ManifestSource(manifest, (manifestEntry) => {
-        return this.sourceFactory(manifest, manifestEntry)
-          .then(sourceSheet => new PlayerSource(manifestEntry, sourceSheet))
-      })
-    );
+    const manifestSource = new ManifestSource(manifest, (manifestEntry) => {
+      return this.sourceFactory(manifest, manifestEntry)
+        .then(sourceSheet => new PlayerSource(manifestEntry, sourceSheet))
+    });
+
+    await manifestSource.ready();
+
+    this.sources.set(manifest.getUid(), manifestSource);
     return true;
   }
 
-  public addManifest(manifest: ManifestSpreadsheet) {
-    if (this.doAddManifest(manifest)) {
+  public async addManifest(manifest: ManifestSpreadsheet) {
+    if (await this.doAddManifest(manifest)) {
       this.clearCache();
     }
   }

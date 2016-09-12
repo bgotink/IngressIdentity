@@ -129,7 +129,7 @@ export default class DataManager {
       }
 
       this.registeredManifests.set(key, manifest);
-      this.playerSource.addManifest(manifest);
+      await this.playerSource.addManifest(manifest);
     } catch (e) {
       this.registeredManifests.delete(key);
       throw e;
