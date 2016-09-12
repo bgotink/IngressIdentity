@@ -328,15 +328,15 @@ class ManifestSource extends CombinedPlayerSource<PlayerSource> {
 
   public async getInformation(): Promise<ManifestInformation> {
     let informations = await Promise.all([... this.sources.entries()].map(
-      async ([ key, source ]): Promise<[string, ManifestInformationEntry]> => [ key, await source.getInformation() ] 
+      async ([ key, source ]): Promise<ManifestInformationEntry> => await source.getInformation()
     ));
 
     return {
       key: this.spreadsheet.getKey(),
       url: this.spreadsheet.getUrl(),
 
-      sources: informations.reduce((obj, [ key, information ]) => {
-        obj[key] = information;
+      sources: informations.reduce((obj, information) => {
+        obj[information.key] = information;
         return obj;
       }, {} as { [s: string]: ManifestInformationEntry })
     }
@@ -442,13 +442,13 @@ export class RootSource extends CombinedPlayerSource<ManifestSource> {
 
   public async getInformation(): Promise<{ [s: string]: ManifestInformation }> {
     const informations = await Promise.all([...this.sources.entries()].map(
-      async ([ key, source ]): Promise<[ string, ManifestInformation]> =>
-        [ key, await source.getInformation() ]
+      async ([ key, source ]): Promise<ManifestInformation> =>
+        await source.getInformation()
       )
     );
 
-    return informations.reduce((obj, [ key, information ]) => {
-      obj[key] = information;
+    return informations.reduce((obj, information) => {
+      obj[information.key] = information;
       return obj;
     }, {} as { [s: string]: ManifestInformation });
   }

@@ -66,14 +66,14 @@ export default class DataManager {
 
     this.playerSourcePromise = Promise.all(keys.map(key => this.createManifest(key)))
       .then(async manifests => {
-        keys.forEach(key => this.registeredManifests.set(key));
+        keys.forEach((key, i) => this.registeredManifests.set(key, manifests[i]));
 
         const rootSource =  new RootSource(
           manifests,
           async (manifest: ManifestSpreadsheet, manifestEntry: ManifestEntry) => {
             return await this.createSource(
               manifest.getFile(),
-              parseKey(manifestEntry.key).gid || 0
+              manifestEntry.key
             )
           }
         );
@@ -90,48 +90,50 @@ export default class DataManager {
     const parsedKey = parseKey(key);
 
     if (!parsedKey.gid) {
-        parsedKey.gid = 0;
-      }
-
-    if (!this.files.has(parsedKey.key)) {
-      this.files.set(parsedKey.key, new File(this.tokenBearer, parsedKey.key));
+      parsedKey.gid = 0;
     }
-    const file = this.files.get(parsedKey.key);
+
+    const file = this.getFile(parsedKey.key);
 
     const manifestData = await file.getData(parsedKey.gid);
-    return new ManifestSpreadsheet(unparseKey(parsedKey), this.tokenBearer, file, manifestData);
+    return new ManifestSpreadsheet(key, this.tokenBearer, file, manifestData);
   }
 
-  private async createSource(file: File, gid: number): Promise<SourceSpreadsheet> {
-    const fileData = await file.getData(gid);
-    const key = parseKey(file.getKey());
-    key.gid = gid;
+  private getFile(key: string): File {
+    if (!this.files.has(key)) {
+      this.files.set(key, new File(this.tokenBearer, key));
+    }
+    return this.files.get(key);
+  }
 
-    return new SourceSpreadsheet(unparseKey(key), this.tokenBearer, file, fileData);
+  private async createSource(file: File, key: string): Promise<SourceSpreadsheet> {
+    const parsedKey = resolveKey(key, parseKey(file.getKey()));
+    const fileData = await this.getFile(parsedKey.key).getData(parsedKey.gid);
+
+    return new SourceSpreadsheet(key, this.tokenBearer, file, fileData);
   }
 
   public async addManifest(key: string) {
     if (this.registeredManifests.has(key)) {
       // Already added
-      return Promise.resolve();
+      return;
     }
     this.registeredManifests.set(key, null);
 
-    return this.createManifest(key)
-      .then(manifest => {
-        if (!this.registeredManifests.has(key)) {
-          // has been removed while loading
-          return;
-        }
+    try {
+      const manifest = await this.createManifest(key);
 
-        this.registeredManifests.set(key, manifest);
-        this.playerSource.addManifest(manifest);
-      })
-      .catch(err => {
-        this.registeredManifests.delete(key);
+      if (!this.registeredManifests.has(key)) {
+        // removed while loading
+        return;
+      }
 
-        return Promise.reject(err);
-      });
+      this.registeredManifests.set(key, manifest);
+      this.playerSource.addManifest(manifest);
+    } catch (e) {
+      this.registeredManifests.delete(key);
+      throw e;
+    }
   }
 
   public removeManifest(key: string) {
