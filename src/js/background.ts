@@ -248,7 +248,7 @@ async function reloadData(): Promise<Status> {
   data = newData;
 
   updateTabs();
-  return (await data.hasErrors()) ? 'success' : 'warning';
+  return data.hasErrors() ? 'warning' : 'success';
 }
 
 /*
