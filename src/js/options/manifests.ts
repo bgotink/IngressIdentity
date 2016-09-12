@@ -215,7 +215,7 @@ export function reloadManifests() {
             axis: 'y',
             containment: 'parent',
             handle: '.panel-heading',
-            cursor: '-webkit-grabbing',
+            cursor: 'grabbing',
             distance: 5,
             revert: true,
             stop: onOrderChanged,
