@@ -16,9 +16,7 @@ export interface GetManifestsRequest {
   type: 'getManifests';
 };
 
-export interface GetManifestsReply {
-  [s: string]: ManifestInformation;
-}
+export type GetManifestsReply = ManifestInformation[];
 
 export function getManifests(callback: Callback<GetManifestsReply>) {
   send<GetManifestsRequest, GetManifestsReply>({ type: 'getManifests' }, callback);

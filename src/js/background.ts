@@ -336,9 +336,9 @@ const messageListeners = Object.freeze({
       const [ names, information ] = await Promise.all([
         getStoredData<{ [s: string]: string }>('manifest_names', {}),
         data.getInformation()
-      ]) as [ { [s: string]: string; }, { [s: string]: ManifestInformation }];
+      ]) as [ { [s: string]: string; }, ManifestInformation[] ];
 
-      _.forEach(information, info => {
+      information.forEach(info => {
         if (_.has(names, info.key)) {
           info.name = names[info.key];
         } else {

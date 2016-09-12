@@ -110,8 +110,9 @@ export function reloadManifests() {
       return;
     }
 
-    _.forEach(result, (value, key) => {
+    _.forEach(result, (value) => {
       const sourceList: JQuery[] = [];
+      const { key } = value;
 
       log.log('Manifest key %s', key);
       log.log(value);

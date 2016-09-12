@@ -451,17 +451,13 @@ export class RootSource extends CombinedPlayerSource<ManifestSource> {
     this.clearCache();
   }
 
-  public async getInformation(): Promise<{ [s: string]: ManifestInformation }> {
-    const informations = await Promise.all(this.sources.map(
-      async (source): Promise<ManifestInformation> =>
-        await source.getInformation()
-      )
-    );
 
-    return informations.reduce((obj, information) => {
-      obj[information.key] = information;
-      return obj;
-    }, {} as { [s: string]: ManifestInformation });
+
+  public async getInformation(): Promise<ManifestInformation[]> {
+    log.error('sources size %d', this.sources.length);
+    return Promise.all(this.sources.map(
+      source => source.getInformation()
+    ));
   }
 
   public getSourcesForExtra(type: string, oid: string): SourceInformation[] {
