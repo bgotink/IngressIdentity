@@ -111,9 +111,13 @@ class PlayerSource implements HasPlayers {
     return this.metadata.errors.concat(this.spreadsheet.getErrors());
   }
 
+  public getKey(): string {
+    return this.spreadsheet.getKey();
+  }
+
   public async getInformation(): Promise<ManifestInformationEntry> {
     return {
-      key: this.spreadsheet.getKey(),
+      key: this.getKey(),
       url: this.spreadsheet.getUrl(),
       count: (await this.spreadsheet.getNumberOfRows()),
       tag: this.metadata.tag,
@@ -319,20 +323,24 @@ class ManifestSource extends CombinedPlayerSource<PlayerSource> {
       '.manifest': this.spreadsheet.getErrors()
     };
 
-    for (let [ key, source ] of this.sources) {
-      result[key] = source.getErrors();
+    for (let source of this.sources.values()) {
+      result[source.getKey()] = source.getErrors();
     }
 
     return result;
   }
 
+  public getKey(): string {
+    return this.spreadsheet.getKey();
+  }
+
   public async getInformation(): Promise<ManifestInformation> {
-    let informations = await Promise.all([... this.sources.entries()].map(
-      async ([ key, source ]): Promise<ManifestInformationEntry> => await source.getInformation()
+    let informations = await Promise.all([... this.sources.values()].map(
+      async (source): Promise<ManifestInformationEntry> => await source.getInformation()
     ));
 
     return {
-      key: this.spreadsheet.getKey(),
+      key: this.getKey(),
       url: this.spreadsheet.getUrl(),
 
       sources: informations.reduce((obj, information) => {
@@ -397,8 +405,8 @@ export class RootSource extends CombinedPlayerSource<ManifestSource> {
   public getErrors(): { [s: string]: ManifestErrors } {
     const result: { [s: string]: ManifestErrors } = {};
 
-    for (let [ key, manifestSource ] of this.sources) {
-      result[key] = manifestSource.getErrors();
+    for (let manifestSource of this.sources.values()) {
+      result[manifestSource.getKey()] = manifestSource.getErrors();
     }
 
     return result;
