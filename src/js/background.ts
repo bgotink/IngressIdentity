@@ -453,18 +453,12 @@ const messageListeners = Object.freeze({
     }
 
     log.log('Requesting to change order from %s to %s', request.oldOrder, request.newOrder);
+    disableUpdateListener = true;
     changeManifestOrder(request.oldOrder, request.newOrder).then(async status => {
-      if (status === 'success' || status === 'warning') {
-        const status2 = await reloadData();
+      disableUpdateListener = false;
+      data.reorderManifests(request.newOrder);
 
-        if (status2 !== 'success') {
-          sendResponse({ status: status2 });
-        } else {
-          sendResponse({ status });
-        }
-
-        return;
-      }
+      await updateTabs();
 
       sendResponse({ status });
     }).catch(() => sendResponse({ status: 'failed' }));

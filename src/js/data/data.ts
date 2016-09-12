@@ -451,7 +451,29 @@ export class RootSource extends CombinedPlayerSource<ManifestSource> {
     this.clearCache();
   }
 
+  public reorderManifests(newKeys: string[]) {
+    // Sanity checks: are the arrays identical apart from their order?
+    if (newKeys.length !== this.sources.length) {
+      throw new Error(`Given old keys array contains ${newKeys.length > this.sources.length ? 'more' : 'less'} keys than there are`);
+    }
+    const oldKeys = this.sources.map(source => source.getKey());
+    for (let i = 0, l = this.sources.length; i < l; i++) {
+      if (!oldKeys.includes(newKeys[i]) || !newKeys.includes(oldKeys[i])) {
+        throw new Error('New keys don\'t match old keys');
+      }
+    }
 
+    // Sanity check done: to the change!
+    const newSources = newKeys.map(key => this.getEntry(key));
+
+    // Double check that everything's okay
+    if (!newSources.every(source => !!source)) {
+      throw new Error('Sanity check failed: null source found');
+    }
+
+    this.sources = newSources;
+    this.clearCache();
+  }
 
   public async getInformation(): Promise<ManifestInformation[]> {
     log.error('sources size %d', this.sources.length);

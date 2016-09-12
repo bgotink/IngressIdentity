@@ -275,55 +275,53 @@ export function initManifests() {
     }
 
     log.log('Creating input to rename manifest %s', $key.text());
+    let oldName = $key.text() === $manifest.data('key') ? '' : $key.text();
 
     $key.replaceWith(
       $('<input type="text" class="form-control manifest-key">')
-        .val($key.text() === $manifest.data('key') ? '' : $key.text())
-        .data('old-name', $key.text())
+        .val(oldName)
         .data('url', $key.prop('tagName') === 'A' ? $key.attr('href') : null)
-    );
+        .on('keypress', function (e) {
+          if (e.which !== 13) {
+            return undefined;
+          }
 
-    $('#source_list').on('keypress', 'input.manifest-key', function (e) {
-      if (e.which !== 13) {
-        return undefined;
-      }
+          const $this = $(this);
+          const $manifest = $this.closest('.manifest');
+          const key = $manifest.data('key');
+          let newName: string = $this.val();
 
-      const $this = $(this);
-      const $manifest = $this.closest('.manifest');
-      const key = $manifest.data('key');
-      let oldName: string = $this.data('old-name');
-      let newName: string = $this.val();
+          if (oldName.trim() !== newName.trim()) {
+            if (!newName.trim().length) {
+              newName = null;
+            }
 
-      if (oldName.trim() !== newName.trim()) {
-        if (!newName.trim().length) {
-          newName = null;
-        }
+            if (!oldName.trim().length) {
+              oldName = null;
+            }
 
-        if (!oldName.trim().length) {
-          oldName = null;
-        }
+            log.log('Renaming manifest %s from %s to %s', key, oldName, newName);
+            comm.renameManifest(key, oldName, newName, status => {
+              showAlert(`rename-${status}`);
+            })
+          }
 
-        log.log('Renaming manifest %s from %s to %s', key, oldName, newName);
-        comm.renameManifest(key, oldName, newName, status => {
-          showAlert(`rename-${status}`);
+          let $replacement: JQuery;
+          if (typeof $this.data('url') === 'string') {
+            $replacement = $('<a target="_blank">')
+              .attr('href', $this.data('url'));
+          } else {
+            $replacement = $('<p>');
+          }
+
+          $replacement.text(newName || key)
+            .addClass('manifest-key');
+
+          $this.replaceWith($replacement);
+
+          return false;
         })
-      }
-
-      let $replacement: JQuery;
-      if (typeof $this.data('url') === 'string') {
-        $replacement = $('<a target="_blank">')
-          .attr('href', $this.data('url'));
-      } else {
-        $replacement = $('<p>');
-      }
-
-      $replacement.text(newName || key)
-        .addClass('manifest-key');
-
-      $this.replaceWith($replacement);
-
-      return false;
-    });
+    );
   });
 
   reloadManifests();

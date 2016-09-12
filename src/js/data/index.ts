@@ -152,6 +152,10 @@ export default class DataManager {
     this.playerSource.removeManifest(manifest);
   }
 
+  public reorderManifests(keys: string[]) {
+    this.playerSource.reorderManifests(keys);
+  }
+
   public async ready() {
     await this.playerSourcePromise;
   }
