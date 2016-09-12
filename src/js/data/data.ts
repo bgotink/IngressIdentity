@@ -24,6 +24,10 @@ interface HasPlayers {
   shouldUpdateRemote(remoteTimestamp: number): boolean;
 };
 
+interface HasKey {
+  getKey(): string;
+};
+
 class PlayerSource implements HasPlayers {
   private err: string[];
   private timestamp: number;
@@ -152,24 +156,35 @@ interface SourceFactory {
   (entry: ManifestEntry): Promise<PlayerSource>;
 };
 
-abstract class CombinedPlayerSource<T extends HasPlayers> implements HasPlayers {
-  protected sources: Map<string, T>;
+abstract class CombinedPlayerSource<T extends HasPlayers & HasKey> implements HasPlayers {
+  protected sources: T[];
   protected playerCache: Map<string, Promise<Player>>;
 
   constructor() {
-    this.sources = new Map();
+    this.sources = [];
     this.playerCache = new Map();
   }
 
-  private async createPlayer(oid: string): Promise<Player|null> {
-    const unmergedData: Promise<Player>[] = [];
+  protected getEntry(key: string): T {
+    return this.sources.find(source => source.getKey() === key);
+  }
 
-    for (let source of this.sources.values()) {
-      unmergedData.push(source.getPlayer(oid));
+  protected removeEntry(key: string): boolean {
+    const idx = this.sources.findIndex(source => source.getKey() === key);
+
+    if (idx === -1) {
+      return false;
     }
 
+    this.sources.splice(idx, 1);
+    return true;
+  }
+
+  private async createPlayer(oid: string): Promise<Player|null> {
+    const unmergedData = await Promise.all(this.sources.map(source => source.getPlayer(oid)));
+
     return mergePlayers(
-      ... (await Promise.all(unmergedData)).filter(player => player != null)
+      ... unmergedData.filter(player => player != null)
     );
   }
 
@@ -189,12 +204,12 @@ abstract class CombinedPlayerSource<T extends HasPlayers> implements HasPlayers 
       return true;
     }
 
-    return somePromise([ ...this.sources.values() ].map(source => source.hasPlayer(oid)));
+    return somePromise(this.sources.map(source => source.hasPlayer(oid)));
   }
 
   public async findOids(pattern: FindFunction): Promise<string[]> {
     const foundPlayers = await Promise.all(
-      [...this.sources.values()].map(source => source.findOids(pattern))
+      this.sources.map(source => source.findOids(pattern))
     );
 
     const result = new Set<string>();
@@ -213,13 +228,7 @@ abstract class CombinedPlayerSource<T extends HasPlayers> implements HasPlayers 
   }
 
   public shouldUpdateRemote(remoteTimestamp: number): boolean {
-    for (let source of this.sources.values()) {
-      if (source.shouldUpdateRemote(remoteTimestamp)) {
-        return true;
-      }
-    }
-
-    return false;
+    return !this.sources.every(source => !source.shouldUpdateRemote(remoteTimestamp));
   }
 }
 
@@ -232,13 +241,9 @@ class ManifestSource extends CombinedPlayerSource<PlayerSource> {
     this.readyPromise = (async () => {
       const manifestData = await spreadsheet.getData();
 
-      await Promise.all(
-        manifestData.map(async manifestEntry => {
-          const newSource = await this.sourceFactory(manifestEntry);
-          this.sources.set(manifestEntry.key, newSource);
-          await newSource.ready();
-        })
-      );
+      this.sources = await Promise.all(manifestData.map(this.sourceFactory));
+
+      await Promise.all(this.sources.map(async source => await source.ready()));
     })();
   }
 
@@ -252,61 +257,61 @@ class ManifestSource extends CombinedPlayerSource<PlayerSource> {
 
   private async doReload() {
     const manifestData = await this.spreadsheet.reload();
-    const removedKeys = new Set(this.sources.keys());
+    let changed = false;
 
-    const promises = manifestData.map(async (manifestEntry) => {
-        if (this.sources.has(manifestEntry.key)) {
-          removedKeys.delete(manifestEntry.key);
-          await this.sources.get(manifestEntry.key).reload(manifestEntry);
-          return;
-        }
+    const newSources = await Promise.all(manifestData.map(async (manifestEntry) => {
+      let source = this.getEntry(manifestEntry.key);
+      if (source) {
+        await source.reload(manifestEntry);
+        return source;
+      }
 
-        const newSource = await this.sourceFactory(manifestEntry);
-        this.sources.set(manifestEntry.key, newSource);
+      source = await this.sourceFactory(manifestEntry);
 
-        await newSource.ready();
-    });
+      await source.ready();
 
-    await Promise.all(promises);
+      changed = true;
+      return source;
+    }));
 
-    for (let key in removedKeys) {
-      this.sources.delete(key);
+    if (newSources.length !== this.sources.length) {
+      changed = true;
+    } else if (!this.sources.every((existingSource, i) => existingSource.getKey() === newSources[i].getKey())) {
+      changed = true;
     }
-    this.clearCache();
+
+    if (changed) {
+      this.sources = newSources;
+      this.clearCache();
+    }
   }
 
   public async update(): Promise<boolean> {
     let updated = false;
 
     const manifestData = await this.spreadsheet.reload();
-    const removedKeys = new Set(this.sources.keys());
 
-    const promises = manifestData.map(async (manifestEntry) => {
-        if (this.sources.has(manifestEntry.key)) {
-          removedKeys.delete(manifestEntry.key);
-
-          const source = this.sources.get(manifestEntry.key);
-          if (source.shouldUpdate()) { 
-            await source.reload(manifestEntry);
-            source.markUpdated();
-            updated = true;
-          }
-          return;
+    const newSources = await Promise.all(manifestData.map(async (manifestEntry) => {
+      let source = this.getEntry(manifestEntry.key);
+      if (source) {
+        if (source.shouldUpdate()) {
+          await source.reload(manifestEntry);
+          source.markUpdated();
+          updated = true;
         }
-
-        const newSource = await this.sourceFactory(manifestEntry);
-        this.sources.set(manifestEntry.key, newSource);
-
-        await newSource.ready();
-        updated = true;
-    });
-
-    await Promise.all(promises);
-
-    if (removedKeys.size) {
-      for (let key in removedKeys) {
-        this.sources.delete(key);
+        return source;
       }
+
+      source = await this.sourceFactory(manifestEntry);
+      await source.ready();
+
+      updated = true;
+      return source;
+    }));
+
+    if (newSources.length !== this.sources.length) {
+      updated = true;
+    } else if (!this.sources.every((existingSource, i) => existingSource.getKey() === newSources[i].getKey())) {
       updated = true;
     }
 
@@ -314,6 +319,7 @@ class ManifestSource extends CombinedPlayerSource<PlayerSource> {
       return false;
     }
 
+    this.sources = newSources;
     this.clearCache();
     return true;
   }
@@ -323,9 +329,9 @@ class ManifestSource extends CombinedPlayerSource<PlayerSource> {
       '.manifest': this.spreadsheet.getErrors()
     };
 
-    for (let source of this.sources.values()) {
-      result[source.getKey()] = source.getErrors();
-    }
+    this.sources.forEach(source =>
+      result[source.getKey()] = source.getErrors()
+    );
 
     return result;
   }
@@ -335,7 +341,7 @@ class ManifestSource extends CombinedPlayerSource<PlayerSource> {
   }
 
   public async getInformation(): Promise<ManifestInformation> {
-    let informations = await Promise.all([... this.sources.values()].map(
+    let informations = await Promise.all(this.sources.map(
       async (source): Promise<ManifestInformationEntry> => await source.getInformation()
     ));
 
@@ -351,7 +357,7 @@ class ManifestSource extends CombinedPlayerSource<PlayerSource> {
   }
 
   public getSourcesForExtra(type: string, oid: string): SourceInformation[] {
-    return [ ...this.sources.values() ].filter(source => source.hasExtra(type, oid))
+    return this.sources.filter(source => source.hasExtra(type, oid))
       .map(source => source.getSourceInformation());
   }
 }
@@ -377,13 +383,13 @@ export class RootSource extends CombinedPlayerSource<ManifestSource> {
 
   public async ready() {
     await Promise.all(
-      [...this.sources.values()].map(source => source.ready())
+      this.sources.map(source => source.ready())
     );
   }
 
   public async reload() {
     await Promise.all(
-      [...this.sources.values()].map(source => source.reload())
+      this.sources.map(source => source.reload())
     );
 
     this.clearCache();
@@ -391,7 +397,7 @@ export class RootSource extends CombinedPlayerSource<ManifestSource> {
 
   public async update(): Promise<boolean> {
     const updated = await Promise.all(
-      [...this.sources.values()].map(source => source.update())
+      this.sources.map(source => source.update())
     );
 
     if (updated.every(u => !u)) {
@@ -403,19 +409,16 @@ export class RootSource extends CombinedPlayerSource<ManifestSource> {
   }
 
   public getErrors(): { [s: string]: ManifestErrors } {
-    const result: { [s: string]: ManifestErrors } = {};
-
-    for (let manifestSource of this.sources.values()) {
-      result[manifestSource.getKey()] = manifestSource.getErrors();
-    }
-
-    return result;
+    return this.sources.reduce((obj, source) => {
+      obj[source.getKey()] = source.getErrors();
+      return obj;
+    }, {} as { [s: string]: ManifestErrors });
   }
 
   private async doAddManifest(manifest: ManifestSpreadsheet) {
-    const uid = manifest.getUid();
+    const key = manifest.getKey();
 
-    if (this.sources.has(uid)) {
+    if (this.getEntry(key)) {
       // Already registered
       return false;
     }
@@ -427,7 +430,7 @@ export class RootSource extends CombinedPlayerSource<ManifestSource> {
 
     await manifestSource.ready();
 
-    this.sources.set(manifest.getUid(), manifestSource);
+    this.sources.push(manifestSource);
     return true;
   }
 
@@ -438,20 +441,19 @@ export class RootSource extends CombinedPlayerSource<ManifestSource> {
   }
 
   public removeManifest(manifest: ManifestSpreadsheet) {
-    const uid = manifest.getUid();
+    const key = manifest.getKey();
 
-    if (!this.sources.has(uid)) {
+    if (!this.removeEntry(key)) {
       // Not registered
       return;
     }
 
-    this.sources.delete(uid);
     this.clearCache();
   }
 
   public async getInformation(): Promise<{ [s: string]: ManifestInformation }> {
-    const informations = await Promise.all([...this.sources.entries()].map(
-      async ([ key, source ]): Promise<ManifestInformation> =>
+    const informations = await Promise.all(this.sources.map(
+      async (source): Promise<ManifestInformation> =>
         await source.getInformation()
       )
     );
@@ -463,7 +465,7 @@ export class RootSource extends CombinedPlayerSource<ManifestSource> {
   }
 
   public getSourcesForExtra(type: string, oid: string): SourceInformation[] {
-    return [ ...this.sources.values() ].map(source => source.getSourcesForExtra(type, oid))
+    return this.sources.map(source => source.getSourcesForExtra(type, oid))
       .reduce((result, values) => {
         result.push(...values);
         return result;
