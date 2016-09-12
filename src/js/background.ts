@@ -92,6 +92,7 @@ async function setStoredData<T>(key: string, value: T): Promise<void> {
         return reject(chrome.runtime.lastError.message);
       }
 
+      storageCache.remove(key);
       resolve();
     })
   );
@@ -203,7 +204,6 @@ async function renameManifest(key: string, oldName?: string, newName?: string): 
   }
 
   await setStoredData('manifest_names', names);
-  storageCache.remove('manifests');
 
   return true;
 }
@@ -247,7 +247,6 @@ async function reloadData(): Promise<Status> {
 
   data = newData;
 
-  storageCache.remove('manifests');
   await updateTabs();
   return data.hasErrors() ? 'warning' : 'success';
 }
@@ -331,13 +330,7 @@ const messageListeners = Object.freeze({
       return MessageListenerReply.DO_NOT_WAIT;
     }
 
-    if (storageCache.has('manifests')) {
-      log.log('Requesting manifests, loaded from cache');
-      sendResponse(storageCache.get('manifests') as GetManifestsReply);
-      return MessageListenerReply.DO_NOT_WAIT;
-    }
-
-    log.log('Requesting manifests, loading from source');
+    log.log('Requesting manifests');
 
     (async () => {
       const [ names, information ] = await Promise.all([
@@ -352,8 +345,6 @@ const messageListeners = Object.freeze({
           info.name = info.key;
         }
       });
-
-      storageCache.set('manifests', information);
 
       log.log('Sending result to getManifests:', information);
       sendResponse(information);
@@ -394,7 +385,6 @@ const messageListeners = Object.freeze({
 
       await data.addManifest(request.key);
 
-      storageCache.remove('manifests');
       await updateTabs();
 
       sendResponse({ status: 'success' });
@@ -422,7 +412,6 @@ const messageListeners = Object.freeze({
 
       data.removeManifest(request.key);
 
-      storageCache.remove('manifests');
       await updateTabs();
 
       sendResponse({ status: 'success' });
@@ -441,11 +430,10 @@ const messageListeners = Object.freeze({
     }
 
     disableUpdateListener = true;
+    log.log('Renaming "%s" from "%s" to "%s"', request.key, request.oldName, request.newName);
     renameManifest(request.key, request.oldName, request.newName).then(success => {
       disableUpdateListener = false;
       if (success) {
-        storageCache.remove('manifest_names');
-        storageCache.remove('manifests');
         sendResponse({ status: 'success' });
       } else {
         sendResponse({ status: 'failed' });
@@ -562,7 +550,6 @@ const messageListeners = Object.freeze({
         await tokenBearer.authorize();
         log.log('OAuth2 flow Finished');
 
-        storageCache.remove('manifests');
         chrome.browserAction.setBadgeText({ text: '' });
 
         sendResponse({ valid: true });
@@ -746,8 +733,6 @@ chrome.browserAction.onClicked.addListener(tab => {
 });
 
 function onUnauthorized() {
-  storageCache.remove('manifests');
-
   chrome.browserAction.setBadgeBackgroundColor({ color: '#FF0000' });
   chrome.browserAction.setBadgeText({ text: '!' });
 
@@ -777,7 +762,6 @@ setInterval(async () => {
   const updated = await data.update();
 
   if (updated) {
-    storageCache.remove('manifests');
     await updateTabs();
   }
 }, 60 * 60 * 1000 /* one hour */);
