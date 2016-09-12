@@ -114,6 +114,7 @@ class PlayerSource implements HasPlayers {
   public async getInformation(): Promise<ManifestInformationEntry> {
     return {
       key: this.spreadsheet.getKey(),
+      url: this.spreadsheet.getUrl(),
       count: (await this.spreadsheet.getNumberOfRows()),
       tag: this.metadata.tag,
       version: this.metadata.lastupdated,
