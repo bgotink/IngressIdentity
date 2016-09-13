@@ -2,7 +2,7 @@
 
 // Profile popup
 
-.iidentity-wrapper {
+a.Ug[oid] .iidentity-wrapper {
     padding: 4px 8px 10px;
 
     > .iidentity-name {
@@ -11,6 +11,13 @@
 
     > .iidentity-extra {
         font-size: 18px;
+    }
+}
+
+.utPnCc .iidentity-wrapper {
+    .iidentity-extra,
+    .iidentity-group {
+        font-size: 12px;
     }
 }
 
@@ -28,6 +35,7 @@ div + span.iidentity-spacer + wbr + .iidentity-iwrapper {
 
 .iidentity-iwrapper {
     margin-right: .4em;
+    font-size: 14px;
 
     > span {
         white-space: nowrap;
@@ -60,6 +68,10 @@ div + span.iidentity-spacer + wbr + .iidentity-iwrapper {
         content: ']';
         padding-left: .2ex;
         color: @c_extra;
+    }
+
+    .czUUib[data-memberid] & {
+        padding-left: .2em;
     }
 }
 
@@ -165,4 +177,31 @@ div.vT.iidentity-matched {
     width: 18px;
     height: 18px;
   }
+}
+
+// Community export
+
+.O0WRkf.oG5Srb.HQ8yf.C0oVfc.iidentity-export {
+    height: 56px;
+}
+
+// New Google+ Profile export
+
+.iidentity-profile-badge__text,
+.iidentity-profile-badge__image {
+    vertical-align: middle;
+}
+
+// New Google+ Profile pop-up
+
+.iidentity-popup-entry {
+    .iidentity-popup__geninfo {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    .iidentity-popup__geninfo-entry {
+        flex: 1 1 0;
+        width: 25%;
+    }
 }

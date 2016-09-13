@@ -76,6 +76,15 @@
     options_error:
         message: 'Error!'
         description: 'Message to show when something went horribly wrong'
+    options_error_unauthorized:
+        message: 'Error: unauthorized!'
+        description: 'Title of the message to show when the OAuth2 token is invalid'
+    options_error_unauthorized_description:
+        message: 'You need to authorize IngressIdentity to access your spreadsheets.'
+        description: 'Message to show when the OAuth2 token is invalid'
+    options_error_unauthorized_link:
+        message: 'Click here to grant IngressIdentity access.'
+        description: 'Text on the button to show when the OAuth2 token is invalid'
     options_reload_success:
         message: 'The data was successfully reloaded.'
         description: ''
@@ -205,6 +214,12 @@
     options_about_text:
         message: 'This extension is written and maintained by <a target="_blank" href="https://github.com/bgotink">Bram Gotink</a>. The code is &copy; 2014 Bram Gotink, licensed under the terms of the <a target="_blank" href="http://en.wikipedia.org/wiki/MIT_License">MIT License</a>. The source of this project can be found on <a target="_blank" href="https://github.com/bgotink/IngressIdentity">GitHub</a>.'
         description: 'Text of the section containing info about the extension.'
+    options_privacy_title:
+        message: 'Privacy'
+        description: 'Title of the privacy section.'
+    options_privacy_text:
+        message: 'Your privacy is important. That\'s why we only connect to the Google Spreadsheet API and not to any other servers. We do not send any data anywhere and we do not track anything you do. Note that the Google Spreadsheet API provides basic tracking: it logs the total amount of requests made by all users of this extension together, and it logs how many and which errors are encountered. It does not show which spreadsheets you access, nor does it show any information about who uses the extension.'
+        description: 'Text of the privacy section.'
     options_ack_title:
         message: 'Acknowledgements'
         description: 'Title of the acknowledgements section.'

@@ -36,12 +36,9 @@ html(data-translate-prefix='options')
         +css('options')
 
         unless browser === 'firefox'
-            // jQuery, Sugar and Bootstrap JS
             +js_lib('jquery')
             +js_lib('jquery-ui')
-            +js_lib('sugar')
             +js_lib('bootstrap')
-
             // Our JS
             +js('options')
     body
@@ -75,6 +72,13 @@ html(data-translate-prefix='options')
 
                     +alert_success('rename-success', 'rename_success', 'The manifest was successfully renamed.')
                     +alert_danger('rename-failed', 'rename_failed', 'Something went wrong when renaming the manifest.')
+
+                    #alert-unauthorized.hide.alert.alert-danger
+                        strong(data-translate-name='error_unauthorized') Error: unauthorized!
+                        span(data-translate-name='error_unauthorized_description') You need to authorize IngressIdentity to access your spreadsheets.
+                        | &nbsp;
+                        a#authorize.alert-link(href="#" data-translate-name='error_unauthorized_link') Click here to grant IngressIdentity access.
+
             +row
                 h2
                     span(data-translate-name='data_sources') Data Sources
@@ -91,7 +95,7 @@ html(data-translate-prefix='options')
                         form.manifest_add(role='form', action='#')
                             .form-group
                                 label(for='manifest_input', data-translate-name='manifest_key_label') Manifest Key
-                                input#manifest_input(class='form-control', type='text', placeholer='0AtpJ3MMfk4gjdFJxdW41VHdxVC1nTnU2RVh1RUk4THc')
+                                input#manifest_input(class='form-control', type='text', placeholer='1Ddjn9HHA91yeipihG31vPcdJWG7Np8E8Zev34Ty1eII')
                                 .help-block
                                     p(data-translate-name='manifest_key_help').
                                         For more information about where to find the manifest key,
@@ -110,8 +114,8 @@ html(data-translate-prefix='options')
                                 p(data-translate-name='manifest_example_intro').
                                     If you want to see an example of a manifest file, add manifest key
                                 blockquote
-                                    a(target='_blank' href='https://docs.google.com/spreadsheet/ccc?key=0AlQqEFrEHdKSdG9GTG83T21XZURhZEozd01Lb3BxTmc').
-                                        0AlQqEFrEHdKSdG9GTG83T21XZURhZEozd01Lb3BxTmc
+                                    a(target='_blank' href='https://docs.google.com/spreadsheets/d/1Ddjn9HHA91yeipihG31vPcdJWG7Np8E8Zev34Ty1eII').
+                                        1Ddjn9HHA91yeipihG31vPcdJWG7Np8E8Zev34Ty1eII
                                 p(data-translate-name='manifest_example_outro').
                                     Then take a look at <a target="_blank" href="https://plus.google.com/+NianticProject/posts/eTDoXUG8TkB">
                                     this post by the Niantic Project</a> or
@@ -154,8 +158,15 @@ html(data-translate-prefix='options')
                 h2(data-translate-name='about_title') About
                 p(data-translate-name='about_text').
                     This extension is written and maintained by <a target="_blank" href="https://github.com/bgotink">Bram Gotink</a>.
-                    The code is &copy; 2014 Bram Gotink, licensed under the terms of the <a target="_blank" href="http://en.wikipedia.org/wiki/MIT_License">MIT License</a>.
+                    The code is &copy; 2014-2016 Bram Gotink, licensed under the terms of the <a target="_blank" href="http://en.wikipedia.org/wiki/MIT_License">MIT License</a>.
                     The source of this project can be found on <a target="_blank" href="https://github.com/bgotink/IngressIdentity">GitHub</a>.
+                h3(data-translate-name='privacy_title') Privacy
+                p(data-translate-name='privacy_text').
+                    Your privacy is important. That's why we only connect to the Google Spreadsheet API and not to any other servers.
+                    We do not track anything you do. Note that the Google Spreadsheet API provides basic tracking: it logs the total
+                    amount of requests made by all users of this extension together, and it logs how many and which errors are
+                    encountered. It does not show which spreadsheets you access, nor does it show any information about who uses the
+                    extension.
                 h3(data-translate-name='ack_title') Acknowledgements
                 p(data-translate-name='ack_text').
                     This project uses code by <a target="_blank" href="https://jquery.org/">jQuery</a>,
