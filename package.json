@@ -1,6 +1,6 @@
 {
   "name": "ingress-identity",
-  "version": "0.8.12",
+  "version": "0.9.0",
   "description": "This project contains a browser extension to show ingress account information on a player's Google+ profile. It currently supports Google Chrome and Safari and Firefox.",
   "main": "index.js",
   "scripts": {
