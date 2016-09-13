@@ -7,9 +7,17 @@
 
 import * as log from '../log';
 
+const STATUS_NOT_AUTHENTICATED = 'UNAUTHENTICATED';
+
 function wrapError(e: any): Error {
   return e instanceof Error ? e : new Error(e);
 }
+
+interface ErrorInfo {
+  code: number;
+  message: string;
+  status: string;
+};
 
 export default class TokenBearer {
   private token: string | null;
@@ -111,7 +119,7 @@ export default class TokenBearer {
   public async fetchAuthenticated(url: string, retry: boolean = true): Promise<Response> {
     let token: string;
 
-    function _throwUnauthorized(e: any) {
+    function _throwUnauthorized(e: any): Response {
       this.tokenError = wrapError(e);
 
       try {
@@ -131,7 +139,7 @@ export default class TokenBearer {
         this.token = token;
         this.tokenError = null;
       } catch (e) {
-        _throwUnauthorized(e);
+        return _throwUnauthorized(e);
       }
     }
 
@@ -147,13 +155,17 @@ export default class TokenBearer {
     }
 
     if (response.status === 401) {
-      await this.clearToken();
+      const errorInfo: ErrorInfo = await response.json();
 
-      if (retry) {
-        return this.fetchAuthenticated(url, false);
+      if (errorInfo.status === STATUS_NOT_AUTHENTICATED) {
+        await this.clearToken();
+
+        if (retry) {
+          return this.fetchAuthenticated(url, false);
+        }
+
+        return _throwUnauthorized(new Error('Unauthorized: token invalid'));
       }
-
-      _throwUnauthorized(new Error('Unauthorized: token invalid'));
     }
 
     if (!response.ok) {
