@@ -211,6 +211,12 @@
     options_about_text:
         message: 'Deze extensie werd geschreven en onderhouden door <a target="_blank" href="https://github.com/bgotink">Bram Gotink</a>. De code is &copy; 2014 Bram Gotink, gelicensieerd onder de termen van de <a target="_blank" href="http://en.wikipedia.org/wiki/MIT_License">MIT License</a>. De broncode van dit project kan je terugvinden op <a target="_blank" href="https://github.com/bgotink/IngressIdentity">GitHub</a>.'
         description: 'Text of the section containing info about the extension.'
+    options_privacy_title:
+        message: 'Privacy'
+        description: 'Title of the privacy section.'
+    options_privacy_text:
+        message: 'Jouw privacy is belangrijk. Daarom verbindt deze extensie enkel met de Google Spreadsheet API en nooit met een andere server. Wij sturen geen data door, en wij tracken jou niet. Merk op dat de Google Spreadsheet API wel het volgende bijhoudt: een totaal aantal requests dat alle gebruikers van deze extensie samen doen en hoeveel fouten daarbij worden behandeld. Het toont nooit data uit spreadsheets of wie deze extensie gebruikt.'
+        description: 'Text of the privacy section.'
     options_ack_title:
         message: 'Acknowledgements'
         description: 'Title of the acknowledgements section.'
