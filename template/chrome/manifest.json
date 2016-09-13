@@ -1,8 +1,9 @@
 {
+    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAirMw10XbSrcEqIGZlKt0UWWAmKDQzCV77045MywOREHd+PKnVyqYvuq2VIRPNyzYZj8I+la3zCG0LE5wwW4qwaqysSN3Ei2mT632My679QU+Ot4Cv/Eo0ipyFKRTsu1Nt9AL5/FTnikQYyDFxEYr3m0kqzoYyHcH9B6JnmB4X36NsIbWuxlV7QGg/oJcAc498o1uUF6WNlEpmjc3VVaGVAUEeR6z9tYGki9UT16vTf+zGVouo9H4F4p7hL/MGlkPy9jKeBCzSzIz3xGsWp8SQTYCnoy4h2VyuzAIvhqtd42mKEVEsQBMG8b4asQrAuuI7yrMpcDNRLEgNIk0JkGBiwIDAQAB",
     "manifest_version": 2,
 
     "name": "__MSG_extDevName__",
-    "version": "0.8.12",
+    "version": "0.9.0",
     "description": "__MSG_extDescription__",
     "icons": {
         "16":  "img/logo/16.png",
@@ -12,7 +13,7 @@
 
     "default_locale": "en",
 
-    "permissions": [ "storage" ],
+    "permissions": [ "storage", "identity" ],
     "optional_permissions": [ "https://*.google.com/*" ],
 
     "background": {
@@ -21,21 +22,21 @@
 
     "options_page": "options.html",
 
-    "content_security_policy": "default-src 'none'; script-src 'self' https://www.google.com https://spreadsheets.google.com https://docs.google.com; object-src 'self'; img-src 'self'; style-src 'self' 'unsafe-inline'",
+    "content_security_policy": "default-src 'none'; script-src 'self' https://www.google.com https://spreadsheets.google.com https://docs.google.com; object-src 'self'; img-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://spreadsheets.google.com https://docs.google.com https://sheets.googleapis.com",
     "content_scripts": [
         {
             "matches": [ "https://plus.google.com/*", "https://apis.google.com/*" ],
             "run_at": "document_end",
             "all_frames": true,
             "css": [ "css/content.css" ],
-            "js": [ "vendor/js/jquery.min.js", "vendor/js/sugar.min.js", "js/content.js" ]
+            "js": [ "vendor/js/jquery.min.js", "js/content.js" ]
         },
         {
             "matches": [ "https://talkgadget.google.com/*" ],
             "run_at": "document_end",
             "all_frames": true,
             "css": [ "css/content.css" ],
-            "js": [ "vendor/js/jquery.min.js", "vendor/js/sugar.min.js", "js/content-talk.js" ]
+            "js": [ "vendor/js/jquery.min.js", "js/content-talk.js" ]
         }
     ],
 
@@ -52,5 +53,12 @@
         "img/logo/*.png",
         "export.html",
         "export-single.html"
-    ]
+    ],
+
+    "oauth2": {
+      "client_id": "240336793062-q47gi7j5rvtsloqkjgqe5lnvli6cjvld.apps.googleusercontent.com",
+      "scopes": [
+        "https://www.googleapis.com/auth/spreadsheets.readonly"
+      ]
+    }
 }

@@ -1,4 +1,0 @@
-#!/bin/bash
-
-echo 'To test for chrome: add /path/to/project/root/build/safari in the Extension Builder' >&2
-echo 'Run `make safari` if this directory does not yet exist.' >&2

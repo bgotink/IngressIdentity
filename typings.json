@@ -1,0 +1,13 @@
+{
+  "name": "ingress-identity",
+  "dependencies": {
+    "lodash": "registry:npm/lodash#4.0.0+20160723033700"
+  },
+  "globalDependencies": {
+    "bootstrap": "registry:dt/bootstrap#3.3.5+20160619023404",
+    "chrome": "registry:dt/chrome#0.0.0+20160724063844",
+    "jquery": "registry:dt/jquery#1.10.0+20160704162008",
+    "jqueryui": "registry:dt/jqueryui#1.11.0+20160727153854",
+    "whatwg-fetch": "registry:dt/whatwg-fetch#0.0.0+20160829180742"
+  }
+}

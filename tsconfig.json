@@ -1,0 +1,65 @@
+{
+    "compilerOptions": {
+        "module": "es6",
+        "target": "es6",
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "sourceMap": false,
+        "lib": [
+            "es5",
+            "es2015",
+            "es2016",
+            "dom"
+        ],
+        "outDir": "build/intermediary/js"
+    },
+    "exclude": [
+        "node_modules"
+    ],
+    "filesGlob": [
+        "typings/index.d.ts",
+        "typings/ingress-identity.d.ts",
+        "src/js/**/*.ts"
+    ],
+    "compileOnSave": true,
+    "files": [
+        "typings/index.d.ts",
+        "typings/ingress-identity.d.ts",
+        "src/js/auto-translate.ts",
+        "src/js/background.ts",
+        "src/js/background/cache.ts",
+        "src/js/background/i18n.ts",
+        "src/js/communication.ts",
+        "src/js/content/doOnce.ts",
+        "src/js/content/export.ts",
+        "src/js/content/i18n.ts",
+        "src/js/content/main-talk.ts",
+        "src/js/content/main.ts",
+        "src/js/content/mentions.ts",
+        "src/js/content/popup.ts",
+        "src/js/content/profile.ts",
+        "src/js/content/source.ts",
+        "src/js/data/data.ts",
+        "src/js/data/finder.ts",
+        "src/js/data/index.ts",
+        "src/js/data/interpreter.ts",
+        "src/js/data/merger.ts",
+        "src/js/data/spreadsheets.ts",
+        "src/js/data/token.ts",
+        "src/js/data/util.ts",
+        "src/js/export-single.ts",
+        "src/js/export.ts",
+        "src/js/help.ts",
+        "src/js/log.ts",
+        "src/js/options/alerts.ts",
+        "src/js/options/authorization.ts",
+        "src/js/options/communication.ts",
+        "src/js/options/main.ts",
+        "src/js/options/manifests.ts",
+        "src/js/options/settings.ts",
+        "src/js/search.ts"
+    ],
+    "atom": {
+        "rewriteTsconfig": true
+    }
+}

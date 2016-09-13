@@ -1,35 +1,34 @@
 # Building IngressIdentity
 
-Building is easy, simply run `make all` or `make all-release` to build for all browsers.
-If you want to build for a specific browser, run `make <browser>` or `make <browser>-release`,
-e.g. `make chrome` or `make safari-release`.
+Building is easy, simply run `make all` or `make all-release` to build. Before building,
+you'll need to install the dependencies though! Run
+
+```
+npm install
+```
+
+to install most of them and look below for more information.
 
 Don't forget to install the dependencies first though!
 
 ## Three build types
 
-There are three build types: `browser`, `browser-release` and `browser-dist`,
-where `browser` should be replaced with one of the supported browsers.
-
-### `browser`
+### `chroe`
 
 This build type compiles all code but doesn't minify it. Code maps are generated,
 making debugging in the browser easy as pie (provided the browser supports `.map` files).
 
-### `browser-release`
+### `chrome-release`
 
-This build type compiles and minifies all code. No code maps are generated. The resulted
+This build type compiles and minifies (TODO) all code. No code maps are generated. The resulted
 code is the exact code that will be released, allowing you to test this code before
 actually releasing it.
 
-### `browser-dist`
+### `chrome-dist`
 
 This build type will fail if it has already been built for the current extension version.
 This command is normally not used directly, but is executed as part of `bin/release`. It builds
 `browser-release` and creates the extension in the format that will be released.
-
-Note that safari doesn't support building from the command line, so this command will simply
-generate a message telling you to open the Extension Builder and build the extension there.
 
 ## Dependencies
 
@@ -39,33 +38,31 @@ Make is required to run the `Makefile`.
 
 ### git
 
-Git is required to build because the building process will clone the firefox
-SDK as well as a small program to create the extension logo for safari.
+Git is required, though you should already have this as you succeeded in downloading the source.
 
 ### clang
 
-The Clang compiler is required to compile the small program used to create the
-extension logo for safari.
+The Clang compiler is required to compile the small program used to create the logo
+for the export button.
 
 ### Imagemagick
 
 The `convert` tool is used to create all the logo png files from `src/img/log.svg`.
 
-### coffee
+### Rollup, TypeScript
 
-The coffeescript compiler is needed to compile all coffeescript to javascript.
-Simply run `npm install -g coffee-script` to install it.
-Please ensure that the `coffee` program is in the `$PATH`.
+Rollup and TypeScript are used to compile the TypeScript code into JavaScript.
+This dependency is installed when you run `npm install`.
 
 ### lessc
 
-The less compiler is required to compile all LESS files to CSS. You can install
-it using `npm install -g less`. Please ensure that the `lessc` program is in the `$PATH`.
+The less compiler is required to compile all LESS files to CSS. This dependency
+is installed when you run `npm install`.
 
 ### cson2json
 
-The cson2json program is needed to compile the CSON files into JSON. Install it
-by running `npm install -g cson`. Please ensure that the `cson2json` program is in the `$PATH`.
+The cson2json program is needed to compile the CSON files into JSON. This
+dependency is installed when you run `npm install`.
 
 ### bower
 
@@ -75,11 +72,10 @@ that the `bower` program is in the `$PATH`.
 
 ### uglifyjs
 
-We use uglifyjs to minify the source before distribution. Install this dependency
-using `npm install -g uglify-js`. Note that `uglifyjs` is also an NPM package, but
-we require `uglify-js`! Please ensure that the `uglifyjs` program is in the `$PATH`.
+We use uglifyjs to minify the source before distribution. This dependency is installed
+when you run `npm install`.
 
 ### jade
 
-Instead of writing HTML, we use the Jade templating engine. Install it using
-`npm install -g jade`. Please ensure that the `jade` program is in the `$PATH`.
+Instead of writing HTML, we use the Jade templating engine. This dependency is installed
+when you run `npm install`.

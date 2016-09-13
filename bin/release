@@ -80,14 +80,11 @@ if ! git diff --quiet --cached; then
 fi
 
 # update version
+# package
+sed -i '' -e "s/\"version\"\:.*\$/\"version\": \"$version\",/" package.json
 #  chrome & firefox
-sed -i '' -e "s/\"version\"\:.*\$/\"version\": \"$version\",/" template/chrome*/manifest.json template/firefox*/package.json
-git add template/chrome*/manifest.json template/firefox*/package.json
-# safari
-    sed -i'.bak' -e "s#<string>.*</string><\!-- version -->#<string>$version</string><!-- version -->#" \
-                  -e "s#<string>.*</string><\!-- bundle version -->#<string>$(grep -F '<!-- bundle version -->' template/IngressIdentity-release.safariextension/Info.plist | cut -d'>' -f2 | cut -d'<' -f1 | xargs echo 1 + | bc )</string><!-- bundle version -->#" template/*.safariextension/Info.plist
-rm template/*.safariextension/Info.plist.bak
-git add template/*/Info.plist
+sed -i '' -e "s/\"version\"\:.*\$/\"version\": \"$version\",/" template/chrome*/manifest.json
+git add template/chrome*/manifest.json package.json
 
 log "Creating release commit"
 git commit -m "[release] prepping v$version"

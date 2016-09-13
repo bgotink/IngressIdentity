@@ -1,4 +1,0 @@
-#!/bin/bash
-
-echo 'Use the Extension Builder to build the safari extension in /path/to/project/root/build/safari-release' >&2
-echo 'Run `make safari-release` if this directory does not exist.' >&2

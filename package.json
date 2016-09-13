@@ -1,0 +1,36 @@
+{
+  "name": "ingress-identity",
+  "version": "0.9.0",
+  "description": "This project contains a browser extension to show ingress account information on a player's Google+ profile. It currently supports Google Chrome and Safari and Firefox.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bgotink/IngressIdentity.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bgotink/IngressIdentity/issues"
+  },
+  "homepage": "https://github.com/bgotink/IngressIdentity#readme",
+  "devDependencies": {
+    "cson": "^3.0.2",
+    "jade": "^1.11.0",
+    "less": "^2.7.1",
+    "rollup": "^0.34.10",
+    "rollup-plugin-commonjs": "^3.3.1",
+    "rollup-plugin-node-resolve": "^2.0.0",
+    "rollup-plugin-typescript": "^0.8.1",
+    "rollup-plugin-uglify": "^1.0.1",
+    "typescript": "^2.0.2",
+    "uglify-js": "mishoo/UglifyJS2#1db50c3b169ee4195e1935013d6721628eb5b4bd"
+  },
+  "dependencies": {
+    "lodash": "^4.15.0",
+    "sugar": "^2.0.1",
+    "sugar-inflections": "^2.0.0"
+  }
+}
