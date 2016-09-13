@@ -139,7 +139,7 @@ export default class TokenBearer {
         this.token = token;
         this.tokenError = null;
       } catch (e) {
-        return _throwUnauthorized(e);
+        return _throwUnauthorized.call(this, e);
       }
     }
 
@@ -164,7 +164,7 @@ export default class TokenBearer {
           return this.fetchAuthenticated(url, false);
         }
 
-        return _throwUnauthorized(new Error('Unauthorized: token invalid'));
+        return _throwUnauthorized.call(this, new Error('Unauthorized: token invalid'));
       }
     }
 
