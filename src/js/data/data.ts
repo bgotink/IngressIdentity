@@ -29,12 +29,10 @@ interface HasKey {
 };
 
 class PlayerSource implements HasPlayers {
-  private err: string[];
   private timestamp: number;
   private players: Promise<PlayerMap>;
 
   constructor(private metadata: ManifestEntry, private spreadsheet: SourceSpreadsheet) {
-    this.err = spreadsheet.getErrors();
     this.markUpdated();
 
     this.players = this.parsePlayers();
