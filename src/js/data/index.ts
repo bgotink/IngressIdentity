@@ -95,8 +95,7 @@ export default class DataManager {
 
     const file = this.getFile(parsedKey.key);
 
-    const manifestData = await file.getData(parsedKey.gid);
-    return new ManifestSpreadsheet(key, this.tokenBearer, file, manifestData);
+    return new ManifestSpreadsheet(key, this.tokenBearer, file, parsedKey.gid);
   }
 
   private getFile(key: string): File {
@@ -108,9 +107,8 @@ export default class DataManager {
 
   private async createSource(file: File, key: string): Promise<SourceSpreadsheet> {
     const parsedKey = resolveKey(key, parseKey(file.getKey()));
-    const fileData = await this.getFile(parsedKey.key).getData(parsedKey.gid);
 
-    return new SourceSpreadsheet(key, this.tokenBearer, file, fileData);
+    return new SourceSpreadsheet(key, this.tokenBearer, file, parsedKey.gid);
   }
 
   public async addManifest(key: string) {

@@ -120,11 +120,35 @@ interface RawSpreadsheetData {
 
 type SpreadSheetEntry = { [s: string]: string };
 
+enum SpreadsheetState {
+  LOADING, SUCCESS, ERROR
+};
+
+const MESSAGE_404 = '404 error: Spreadsheet not found. Please visit this spreadsheet by clicking the link above and verify that the key in the URL matches the key you entered.';
+
 export abstract class Spreadsheet<T> {
   private data: Promise<T[]>;
   protected err: string[];
+  protected fileData: Promise<FileData>;
+  private state: SpreadsheetState;
 
-  constructor(private key: string, private tokenBearer: TokenBearer, protected file: File, protected fileData: FileData) {
+  constructor(private key: string, private tokenBearer: TokenBearer, protected file: File, gid: number) {
+    this.state = SpreadsheetState.LOADING;
+    this.err = [];
+    this.fileData = file.getData(gid)
+      .then(fileData => {
+        this.state = SpreadsheetState.SUCCESS;
+        return fileData;
+      })
+      .catch(e => {
+        if (e && e.status === 404) {
+          this.err.push(MESSAGE_404);
+        } else {
+          this.err.push(e.message || e);
+        }
+        this.state = SpreadsheetState.ERROR;
+        return { sheetId: gid } as FileData;
+      })
     this.reload();
   }
 
@@ -148,12 +172,8 @@ export abstract class Spreadsheet<T> {
     .filter(data => !!data);
   }
 
-  public getUid() {
-    return `${this.file.getKey()}#gid=${this.fileData.sheetId}`;
-  }
-
   private async getNewFileData() {
-    return await this.file.getData(this.fileData.sheetId);
+    return await this.file.getData((await this.fileData).sheetId);
   }
 
   protected abstract validate(data: SpreadSheetEntry, i: number): T|null;
@@ -163,18 +183,30 @@ export abstract class Spreadsheet<T> {
   }
 
   private async doReload(): Promise<T[]> {
-    this.err = [];
-    const fileData = await this.getNewFileData();
+    const fileDataPromise = this.getNewFileData();
     const fileKey = this.file.getKey();
 
-    if (fileData == null) {
-      return Promise.reject(`No sheet with id "${this.fileData.sheetId}" found in "${fileKey}"`);
+    let fileData: FileData;
+    try {
+      fileData  = await fileDataPromise;
+      this.err = [];
+      this.state = SpreadsheetState.SUCCESS;
+    } catch (e) {
+      this.state = SpreadsheetState.ERROR;
+
+      if (e && e.status === 404) {
+        this.err = [ MESSAGE_404 ];
+      } else {
+        this.err = [ e.message || e ];
+      }
+
+      return [];
     }
 
-    this.fileData = fileData;
+    this.fileData = fileDataPromise;
 
     return this.tokenBearer.fetchAuthenticated(
-      `https://sheets.googleapis.com/v4/spreadsheets/${fileKey}/values/${this.fileData.title}!A1:${numberToColumnId(fileData.gridProperties.columnCount)}${fileData.gridProperties.rowCount}?majorDimension=rows`
+      `https://sheets.googleapis.com/v4/spreadsheets/${fileKey}/values/${fileData.title}!A1:${numberToColumnId(fileData.gridProperties.columnCount)}${fileData.gridProperties.rowCount}?majorDimension=rows`
     )
     .then(response => response.json())
     .then((response: RawSpreadsheetData) => this.parseData(response))
@@ -192,21 +224,28 @@ export abstract class Spreadsheet<T> {
     return this.data;
   }
 
-  public getUrl() {
-    return `${this.file.getUrl()}#gid=${this.fileData.sheetId}`;
+  public async getUrl() {
+    return `${this.file.getUrl()}#gid=${(await this.fileData).sheetId}`;
   }
 
   public getErrors(): string[] {
     return this.err;
   }
 
-  public exists(): Promise<boolean> {
-    return this.file.getData(this.fileData.sheetId)
-      .then(found => !!found);
+  public async exists(): Promise<boolean> {
+    return this.file.getData((await this.fileData).sheetId)
+      .then(found => !!found)
+      .catch(() => false);
   }
 
-  public getNumberOfRows() {
-    return this.fileData.gridProperties.rowCount;
+  public async getNumberOfRows() {
+    const fileData = await this.fileData;
+
+    if (this.state === SpreadsheetState.ERROR) {
+      return 0;
+    }
+
+    return fileData.gridProperties.rowCount;
   }
 
   public getFile() {

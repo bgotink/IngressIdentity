@@ -72,14 +72,15 @@ class PlayerSource implements HasPlayers {
   private async parsePlayers() {
     const sourceData = await this.spreadsheet.getData();
     const players = sourceData.map(entry => createPlayer(this.metadata, entry));
+    const SourceInformation = await this.getSourceInformation();
 
     return players.reduce((map, player) => {
-        player.sources.push(this.getSourceInformation());
+      player.sources.push(SourceInformation);
 
-        map.set(player.oid, player);
+      map.set(player.oid, player);
 
-        return map;
-      }, new Map<string, Player>());
+      return map;
+    }, new Map<string, Player>());
   }
 
   public getNumberOfPlayers() {
@@ -120,8 +121,8 @@ class PlayerSource implements HasPlayers {
   public async getInformation(): Promise<ManifestInformationEntry> {
     return {
       key: this.getKey(),
-      url: this.spreadsheet.getUrl(),
-      count: (await this.spreadsheet.getNumberOfRows()),
+      url: await this.spreadsheet.getUrl(),
+      count: await this.spreadsheet.getNumberOfRows(),
       tag: this.metadata.tag,
       version: this.metadata.lastupdated,
       faction: this.metadata.faction,
@@ -142,9 +143,9 @@ class PlayerSource implements HasPlayers {
     return value.trim() === oid;
   }
 
-  public getSourceInformation(): SourceInformation {
+  public async getSourceInformation(): Promise<SourceInformation> {
     return {
-      url: this.getUrl(),
+      url: await this.getUrl(),
       tag: this.getTag(),
     };
   }
@@ -345,7 +346,7 @@ class ManifestSource extends CombinedPlayerSource<PlayerSource> {
 
     return {
       key: this.getKey(),
-      url: this.spreadsheet.getUrl(),
+      url: await this.spreadsheet.getUrl(),
 
       sources: informations.reduce((obj, information) => {
         obj[information.key] = information;
@@ -354,9 +355,9 @@ class ManifestSource extends CombinedPlayerSource<PlayerSource> {
     }
   }
 
-  public getSourcesForExtra(type: string, oid: string): SourceInformation[] {
-    return this.sources.filter(source => source.hasExtra(type, oid))
-      .map(source => source.getSourceInformation());
+  public async getSourcesForExtra(type: string, oid: string): Promise<SourceInformation[]> {
+    return Promise.all(this.sources.filter(source => source.hasExtra(type, oid))
+      .map(source => source.getSourceInformation()));
   }
 }
 
@@ -480,11 +481,13 @@ export class RootSource extends CombinedPlayerSource<ManifestSource> {
     ));
   }
 
-  public getSourcesForExtra(type: string, oid: string): SourceInformation[] {
+  public async getSourcesForExtra(type: string, oid: string): Promise<SourceInformation[]> {
     return this.sources.map(source => source.getSourcesForExtra(type, oid))
       .reduce((result, values) => {
-        result.push(...values);
-        return result;
-      }, [] as SourceInformation[]);
+        return Promise.all([ result, values ]).then(([ result, values ]) => {
+          result.push(...values);
+          return result;
+        })
+      }, Promise.resolve([] as SourceInformation[]));
   }
 }

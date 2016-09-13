@@ -75,8 +75,8 @@ function reloadManifestErrorsHelper(errors: Errors, $elem: JQuery) {
     });
   } else {
     _.forEach(errors, (value: Errors, key: string) => {
-      if (key === '__errors' && $elem.find('> .panel > .panel-body').length === 0) {
-        $('<div class="panel-body" data-key="__errors">').insertBefore($elem.find('> .panel > .list-group'));
+      if (key === '.manifest' && (value as string[]).length && $elem.find('> .panel > .panel-body').length === 0) {
+        $('<div class="panel-body" data-key=".manifest">').insertBefore($elem.find('> .panel > .list-group'));
       }
 
       reloadManifestErrorsHelper(value, $elem.find(`[data-key="${key}"]`));

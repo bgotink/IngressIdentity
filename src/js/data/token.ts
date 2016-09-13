@@ -157,7 +157,9 @@ export default class TokenBearer {
     }
 
     if (!response.ok) {
-      throw new Error(`Got HTTP error ${response.status}`);
+      const e = new Error(`Got HTTP error ${response.status}`);
+      (e as any).status = response.status;
+      throw e;
     }
 
     return response;
