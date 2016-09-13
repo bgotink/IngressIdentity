@@ -80,10 +80,8 @@ export default class DataManager {
 
         await rootSource.ready();
 
-        return rootSource;
+        return this.playerSource = rootSource;
       });
-
-    this.playerSourcePromise.then(playerSource => this.playerSource = playerSource);
   }
 
   private async createManifest(key: string): Promise<ManifestSpreadsheet> {

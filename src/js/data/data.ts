@@ -364,10 +364,15 @@ class ManifestSource extends CombinedPlayerSource<PlayerSource> {
 export type SourceSheetFactory = (manifest: ManifestSpreadsheet, manifestEntry: ManifestEntry) => Promise<SourceSpreadsheet>;
 
 export class RootSource extends CombinedPlayerSource<ManifestSource> {
+  private readyPromise: Promise<void>;
+
   constructor(manifests: ManifestSpreadsheet[], private sourceFactory: SourceSheetFactory) {
     super();
 
-    manifests.forEach(manifest => this.doAddManifest(manifest));
+    this.readyPromise = Promise.all(manifests.map(manifest => this.createManifestSource(manifest)))
+      .then(sources => {
+        this.sources = sources;
+      })
   }
 
   public async find(pattern: SearchPattern): Promise<Player[]> {
@@ -381,6 +386,7 @@ export class RootSource extends CombinedPlayerSource<ManifestSource> {
   }
 
   public async ready() {
+    await this.readyPromise;
     await Promise.all(
       this.sources.map(source => source.ready())
     );
@@ -414,12 +420,12 @@ export class RootSource extends CombinedPlayerSource<ManifestSource> {
     }, {} as { [s: string]: ManifestErrors });
   }
 
-  private async doAddManifest(manifest: ManifestSpreadsheet) {
+  private async createManifestSource(manifest: ManifestSpreadsheet): Promise<ManifestSource> {
     const key = manifest.getKey();
 
     if (this.getEntry(key)) {
       // Already registered
-      return false;
+      return null;
     }
 
     const manifestSource = new ManifestSource(manifest, (manifestEntry) => {
@@ -429,12 +435,13 @@ export class RootSource extends CombinedPlayerSource<ManifestSource> {
 
     await manifestSource.ready();
 
-    this.sources.push(manifestSource);
-    return true;
+    return manifestSource;
   }
 
   public async addManifest(manifest: ManifestSpreadsheet) {
-    if (await this.doAddManifest(manifest)) {
+    const source = await this.createManifestSource(manifest);
+    if (source != null) {
+      this.sources.push(source);
       this.clearCache();
     }
   }
