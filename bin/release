@@ -84,7 +84,7 @@ fi
 sed -i '' -e "s/\"version\"\:.*\$/\"version\": \"$version\",/" package.json
 #  chrome & firefox
 sed -i '' -e "s/\"version\"\:.*\$/\"version\": \"$version\",/" template/chrome*/manifest.json
-git add template/chrome*/manifest.json
+git add template/chrome*/manifest.json package.json
 
 log "Creating release commit"
 git commit -m "[release] prepping v$version"
